@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Εργαστήριο Φυσικής — Προσομοιώσεις</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1180px; margin:0 auto; padding: 22px 18px 60px;}
+
+header{
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(24px, 4.2vw, 34px);
+  margin: 0 0 4px 0;
+}
+h1 span{color: var(--gold);}
+.byline{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  color: var(--paper-dim);
+  margin-top:4px;
+}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+
+/* search */
+.search-row{
+  margin: 20px 0 18px;
+}
+.search-box{
+  position:relative;
+  max-width: 520px;
+}
+.search-box input{
+  width:100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  padding: 13px 16px 13px 40px;
+  border-radius: var(--radius);
+  outline:none;
+}
+.search-box input::placeholder{color: var(--paper-dim);}
+.search-box input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.search-box .icon{
+  position:absolute; left:13px; top:50%; transform:translateY(-50%);
+  color: var(--paper-dim);
+  font-size:15px;
+  pointer-events:none;
+}
+.result-count{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  color: var(--paper-dim);
+  margin-top:8px;
+  letter-spacing:0.04em;
+}
+
+/* tabs */
+.tab-row{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-bottom:4px;
+  margin-bottom:10px;
+  -ms-overflow-style:none;
+  scrollbar-width:none;
+}
+.tab-row::-webkit-scrollbar{display:none;}
+.tab-btn{
+  flex:none;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:12.5px;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  padding:10px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: var(--bg-panel);
+  color: var(--paper-dim);
+  cursor:pointer;
+  white-space:nowrap;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-btn:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+
+.sub-tab-row{
+  display:none;
+  gap:6px;
+  margin: 4px 0 20px;
+  padding: 12px;
+  background: rgba(232,184,75,0.06);
+  border: 1px dashed var(--gold-dim);
+  border-radius: var(--radius);
+  flex-wrap:wrap;
+  align-items:center;
+}
+.sub-tab-row.show{display:flex;}
+.sub-tab-row .lbl{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  margin-right:4px;
+}
+.sub-btn{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:11.5px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:7px 13px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper-dim);
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.sub-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.sub-btn.active{background: var(--gold-dim); color: var(--gold); border-color: var(--gold);}
+
+/* grid */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 18px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.card:hover{border-color: var(--gold-dim); transform: translateY(-2px);}
+
+.card-title{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  font-size:16.5px;
+  color: var(--paper);
+  margin:0;
+  line-height:1.3;
+}
+.card-desc{
+  font-size:13px;
+  line-height:1.5;
+  color: var(--paper-dim);
+  flex:1;
+}
+
+.badge-row{
+  display:flex; flex-wrap:wrap; gap:5px;
+}
+.badge{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10px;
+  letter-spacing:0.03em;
+  padding:3px 8px;
+  border-radius:12px;
+  background: rgba(110,151,190,0.18);
+  color: var(--line-bright);
+  border: 1px solid var(--line-dim);
+}
+.tag-row{
+  display:flex; flex-wrap:wrap; gap:5px;
+}
+.tag{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10px;
+  padding:3px 8px;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  cursor:pointer;
+}
+.tag:hover{background: rgba(232,184,75,0.12);}
+
+.card-open{
+  margin-top:4px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:12.5px;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  text-decoration:none;
+  background: var(--gold);
+  color: var(--bg-deep);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.card-open:hover{background:#f0c665;}
+
+.empty{
+  grid-column: 1 / -1;
+  text-align:center;
+  padding: 50px 20px;
+  color: var(--paper-dim);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  border: 1px dashed var(--line-dim);
+  border-radius: var(--radius);
+}
+
+footer{
+  margin-top: 40px;
+  padding-top:16px;
+  border-top: 1px solid var(--line-dim);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  text-align:center;
+  letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Εργαστήριο <span>Φυσικής</span></h1>
+    <div class="subtitle">Διαδραστικές προσομοιώσεις · Γυμνάσιο &amp; Λύκειο</div>
+    <div class="byline">Σλάβης Τάσος</div>
+  </header>
+
+  <div class="search-row">
+    <div class="search-box">
+      <span class="icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Αναζήτηση με λέξη-κλειδί (π.χ. βολή, κύματα, τάση)...">
+    </div>
+    <div class="result-count" id="resultCount"></div>
+  </div>
+
+  <div class="tab-row" id="tabRow"></div>
+  <div class="sub-tab-row" id="subTabRow"></div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>Κάθε προσομοίωση μπορεί να ανήκει σε περισσότερες από μία τάξεις/ενότητες</footer>
+</div>
+
+<script>
+/* ============================================================
+   ΠΩΣ ΠΡΟΣΘΕΤΩ ΝΕΑ ΠΡΟΣΟΜΟΙΩΣΗ
+   ------------------------------------------------------------
+   Αντέγραψε ένα block μέσα στο SIMULATIONS παρακάτω και άλλαξε:
+   - id            : μοναδικό αναγνωριστικό (μόνο λατινικά, χωρίς κενά)
+   - title         : τίτλος όπως θα φαίνεται στην κάρτα
+   - description   : σύντομη περιγραφή (1-2 προτάσεις)
+   - url           : το όνομα του .html αρχείου της προσομοίωσης
+                      (πρέπει να βρίσκεται στον ίδιο φάκελο με αυτό το index.html)
+   - grades        : σε ποιες τάξεις/ενότητες θα εμφανίζεται. Επίτρεπτες τιμές:
+                      'a-gym', 'b-gym', 'g-gym',
+                      'a-lyk', 'g-lyk',
+                      'b-lyk-kat'  (Β Λυκείου - Φυσική Κατεύθυνσης)
+                      'b-lyk-gen'  (Β Λυκείου - Φυσική Γενικής Παιδείας)
+                      Μπορείς να βάλεις όσες θέλεις, π.χ. ['a-lyk','b-lyk-kat']
+   - tags          : ελεύθερες λέξεις-κλειδιά για την αναζήτηση, όσες θέλεις
+   ============================================================ */
+
+  const SIMULATIONS = [
+    {
+      id: 'eythigrammi-kinisi-3',
+      title: 'Ευθύγραμμη Κίνηση σε Οριζόντιο Επίπεδο — Προσομοίωση',
+      description: 'Προσομοίωση ευθύγραμμη κίνησης (ΕΟΚ, επιταχυνόμενη, επιβραδυνόμενη) με επιλογή παραμετροποίησης όλων των μεγεθών.',
+      url: 'eythigrammi-kinisi_3.html',
+      grades: ['a-lyk'],
+      tags: ['κινηματική', 'ΕΟΚ', 'επιταχυνόμενη', 'επιβραδυνόμενη']
+    }
+
+    // Πρόσθεσε εδώ επόμενες προσομοιώσεις με κόμμα (,) πριν από κάθε νέο { }
+  ];
+
+  const GRADES = [
+    { id: 'all',   label: 'Όλες' },
+    { id: 'a-gym', label: 'Α Γυμνασίου' },
+    { id: 'b-gym', label: 'Β Γυμνασίου' },
+    { id: 'g-gym', label: 'Γ Γυμνασίου' },
+    { id: 'a-lyk', label: 'Α Λυκείου' },
+    { id: 'b-lyk', label: 'Β Λυκείου' },
+    { id: 'g-lyk', label: 'Γ Λυκείου' }
+  ];
+  const GRADE_LABELS = Object.fromEntries(GRADES.map(g => [g.id, g.label]));
+  GRADE_LABELS['b-lyk-kat'] = 'Β Λυκείου · Κατεύθυνσης';
+  GRADE_LABELS['b-lyk-gen'] = 'Β Λυκείου · Γενικής Παιδείας';
+
+  const B_LYK_SUB = [
+    { id: 'b-lyk-all', label: 'Όλα Β Λυκείου' },
+    { id: 'b-lyk-kat', label: 'Φυσική Κατεύθυνσης' },
+    { id: 'b-lyk-gen', label: 'Φυσική Γενικής Παιδείας' }
+  ];
+
+  let activeGrade = 'all';
+  let activeSub = 'b-lyk-all';
+  let searchQuery = '';
+
+  const tabRow = document.getElementById('tabRow');
+  const subTabRow = document.getElementById('subTabRow');
+  const grid = document.getElementById('grid');
+  const searchInput = document.getElementById('searchInput');
+  const resultCount = document.getElementById('resultCount');
+
+  function renderTabs(){
+    tabRow.innerHTML = '';
+    GRADES.forEach(g => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tab-btn' + (activeGrade === g.id ? ' active' : '');
+      btn.textContent = g.label;
+      btn.addEventListener('click', () => {
+        activeGrade = g.id;
+        renderTabs();
+        renderSubTabs();
+        renderGrid();
+      });
+      tabRow.appendChild(btn);
+    });
+  }
+
+  function renderSubTabs(){
+    subTabRow.innerHTML = '';
+    if (activeGrade !== 'b-lyk'){
+      subTabRow.classList.remove('show');
+      return;
+    }
+    subTabRow.classList.add('show');
+    const lbl = document.createElement('span');
+    lbl.className = 'lbl';
+    lbl.textContent = 'Ενότητα:';
+    subTabRow.appendChild(lbl);
+    B_LYK_SUB.forEach(s => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sub-btn' + (activeSub === s.id ? ' active' : '');
+      btn.textContent = s.label;
+      btn.addEventListener('click', () => {
+        activeSub = s.id;
+        renderSubTabs();
+        renderGrid();
+      });
+      subTabRow.appendChild(btn);
+    });
+  }
+
+  function getFiltered(){
+    let list = SIMULATIONS.slice();
+
+    if (activeGrade !== 'all'){
+      if (activeGrade === 'b-lyk'){
+        if (activeSub === 'b-lyk-all'){
+          list = list.filter(s => s.grades.includes('b-lyk-kat') || s.grades.includes('b-lyk-gen'));
+        } else {
+          list = list.filter(s => s.grades.includes(activeSub));
+        }
+      } else {
+        list = list.filter(s => s.grades.includes(activeGrade));
+      }
+    }
+
+    const q = searchQuery.trim().toLowerCase();
+    if (q){
+      list = list.filter(s =>
+        s.title.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.tags.some(t => t.toLowerCase().includes(q))
+      );
+    }
+
+    list.sort((a,b) => a.title.localeCompare(b.title, 'el'));
+    return list;
+  }
+
+  function setTagSearch(tag){
+    searchInput.value = tag;
+    searchQuery = tag;
+    renderGrid();
+    searchInput.focus();
+  }
+
+  function renderGrid(){
+    const list = getFiltered();
+    grid.innerHTML = '';
+    resultCount.textContent = list.length + (list.length === 1 ? ' αποτέλεσμα' : ' αποτελέσματα');
+
+    if (list.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Δεν βρέθηκαν προσομοιώσεις για αυτή την επιλογή. Δοκίμασε άλλη λέξη-κλειδί ή τάξη.';
+      grid.appendChild(empty);
+      return;
+    }
+
+    list.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const title = document.createElement('h3');
+      title.className = 'card-title';
+      title.textContent = s.title;
+
+      const desc = document.createElement('div');
+      desc.className = 'card-desc';
+      desc.textContent = s.description;
+
+      const badgeRow = document.createElement('div');
+      badgeRow.className = 'badge-row';
+      s.grades.forEach(gid => {
+        const b = document.createElement('span');
+        b.className = 'badge';
+        b.textContent = GRADE_LABELS[gid] || gid;
+        badgeRow.appendChild(b);
+      });
+
+      const tagRow = document.createElement('div');
+      tagRow.className = 'tag-row';
+      s.tags.forEach(tag => {
+        const t = document.createElement('span');
+        t.className = 'tag';
+        t.textContent = '#' + tag;
+        t.addEventListener('click', () => setTagSearch(tag));
+        tagRow.appendChild(t);
+      });
+
+      const open = document.createElement('a');
+      open.className = 'card-open';
+      open.href = s.url;
+      open.textContent = '▶ Άνοιγμα';
+
+      card.appendChild(title);
+      card.appendChild(desc);
+      card.appendChild(badgeRow);
+      card.appendChild(tagRow);
+      card.appendChild(open);
+      grid.appendChild(card);
+    });
+  }
+
+  searchInput.addEventListener('input', () => {
+    searchQuery = searchInput.value;
+    renderGrid();
+  });
+
+  renderTabs();
+  renderSubTabs();
+  renderGrid();
+</script>
+</body>
+</html>
