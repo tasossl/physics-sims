@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="el" data-theme="blueprint">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ευθύγραμμη Κίνηση σε Οριζόντιο Επίπεδο — Προσομοίωση</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="blueprint"]{
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol: rgba(232,184,75,0.18);
+  --danger:#E0685A; --accAccel:#FF6FCF; --radius:3px;
+}
+:root[data-theme="minimal"]{
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.08); --track:#F3F6FA; --shadowCol: rgba(240,147,43,0.18);
+  --danger:#D64545; --accAccel:#DB2777; --radius:3px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  transition:background .3s ease, color .3s ease;
+  padding:18px;
+}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+/* header */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px; flex-wrap:wrap; gap:10px;
+  border-bottom:1px solid var(--border); padding-bottom:14px;
+}
+header h1{font-size:1.5rem;font-weight:600;color:var(--text);}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono';letter-spacing:.04em;}
+.theme-toggle{
+  display:flex;background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.theme-toggle button{
+  background:transparent;border:none;color:var(--textDim);
+  padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;
+  transition:.2s;
+}
+.theme-toggle button.active{background:var(--accent);color:var(--bg);font-weight:600;}
+
+/* mode tabs */
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.mode-tab{
+  flex:1;min-width:180px;
+  background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;cursor:pointer;
+  transition:.15s;position:relative;
+}
+.mode-tab:hover{border-color:var(--shadowCol);}
+.mode-tab.active{border-color:var(--accent);}
+.mode-tab .tag{
+  font-family:'IBM Plex Mono';font-size:.68rem;color:var(--accent2);
+  letter-spacing:.06em;
+}
+.mode-tab.active .tag{color:var(--accent);}
+.mode-tab .name{font-family:'Oswald';font-size:.95rem;margin-top:3px;font-weight:500;}
+.mode-tab .formula{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--textDim);margin-top:5px;}
+
+/* panel visibility mode dropdown */
+.panel-mode-panel select{
+  width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);padding:9px 10px;font-family:'Inter';font-size:.83rem;
+}
+
+/* layout */
+.right-col{display:flex;flex-direction:column;gap:16px;}
+.main-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+}
+.panel h2{font-size:.78rem;font-weight:500;color:var(--accent);font-family:'Oswald',sans-serif;
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;
+  border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;
+  border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-head-row h2{margin-bottom:0;border-bottom:none;padding-bottom:0;}
+.panel-tools{display:flex;gap:6px;}
+.panel-tool-btn{
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;
+  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0;
+}
+.panel-tool-btn:hover{border-color:var(--accent2);}
+.panel:fullscreen, .graph-card:fullscreen{
+  display:flex;flex-direction:column;justify-content:center;background:var(--bg);padding:28px;
+}
+.panel:fullscreen canvas, .graph-card:fullscreen canvas{width:100%;}
+
+/* collapsible panels */
+.collapse-btn{
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.8rem;
+  display:flex;align-items:center;justify-content:center;transition:transform .2s;flex-shrink:0;
+}
+.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel-collapsible-body{overflow:hidden;}
+.panel.collapsed .panel-collapsible-body,
+.graph-card.collapsed .panel-collapsible-body{display:none;}
+.panel.collapsed .panel-head-row, .graph-card.collapsed .graph-head{margin-bottom:0;}
+.panel.collapsed, .graph-card.collapsed{padding-bottom:16px;}
+
+/* track */
+#trackCanvas{width:100%;display:block;border-radius:var(--radius);background:var(--track);
+  border:1px solid var(--border);touch-action:none;}
+.playback-row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.iconbtn{
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  width:38px;height:38px;border-radius:var(--radius);cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.iconbtn:hover{border-color:var(--accent2);}
+.iconbtn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.scrub{flex:1;min-width:120px;}
+.readouts{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;
+}
+.readout{
+  background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 10px;text-align:center;
+}
+.readout .lbl{font-size:.68rem;color:var(--textDim);text-transform:uppercase;letter-spacing:.05em;}
+.readout .lbl .lbl-sym{text-transform:none;}
+.readout .val{font-family:'IBM Plex Mono';font-size:1.05rem;font-weight:600;margin-top:2px;}
+.readout.stopped{border-color:var(--danger);}
+
+/* controls */
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:.82rem;color:var(--textDim);margin-bottom:6px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  height:5px;background:var(--grid);border-radius:3px;outline:none;
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;
+}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--accent);
+  border:2px solid var(--bg);cursor:pointer;
+}
+.field input[type=number]{
+  width:74px;background:var(--bg);border:1px solid var(--border);
+  color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono';
+  font-size:.85rem;text-align:right;
+}
+.field input[type=number]:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:32px;}
+.checkline{display:flex;align-items:center;gap:8px;margin:10px 0 4px;font-size:.83rem;color:var(--text);}
+.checkline input{accent-color:var(--accent);width:16px;height:16px;}
+.direction-indicator{
+  display:flex;gap:16px;margin-top:6px;padding:10px;background:var(--panel2);
+  border-radius:var(--radius);border:1px solid var(--border);font-size:.8rem;
+}
+.direction-indicator span{color:var(--textDim);}
+.direction-indicator b{font-family:'IBM Plex Mono';}
+
+/* vector toggles */
+.vector-toggles{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;padding:10px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input{accent-color:var(--accent);width:15px;height:15px;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.body-select{background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);padding:5px 8px;font-family:'Inter';font-size:.78rem;margin-left:4px;}
+
+/* solver toggle */
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);
+  padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;}
+.solver-toggle button.active{background:var(--accent);color:var(--bg);}
+select.inv-select{width:100%;background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);border-radius:var(--radius);padding:8px;font-family:'Inter';font-size:.85rem;}
+.inv-note{font-size:.76rem;color:var(--textDim);margin:6px 0 12px;line-height:1.5;}
+.inv-error{color:var(--danger);font-weight:600;}
+
+/* exercise panel */
+.exercise-panel{margin-top:16px;}
+.exercise-note{font-size:.8rem;color:var(--textDim);margin:14px 0 12px;line-height:1.5;}
+.exercise-note b{color:var(--text);}
+.exercise-grid{display:flex;flex-direction:column;gap:6px;}
+.exercise-row{
+  display:grid;grid-template-columns:90px 200px 1fr 90px;gap:10px;align-items:center;
+  background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;
+}
+.exercise-row .ex-name{font-family:'IBM Plex Mono';font-size:.88rem;font-weight:600;}
+.exercise-row .ex-toggle{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:2px;}
+.exercise-row .ex-toggle button{
+  flex:1;background:transparent;border:none;color:var(--textDim);padding:5px 4px;
+  font-size:.68rem;border-radius:4px;cursor:pointer;font-family:'Inter';
+  white-space:normal;line-height:1.15;overflow:hidden;text-overflow:ellipsis;
+}
+.exercise-row .ex-toggle button.active-given{background:var(--accent);color:var(--bg2);font-weight:600;}
+.exercise-row .ex-toggle button.active-asked{background:var(--accent2);color:var(--bg2);font-weight:600;}
+.exercise-row .ex-value{display:flex;align-items:center;gap:6px;}
+.exercise-row .ex-value input{
+  width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);padding:6px 8px;font-family:'IBM Plex Mono';font-size:.85rem;
+}
+.exercise-row .ex-value .unit{font-size:.72rem;color:var(--textDim);width:38px;}
+.exercise-row .ex-result{font-family:'IBM Plex Mono';font-size:.85rem;color:var(--accent2);font-weight:600;text-align:right;}
+.exercise-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+@media(max-width:640px){
+  .exercise-row{grid-template-columns:1fr;}
+}
+
+/* composite motion segments */
+.segment-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.segment-row{
+  background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:relative;
+}
+.segment-row .seg-num{
+  font-family:'IBM Plex Mono';font-size:.72rem;color:var(--bg2);background:var(--accent2);
+  width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;
+}
+.segment-row select{
+  background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);
+  padding:6px 8px;font-family:'Inter';font-size:.8rem;
+}
+.segment-row .seg-field{display:flex;align-items:center;gap:5px;}
+.segment-row .seg-field label{font-size:.72rem;color:var(--textDim);}
+.segment-row .seg-field input{
+  width:64px;background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono';font-size:.82rem;
+}
+.segment-row .seg-del{
+  margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--textDim);
+  border-radius:var(--radius);width:26px;height:26px;cursor:pointer;flex-shrink:0;
+}
+.segment-row .seg-del:hover{border-color:var(--danger);color:var(--danger);}
+.segment-row .seg-summary{width:100%;font-size:.74rem;color:var(--textDim);font-family:'IBM Plex Mono';}
+
+/* presets */
+.presets-panel{margin-top:16px;}
+.preset-save-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.preset-save-row input[type=text]{
+  flex:1;min-width:160px;background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);border-radius:var(--radius);padding:9px 10px;font-family:'Inter';font-size:.85rem;
+}
+.btn{background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius);
+  padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;transition:.15s;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.preset-io-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.preset-list{display:flex;flex-direction:column;gap:8px;}
+.preset-item{
+  display:flex;align-items:center;gap:10px;background:var(--panel2);
+  border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;flex-wrap:wrap;
+}
+.preset-item .pbadge{
+  font-family:'IBM Plex Mono';font-size:.66rem;padding:2px 7px;border-radius:var(--radius);
+  background:var(--accent);color:var(--bg2);font-weight:600;white-space:nowrap;
+}
+.preset-item .pname{font-weight:600;font-size:.86rem;flex:1;min-width:100px;}
+.preset-item .pdetail{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--textDim);flex-basis:100%;}
+.preset-item .pactions{display:flex;gap:6px;}
+.preset-item .pactions button{
+  background:transparent;border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius);padding:5px 9px;font-size:.75rem;cursor:pointer;font-family:'Inter';
+}
+.preset-item .pactions button:hover{border-color:var(--accent2);}
+.preset-item .pactions button.del:hover{border-color:var(--danger);color:var(--danger);}
+.presets-empty{color:var(--textDim);font-size:.82rem;text-align:center;padding:14px;}
+.presets-note{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;padding-top:10px;border-top:1px solid var(--border);}
+
+/* main tabs (Άσκηση / Λύση / Αποθηκευμένες) */
+.main-tab-row{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px;-ms-overflow-style:none;scrollbar-width:none;}
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none;font-family:'Oswald',sans-serif;font-weight:500;font-size:.82rem;
+  letter-spacing:.03em;text-transform:uppercase;padding:12px 20px;min-height:44px;
+  border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);
+  color:var(--textDim);cursor:pointer;white-space:nowrap;transition:.15s;
+}
+.main-tab-btn:hover{border-color:var(--shadowCol);color:var(--text);}
+.main-tab-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* export */
+.export-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+#printExportArea{display:none;}
+@media print{
+  body > *:not(#printExportArea){display:none !important;}
+  #printExportArea{
+    display:block !important; color:#111; background:#fff; padding:10px;
+    font-family:'Inter',Arial,sans-serif;
+  }
+  #printExportArea *{color:#111 !important; background:transparent !important; border-color:#999 !important;}
+  #printExportArea h1{font-size:20px;margin-bottom:4px;}
+  #printExportArea .sol-block{margin-bottom:14px; page-break-inside:avoid;}
+  #printExportArea .sol-block h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+  #printExportArea .line{font-family:'Courier New',monospace;font-size:13px;line-height:1.8;}
+  #printExportArea .res{font-weight:700;}
+  #printExportArea .givens-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  #printExportArea .gi{border:1px solid #999;border-radius:4px;padding:6px 9px;font-family:'Courier New',monospace;font-size:13px;}
+  #printExportArea .gi .k{display:block;font-size:9px;color:#666;font-family:Arial,sans-serif;}
+  #printExportArea img{display:block !important;visibility:visible !important;max-width:100%;}
+}
+
+/* graphs */
+.graphs-title{margin:22px 0 12px;}
+.graphs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+@media(max-width:820px){.graphs-grid{grid-template-columns:1fr;}}
+.graph-card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.graph-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;}
+.graph-head h3{font-size:.82rem;font-weight:500;font-family:'Oswald',sans-serif;letter-spacing:.03em;color:var(--text);}
+.graph-head .gunit{font-size:.72rem;color:var(--textDim);}
+.tool-toggle{display:flex;gap:4px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:2px;}
+.tool-toggle button{
+  background:transparent;border:none;color:var(--textDim);padding:5px 9px;
+  font-size:.72rem;border-radius:var(--radius);cursor:pointer;font-family:'Inter';
+}
+.tool-toggle button.active{background:var(--accent);color:var(--bg2);font-weight:600;}
+.graph-canvas{width:100%;display:block;border-radius:var(--radius);touch-action:none;cursor:crosshair;}
+.graph-result{
+  margin-top:8px;padding:8px 10px;background:var(--panel2);border-radius:var(--radius);
+  border:1px solid var(--border);font-size:.78rem;font-family:'IBM Plex Mono';
+  color:var(--text);min-height:36px;line-height:1.5;
+}
+.graph-result .hi{color:var(--accent);font-weight:600;}
+.graph-result .hi2{color:var(--accent2);font-weight:600;}
+
+/* solution */
+.solution-panel{margin-top:16px;}
+.solution-body{}
+.sol-block{margin-bottom:16px;}
+.sol-block h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--accent2);margin-bottom:8px;}
+.sol-block .line{font-family:'IBM Plex Mono';font-size:.88rem;line-height:1.9;
+  padding-left:2px;}
+.sol-block .line .arrow{color:var(--textDim);margin:0 8px;}
+.sol-block .line .res{color:var(--accent);font-weight:600;}
+.sol-note{font-size:.8rem;color:var(--textDim);margin-top:6px;font-style:italic;}
+.givens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
+.givens-grid .gi{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 10px;font-family:'IBM Plex Mono';font-size:.85rem;text-align:center;}
+.givens-grid .gi .k{font-family:'Inter';font-size:.68rem;color:var(--textDim);display:block;margin-bottom:2px;}
+footer{text-align:center;color:var(--textDim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div>
+      <h1>Ευθύγραμμη Κίνηση σε Οριζόντιο Επίπεδο</h1>
+      <div class="sub">ΕΟΚ &nbsp;•&nbsp; Ομαλά Επιταχυνόμενη &nbsp;•&nbsp; Ομαλά Επιβραδυνόμενη</div>
+    </div>
+    <div class="theme-toggle">
+      <button id="themeBlueprint" class="active">Blueprint</button>
+      <button id="themeMinimal">Textbook</button>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-head-row">
+        <h2>Κίνηση σώματος</h2>
+        <div class="panel-tools">
+          <button class="panel-tool-btn" id="trackZoomBtn" title="Αύξηση μεγέθους">🔍+</button>
+          <button class="panel-tool-btn" id="trackFsBtn" title="Πλήρης οθόνη">⛶</button>
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+      <canvas id="trackCanvas" height="270"></canvas>
+      <div class="playback-row">
+        <button class="iconbtn" id="playBtn" title="Αναπαραγωγή/Παύση">▶</button>
+        <button class="iconbtn" id="resetBtn" title="Επαναφορά">⟲</button>
+        <button class="iconbtn" id="slowMoBtn" title="Αργή κίνηση (0.25×)">🐢</button>
+        <input type="range" id="scrub" class="scrub" min="0" max="10" step="0.02" value="0">
+        <span class="mono" id="scrubLabel" style="width:60px;text-align:right;">0.00 s</span>
+      </div>
+      <div class="direction-indicator">
+        <span>Φορά ταχύτητας: <b id="dirV">→</b></span>
+        <span>Φορά επιτάχυνσης: <b id="dirA">—</b></span>
+        <span id="stopNote" style="color:var(--danger);display:none;">⏹ Σταμάτησε στο t = <b id="stopT" class="mono"></b> s</span>
+      </div>
+      <div class="vector-toggles">
+        <label><input type="checkbox" id="vecPos"><span class="swatch" style="background:var(--accent2)"></span>Διάνυσμα θέσης x</label>
+        <label><input type="checkbox" id="vecX0"><span class="swatch" style="background:var(--accent2);opacity:.55"></span>Αρχική θέση x₀</label>
+        <label><input type="checkbox" id="vecDisp"><span class="swatch" style="background:var(--accent)"></span>Μετατόπιση Δx</label>
+        <label><input type="checkbox" id="vecVel" checked><span class="swatch" style="background:var(--accent3)"></span>Ταχύτητα v</label>
+        <label><input type="checkbox" id="vecAcc" checked><span class="swatch" style="background:var(--danger)"></span>Επιτάχυνση α</label>
+        <label style="margin-left:auto;">Σώμα:
+          <select id="bodyShape" class="body-select">
+            <option value="ball">⚫ Σφαίρα</option>
+            <option value="cube">◼ Κύβος</option>
+            <option value="f1">🏎 Formula 1</option>
+            <option value="car">🚗 Αυτοκίνητο</option>
+            <option value="truck">🚚 Φορτηγό</option>
+            <option value="bus">🚌 Λεωφορείο</option>
+          </select>
+        </label>
+      </div>
+      <div class="readouts">
+        <div class="readout"><div class="lbl">Χρόνος <span class="lbl-sym">t</span></div><div class="val mono" id="rT">0.00 s</div></div>
+        <div class="readout"><div class="lbl">Θέση <span class="lbl-sym">x</span></div><div class="val mono" id="rX">0.00 m</div></div>
+        <div class="readout"><div class="lbl">Ταχύτητα <span class="lbl-sym">v</span></div><div class="val mono" id="rV">0.00 m/s</div></div>
+        <div class="readout"><div class="lbl">Επιτάχυνση <span class="lbl-sym">α</span></div><div class="val mono" id="rA">0.00 m/s²</div></div>
+      </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="panel panel-mode-panel">
+        <div class="panel-head-row">
+          <h2>Προβολή πάνελ</h2>
+        </div>
+        <select id="panelModeSelect">
+          <option value="basic">Basic — Κίνηση σώματος + Παράμετροι κίνησης</option>
+          <option value="extended">Extended — + Διαγράμματα</option>
+          <option value="basicSolution">Basic + Λύση — + Άσκηση &amp; Λύση</option>
+          <option value="full" selected>Full — Όλα τα πάνελ</option>
+        </select>
+      </div>
+
+      <div class="panel">
+      <div class="panel-head-row">
+        <h2>Παράμετροι κίνησης</h2>
+        <div class="panel-tools">
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+
+      <div class="solver-toggle">
+        <button data-solver="forward" class="active">Κανονικός (δίνω x₀, u, α, t)</button>
+        <button data-solver="inverse">Αντίστροφος (βρες α, t κ.λπ.)</button>
+        <button data-solver="composite">Σύνθετη κίνηση</button>
+      </div>
+
+      <div class="field" id="motionTypeRow">
+        <label><span class="name">Είδος κίνησης</span></label>
+        <select id="motionTypeSelect" class="inv-select">
+          <option value="eok">ΕΟΚ — Ευθύγραμμη Ομαλή Κίνηση (α = 0)</option>
+          <option value="accel">ΕΟΕΚ — Ομαλά Επιταχυνόμενη</option>
+          <option value="decel">ΕΟΕπΚ — Ομαλά Επιβραδυνόμενη</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label><span class="name">Αρχική θέση</span><span>x₀</span></label>
+        <div class="inputs">
+          <input type="range" id="slX0" min="-40" max="40" step="0.5" value="0">
+          <input type="number" id="numX0" min="-40" max="40" step="0.5" value="0">
+          <span class="unit">m</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label><span class="name">Αρχική ταχύτητα</span><span>u (v₀)</span></label>
+        <div class="inputs">
+          <input type="range" id="slV0" min="-20" max="20" step="0.25" value="5">
+          <input type="number" id="numV0" min="-20" max="20" step="0.25" value="5">
+          <span class="unit">m/s</span>
+        </div>
+      </div>
+
+      <div id="forwardFields">
+        <div class="field" id="fieldA">
+          <label><span class="name">Επιτάχυνση</span><span>α</span></label>
+          <div class="inputs">
+            <input type="range" id="slA" min="-8" max="8" step="0.1" value="2">
+            <input type="number" id="numA" min="-8" max="8" step="0.1" value="2">
+            <span class="unit">m/s²</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label><span class="name">Χρόνος παρατήρησης</span><span>t_max</span></label>
+          <div class="inputs">
+            <input type="range" id="slT" min="1" max="20" step="0.5" value="10">
+            <input type="number" id="numT" min="1" max="20" step="0.5" value="10">
+            <span class="unit">s</span>
+          </div>
+        </div>
+
+        <div class="checkline" id="stopCheckWrap" style="display:none;">
+          <input type="checkbox" id="stopCheck" checked>
+          <label for="stopCheck">Το σώμα σταματά όταν v = 0 (δεν αντιστρέφει φορά)</label>
+        </div>
+      </div>
+
+      <div id="inverseFields" style="display:none;">
+        <div class="field">
+          <label><span class="name">Γνωστά μεγέθη</span></label>
+          <select id="invCase" class="inv-select">
+            <option value="dxuv">Δx, u, v  →  βρες α, t</option>
+            <option value="dxua">Δx, u, α  →  βρες v, t</option>
+            <option value="uva">u, v, α  →  βρες t, Δx</option>
+            <option value="uvt">u, v, t  →  βρες α, Δx</option>
+          </select>
+        </div>
+        <div class="inv-note">Το u (αρχική ταχύτητα) ρυθμίζεται από το πεδίο «Αρχική ταχύτητα» παραπάνω.</div>
+        <div id="invKnownsContainer"></div>
+        <div class="graph-result" id="invResult">—</div>
+      </div>
+
+      <div id="compositeFields" style="display:none;">
+        <div class="inv-note">Κάθε τμήμα ξεκινά από το σημείο όπου σταμάτησε το προηγούμενο (θέση &amp; ταχύτητα συνεχίζονται). Το x₀ και το u παραπάνω ορίζουν την αρχή του πρώτου τμήματος.</div>
+        <div id="segmentList" class="segment-list"></div>
+        <button class="btn secondary" id="addSegmentBtn" style="margin-top:4px;">+ Προσθήκη κίνησης</button>
+      </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <h2 class="graphs-title">Διαγράμματα &nbsp;<span style="color:var(--textDim);font-weight:400;font-size:.75rem;">— σύρετε τις δύο κάθετες γραμμές για να βρείτε κλίση ή εμβαδόν</span></h2>
+  <div class="graphs-grid">
+    <div class="graph-card" data-key="x">
+      <div class="graph-head">
+        <h3>Θέση – Χρόνος (x–t)</h3>
+        <div class="tool-toggle">
+          <button data-tool="none" class="active">καμία</button>
+          <button data-tool="slope">κλίση</button>
+          <button data-tool="area">εμβαδόν</button>
+        </div>
+        <div class="panel-tools">
+          <button class="panel-tool-btn" data-zoom="x" title="Αύξηση μεγέθους">🔍+</button>
+          <button class="panel-tool-btn" data-fs="x" title="Πλήρης οθόνη">⛶</button>
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+      <canvas class="graph-canvas" data-graph="x" height="200"></canvas>
+      <div class="graph-result" data-result="x">Επιλέξτε εργαλείο για ανάλυση.</div>
+      </div>
+    </div>
+
+    <div class="graph-card" data-key="s">
+      <div class="graph-head">
+        <h3>Διάστημα – Χρόνου (s–t)</h3>
+        <div class="tool-toggle">
+          <button data-tool="none" class="active">καμία</button>
+          <button data-tool="slope">κλίση</button>
+          <button data-tool="area">εμβαδόν</button>
+        </div>
+        <div class="panel-tools">
+          <button class="panel-tool-btn" data-zoom="s" title="Αύξηση μεγέθους">🔍+</button>
+          <button class="panel-tool-btn" data-fs="s" title="Πλήρης οθόνη">⛶</button>
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+      <canvas class="graph-canvas" data-graph="s" height="200"></canvas>
+      <div class="graph-result" data-result="s">Επιλέξτε εργαλείο για ανάλυση.</div>
+      </div>
+    </div>
+
+    <div class="graph-card" data-key="v">
+      <div class="graph-head">
+        <h3>Ταχύτητα – Χρόνου (v–t)</h3>
+        <div class="tool-toggle">
+          <button data-tool="none" class="active">καμία</button>
+          <button data-tool="slope">κλίση</button>
+          <button data-tool="area">εμβαδόν</button>
+        </div>
+        <div class="panel-tools">
+          <button class="panel-tool-btn" data-zoom="v" title="Αύξηση μεγέθους">🔍+</button>
+          <button class="panel-tool-btn" data-fs="v" title="Πλήρης οθόνη">⛶</button>
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+      <canvas class="graph-canvas" data-graph="v" height="200"></canvas>
+      <div class="graph-result" data-result="v">Επιλέξτε εργαλείο για ανάλυση.</div>
+      </div>
+    </div>
+
+    <div class="graph-card" data-key="a">
+      <div class="graph-head">
+        <h3>Επιτάχυνση – Χρόνου (α–t)</h3>
+        <div class="tool-toggle">
+          <button data-tool="none" class="active">καμία</button>
+          <button data-tool="slope">κλίση</button>
+          <button data-tool="area">εμβαδόν</button>
+        </div>
+        <div class="panel-tools">
+          <button class="panel-tool-btn" data-zoom="a" title="Αύξηση μεγέθους">🔍+</button>
+          <button class="panel-tool-btn" data-fs="a" title="Πλήρης οθόνη">⛶</button>
+          <button class="collapse-btn" title="Σύμπτυξη">▾</button>
+        </div>
+      </div>
+      <div class="panel-collapsible-body">
+      <canvas class="graph-canvas" data-graph="a" height="200"></canvas>
+      <div class="graph-result" data-result="a">Επιλέξτε εργαλείο για ανάλυση.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-tab-row" id="mainTabRow">
+    <button type="button" class="main-tab-btn active" data-tab="exercise">📝 Άσκηση</button>
+    <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
+    <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
+  </div>
+
+  <div class="tab-panel active panel" id="tab-exercise">
+    <div class="exercise-note">Επίλεξε ποια μεγέθη είναι <b>Δεδομένα</b> (δώσε τιμή) και ποια <b>Ζητούμενα</b> (θα υπολογιστούν). Χρειάζονται τουλάχιστον 3 από τα u, v, α, t, Δx για να λυθεί η άσκηση.</div>
+    <div class="exercise-grid" id="exerciseGrid"></div>
+    <div class="exercise-actions">
+      <button class="btn secondary" id="exerciseResetBtn">↺ Καθαρισμός</button>
+      <button class="btn" id="exerciseApplyBtn">▶ Εφαρμογή στην προσομοίωση</button>
+    </div>
+    <div class="graph-result" id="exerciseResult">Επίλεξε δεδομένα και ζητούμενα παραπάνω.</div>
+  </div>
+
+  <div class="tab-panel panel" id="tab-solution">
+    <div class="solution-body open" id="solBody"></div>
+    <div class="export-row">
+      <button class="btn secondary" id="printBtn">🖨️ Εκτύπωση / PDF</button>
+      <button class="btn secondary" id="wordBtn">📄 Λήψη σε Word</button>
+    </div>
+  </div>
+
+  <div class="tab-panel panel" id="tab-saved">
+    <div style="padding-top:2px;">
+      <div class="preset-save-row">
+        <input type="text" id="presetName" placeholder="Όνομα π.χ. «Άσκηση 3 – ΕΟΕΚ αυτοκίνητο»">
+        <button class="btn" id="presetSaveBtn">💾 Αποθήκευση τρέχουσας ρύθμισης</button>
+      </div>
+      <div id="presetList" class="preset-list"></div>
+      <div class="preset-io-row">
+        <button class="btn secondary" id="presetExportBtn">⬇ Εξαγωγή όλων (.json)</button>
+        <button class="btn secondary" id="presetImportBtn">⬆ Εισαγωγή από αρχείο</button>
+        <input type="file" id="presetImportFile" accept="application/json" style="display:none;">
+      </div>
+      <div class="presets-note">
+        Οι προσομοιώσεις αποθηκεύονται τοπικά στον browser αυτού του υπολογιστή (localStorage). Αν ανοίξετε το αρχείο σε άλλον υπολογιστή ή browser, χρησιμοποιήστε «Εξαγωγή» εδώ και «Εισαγωγή» εκεί για να τις μεταφέρετε.
+      </div>
+    </div>
+  </div>
+
+  <footer>Προσομοίωση ευθύγραμμης κίνησης — φτιαγμένο για διδασκαλία φυσικής</footer>
+</div>
+<div id="printExportArea"></div>
+
+<script>
+(function(){
+"use strict";
+
+// ---------------- STATE ----------------
+const state = {
+  mode:'eok', x0:0, v0:5, aMag:2, tMax:10,
+  stopAtZero:true, currentT:0, playing:false, playSpeed:1,
+  solverMode:'forward', invCase:'dxuv', inverseA:0, inverseError:null,
+  showVecPos:false, showVecDisp:false, showVecVel:true, showVecAcc:true, showVecX0:false,
+  bodyShape:'ball',
+  trackSizeStep:0, graphSizeStep:{x:0,s:0,v:0,a:0},
+  segments:[{type:'eok', duration:4}, {type:'accel', duration:3, a:2}, {type:'decel', duration:3, a:-2}],
+};
+const DT = 0.02;
+let samples = [];
+let tStop = null;
+let rafId = null;
+let lastFrameTime = null;
+
+// declared early to avoid temporal-dead-zone errors: parameter binding below
+// triggers an initial draw pass before its own section of the script runs
+const graphDefs = [
+  {key:'x', label:'θέση x', unit:'m', color:'--accent2'},
+  {key:'s', label:'διάστημα s', unit:'m', color:'--accent'},
+  {key:'v', label:'ταχύτητα v', unit:'m/s', color:'--accent3'},
+  {key:'a', label:'επιτάχυνση α', unit:'m/s²', color:'--accAccel'},
+];
+const graphs = {}; // key -> {canvas, tool, hA, hB, dragging}
+const TRACK_H = 270; // logical px height of the motion-track canvas
+const GRAPH_H = 200; // logical px base height of each graph canvas
+const SIZE_STEPS = [1, 1.4, 1.8]; // cycled by the "increase size" button
+
+// Inverse-solver case definitions. "u" (initial velocity) is always taken
+// from state.v0; each case defines the OTHER two known quantities and how
+// to solve for the two unknowns from {u, known1, known2}.
+const INV_CASES = {
+  dxuv: {
+    unknownsLabel:'α, t',
+    knowns:[
+      {id:'dx', label:'Μετατόπιση Δx', unit:'m', min:-150, max:150, step:1, def:40},
+      {id:'v',  label:'Τελική ταχύτητα v', unit:'m/s', min:-25, max:25, step:0.25, def:12},
+    ],
+    solve(u,dx,v){
+      if(Math.abs(u+v) < 1e-9) return {error:'u + v ≈ 0: δεν ορίζεται μοναδικός χρόνος με αυτά τα δεδομένα.'};
+      const t = 2*dx/(u+v);
+      if(t <= 0) return {error:'Ο χρόνος που προκύπτει είναι ≤ 0 — δοκιμάστε άλλες τιμές.'};
+      const a = (v-u)/t;
+      return {t, a};
+    }
+  },
+  dxua: {
+    unknownsLabel:'v, t',
+    knowns:[
+      {id:'dx', label:'Μετατόπιση Δx', unit:'m', min:-150, max:150, step:1, def:40},
+      {id:'a',  label:'Επιτάχυνση α', unit:'m/s²', min:-8, max:8, step:0.1, def:2},
+    ],
+    solve(u,dx,a){
+      let t;
+      if(Math.abs(a) < 1e-9){
+        if(Math.abs(u) < 1e-9) return {error:'u = 0 και α = 0: το σώμα δεν κινείται.'};
+        t = dx/u;
+      } else {
+        const disc = u*u + 2*a*dx;
+        if(disc < 0) return {error:'Δεν υπάρχει πραγματική λύση (αρνητική διακρίνουσα).'};
+        const sq = Math.sqrt(disc);
+        const cands = [(-u+sq)/a, (-u-sq)/a].filter(x=>x>1e-9).sort((x,y)=>x-y);
+        if(cands.length===0) return {error:'Δεν βρέθηκε θετική λύση χρόνου.'};
+        t = cands[0];
+      }
+      if(t <= 0) return {error:'Ο χρόνος που προκύπτει είναι ≤ 0 — δοκιμάστε άλλες τιμές.'};
+      const v = u + a*t;
+      return {v, t};
+    }
+  },
+  uva: {
+    unknownsLabel:'t, Δx',
+    knowns:[
+      {id:'v', label:'Τελική ταχύτητα v', unit:'m/s', min:-25, max:25, step:0.25, def:14},
+      {id:'a', label:'Επιτάχυνση α', unit:'m/s²', min:-8, max:8, step:0.1, def:2},
+    ],
+    solve(u,v,a){
+      if(Math.abs(a) < 1e-9) return {error:'α = 0: ο χρόνος δεν ορίζεται μονοσήμαντα (χρησιμοποιήστε ΕΟΚ).'};
+      const t = (v-u)/a;
+      if(t <= 0) return {error:'Ο χρόνος που προκύπτει είναι ≤ 0 — δοκιμάστε αντίθετο πρόσημο στο α.'};
+      const dx = (u+v)/2*t;
+      return {t, dx};
+    }
+  },
+  uvt: {
+    unknownsLabel:'α, Δx',
+    knowns:[
+      {id:'v', label:'Τελική ταχύτητα v', unit:'m/s', min:-25, max:25, step:0.25, def:14},
+      {id:'t', label:'Χρόνος t', unit:'s', min:0.1, max:20, step:0.1, def:6},
+    ],
+    solve(u,v,t){
+      if(t <= 0) return {error:'Ο χρόνος πρέπει να είναι θετικός.'};
+      const a = (v-u)/t;
+      const dx = (u+v)/2*t;
+      return {a, dx};
+    }
+  },
+};
+
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function fmt(v,d=2){return (Object.is(v,-0)?0:v).toFixed(d);}
+
+function signedA(){
+  if(state.solverMode==='inverse') return state.inverseA;
+  if(state.solverMode==='exercise') return state.exerciseA||0;
+  if(state.solverMode==='composite') return 0; // composite motion has its own recompute path
+  if(state.mode==='eok') return 0;
+  return state.aMag; // aMag now holds the actual signed acceleration the user set
+}
+
+function recompute(){
+  if(state.solverMode==='composite'){ recomputeComposite(); return; }
+  const a = signedA();
+  const n = Math.max(1, Math.round(state.tMax/DT));
+  samples = new Array(n+1);
+  tStop = null;
+  // "stop at v=0" applies whenever accel opposes the initial velocity, regardless
+  // of which tab was clicked — the user can set any signed α directly now
+  const opposesMotion = state.v0!==0 && a!==0 && Math.sign(a)!==Math.sign(state.v0);
+  if(state.solverMode==='forward' && state.mode!=='eok' && state.stopAtZero && opposesMotion){
+    const tz = -state.v0/a;
+    if(tz>0 && tz<=state.tMax) tStop = tz;
+  }
+  let frozenX = null;
+  let sAcc = 0, prevX = state.x0;
+  for(let i=0;i<=n;i++){
+    const t = Math.min(i*DT, state.tMax);
+    let x,v,ai;
+    if(tStop!==null && t>=tStop){
+      if(frozenX===null) frozenX = state.x0 + state.v0*tStop + 0.5*a*tStop*tStop;
+      x = frozenX; v = 0; ai = 0;
+    } else {
+      x = state.x0 + state.v0*t + 0.5*a*t*t;
+      v = state.v0 + a*t;
+      ai = a;
+    }
+    sAcc += Math.abs(x - prevX);
+    samples[i] = {t, x, v, a:ai, s:sAcc};
+    prevX = x;
+  }
+}
+
+// segment's signed acceleration, following the same convention as the main
+// α field: eok is locked to 0, others hold whatever signed value was set
+function segmentSignedA(seg){
+  return seg.type==='eok' ? 0 : (seg.a||0);
+}
+
+let segmentBoundaries = []; // [{t, label}] populated by recomputeComposite, used to mark graphs
+function recomputeComposite(){
+  tStop = null; // composite motion never uses the single-segment "stop at v=0" feature
+  const segs = state.segments.length ? state.segments : [{type:'eok', duration:1}];
+  const totalT = Math.max(0.1, segs.reduce((sum,seg)=> sum+Math.max(0.1,seg.duration), 0));
+  state.tMax = totalT;
+  const n = Math.max(1, Math.round(totalT/DT));
+  samples = new Array(n+1);
+  segmentBoundaries = [];
+
+  let x0 = state.x0, v0 = state.v0, sAcc = 0, prevX = state.x0, tOffset = 0;
+  let segIdx = 0, curSeg = segs[0], curA = segmentSignedA(curSeg), curDur = Math.max(0.1,curSeg.duration);
+  let curSegEndT = curDur;
+  segmentBoundaries.push({t:0, label:'1'});
+
+  for(let i=0;i<=n;i++){
+    const t = Math.min(i*DT, totalT);
+    while(t > curSegEndT + 1e-9 && segIdx < segs.length-1){
+      // advance to the next segment: carry over end position/velocity as new start
+      const localEndT = curDur;
+      x0 = x0 + v0*localEndT + 0.5*curA*localEndT*localEndT;
+      v0 = v0 + curA*localEndT;
+      tOffset = curSegEndT;
+      segIdx++;
+      curSeg = segs[segIdx];
+      curA = segmentSignedA(curSeg);
+      curDur = Math.max(0.1, curSeg.duration);
+      curSegEndT += curDur;
+      segmentBoundaries.push({t:tOffset, label:String(segIdx+1)});
+    }
+    const localT = Math.max(0, t - tOffset);
+    const x = x0 + v0*localT + 0.5*curA*localT*localT;
+    const v = v0 + curA*localT;
+    sAcc += Math.abs(x - prevX);
+    samples[i] = {t, x, v, a:curA, s:sAcc};
+    prevX = x;
+  }
+}
+
+function sampleAt(t){
+  t = clamp(t, 0, state.tMax);
+  const idx = t/DT;
+  const i0 = Math.floor(idx);
+  const i1 = Math.min(i0+1, samples.length-1);
+  const frac = idx - i0;
+  const s0 = samples[i0], s1 = samples[i1];
+  if(!s0) return samples[0];
+  return {
+    t,
+    x: s0.x + (s1.x-s0.x)*frac,
+    v: s0.v + (s1.v-s0.v)*frac,
+    a: s0.a + (s1.a-s0.a)*frac,
+    s: s0.s + (s1.s-s0.s)*frac,
+  };
+}
+
+function areaBetween(key, tA, tB){
+  if(tB < tA){ const tmp=tA; tA=tB; tB=tmp; }
+  let area = 0;
+  const iA = tA/DT, iB = tB/DT;
+  const i0 = Math.ceil(iA), i1 = Math.floor(iB);
+  let prevT = tA, prevY = sampleAt(tA)[key];
+  for(let i=i0;i<=i1;i++){
+    const s = samples[i];
+    if(!s) continue;
+    area += (s[key]+prevY)/2 * (s.t-prevT);
+    prevT = s.t; prevY = s[key];
+  }
+  const endY = sampleAt(tB)[key];
+  area += (endY+prevY)/2 * (tB-prevT);
+  return area;
+}
+
+// ---------------- DOM refs ----------------
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+// ---------------- Main tabs (Άσκηση / Λύση / Αποθηκευμένες) ----------------
+const mainTabBtns = $$('.main-tab-btn');
+const mainTabPanels = {
+  exercise: $('#tab-exercise'),
+  solution: $('#tab-solution'),
+  saved: $('#tab-saved'),
+};
+function switchTab(name){
+  mainTabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab===name));
+  Object.keys(mainTabPanels).forEach(k => mainTabPanels[k].classList.toggle('active', k===name));
+}
+mainTabBtns.forEach(b => b.addEventListener('click', ()=> switchTab(b.dataset.tab)));
+
+// ---------------- Panel visibility mode (Basic / Extended / Basic+Solution / Full) ----------------
+const panelModeSelect = $('#panelModeSelect');
+const graphsTitleEl = $('.graphs-title');
+const graphsGridEl = $('.graphs-grid');
+const mainTabRowEl = $('#mainTabRow');
+const savedTabBtn = $('.main-tab-btn[data-tab="saved"]');
+
+function applyPanelMode(mode){
+  const showGraphs = (mode==='extended' || mode==='full');
+  const showTabs = (mode==='basicSolution' || mode==='full');
+  const showSaved = (mode==='full');
+
+  graphsTitleEl.style.display = showGraphs ? '' : 'none';
+  graphsGridEl.style.display = showGraphs ? '' : 'none';
+
+  mainTabRowEl.style.display = showTabs ? '' : 'none';
+  Object.values(mainTabPanels).forEach(p => { p.style.display = showTabs ? '' : 'none'; });
+  savedTabBtn.style.display = showSaved ? '' : 'none';
+
+  if(showTabs){
+    const activeKey = Object.keys(mainTabPanels).find(k => mainTabPanels[k].classList.contains('active'));
+    if((!showSaved && activeKey==='saved') || !activeKey){
+      switchTab('exercise');
+    }
+  }
+}
+panelModeSelect.addEventListener('change', ()=> applyPanelMode(panelModeSelect.value));
+applyPanelMode(panelModeSelect.value);
+
+const trackCanvas = $('#trackCanvas');
+const playBtn = $('#playBtn');
+const resetBtn = $('#resetBtn');
+const slowMoBtn = $('#slowMoBtn');
+const scrub = $('#scrub');
+const scrubLabel = $('#scrubLabel');
+const dirV = $('#dirV');
+const dirA = $('#dirA');
+const stopNote = $('#stopNote');
+const stopTEl = $('#stopT');
+const rT = $('#rT'), rX = $('#rX'), rV = $('#rV'), rA = $('#rA');
+const readoutEls = [rT,rX,rV,rA].map(e=>e.closest('.readout'));
+
+const slX0=$('#slX0'), numX0=$('#numX0');
+const slV0=$('#slV0'), numV0=$('#numV0');
+const slA=$('#slA'), numA=$('#numA');
+const slT=$('#slT'), numT=$('#numT');
+const fieldA = $('#fieldA');
+const stopCheckWrap = $('#stopCheckWrap');
+const stopCheck = $('#stopCheck');
+
+const forwardFields = $('#forwardFields');
+const inverseFields = $('#inverseFields');
+const compositeFields = $('#compositeFields');
+const segmentList = $('#segmentList');
+const invCaseSel = $('#invCase');
+const invKnownsContainer = $('#invKnownsContainer');
+const invResult = $('#invResult');
+const motionTypeRow = $('#motionTypeRow');
+const motionTypeSelect = $('#motionTypeSelect');
+
+const vecPos = $('#vecPos'), vecDisp = $('#vecDisp'), vecVel = $('#vecVel'), vecAcc = $('#vecAcc'), vecX0 = $('#vecX0');
+const bodyShapeSel = $('#bodyShape');
+
+const solBody = $('#solBody');
+
+// ---------------- Theme ----------------
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  $('#themeBlueprint').classList.toggle('active', t==='blueprint');
+  $('#themeMinimal').classList.toggle('active', t==='minimal');
+  drawAll();
+}
+$('#themeBlueprint').addEventListener('click',()=>setTheme('blueprint'));
+$('#themeMinimal').addEventListener('click',()=>setTheme('minimal'));
+
+function themeVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// ---------------- Motion type (ΕΟΚ / ΕΟΕΚ / ΕΟΕπΚ) ----------------
+motionTypeSelect.addEventListener('change', ()=>{
+  state.mode = motionTypeSelect.value;
+  fieldA.style.display = state.mode==='eok' ? 'none' : '';
+  stopCheckWrap.style.display = state.mode==='eok' ? 'none' : 'flex';
+  // choosing a type sets a sensible signed starting value — the α field
+  // itself stays fully editable afterwards, including negative values
+  if(state.mode==='accel' || state.mode==='decel'){
+    const vSign = state.v0 < 0 ? -1 : 1;
+    const magnitude = Math.max(0.5, Math.abs(state.aMag) || 2);
+    state.aMag = state.mode==='accel' ? vSign*magnitude : -vSign*magnitude;
+    slA.value = numA.value = state.aMag;
+  }
+  onParamsChanged();
+});
+motionTypeSelect.value = state.mode;
+fieldA.style.display = state.mode==='eok' ? 'none' : '';
+stopCheckWrap.style.display = state.mode==='eok' ? 'none' : 'flex';
+
+// ---------------- Sync slider <-> number ----------------
+function bindPair(slider, num, key, onChange){
+  function apply(v){
+    v = clamp(parseFloat(v)||0, parseFloat(slider.min), parseFloat(slider.max));
+    state[key] = v;
+    slider.value = v;
+    num.value = v;
+    onChange();
+  }
+  slider.addEventListener('input', ()=>apply(slider.value));
+  num.addEventListener('input', ()=>apply(num.value));
+  num.addEventListener('blur', ()=>apply(num.value));
+  apply(slider.value);
+}
+
+function onParamsChanged(){
+  recompute();
+  state.currentT = clamp(state.currentT, 0, state.tMax);
+  scrub.max = state.tMax;
+  scrub.value = state.currentT;
+  updateDirectionIndicator();
+  updateReadouts();
+  drawAll();
+  buildSolution();
+  if(state.solverMode==='composite') updateSegmentSummaries();
+}
+
+bindPair(slX0, numX0, 'x0', onParamsChanged);
+bindPair(slV0, numV0, 'v0', onParamsChanged);
+bindPair(slA, numA, 'aMag', onParamsChanged);
+bindPair(slT, numT, 'tMax', onParamsChanged);
+stopCheck.addEventListener('change', ()=>{ state.stopAtZero = stopCheck.checked; onParamsChanged(); });
+
+// ---------------- Vector toggles ----------------
+[[vecPos,'showVecPos'],[vecDisp,'showVecDisp'],[vecVel,'showVecVel'],[vecAcc,'showVecAcc'],[vecX0,'showVecX0']].forEach(([el,key])=>{
+  state[key] = el.checked;
+  el.addEventListener('change', ()=>{ state[key] = el.checked; drawTrack(); });
+});
+bodyShapeSel.value = state.bodyShape;
+bodyShapeSel.addEventListener('change', ()=>{ state.bodyShape = bodyShapeSel.value; drawTrack(); });
+
+// ---------------- Panel size / fullscreen controls ----------------
+const trackPanelEl = trackCanvas.closest('.panel');
+$('#trackZoomBtn').addEventListener('click', ()=>{
+  state.trackSizeStep = (state.trackSizeStep+1) % SIZE_STEPS.length;
+  drawAll();
+});
+$('#trackFsBtn').addEventListener('click', ()=>{
+  if(document.fullscreenElement === trackPanelEl) document.exitFullscreen();
+  else if(trackPanelEl.requestFullscreen) trackPanelEl.requestFullscreen();
+});
+$$('.panel-tool-btn[data-zoom]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.zoom;
+    state.graphSizeStep[key] = (state.graphSizeStep[key]+1) % SIZE_STEPS.length;
+    drawGraph(key);
+  });
+});
+$$('.panel-tool-btn[data-fs]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.fs;
+    const card = btn.closest('.graph-card');
+    if(document.fullscreenElement === card) document.exitFullscreen();
+    else if(card.requestFullscreen) card.requestFullscreen();
+  });
+});
+document.addEventListener('fullscreenchange', ()=>{
+  requestAnimationFrame(()=> drawAll());
+});
+
+// ---------------- Collapsible panels ----------------
+$$('.collapse-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const container = btn.closest('.panel, .graph-card');
+    const collapsed = container.classList.toggle('collapsed');
+    btn.classList.toggle('collapsed', collapsed);
+    // redraw once a track/graph panel re-opens, since canvases don't paint while hidden
+    if(!collapsed){
+      if(container.contains(trackCanvas)) drawTrack();
+      const gc = container.querySelector('.graph-canvas');
+      if(gc) drawGraph(gc.dataset.graph);
+    }
+  });
+});
+
+// ---------------- Solver mode (forward / inverse) ----------------
+$$('.solver-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    $$('.solver-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.solverMode = btn.dataset.solver;
+    const isInverse = state.solverMode==='inverse';
+    const isComposite = state.solverMode==='composite';
+    forwardFields.style.display = (isInverse||isComposite) ? 'none' : '';
+    inverseFields.style.display = isInverse ? '' : 'none';
+    compositeFields.style.display = isComposite ? '' : 'none';
+    motionTypeRow.style.display = (isInverse||isComposite) ? 'none' : '';
+    stopCheckWrap.style.display = (isInverse||isComposite||state.mode==='eok') ? 'none' : 'flex';
+    if(isInverse){
+      buildInverseKnowns();
+      runInverseSolve();
+    } else if(isComposite){
+      renderSegments();
+      onParamsChanged();
+    } else {
+      onParamsChanged();
+    }
+  });
+});
+
+function buildInverseKnowns(overrideValues){
+  const cfg = INV_CASES[state.invCase];
+  if(overrideValues) state.invValues = Object.assign({}, overrideValues);
+  invKnownsContainer.innerHTML = cfg.knowns.map(k=>`
+    <div class="field">
+      <label><span class="name">${k.label}</span></label>
+      <div class="inputs">
+        <input type="range" id="inv_${k.id}" min="${k.min}" max="${k.max}" step="${k.step}" value="${k.def}">
+        <input type="number" id="invn_${k.id}" min="${k.min}" max="${k.max}" step="${k.step}" value="${k.def}">
+        <span class="unit">${k.unit}</span>
+      </div>
+    </div>`).join('');
+  cfg.knowns.forEach(k=>{
+    const slider = $('#inv_'+k.id), num = $('#invn_'+k.id);
+    if(!state.invValues) state.invValues = {};
+    if(state.invValues[k.id]===undefined) state.invValues[k.id] = k.def;
+    slider.value = state.invValues[k.id];
+    num.value = state.invValues[k.id];
+    function apply(v){
+      v = clamp(parseFloat(v)||0, k.min, k.max);
+      state.invValues[k.id] = v;
+      slider.value = v; num.value = v;
+      runInverseSolve();
+    }
+    slider.addEventListener('input', ()=>apply(slider.value));
+    num.addEventListener('input', ()=>apply(num.value));
+    num.addEventListener('blur', ()=>apply(num.value));
+  });
+}
+
+function runInverseSolve(){
+  const cfg = INV_CASES[state.invCase];
+  const u = state.v0;
+  const args = cfg.knowns.map(k=>state.invValues[k.id]);
+  const res = cfg.solve(u, ...args);
+  if(res.error){
+    state.inverseError = res.error;
+    invResult.innerHTML = `<span class="inv-error">⚠ ${res.error}</span>`;
+    return;
+  }
+  state.inverseError = null;
+  // apply results to shared state so the whole app (animation, graphs, solution) reuses them
+  if('t' in res) state.tMax = res.t;
+  const aIsKnown = cfg.knowns.some(k=>k.id==='a');
+  state.inverseA = aIsKnown ? state.invValues.a : res.a;
+  const parts = [];
+  if('a' in res) parts.push(`α = <span class="hi">${fmt(res.a,3)} m/s²</span>`);
+  if('t' in res) parts.push(`t = <span class="hi2">${fmt(res.t,3)} s</span>`);
+  if('v' in res) parts.push(`v = <span class="hi">${fmt(res.v,3)} m/s</span>`);
+  if('dx' in res) parts.push(`Δx = <span class="hi2">${fmt(res.dx,3)} m</span>`);
+  invResult.innerHTML = 'Αποτέλεσμα: ' + parts.join(' &nbsp;|&nbsp; ');
+
+  state.currentT = clamp(state.currentT, 0, state.tMax);
+  scrub.max = state.tMax;
+  scrub.value = state.currentT;
+  recompute();
+  updateDirectionIndicator();
+  updateReadouts();
+  drawAll();
+  buildSolution();
+}
+
+// ---------------- Composite motion segments ----------------
+const SEG_TYPE_LABEL = {eok:'ΕΟΚ', accel:'Επιταχυνόμενη', decel:'Επιβραδυνόμενη'};
+
+function renderSegments(){
+  segmentList.innerHTML = state.segments.map((seg,i)=>{
+    const needsA = seg.type!=='eok';
+    return `<div class="segment-row" data-idx="${i}">
+      <div class="seg-num">${i+1}</div>
+      <select class="seg-type">
+        <option value="eok" ${seg.type==='eok'?'selected':''}>ΕΟΚ</option>
+        <option value="accel" ${seg.type==='accel'?'selected':''}>Επιταχυνόμενη</option>
+        <option value="decel" ${seg.type==='decel'?'selected':''}>Επιβραδυνόμενη</option>
+      </select>
+      <div class="seg-field"><label>διάρκεια</label><input type="number" class="seg-duration" min="0.1" max="60" step="0.5" value="${seg.duration}"><span style="font-size:.72rem;color:var(--textDim);">s</span></div>
+      ${needsA ? `<div class="seg-field"><label>α</label><input type="number" class="seg-a" min="-15" max="15" step="0.1" value="${seg.a!==undefined?seg.a:2}"><span style="font-size:.72rem;color:var(--textDim);">m/s²</span></div>` : ''}
+      <button class="seg-del" title="Διαγραφή">✕</button>
+      <div class="seg-summary" data-summary="${i}"></div>
+    </div>`;
+  }).join('');
+
+  segmentList.querySelectorAll('.segment-row').forEach(row=>{
+    const idx = parseInt(row.dataset.idx);
+    row.querySelector('.seg-type').addEventListener('change', e=>{
+      state.segments[idx].type = e.target.value;
+      if(state.segments[idx].type!=='eok' && state.segments[idx].a===undefined) state.segments[idx].a = 2;
+      renderSegments();
+      onParamsChanged();
+    });
+    row.querySelector('.seg-duration').addEventListener('input', e=>{
+      state.segments[idx].duration = clamp(parseFloat(e.target.value)||0.1, 0.1, 60);
+      onParamsChanged();
+      updateSegmentSummaries();
+    });
+    const aInput = row.querySelector('.seg-a');
+    if(aInput) aInput.addEventListener('input', e=>{
+      state.segments[idx].a = clamp(parseFloat(e.target.value)||0, -15, 15);
+      onParamsChanged();
+      updateSegmentSummaries();
+    });
+    row.querySelector('.seg-del').addEventListener('click', ()=>{
+      if(state.segments.length<=1) return; // keep at least one segment
+      state.segments.splice(idx,1);
+      renderSegments();
+      onParamsChanged();
+    });
+  });
+  updateSegmentSummaries();
+}
+
+function updateSegmentSummaries(){
+  if(state.solverMode!=='composite') return;
+  recomputeComposite();
+  let tOffset = 0;
+  state.segments.forEach((seg,i)=>{
+    const dur = Math.max(0.1, seg.duration);
+    const sA = sampleAt(tOffset), sB = sampleAt(Math.min(state.tMax, tOffset+dur));
+    const el = segmentList.querySelector(`[data-summary="${i}"]`);
+    if(el) el.textContent = `t∈[${fmt(tOffset,2)}, ${fmt(tOffset+dur,2)}]s  ·  x: ${fmt(sA.x,3)}→${fmt(sB.x,3)}m  ·  v: ${fmt(sA.v,3)}→${fmt(sB.v,3)}m/s`;
+    tOffset += dur;
+  });
+}
+
+$('#addSegmentBtn').addEventListener('click', ()=>{
+  state.segments.push({type:'eok', duration:3});
+  renderSegments();
+  onParamsChanged();
+});
+
+invCaseSel.addEventListener('change', ()=>{
+  state.invCase = invCaseSel.value;
+  state.invValues = {};
+  buildInverseKnowns();
+  runInverseSolve();
+});
+
+// ---------------- Exercise panel (free choice of givens/unknowns) ----------------
+const EXERCISE_QUANTITIES = [
+  {key:'u',  name:'Αρχική ταχύτητα', sym:'u',  unit:'m/s',  step:0.25, def:5},
+  {key:'v',  name:'Τελική ταχύτητα', sym:'v',  unit:'m/s',  step:0.25, def:15},
+  {key:'a',  name:'Επιτάχυνση',      sym:'α',  unit:'m/s²', step:0.1,  def:2},
+  {key:'t',  name:'Χρόνος',          sym:'t',  unit:'s',    step:0.1,  def:5},
+  {key:'dx', name:'Μετατόπιση',      sym:'Δx', unit:'m',    step:1,    def:50},
+];
+
+state.exercise = {
+  status: {u:'none', v:'none', a:'none', t:'none', dx:'none'}, // 'given' | 'asked' | 'none'
+  values: {u:5, v:15, a:2, t:5, dx:50},
+};
+let lastExerciseSolve = null;
+
+// Generic constant-acceleration solver: given any subset of {u,v,a,t,dx},
+// repeatedly applies the algebraically-safe SUVAT relations (no sqrt, so no
+// sign ambiguity) until no more quantities can be derived.
+function solveKinematics(knownIn){
+  const vals = Object.assign({}, knownIn);
+  const steps = [];
+  const rules = [
+    ['v',  ['u','a','t'],  (u,a,t)=> u+a*t,                                  'v = u + α·t'],
+    ['u',  ['v','a','t'],  (v,a,t)=> v-a*t,                                  'u = v − α·t'],
+    ['a',  ['v','u','t'],  (v,u,t)=> t!==0 ? (v-u)/t : null,                 'α = (v−u)/t'],
+    ['t',  ['v','u','a'],  (v,u,a)=> a!==0 ? (v-u)/a : null,                 't = (v−u)/α'],
+    ['dx', ['u','v','t'],  (u,v,t)=> (u+v)/2*t,                              'Δx = (u+v)/2 · t'],
+    ['t',  ['dx','u','v'], (dx,u,v)=> (u+v)!==0 ? 2*dx/(u+v) : null,         't = 2Δx/(u+v)'],
+    ['u',  ['dx','v','t'], (dx,v,t)=> t!==0 ? 2*dx/t - v : null,             'u = 2Δx/t − v'],
+    ['v',  ['dx','u','t'], (dx,u,t)=> t!==0 ? 2*dx/t - u : null,             'v = 2Δx/t − u'],
+    ['dx', ['u','a','t'],  (u,a,t)=> u*t+0.5*a*t*t,                          'Δx = u·t + ½·α·t²'],
+    ['a',  ['dx','u','t'], (dx,u,t)=> t!==0 ? 2*(dx-u*t)/(t*t) : null,       'α = 2(Δx−u·t)/t²'],
+    ['u',  ['dx','a','t'], (dx,a,t)=> t!==0 ? (dx-0.5*a*t*t)/t : null,       'u = (Δx−½αt²)/t'],
+    ['dx', ['v','u','a'],  (v,u,a)=> a!==0 ? (v*v-u*u)/(2*a) : null,         'Δx = (v²−u²)/(2α)'],
+    ['a',  ['v','u','dx'], (v,u,dx)=> dx!==0 ? (v*v-u*u)/(2*dx) : null,      'α = (v²−u²)/(2Δx)'],
+  ];
+  let changed = true, iter = 0;
+  while(changed && iter<12){
+    changed = false; iter++;
+    for(const [outKey, inKeys, fn, formula] of rules){
+      if(vals[outKey]!==undefined) continue;
+      if(inKeys.every(k=>vals[k]!==undefined)){
+        const args = inKeys.map(k=>vals[k]);
+        const result = fn(...args);
+        if(result!==null && result!==undefined && isFinite(result)){
+          vals[outKey] = result;
+          steps.push({key:outKey, formula, value:result});
+          changed = true;
+        }
+      }
+    }
+  }
+  return {vals, steps};
+}
+
+function renderExerciseGrid(){
+  const grid = $('#exerciseGrid');
+  grid.innerHTML = EXERCISE_QUANTITIES.map(q=>{
+    const st = state.exercise.status[q.key];
+    return `<div class="exercise-row" data-key="${q.key}">
+      <div class="ex-name">${q.sym} <span style="color:var(--textDim);font-weight:400;font-size:.7rem;">(${q.name})</span></div>
+      <div class="ex-toggle">
+        <button data-act="given" class="${st==='given'?'active-given':''}">Δεδομένο</button>
+        <button data-act="asked" class="${st==='asked'?'active-asked':''}">Ζητούμενο</button>
+      </div>
+      <div class="ex-value">${st==='given' ? `<input type="number" data-key="${q.key}" value="${state.exercise.values[q.key]}" step="${q.step}"><span class="unit">${q.unit}</span>` : ''}</div>
+      <div class="ex-result" data-result-key="${q.key}">${st==='asked' ? '?' : ''}</div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.ex-toggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.closest('.exercise-row').dataset.key;
+      const act = btn.dataset.act;
+      state.exercise.status[key] = (state.exercise.status[key]===act) ? 'none' : act;
+      renderExerciseGrid();
+      computeExercise();
+    });
+  });
+  grid.querySelectorAll('.ex-value input').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      state.exercise.values[inp.dataset.key] = parseFloat(inp.value)||0;
+      computeExercise();
+    });
+  });
+}
+
+function computeExercise(){
+  const known = {};
+  EXERCISE_QUANTITIES.forEach(q=>{
+    if(state.exercise.status[q.key]==='given') known[q.key] = state.exercise.values[q.key];
+  });
+  const askedKeys = EXERCISE_QUANTITIES.filter(q=>state.exercise.status[q.key]==='asked').map(q=>q.key);
+  const resultEl = $('#exerciseResult');
+  const applyBtn = $('#exerciseApplyBtn');
+
+  if(Object.keys(known).length < 2){
+    lastExerciseSolve = null;
+    resultEl.textContent = 'Χρειάζονται τουλάχιστον 2-3 δεδομένα για να λυθεί η άσκηση.';
+    applyBtn.disabled = true;
+    return;
+  }
+  const {vals, steps} = solveKinematics(known);
+  lastExerciseSolve = {vals, steps, known, askedKeys};
+
+  $('#exerciseGrid').querySelectorAll('.ex-result').forEach(e=>{
+    const key = e.dataset.resultKey;
+    e.textContent = state.exercise.status[key]==='asked' ? (vals[key]!==undefined ? fmt(vals[key],3) : '?') : '';
+  });
+
+  if(askedKeys.length===0){
+    resultEl.innerHTML = 'Επίλεξε τουλάχιστον ένα μέγεθος ως <b>Ζητούμενο</b>.';
+    applyBtn.disabled = true;
+    return;
+  }
+  const unresolved = askedKeys.filter(k=> vals[k]===undefined);
+  if(unresolved.length>0){
+    resultEl.innerHTML = `Δεν προέκυψε λύση για: ${unresolved.join(', ')}. Δοκίμασε διαφορετικό συνδυασμό δεδομένων.`;
+    applyBtn.disabled = true;
+    return;
+  }
+  const summary = EXERCISE_QUANTITIES.filter(q=>vals[q.key]!==undefined).map(q=>`${q.sym}=${fmt(vals[q.key],2)}`).join(', ');
+  resultEl.innerHTML = `<span class="hi">Λύθηκε!</span> ${summary}`;
+  applyBtn.disabled = (vals.u===undefined || vals.t===undefined || vals.t<=0);
+}
+
+$('#exerciseResetBtn').addEventListener('click', ()=>{
+  EXERCISE_QUANTITIES.forEach(q=> state.exercise.status[q.key]='none');
+  renderExerciseGrid();
+  computeExercise();
+});
+
+$('#exerciseApplyBtn').addEventListener('click', ()=>{
+  if(!lastExerciseSolve || lastExerciseSolve.vals.u===undefined || lastExerciseSolve.vals.t===undefined || lastExerciseSolve.vals.t<=0){
+    alert('Χρειάζονται τουλάχιστον οι τιμές u, α/χρόνος ώστε να ζωντανέψει η προσομοίωση.');
+    return;
+  }
+  const v = lastExerciseSolve.vals;
+  state.solverMode = 'exercise';
+  state.v0 = v.u;
+  state.exerciseA = v.a!==undefined ? v.a : 0;
+  state.tMax = v.t;
+  slV0.value = numV0.value = v.u;
+  slT.value = numT.value = state.tMax;
+  $$('.solver-toggle button').forEach(b=>b.classList.remove('active'));
+  forwardFields.style.display = 'none';
+  inverseFields.style.display = 'none';
+  motionTypeRow.style.display = 'none';
+  onParamsChanged();
+  switchTab('solution');
+});
+
+renderExerciseGrid();
+computeExercise();
+
+// ---------------- Presets (saved simulations) ----------------
+const PRESETS_KEY = 'eythigrammi_kinisi_presets_v1';
+const presetName = $('#presetName');
+const presetSaveBtn = $('#presetSaveBtn');
+const presetList = $('#presetList');
+const presetExportBtn = $('#presetExportBtn');
+const presetImportBtn = $('#presetImportBtn');
+const presetImportFile = $('#presetImportFile');
+
+function loadPresets(){
+  try{
+    const raw = localStorage.getItem(PRESETS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function savePresets(list){
+  try{ localStorage.setItem(PRESETS_KEY, JSON.stringify(list)); }
+  catch(e){ alert('Δεν ήταν δυνατή η αποθήκευση (πιθανώς γεμάτος τοπικός χώρος αποθήκευσης).'); }
+}
+
+function currentConfigSnapshot(){
+  const cfg = {
+    solverMode: state.solverMode,
+    x0: state.x0, v0: state.v0,
+  };
+  if(state.solverMode==='forward'){
+    Object.assign(cfg, {
+      mode: state.mode, aMag: state.aMag, tMax: state.tMax, stopAtZero: state.stopAtZero,
+    });
+  } else if(state.solverMode==='inverse'){
+    Object.assign(cfg, {
+      invCase: state.invCase, invValues: Object.assign({}, state.invValues),
+    });
+  } else if(state.solverMode==='composite'){
+    Object.assign(cfg, {
+      segments: JSON.parse(JSON.stringify(state.segments)),
+    });
+  } else if(state.solverMode==='exercise'){
+    Object.assign(cfg, {
+      tMax: state.tMax, exerciseA: state.exerciseA,
+      exerciseStatus: Object.assign({}, state.exercise.status),
+      exerciseValues: Object.assign({}, state.exercise.values),
+    });
+  }
+  return cfg;
+}
+
+function motionBadge(cfg){
+  if(cfg.solverMode==='inverse'){
+    return {dxuv:'ΑΝΤ: Δx,u,v', dxua:'ΑΝΤ: Δx,u,α', uva:'ΑΝΤ: u,v,α', uvt:'ΑΝΤ: u,v,t'}[cfg.invCase] || 'ΑΝΤΙΣΤΡΟΦΟΣ';
+  }
+  if(cfg.solverMode==='composite') return 'ΣΥΝΘΕΤΗ (' + (cfg.segments? cfg.segments.length : 0) + ')';
+  if(cfg.solverMode==='exercise') return 'ΑΣΚΗΣΗ';
+  return {eok:'ΕΟΚ', accel:'ΕΟΕΚ', decel:'ΕΟΕπΚ'}[cfg.mode] || 'ΕΟΚ';
+}
+
+function detailText(cfg){
+  if(cfg.solverMode==='inverse'){
+    const parts = ['x₀='+fmt(cfg.x0,1), 'u='+fmt(cfg.v0,1)];
+    Object.keys(cfg.invValues||{}).forEach(k=> parts.push(k+'='+fmt(cfg.invValues[k],2)));
+    return parts.join('  ·  ');
+  }
+  if(cfg.solverMode==='composite'){
+    return (cfg.segments||[]).map(s=>SEG_TYPE_LABEL[s.type]+' '+fmt(s.duration,1)+'s').join('  →  ');
+  }
+  if(cfg.solverMode==='exercise'){
+    const parts = ['x₀='+fmt(cfg.x0,1)];
+    Object.keys(cfg.exerciseValues||{}).forEach(k=>{
+      if(cfg.exerciseStatus && cfg.exerciseStatus[k]==='given') parts.push(k+'='+fmt(cfg.exerciseValues[k],2));
+    });
+    return parts.join('  ·  ');
+  }
+  return `x₀=${fmt(cfg.x0,1)}  ·  u=${fmt(cfg.v0,1)}  ·  |α|=${fmt(cfg.aMag,1)}  ·  t=${fmt(cfg.tMax,1)}s`;
+}
+
+function renderPresetList(){
+  const items = loadPresets();
+  if(items.length===0){
+    presetList.innerHTML = '<div class="presets-empty">Δεν έχετε αποθηκεύσει ακόμη καμία προσομοίωση.</div>';
+    return;
+  }
+  presetList.innerHTML = items.map(p => `
+    <div class="preset-item" data-id="${p.id}">
+      <span class="pbadge">${motionBadge(p.data)}</span>
+      <span class="pname">${escapeHtml(p.name)}</span>
+      <div class="pactions">
+        <button class="load" data-id="${p.id}">▶ Φόρτωση</button>
+        <button class="del" data-id="${p.id}">🗑</button>
+      </div>
+      <div class="pdetail">${detailText(p.data)}</div>
+    </div>`).join('');
+  presetList.querySelectorAll('button.load').forEach(btn=>{
+    btn.addEventListener('click', ()=> applyPreset(btn.dataset.id));
+  });
+  presetList.querySelectorAll('button.del').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const items2 = loadPresets().filter(p=>p.id!==btn.dataset.id);
+      savePresets(items2);
+      renderPresetList();
+    });
+  });
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+presetSaveBtn.addEventListener('click', ()=>{
+  const name = (presetName.value||'').trim() || ('Χωρίς όνομα – ' + new Date().toLocaleString('el-GR'));
+  const items = loadPresets();
+  items.unshift({ id: 'p'+Date.now(), name, data: currentConfigSnapshot() });
+  savePresets(items);
+  presetName.value = '';
+  renderPresetList();
+});
+
+function applyPreset(id){
+  const item = loadPresets().find(p=>p.id===id);
+  if(!item) return;
+  const cfg = item.data;
+  state.x0 = cfg.x0; state.v0 = cfg.v0;
+  slX0.value = numX0.value = cfg.x0;
+  slV0.value = numV0.value = cfg.v0;
+
+  if(cfg.solverMode==='forward'){
+    state.solverMode = 'forward';
+    state.mode = cfg.mode; state.aMag = cfg.aMag; state.tMax = cfg.tMax; state.stopAtZero = cfg.stopAtZero;
+    slA.value = numA.value = cfg.aMag;
+    slT.value = numT.value = cfg.tMax;
+    stopCheck.checked = cfg.stopAtZero;
+    $$('.solver-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.solver==='forward'));
+    forwardFields.style.display = '';
+    inverseFields.style.display = 'none';
+    compositeFields.style.display = 'none';
+    motionTypeRow.style.display = '';
+    motionTypeSelect.value = cfg.mode;
+    fieldA.style.display = cfg.mode==='eok' ? 'none' : '';
+    stopCheckWrap.style.display = cfg.mode==='eok' ? 'none' : 'flex';
+    onParamsChanged();
+  } else if(cfg.solverMode==='inverse'){
+    state.solverMode = 'inverse';
+    state.invCase = cfg.invCase;
+    $$('.solver-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.solver==='inverse'));
+    forwardFields.style.display = 'none';
+    inverseFields.style.display = '';
+    compositeFields.style.display = 'none';
+    motionTypeRow.style.display = 'none';
+    invCaseSel.value = cfg.invCase;
+    buildInverseKnowns(cfg.invValues);
+    runInverseSolve();
+  } else if(cfg.solverMode==='composite'){
+    state.solverMode = 'composite';
+    state.segments = JSON.parse(JSON.stringify(cfg.segments||[{type:'eok',duration:4}]));
+    $$('.solver-toggle button').forEach(b=>b.classList.toggle('active', b.dataset.solver==='composite'));
+    forwardFields.style.display = 'none';
+    inverseFields.style.display = 'none';
+    compositeFields.style.display = '';
+    motionTypeRow.style.display = 'none';
+    renderSegments();
+    onParamsChanged();
+  } else if(cfg.solverMode==='exercise'){
+    state.solverMode = 'exercise';
+    state.tMax = cfg.tMax; state.exerciseA = cfg.exerciseA;
+    state.exercise.status = Object.assign({u:'none',v:'none',a:'none',t:'none',dx:'none'}, cfg.exerciseStatus);
+    state.exercise.values = Object.assign({}, state.exercise.values, cfg.exerciseValues);
+    slT.value = numT.value = cfg.tMax;
+    $$('.solver-toggle button').forEach(b=>b.classList.remove('active'));
+    forwardFields.style.display = 'none';
+    inverseFields.style.display = 'none';
+    compositeFields.style.display = 'none';
+    motionTypeRow.style.display = 'none';
+    renderExerciseGrid();
+    computeExercise();
+    onParamsChanged();
+  }
+  switchTab('solution');
+}
+
+presetExportBtn.addEventListener('click', ()=>{
+  const items = loadPresets();
+  if(items.length===0){ alert('Δεν υπάρχουν αποθηκευμένες προσομοιώσεις για εξαγωγή.'); return; }
+  const blob = new Blob([JSON.stringify(items, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'eythigrammi-kinisi-presets.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+presetImportBtn.addEventListener('click', ()=> presetImportFile.click());
+presetImportFile.addEventListener('change', ()=>{
+  const file = presetImportFile.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const imported = JSON.parse(reader.result);
+      if(!Array.isArray(imported)) throw new Error('bad format');
+      const existing = loadPresets();
+      const existingIds = new Set(existing.map(p=>p.id));
+      imported.forEach(p=>{
+        if(!p.id || existingIds.has(p.id)) p.id = 'p'+Date.now()+Math.random().toString(36).slice(2,7);
+      });
+      savePresets(existing.concat(imported));
+      renderPresetList();
+      alert('Εισήχθησαν '+imported.length+' προσομοιώσεις.');
+    }catch(e){
+      alert('Το αρχείο δεν είναι έγκυρο αρχείο προσομοιώσεων (.json).');
+    }
+    presetImportFile.value = '';
+  };
+  reader.readAsText(file);
+});
+
+renderPresetList();
+
+// ---------------- Direction indicator ----------------
+function updateDirectionIndicator(){
+  const a = signedA();
+  dirV.textContent = state.v0>0 ? '→ (+)' : state.v0<0 ? '← (−)' : '— (0)';
+  const aIsZero = state.solverMode==='forward' && state.mode==='eok';
+  dirA.textContent = aIsZero ? '— (0)' : (a>0.001 ? '→ (+)' : a<-0.001 ? '← (−)' : '— (0)');
+  if(tStop!==null){
+    stopNote.style.display='inline';
+    stopTEl.textContent = fmt(tStop,2);
+  } else {
+    stopNote.style.display='none';
+  }
+}
+
+// ---------------- Playback ----------------
+function updateReadouts(){
+  const s = sampleAt(state.currentT);
+  rT.textContent = fmt(s.t,2)+' s';
+  rX.textContent = fmt(s.x,2)+' m';
+  rV.textContent = fmt(s.v,2)+' m/s';
+  rA.textContent = fmt(s.a,2)+' m/s²';
+  const stoppedNow = tStop!==null && state.currentT >= tStop - 1e-9;
+  readoutEls.forEach(e=>e.classList.toggle('stopped', stoppedNow));
+  scrubLabel.textContent = fmt(state.currentT,2)+' s';
+  scrub.value = state.currentT;
+}
+
+function step(now){
+  if(!state.playing) return;
+  if(lastFrameTime===null) lastFrameTime = now;
+  const dt = (now-lastFrameTime)/1000;
+  lastFrameTime = now;
+  state.currentT += dt*state.playSpeed;
+  if(state.currentT >= state.tMax){
+    state.currentT = state.tMax;
+    state.playing = false;
+    playBtn.textContent = '▶';
+  }
+  updateReadouts();
+  drawTrack();
+  drawAllCursors();
+  if(state.playing) rafId = requestAnimationFrame(step);
+}
+
+playBtn.addEventListener('click', ()=>{
+  state.playing = !state.playing;
+  playBtn.textContent = state.playing ? '⏸' : '▶';
+  if(state.playing){
+    if(state.currentT >= state.tMax) state.currentT = 0;
+    lastFrameTime = null;
+    rafId = requestAnimationFrame(step);
+  }
+});
+resetBtn.addEventListener('click', ()=>{
+  state.playing = false;
+  playBtn.textContent = '▶';
+  state.currentT = 0;
+  updateReadouts();
+  drawTrack();
+  drawAllCursors();
+});
+slowMoBtn.addEventListener('click', ()=>{
+  state.playSpeed = state.playSpeed===1 ? 0.25 : 1;
+  slowMoBtn.classList.toggle('active', state.playSpeed!==1);
+  slowMoBtn.title = state.playSpeed!==1 ? 'Κανονική ταχύτητα' : 'Αργή κίνηση (0.25×)';
+});
+scrub.addEventListener('input', ()=>{
+  state.playing = false;
+  playBtn.textContent = '▶';
+  state.currentT = parseFloat(scrub.value);
+  updateReadouts();
+  drawTrack();
+  drawAllCursors();
+});
+
+// ---------------- Track drawing ----------------
+function fitTrackCanvas(){
+  const w = trackCanvas.clientWidth;
+  const trackPanelEl = trackCanvas.closest('.panel');
+  let cssH;
+  if(document.fullscreenElement === trackPanelEl) cssH = Math.min(window.innerHeight*0.72, 760);
+  else cssH = TRACK_H * SIZE_STEPS[state.trackSizeStep];
+  trackCanvas.style.height = cssH + 'px';
+  trackCanvas.width = w * devicePixelRatio;
+  trackCanvas.height = cssH * devicePixelRatio;
+}
+
+function trackRange(){
+  let mn=state.x0, mx=state.x0;
+  for(const s of samples){ if(s.x<mn) mn=s.x; if(s.x>mx) mx=s.x; }
+  const pad = Math.max(4, (mx-mn)*0.18);
+  mn -= pad; mx += pad;
+  if(mx-mn < 8){ const c=(mx+mn)/2; mn=c-4; mx=c+4; }
+  return [mn,mx];
+}
+
+// draws text on a small rounded background "chip" so it always stays
+// readable no matter what line/curve/label happens to sit behind it
+function labelChip(ctx, dpr, text, x, y, textColor, bgColor, align){
+  align = align || 'center';
+  ctx.font = ctx.font; // keep currently-set font
+  const padX = 5*dpr, padY = 3*dpr;
+  const w = Math.max(ctx.measureText(text).width, 4*dpr);
+  const h = 12*dpr;
+  let rectX = align==='center' ? x-w/2-padX : align==='left' ? x-padX : x-w-padX;
+  const rectY = y - h + padY*0.5;
+  ctx.fillStyle = bgColor;
+  ctx.globalAlpha = 0.88;
+  ctx.beginPath();
+  if(ctx.roundRect) ctx.roundRect(rectX, rectY, w+padX*2, h+padY, 3*dpr);
+  else ctx.rect(rectX, rectY, w+padX*2, h+padY);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = textColor;
+  ctx.textAlign = align;
+  ctx.fillText(text, x, y);
+}
+
+// draws the moving body: sits on the "ground" line (local y=0 = ground,
+// negative y = up), facing right by default and mirrored when moving left
+function drawBody(ctx, dpr, cx, groundY, type, color, dir, bg){
+  ctx.save();
+  ctx.translate(cx, groundY);
+  if(dir < 0) ctx.scale(-1,1);
+
+  function wheel(x, r){
+    ctx.fillStyle = '#161616';
+    ctx.beginPath(); ctx.arc(x,0,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#666';
+    ctx.beginPath(); ctx.arc(x,0,r*0.42,0,Math.PI*2); ctx.fill();
+  }
+
+  switch(type){
+    case 'cube': {
+      const s = 20*dpr;
+      ctx.fillStyle = color;
+      ctx.fillRect(-s/2, -s, s, s);
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.beginPath();
+      ctx.moveTo(-s/2,-s); ctx.lineTo(-s/2+6*dpr,-s-6*dpr);
+      ctx.lineTo(s/2+6*dpr,-s-6*dpr); ctx.lineTo(s/2,-s);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = bg; ctx.lineWidth = 2*dpr; ctx.strokeRect(-s/2,-s,s,s);
+      break;
+    }
+    case 'f1': {
+      const w = 44*dpr, h = 11*dpr;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(-w/2, 0);
+      ctx.lineTo(-w/2+4*dpr, -h*0.5);
+      ctx.lineTo(-w/2+11*dpr, -h);
+      ctx.lineTo(w/2-17*dpr, -h);
+      ctx.lineTo(w/2-6*dpr, -h*0.35);
+      ctx.lineTo(w/2, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.fillRect(-w/2-8*dpr, -4*dpr, 10*dpr, 4*dpr);   // front wing
+      ctx.fillRect(w/2-7*dpr, -h-3*dpr, 11*dpr, 4*dpr);  // rear wing
+      wheel(-w/2+10*dpr, 5*dpr);
+      wheel(w/2-12*dpr, 5*dpr);
+      break;
+    }
+    case 'car': {
+      const w = 32*dpr, h = 16*dpr;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(-w/2, 0);
+      ctx.lineTo(-w/2, -h*0.35);
+      ctx.lineTo(-w/2+7*dpr, -h);
+      ctx.lineTo(w/2-11*dpr, -h);
+      ctx.lineTo(w/2, -h*0.35);
+      ctx.lineTo(w/2, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillRect(-w/2+10*dpr, -h+3*dpr, w*0.38, h*0.5);
+      wheel(-w/2+9*dpr, 5*dpr);
+      wheel(w/2-9*dpr, 5*dpr);
+      break;
+    }
+    case 'truck': {
+      const cabW = 15*dpr, cargoW = 27*dpr, h = 22*dpr;
+      ctx.fillStyle = color;
+      ctx.fillRect(-cargoW-cabW/2+2*dpr, -h, cargoW, h);
+      ctx.fillRect(cargoW-cabW/2+2*dpr, -h*0.62, cabW, h*0.62);
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillRect(cargoW-cabW/2+4*dpr, -h*0.5, cabW-6*dpr, h*0.28);
+      wheel(-cargoW-cabW/2+11*dpr, 5*dpr);
+      wheel(-3*dpr, 5*dpr);
+      wheel(cargoW-2*dpr, 5*dpr);
+      break;
+    }
+    case 'bus': {
+      const w = 40*dpr, h = 22*dpr;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(-w/2,-h,w,h,4*dpr); else ctx.rect(-w/2,-h,w,h);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      for(let i=0;i<4;i++) ctx.fillRect(-w/2+5*dpr+i*9*dpr, -h+4*dpr, 6*dpr, h*0.42);
+      wheel(-w/2+10*dpr, 5*dpr);
+      wheel(w/2-10*dpr, 5*dpr);
+      break;
+    }
+    default: { // ball
+      const r = 11*dpr;
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(0,-r,r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = bg; ctx.lineWidth = 2.5*dpr; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath(); ctx.arc(-r*0.3,-r*1.3,r*0.3,0,Math.PI*2); ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawTrack(){
+  const ctx = trackCanvas.getContext('2d');
+  const W = trackCanvas.width, H = trackCanvas.height;
+  // scaled pixel unit: grows with the zoom/fullscreen height so the extra
+  // room is actually used to make everything bigger, not left blank
+  const dpr = H / TRACK_H;
+  ctx.clearRect(0,0,W,H);
+  const bg = themeVar('--track');
+  const chipBg = themeVar('--panel2');
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+  const [mn,mx] = trackRange();
+  const marginX = 30*dpr;
+  const xToPx = x => marginX + (x-mn)/(mx-mn) * (W-2*marginX);
+  const midY = H*0.46;
+
+  // grid ticks
+  ctx.strokeStyle = themeVar('--grid');
+  ctx.fillStyle = themeVar('--textDim');
+  ctx.font = (11*dpr)+'px IBM Plex Mono';
+  ctx.textAlign='center';
+  const range = mx-mn;
+  const step = range>60?10:range>25?5:range>10?2:1;
+  const start = Math.ceil(mn/step)*step;
+  for(let v=start; v<=mx; v+=step){
+    const px = xToPx(v);
+    ctx.beginPath(); ctx.moveTo(px, midY-7*dpr); ctx.lineTo(px, midY+7*dpr);
+    ctx.lineWidth=1*dpr; ctx.stroke();
+    ctx.fillText(String(Math.round(v*10)/10), px, midY+22*dpr);
+  }
+  // main line
+  ctx.strokeStyle = themeVar('--line');
+  ctx.lineWidth = 2*dpr;
+  ctx.beginPath(); ctx.moveTo(marginX, midY); ctx.lineTo(W-marginX, midY); ctx.stroke();
+
+  // origin marker
+  const originPx = xToPx(0);
+  ctx.strokeStyle = themeVar('--accent2');
+  ctx.lineWidth=2*dpr;
+  ctx.beginPath(); ctx.moveTo(originPx, midY-16*dpr); ctx.lineTo(originPx, midY+16*dpr); ctx.stroke();
+  ctx.font = (10*dpr)+'px IBM Plex Mono';
+  labelChip(ctx, dpr, '0', originPx, midY-22*dpr, themeVar('--accent2'), chipBg, 'center');
+
+  // reference marker for x0 (needed for the displacement vector)
+  if(Math.abs(state.x0) > 1e-9 || state.showVecDisp){
+    const x0Px = xToPx(state.x0);
+    ctx.strokeStyle = themeVar('--textDim');
+    ctx.setLineDash([2*dpr,3*dpr]);
+    ctx.lineWidth=1.2*dpr;
+    ctx.beginPath(); ctx.moveTo(x0Px, midY-16*dpr); ctx.lineTo(x0Px, midY+16*dpr); ctx.stroke();
+    ctx.setLineDash([]);
+    if(state.showVecDisp){
+      ctx.font=(9*dpr)+'px IBM Plex Mono';
+      labelChip(ctx, dpr, 'x₀', x0Px, midY+16*dpr, themeVar('--textDim'), chipBg, 'center');
+    }
+  }
+
+  // moving object
+  const s = sampleAt(state.currentT);
+  const objPx = xToPx(s.x);
+  const bodyDir = s.v < -0.001 ? -1 : 1;
+  drawBody(ctx, dpr, objPx, midY, state.bodyShape, themeVar('--accent'), bodyDir, bg);
+
+  // ---- vectors (toggle-controlled), each on its own dedicated row ----
+  function spanVector(fromData, toData, y, color, label, dashed){
+    if(Math.abs(toData-fromData) < 1e-6) return;
+    const x1 = xToPx(fromData), x2 = xToPx(toData);
+    const dir = x2>x1 ? 1 : -1;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.4*dpr;
+    if(dashed) ctx.setLineDash([6*dpr,4*dpr]);
+    ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x2,y);
+    ctx.lineTo(x2-dir*7*dpr, y-5*dpr);
+    ctx.lineTo(x2-dir*7*dpr, y+5*dpr);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x1,y-4*dpr); ctx.lineTo(x1,y+4*dpr); ctx.stroke();
+    ctx.font=(10*dpr)+'px IBM Plex Mono';
+    const midX = clamp((x1+x2)/2, marginX+30*dpr, W-marginX-30*dpr);
+    labelChip(ctx, dpr, label, midX, y-9*dpr, color, chipBg, 'center');
+  }
+  function dirVector(y, magnitude, color, label, lenLogical){
+    if(Math.abs(magnitude) < 0.03) return;
+    const dir = magnitude>0 ? 1 : -1;
+    const len = lenLogical*dpr;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.8*dpr;
+    ctx.beginPath(); ctx.moveTo(objPx,y); ctx.lineTo(objPx+dir*len,y); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(objPx+dir*len,y);
+    ctx.lineTo(objPx+dir*(len-8*dpr), y-5*dpr);
+    ctx.lineTo(objPx+dir*(len-8*dpr), y+5*dpr);
+    ctx.closePath(); ctx.fill();
+    ctx.font=(10*dpr)+'px IBM Plex Mono';
+    // label sits ABOVE the shaft (never on top of it), centered on the arrow's midpoint
+    const lx = clamp(objPx+dir*(len/2), marginX+55*dpr, W-marginX-55*dpr);
+    labelChip(ctx, dpr, label, lx, y-11*dpr, color, chipBg, 'center');
+  }
+
+  // velocity arrow length scales with |v| relative to the extremes reached
+  // over this motion, so it visibly grows/shrinks during accelerated motion
+  const maxAbsV = Math.max(0.5, Math.abs(state.v0), Math.abs(samples[samples.length-1].v));
+  const velLen = clamp(16 + (Math.abs(s.v)/maxAbsV)*34, 16, 50);
+
+  // rows, top to bottom: acceleration, velocity  |  line  |  position, x0, displacement
+  if(state.showVecAcc)  dirVector(midY-70*dpr, s.a, themeVar('--accAccel'), 'α = '+fmt(s.a,2)+' m/s²', 32);
+  if(state.showVecVel)  dirVector(midY-40*dpr, s.v, themeVar('--accent3'), 'v = '+fmt(s.v,2)+' m/s', velLen);
+  if(state.showVecPos)  spanVector(0, s.x, midY+40*dpr, themeVar('--accent2'), 'x = '+fmt(s.x,2)+' m');
+  if(state.showVecX0 && Math.abs(state.x0)>1e-9)
+                         spanVector(0, state.x0, midY+58*dpr, themeVar('--accent2'), 'x₀ = '+fmt(state.x0,2)+' m', true);
+  if(state.showVecDisp) spanVector(state.x0, s.x, midY+80*dpr, themeVar('--accent'), 'Δx = '+fmt(s.x-state.x0,2)+' m');
+}
+
+// ---------------- Graphs ----------------
+function initGraphs(){
+  $$('.graph-canvas').forEach(canvas=>{
+    const key = canvas.dataset.graph;
+    graphs[key] = {
+      canvas, tool:'none',
+      hA: 0.25, hB: 0.75, // fraction of tMax
+      dragging: null,
+    };
+    setupGraphInteraction(graphs[key]);
+  });
+  $$('.graph-card').forEach(card=>{
+    const key = card.dataset.key;
+    card.querySelectorAll('.tool-toggle button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        card.querySelectorAll('.tool-toggle button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        graphs[key].tool = btn.dataset.tool;
+        drawGraph(key);
+      });
+    });
+  });
+}
+
+function graphGeom(canvas){
+  const rawDpr = devicePixelRatio;       // horizontal margins follow true canvas width scale
+  const vDpr = canvas.height / GRAPH_H;  // vertical margins follow the zoom/fullscreen height scale
+  const W = canvas.width, H = canvas.height;
+  const ml = 46*rawDpr, mr = 14*rawDpr;
+  const mt = 12*vDpr, mb = 30*vDpr;
+  return {W,H,ml,mr,mt,mb, pw:W-ml-mr, ph:H-mt-mb};
+}
+
+function graphYRange(key){
+  let mn=Infinity, mx=-Infinity;
+  for(const s of samples){ if(s[key]<mn) mn=s[key]; if(s[key]>mx) mx=s[key]; }
+  if(mn>0) mn=0; if(mx<0) mx=0;
+  if(mx-mn < 1e-6){ mx+=1; mn-=1; }
+  const pad = (mx-mn)*0.12;
+  return [mn-pad, mx+pad];
+}
+
+function drawGraph(key){
+  const g = graphs[key];
+  if(!g) return;
+  const canvas = g.canvas;
+  const rawDpr = devicePixelRatio;
+  const card = canvas.closest('.graph-card');
+  let cssH;
+  if(document.fullscreenElement === card) cssH = Math.min(window.innerHeight*0.68, 760);
+  else cssH = GRAPH_H * SIZE_STEPS[state.graphSizeStep[key]||0];
+  canvas.style.height = cssH + 'px';
+  canvas.width = canvas.clientWidth*rawDpr;
+  canvas.height = cssH*rawDpr;
+  const dpr = canvas.height / GRAPH_H; // scaled pixel unit (see drawTrack) — grows when zoomed
+  const ctx = canvas.getContext('2d');
+  const {W,H,ml,mr,mt,mb,pw,ph} = graphGeom(canvas);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = themeVar('--panel2');
+  ctx.fillRect(0,0,W,H);
+
+  const [ymn,ymx] = graphYRange(key);
+  const tToX = t => ml + (t/state.tMax)*pw;
+  const yToY = y => mt + (1-(y-ymn)/(ymx-ymn))*ph;
+
+  // grid
+  ctx.strokeStyle = themeVar('--grid');
+  ctx.fillStyle = themeVar('--textDim');
+  ctx.font = (10*dpr)+'px IBM Plex Mono';
+  ctx.lineWidth = 1*dpr;
+  const nT = 5;
+  ctx.textAlign='center';
+  for(let i=0;i<=nT;i++){
+    const t = state.tMax*i/nT;
+    const px = tToX(t);
+    ctx.beginPath(); ctx.moveTo(px,mt); ctx.lineTo(px,mt+ph); ctx.stroke();
+    ctx.fillText(fmt(t,1), px, mt+ph+16*dpr);
+  }
+  const nY = 4;
+  ctx.textAlign='right';
+  for(let i=0;i<=nY;i++){
+    const y = ymn + (ymx-ymn)*i/nY;
+    const py = yToY(y);
+    ctx.beginPath(); ctx.moveTo(ml,py); ctx.lineTo(ml+pw,py); ctx.stroke();
+    ctx.fillText(fmt(y,1), ml-6*dpr, py+3*dpr);
+  }
+  // zero axis emphasized
+  if(ymn<0 && ymx>0){
+    ctx.strokeStyle = themeVar('--gridStrong');
+    ctx.lineWidth=1.5*dpr;
+    const zy = yToY(0);
+    ctx.beginPath(); ctx.moveTo(ml,zy); ctx.lineTo(ml+pw,zy); ctx.stroke();
+  }
+
+  // curve
+  const def = graphDefs.find(d=>d.key===key);
+  ctx.strokeStyle = themeVar(def.color);
+  ctx.lineWidth = 2.4*dpr;
+  ctx.beginPath();
+  samples.forEach((s,i)=>{
+    const px = tToX(s.t), py = yToY(s[key]);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+
+  // tool overlay
+  if(g.tool !== 'none'){
+    const tA = g.hA*state.tMax, tB = g.hB*state.tMax;
+    const sA = sampleAt(tA), sB = sampleAt(tB);
+    const pxA = tToX(tA), pxB = tToX(tB);
+    const pyA = yToY(sA[key]), pyB = yToY(sB[key]);
+
+    if(g.tool==='area'){
+      const area = areaBetween(key, tA, tB);
+      ctx.fillStyle = themeVar('--accent2');
+      ctx.globalAlpha = 0.22;
+      ctx.beginPath();
+      const zy = yToY(0);
+      ctx.moveTo(pxA, zy);
+      const iA=Math.min(tA,tB)/DT, iB=Math.max(tA,tB)/DT;
+      const i0=Math.ceil(Math.min(iA,iB)), i1=Math.floor(Math.max(iA,iB));
+      const loT=Math.min(tA,tB), hiT=Math.max(tA,tB);
+      ctx.lineTo(tToX(loT), yToY(sampleAt(loT)[key]));
+      for(let i=i0;i<=i1;i++){
+        const s=samples[i]; if(!s) continue;
+        ctx.lineTo(tToX(s.t), yToY(s[key]));
+      }
+      ctx.lineTo(tToX(hiT), yToY(sampleAt(hiT)[key]));
+      ctx.lineTo(tToX(hiT), zy);
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    if(g.tool==='slope'){
+      // hypotenuse (secant line through the two points)
+      ctx.strokeStyle = themeVar('--accent');
+      ctx.setLineDash([5*dpr,4*dpr]);
+      ctx.lineWidth=2*dpr;
+      ctx.beginPath(); ctx.moveTo(pxA,pyA); ctx.lineTo(pxB,pyB); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // right-angle triangle: legs from A to the right-angle corner, then corner to B
+      const cornerX = pxB, cornerY = pyA;
+      ctx.strokeStyle = themeVar('--accent2');
+      ctx.lineWidth = 1.6*dpr;
+      ctx.beginPath();
+      ctx.moveTo(pxA,pyA); ctx.lineTo(cornerX,cornerY); ctx.lineTo(pxB,pyB);
+      ctx.stroke();
+
+      // small square marking the right angle
+      if(Math.abs(cornerX-pxA) > 6*dpr && Math.abs(pyB-cornerY) > 6*dpr){
+        const mark = 8*dpr;
+        const sx = pxA < cornerX ? -1 : 1;
+        const sy = pyB < cornerY ? -1 : 1;
+        ctx.beginPath();
+        ctx.moveTo(cornerX + sx*mark, cornerY);
+        ctx.lineTo(cornerX + sx*mark, cornerY + sy*mark);
+        ctx.lineTo(cornerX, cornerY + sy*mark);
+        ctx.stroke();
+      }
+
+      // angle at vertex A between the horizontal leg and the hypotenuse
+      const dxPix = cornerX - pxA;
+      const dyPix = pyB - pyA;
+      if(Math.abs(dxPix) > 2*dpr || Math.abs(dyPix) > 2*dpr){
+        const dirHoriz = dxPix >= 0 ? 0 : Math.PI;
+        const hypAngle = Math.atan2(dyPix, dxPix);
+        const angleDeg = Math.atan2(Math.abs(dyPix), Math.abs(dxPix)) * 180/Math.PI;
+        const startA = Math.min(dirHoriz, hypAngle);
+        const endA = Math.max(dirHoriz, hypAngle);
+        const arcR = 20*dpr;
+        ctx.strokeStyle = themeVar('--accent3');
+        ctx.lineWidth = 1.4*dpr;
+        ctx.beginPath();
+        ctx.arc(pxA, pyA, arcR, startA, endA, false);
+        ctx.stroke();
+        const midA = (startA+endA)/2;
+        let lx = pxA + Math.cos(midA)*(arcR+16*dpr);
+        let ly = pyA + Math.sin(midA)*(arcR+16*dpr);
+        // keep the angle label fully inside the plot area, never clipped/hidden at the edges
+        lx = clamp(lx, ml+26*dpr, ml+pw-26*dpr);
+        ly = clamp(ly, mt+10*dpr, mt+ph-4*dpr);
+        ctx.font = (10*dpr)+'px IBM Plex Mono';
+        labelChip(ctx, dpr, 'θ≈'+angleDeg.toFixed(1)+'°', lx, ly, themeVar('--accent3'), themeVar('--panel2'), 'center');
+      }
+    }
+    // handles
+    [[pxA,pyA],[pxB,pyB]].forEach(([px,py],idx)=>{
+      ctx.strokeStyle = themeVar('--accent');
+      ctx.lineWidth=1.2*dpr;
+      ctx.setLineDash([3*dpr,3*dpr]);
+      ctx.beginPath(); ctx.moveTo(px,mt); ctx.lineTo(px,mt+ph); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = themeVar('--accent');
+      ctx.beginPath(); ctx.arc(px,py,5*dpr,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = themeVar('--panel2'); ctx.lineWidth=1.5*dpr; ctx.stroke();
+    });
+
+    updateGraphResult(key, def, tA, tB, sA, sB);
+  } else {
+    document.querySelector(`[data-result="${key}"]`).textContent = 'Επιλέξτε "κλίση" ή "εμβαδόν" και σύρετε τις κάθετες γραμμές πάνω στο γράφημα.';
+  }
+
+  drawCursorOnGraph(key, ctx, tToX, yToY);
+}
+
+function unitFor(key){
+  return {x:'m', s:'m', v:'m/s', a:'m/s²'}[key];
+}
+function slopeUnit(key){
+  return {x:'m/s', s:'m/s', v:'m/s²', a:'m/s³'}[key];
+}
+function slopeLabel(key){
+  return {x:'μέση ταχύτητα', s:'μέσος ρυθμός μεταβολής διαστήματος', v:'μέση επιτάχυνση', a:'ρυθμός μεταβολής επιτάχυνσης'}[key];
+}
+function areaLabel(key){
+  return {x:'εμβαδόν (x·t) — δεν αντιστοιχεί σε άμεσο φυσικό μέγεθος',
+          s:'εμβαδόν (s·t) — δεν αντιστοιχεί σε άμεσο φυσικό μέγεθος',
+          v:'μετατόπιση Δx (εμβαδόν κάτω από v–t)',
+          a:'μεταβολή ταχύτητας Δv (εμβαδόν κάτω από α–t)'}[key];
+}
+
+function updateGraphResult(key, def, tA, tB, sA, sB){
+  const el = document.querySelector(`[data-result="${key}"]`);
+  const dt = tB-tA;
+  if(el.dataset.tool !== undefined) {} // noop
+  const g = graphs[key];
+  if(g.tool==='slope'){
+    const dy = sB[key]-sA[key];
+    const slope = Math.abs(dt) < 1e-9 ? 0 : dy/dt;
+    el.innerHTML = `Δ${key} = <span class="hi">${fmt(dy,2)} ${unitFor(key)}</span> &nbsp;|&nbsp; Δt = <span class="hi2">${fmt(dt,2)} s</span><br>`+
+      `κλίση = Δ${key}/Δt = <span class="hi">${fmt(slope,3)} ${slopeUnit(key)}</span> — ${slopeLabel(key)}`;
+  } else if(g.tool==='area'){
+    const area = areaBetween(key, Math.min(tA,tB), Math.max(tA,tB));
+    el.innerHTML = `t ∈ [${fmt(Math.min(tA,tB),2)}, ${fmt(Math.max(tA,tB),2)}] s<br>`+
+      `εμβαδόν = <span class="hi">${fmt(area,3)} ${unitFor(key)}·s</span><br><span style="color:var(--textDim);">${areaLabel(key)}</span>`;
+  }
+}
+
+function drawCursorOnGraph(key, ctx, tToX, yToY){
+  const dpr = devicePixelRatio;
+  const s = sampleAt(state.currentT);
+  const px = tToX(state.currentT), py = yToY(s[key]);
+  ctx.fillStyle = themeVar('--text');
+  ctx.strokeStyle = themeVar('--bg2');
+  ctx.beginPath(); ctx.arc(px,py,4.5*dpr,0,Math.PI*2); ctx.fill();
+  ctx.lineWidth=1.5*dpr; ctx.stroke();
+}
+
+function drawAllCursors(){
+  graphDefs.forEach(d=>drawGraph(d.key));
+}
+function drawAllGraphs(){
+  graphDefs.forEach(d=>drawGraph(d.key));
+}
+
+// ---- pointer interaction for handles ----
+function setupGraphInteraction(g){
+  const canvas = g.canvas;
+  function pxToFrac(clientX){
+    const rect = canvas.getBoundingClientRect();
+    const dpr = devicePixelRatio;
+    const {ml,pw} = graphGeom(canvas);
+    const localX = (clientX-rect.left)*dpr;
+    return clamp((localX-ml)/pw, 0, 1);
+  }
+  function nearestHandle(frac){
+    return Math.abs(frac-g.hA) <= Math.abs(frac-g.hB) ? 'hA' : 'hB';
+  }
+  function handleDist(frac){
+    return Math.min(Math.abs(frac-g.hA), Math.abs(frac-g.hB));
+  }
+  // dragging directly on the graph (away from the slope/area handles) moves
+  // the current-time cursor, so the body on the track animates in sync
+  function moveCursorTo(frac){
+    state.currentT = clamp(frac*state.tMax, 0, state.tMax);
+    state.playing = false;
+    playBtn.textContent = '▶';
+    scrub.value = state.currentT;
+    updateReadouts();
+    drawTrack();
+    drawAllCursors();
+  }
+  canvas.addEventListener('pointerdown', e=>{
+    if(canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
+    const frac = pxToFrac(e.clientX);
+    if(g.tool!=='none' && handleDist(frac) < 0.035){
+      g.dragging = nearestHandle(frac);
+      g[g.dragging] = frac;
+      drawGraph(canvas.dataset.graph);
+    } else {
+      g.dragging = 'cursor';
+      moveCursorTo(frac);
+    }
+  });
+  canvas.addEventListener('pointermove', e=>{
+    if(!g.dragging){
+      showHoverCrosshair(g, e.clientX);
+      return;
+    }
+    const frac = pxToFrac(e.clientX);
+    if(g.dragging==='cursor'){
+      moveCursorTo(frac);
+    } else {
+      g[g.dragging] = frac;
+      drawGraph(canvas.dataset.graph);
+    }
+  });
+  canvas.addEventListener('pointerleave', ()=>{
+    if(!g.dragging) drawGraph(canvas.dataset.graph); // clears the hover overlay
+  });
+  function endDrag(e){ g.dragging=null; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+}
+
+// shows a crosshair + value readout at the point under the cursor, without
+// moving the current-time cursor or affecting the animated body
+function showHoverCrosshair(g, clientX){
+  const canvas = g.canvas;
+  const key = canvas.dataset.graph;
+  const rect = canvas.getBoundingClientRect();
+  const rawDpr = devicePixelRatio;
+  const {ml,pw} = graphGeom(canvas);
+  const localX = (clientX-rect.left)*rawDpr;
+  const frac = clamp((localX-ml)/pw, 0, 1);
+  const t = frac*state.tMax;
+  const s = sampleAt(t);
+
+  drawGraph(key); // redraw clean first, so old hover marks never accumulate
+  const ctx = canvas.getContext('2d');
+  const {mt,ph} = graphGeom(canvas);
+  const dpr = canvas.height / GRAPH_H;
+  const [ymn,ymx] = graphYRange(key);
+  const tToX = tt => ml + (tt/state.tMax)*pw;
+  const yToY = y => mt + (1-(y-ymn)/(ymx-ymn))*ph;
+  const px = tToX(t), py = yToY(s[key]);
+
+  ctx.strokeStyle = themeVar('--textDim');
+  ctx.setLineDash([3*dpr,3*dpr]);
+  ctx.lineWidth = 1*dpr;
+  ctx.beginPath(); ctx.moveTo(px,mt); ctx.lineTo(px,mt+ph); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = themeVar('--text');
+  ctx.beginPath(); ctx.arc(px,py,4*dpr,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = themeVar('--panel2'); ctx.lineWidth = 1.5*dpr; ctx.stroke();
+
+  const label = `t=${fmt(t,2)}s   ${key}=${fmt(s[key],2)}${unitFor(key)}`;
+  ctx.font = (11*dpr)+'px IBM Plex Mono';
+  const labelY = py < mt+ph*0.3 ? py+22*dpr : mt+14*dpr;
+  const lx = clamp(px, ml+70*dpr, ml+pw-70*dpr);
+  labelChip(ctx, dpr, label, lx, labelY, themeVar('--text'), themeVar('--panel2'), 'center');
+}
+
+function drawAll(){
+  fitTrackCanvas();
+  drawTrack();
+  drawAllGraphs();
+}
+
+// ---------------- Solution builder ----------------
+function buildSolution(){
+  const a = signedA();
+  const t = state.tMax;
+  const s = sampleAt(t);
+
+  if(state.solverMode==='inverse'){
+    buildInverseSolution(a,t,s);
+    return;
+  }
+  if(state.solverMode==='exercise'){
+    buildExerciseSolution(a,t,s);
+    return;
+  }
+  if(state.solverMode==='composite'){
+    buildCompositeSolution();
+    return;
+  }
+
+  const modeName = {eok:'Ευθύγραμμη Ομαλή Κίνηση (ΕΟΚ)', accel:'Ευθύγραμμη Ομαλά Επιταχυνόμενη Κίνηση',
+    decel:'Ευθύγραμμη Ομαλά Επιβραδυνόμενη Κίνηση'}[state.mode];
+
+  let html = '';
+  html += `<div class="sol-block"><h4>Δεδομένα</h4>
+    <div class="givens-grid">
+      <div class="gi"><span class="k">x₀</span>${fmt(state.x0,2)} m</div>
+      <div class="gi"><span class="k">u (v₀)</span>${fmt(state.v0,2)} m/s</div>
+      <div class="gi"><span class="k">α</span>${fmt(a,2)} m/s²</div>
+      <div class="gi"><span class="k">t</span>${fmt(t,2)} s</div>
+    </div>
+    <div class="sol-note">Είδος κίνησης: ${modeName}${state.mode!=='eok' ? (a>=0? ' (θετική φορά επιτάχυνσης)':' (αρνητική φορά επιτάχυνσης)') : ''}</div>
+  </div>`;
+
+  html += `<div class="sol-block"><h4>Ζητούμενα</h4>
+    <div class="line">Θέση x(t) και ταχύτητα v(t) τη χρονική στιγμή t = ${fmt(t,2)} s.</div>
+  </div>`;
+
+  html += `<div class="sol-block"><h4>Τύποι &amp; Υπολογισμός</h4>`;
+  if(state.mode==='eok'){
+    html += `<div class="line">x = x₀ + u·t</div>
+      <div class="line">x = ${fmt(state.x0,2)} + (${fmt(state.v0,2)})·(${fmt(t,2)}) <span class="arrow">⇒</span> x = <span class="res">${fmt(state.x0+state.v0*t,2)} m</span></div>
+      <div class="line" style="margin-top:8px;">v = u = <span class="res">${fmt(state.v0,2)} m/s</span> (σταθερή)</div>`;
+  } else {
+    const tCalc = (tStop!==null) ? tStop : t;
+    const xAtCalc = state.x0 + state.v0*tCalc + 0.5*a*tCalc*tCalc;
+    const vAtCalc = state.v0 + a*tCalc;
+    html += `<div class="line">v = u + α·t</div>
+      <div class="line">v = ${fmt(state.v0,2)} + (${fmt(a,2)})·(${fmt(tCalc,2)}) <span class="arrow">⇒</span> v = <span class="res">${fmt(vAtCalc,2)} m/s</span></div>
+      <div class="line" style="margin-top:8px;">x = x₀ + u·t + ½·α·t²</div>
+      <div class="line">x = ${fmt(state.x0,2)} + (${fmt(state.v0,2)})·(${fmt(tCalc,2)}) + ½·(${fmt(a,2)})·(${fmt(tCalc,2)})²</div>
+      <div class="line">x <span class="arrow">⇒</span> x = <span class="res">${fmt(xAtCalc,2)} m</span></div>
+      <div class="line" style="margin-top:8px;">Δx = x − x₀ = <span class="res">${fmt(xAtCalc-state.x0,2)} m</span> (μετατόπιση)</div>`;
+    if(tStop!==null){
+      html += `<div class="sol-note">Το σώμα μηδενίζει την ταχύτητά του (v=0) τη στιγμή t_στοπ = −u/α = ${fmt(tStop,3)} s, πριν το t = ${fmt(t,2)} s, και παραμένει ακίνητο έως το τέλος (x = ${fmt(xAtCalc,2)} m).</div>`;
+    }
+  }
+  html += `</div>`;
+
+  html += `<div class="sol-block"><h4>Διάστημα (συνολική απόσταση)</h4>
+    <div class="line">s(${fmt(t,2)} s) = <span class="res">${fmt(s.s,2)} m</span>`+
+    (Math.abs(s.s - Math.abs(s.x-state.x0))>0.01 ? ' <span style="color:var(--textDim);">(≠ |Δx|, γιατί το σώμα άλλαξε φορά κίνησης)</span>' : '')+
+    `</div></div>`;
+
+  solBody.innerHTML = html;
+}
+
+function buildInverseSolution(a, t, s){
+  if(state.inverseError){
+    solBody.innerHTML = `<div class="sol-block"><h4>Δεδομένα</h4>
+      <div class="sol-note inv-error">⚠ ${state.inverseError}</div></div>`;
+    return;
+  }
+  const cfg = INV_CASES[state.invCase];
+  const u = state.v0;
+  const dx = s.x - state.x0;
+  const caseGivens = {
+    dxuv:[['u',u,'m/s'],['Δx',state.invValues.dx,'m'],['v',state.invValues.v,'m/s']],
+    dxua:[['u',u,'m/s'],['Δx',state.invValues.dx,'m'],['α',state.invValues.a,'m/s²']],
+    uva:[['u',u,'m/s'],['v',state.invValues.v,'m/s'],['α',state.invValues.a,'m/s²']],
+    uvt:[['u',u,'m/s'],['v',state.invValues.v,'m/s'],['t',state.invValues.t,'s']],
+  }[state.invCase];
+
+  let html = `<div class="sol-block"><h4>Δεδομένα (αντίστροφος υπολογισμός)</h4>
+    <div class="givens-grid">${caseGivens.map(([k,v,u2])=>`<div class="gi"><span class="k">${k}</span>${fmt(v,2)} ${u2}</div>`).join('')}</div>
+    <div class="sol-note">Ζητούμενα: ${cfg.unknownsLabel}</div>
+  </div>`;
+
+  html += `<div class="sol-block"><h4>Τύποι &amp; Υπολογισμός</h4>`;
+  if(state.invCase==='dxuv'){
+    const dxv = state.invValues.dx, v = state.invValues.v;
+    html += `<div class="line">Δx = (u+v)/2 · t &nbsp;⇒&nbsp; t = 2Δx / (u+v)</div>
+      <div class="line">t = 2·(${fmt(dxv,2)}) / (${fmt(u,2)} + ${fmt(v,2)}) <span class="arrow">⇒</span> t = <span class="res">${fmt(t,3)} s</span></div>
+      <div class="line" style="margin-top:8px;">v = u + α·t &nbsp;⇒&nbsp; α = (v−u)/t</div>
+      <div class="line">α = (${fmt(v,2)} − ${fmt(u,2)}) / ${fmt(t,3)} <span class="arrow">⇒</span> α = <span class="res">${fmt(a,3)} m/s²</span></div>`;
+  } else if(state.invCase==='dxua'){
+    const dxv = state.invValues.dx;
+    html += `<div class="line">Δx = u·t + ½·α·t² &nbsp;⇒&nbsp; λύση ως προς t (δευτεροβάθμια εξίσωση)</div>
+      <div class="line">t = <span class="res">${fmt(t,3)} s</span></div>
+      <div class="line" style="margin-top:8px;">v = u + α·t</div>
+      <div class="line">v = ${fmt(u,2)} + (${fmt(a,2)})·(${fmt(t,3)}) <span class="arrow">⇒</span> v = <span class="res">${fmt(s.v,3)} m/s</span></div>`;
+  } else if(state.invCase==='uva'){
+    const v = state.invValues.v;
+    html += `<div class="line">v = u + α·t &nbsp;⇒&nbsp; t = (v−u)/α</div>
+      <div class="line">t = (${fmt(v,2)} − ${fmt(u,2)}) / ${fmt(a,2)} <span class="arrow">⇒</span> t = <span class="res">${fmt(t,3)} s</span></div>
+      <div class="line" style="margin-top:8px;">Δx = (u+v)/2 · t</div>
+      <div class="line">Δx = (${fmt(u,2)}+${fmt(v,2)})/2 · ${fmt(t,3)} <span class="arrow">⇒</span> Δx = <span class="res">${fmt(dx,3)} m</span></div>`;
+  } else if(state.invCase==='uvt'){
+    const v = state.invValues.v;
+    html += `<div class="line">v = u + α·t &nbsp;⇒&nbsp; α = (v−u)/t</div>
+      <div class="line">α = (${fmt(v,2)} − ${fmt(u,2)}) / ${fmt(t,2)} <span class="arrow">⇒</span> α = <span class="res">${fmt(a,3)} m/s²</span></div>
+      <div class="line" style="margin-top:8px;">Δx = (u+v)/2 · t</div>
+      <div class="line">Δx = (${fmt(u,2)}+${fmt(v,2)})/2 · ${fmt(t,2)} <span class="arrow">⇒</span> Δx = <span class="res">${fmt(dx,3)} m</span></div>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="sol-block"><h4>Διάστημα (συνολική απόσταση)</h4>
+    <div class="line">s(${fmt(t,2)} s) = <span class="res">${fmt(s.s,2)} m</span></div></div>`;
+
+  solBody.innerHTML = html;
+}
+
+function buildExerciseSolution(a, t, s){
+  if(!lastExerciseSolve){
+    solBody.innerHTML = '<div class="sol-block"><h4>Δεδομένα</h4><div class="sol-note">Δεν έχει οριστεί άσκηση στο πάνελ «Άσκηση».</div></div>';
+    return;
+  }
+  const {vals, steps, known, askedKeys} = lastExerciseSolve;
+  const knownList = Object.keys(known).map(k=>{
+    const q = EXERCISE_QUANTITIES.find(qq=>qq.key===k);
+    return `<div class="gi"><span class="k">${q.sym}</span>${fmt(known[k],2)} ${q.unit}</div>`;
+  }).join('');
+
+  let html = `<div class="sol-block"><h4>Δεδομένα</h4>
+    <div class="givens-grid">${knownList}</div>
+    <div class="sol-note">Ζητούμενα: ${askedKeys.map(k=>EXERCISE_QUANTITIES.find(q=>q.key===k).sym).join(', ') || '—'}</div>
+  </div>`;
+
+  html += `<div class="sol-block"><h4>Υπολογισμός</h4>`;
+  if(steps.length===0){
+    html += `<div class="sol-note">Δεν χρειάστηκε επιπλέον υπολογισμός.</div>`;
+  } else {
+    steps.forEach(st=>{
+      const q = EXERCISE_QUANTITIES.find(qq=>qq.key===st.key);
+      html += `<div class="line">${st.formula} <span class="arrow">⇒</span> ${q.sym} = <span class="res">${fmt(st.value,3)} ${q.unit}</span></div>`;
+    });
+  }
+  html += `</div>`;
+
+  html += `<div class="sol-block"><h4>Διάστημα (συνολική απόσταση)</h4>
+    <div class="line">s(${fmt(t,2)} s) = <span class="res">${fmt(s.s,2)} m</span></div></div>`;
+
+  solBody.innerHTML = html;
+}
+
+function buildCompositeSolution(){
+  recomputeComposite();
+  let html = `<div class="sol-block"><h4>Δεδομένα</h4>
+    <div class="givens-grid">
+      <div class="gi"><span class="k">x₀</span>${fmt(state.x0,2)} m</div>
+      <div class="gi"><span class="k">u</span>${fmt(state.v0,2)} m/s</div>
+    </div>
+    <div class="sol-note">Σύνθετη κίνηση με ${state.segments.length} διαδοχικά τμήματα.</div>
+  </div>`;
+
+  let tOffset = 0;
+  state.segments.forEach((seg,i)=>{
+    const dur = Math.max(0.1, seg.duration);
+    const sA = sampleAt(tOffset), sB = sampleAt(Math.min(state.tMax, tOffset+dur));
+    const a = segmentSignedA(seg);
+    html += `<div class="sol-block"><h4>Τμήμα ${i+1} — ${SEG_TYPE_LABEL[seg.type]} (t ∈ [${fmt(tOffset,2)}, ${fmt(tOffset+dur,2)}] s)</h4>`;
+    html += `<div class="line">Αρχή τμήματος: x = <span class="res">${fmt(sA.x,2)} m</span>, v = <span class="res">${fmt(sA.v,2)} m/s</span></div>`;
+    if(seg.type==='eok'){
+      html += `<div class="line">x = x_αρχ + u·Δt <span class="arrow">⇒</span> x = ${fmt(sA.x,2)} + (${fmt(sA.v,2)})·(${fmt(dur,2)}) <span class="arrow">⇒</span> x = <span class="res">${fmt(sB.x,2)} m</span></div>`;
+    } else {
+      html += `<div class="line">v = u + α·Δt <span class="arrow">⇒</span> v = ${fmt(sA.v,2)} + (${fmt(a,2)})·(${fmt(dur,2)}) <span class="arrow">⇒</span> v = <span class="res">${fmt(sB.v,2)} m/s</span></div>`;
+      html += `<div class="line">x = x_αρχ + u·Δt + ½·α·Δt² <span class="arrow">⇒</span> x = <span class="res">${fmt(sB.x,2)} m</span></div>`;
+    }
+    html += `<div class="line" style="margin-top:6px;">Τέλος τμήματος: x = <span class="res">${fmt(sB.x,2)} m</span>, v = <span class="res">${fmt(sB.v,2)} m/s</span></div>`;
+    html += `</div>`;
+    tOffset += dur;
+  });
+
+  const sFinal = sampleAt(state.tMax);
+  html += `<div class="sol-block"><h4>Συνολικά αποτελέσματα</h4>
+    <div class="line">Συνολικός χρόνος t = <span class="res">${fmt(state.tMax,2)} s</span></div>
+    <div class="line">Τελική θέση x = <span class="res">${fmt(sFinal.x,2)} m</span></div>
+    <div class="line">Συνολική μετατόπιση Δx = <span class="res">${fmt(sFinal.x-state.x0,2)} m</span></div>
+    <div class="line">Συνολικό διάστημα s = <span class="res">${fmt(sFinal.s,2)} m</span></div>
+  </div>`;
+
+  solBody.innerHTML = html;
+}
+
+// ---------------- Export solution (print/PDF & Word) ----------------
+// Renders a graph into a fresh, fixed-size, non-interactive canvas (not the
+// live on-screen one, which may be zoomed/huge/collapsed) so exports are
+// always a reasonable, print-safe size regardless of current UI state.
+function renderGraphForExport(key){
+  const EXPORT_W = 640, EXPORT_H = 300, dpr = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = EXPORT_W*dpr;
+  canvas.height = EXPORT_H*dpr;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,W,H);
+
+  const ml=54*dpr, mr=16*dpr, mt=14*dpr, mb=36*dpr;
+  const pw=W-ml-mr, ph=H-mt-mb;
+  const tToX = t => ml + (t/state.tMax)*pw;
+  const [ymn,ymx] = graphYRange(key);
+  const yToY = y => mt + (1-(y-ymn)/(ymx-ymn))*ph;
+
+  ctx.strokeStyle = '#ddd';
+  ctx.fillStyle = '#555';
+  ctx.font = (11*dpr)+'px Arial';
+  ctx.lineWidth = 1*dpr;
+  ctx.textAlign = 'center';
+  const nT = 5;
+  for(let i=0;i<=nT;i++){
+    const t = state.tMax*i/nT, px = tToX(t);
+    ctx.beginPath(); ctx.moveTo(px,mt); ctx.lineTo(px,mt+ph); ctx.stroke();
+    ctx.fillText(fmt(t,1), px, mt+ph+16*dpr);
+  }
+  const nY = 4;
+  ctx.textAlign = 'right';
+  for(let i=0;i<=nY;i++){
+    const y = ymn+(ymx-ymn)*i/nY, py = yToY(y);
+    ctx.beginPath(); ctx.moveTo(ml,py); ctx.lineTo(ml+pw,py); ctx.stroke();
+    ctx.fillText(fmt(y,1), ml-6*dpr, py+3*dpr);
+  }
+  if(ymn<0 && ymx>0){
+    ctx.strokeStyle = '#999';
+    const zy = yToY(0);
+    ctx.beginPath(); ctx.moveTo(ml,zy); ctx.lineTo(ml+pw,zy); ctx.stroke();
+  }
+
+  const printColors = {x:'#2563EB', s:'#B8860B', v:'#16A34A', a:'#DB2777'};
+  ctx.strokeStyle = printColors[key] || '#333';
+  ctx.lineWidth = 2.4*dpr;
+  ctx.beginPath();
+  samples.forEach((sm,i)=>{
+    const px = tToX(sm.t), py = yToY(sm[key]);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  });
+  ctx.stroke();
+
+  if(state.solverMode==='composite' && segmentBoundaries.length>1){
+    ctx.strokeStyle = '#999';
+    ctx.setLineDash([4*dpr,3*dpr]);
+    ctx.lineWidth = 1*dpr;
+    segmentBoundaries.forEach(b=>{
+      if(b.t>0){ const px=tToX(b.t); ctx.beginPath(); ctx.moveTo(px,mt); ctx.lineTo(px,mt+ph); ctx.stroke(); }
+    });
+    ctx.setLineDash([]);
+  }
+
+  ctx.fillStyle = '#333';
+  ctx.font = (12*dpr)+'px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('t (s)', ml+pw/2, H-4*dpr);
+
+  return canvas.toDataURL('image/png');
+}
+
+function buildExportHtml(){
+  buildSolution(); // make sure the solution reflects the current parameters
+  const dateStr = new Date().toLocaleDateString('el-GR');
+  let modeLabel;
+  if(state.solverMode==='inverse'){
+    modeLabel = 'Αντίστροφος υπολογισμός — γνωστά: ' + invCaseSel.options[invCaseSel.selectedIndex].textContent;
+  } else if(state.solverMode==='composite'){
+    modeLabel = 'Σύνθετη κίνηση — ' + state.segments.length + ' διαδοχικά τμήματα';
+  } else if(state.solverMode==='exercise'){
+    modeLabel = 'Άσκηση (ελεύθερη επιλογή δεδομένων/ζητουμένων)';
+  } else {
+    modeLabel = {eok:'Ευθύγραμμη Ομαλή Κίνηση (ΕΟΚ)', accel:'Ευθύγραμμη Ομαλά Επιταχυνόμενη Κίνηση', decel:'Ευθύγραμμη Ομαλά Επιβραδυνόμενη Κίνηση'}[state.mode];
+  }
+
+  // include the four graphs as fresh, fixed-size images so the printed/exported
+  // solution is self-contained and unaffected by any on-screen zoom/collapse state
+  let graphsHtml = '';
+  try{
+    const cards = graphDefs.map(d=>{
+      const card = document.querySelector(`.graph-card[data-key="${d.key}"]`);
+      const title = card ? card.querySelector('h3').textContent : d.label;
+      const dataUrl = renderGraphForExport(d.key);
+      return `<div style="page-break-inside:avoid;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:5px;">${title}</div>
+        <img src="${dataUrl}" width="640" height="300" style="width:100%;height:auto;border:1px solid #ccc;display:block;">
+      </div>`;
+    });
+    // two graphs side by side per row
+    graphsHtml = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">${cards.join('')}</div>`;
+  } catch(e){ /* canvas image export unavailable in this environment — export continues without graphs */ }
+
+  return `<h1>Λύση Άσκησης — Ευθύγραμμη Κίνηση</h1>
+    <div style="font-size:12px;color:#555;margin-bottom:16px;">${modeLabel} &middot; ${dateStr}</div>
+    ${solBody.innerHTML}
+    ${graphsHtml ? `<h1 style="font-size:17px;margin-top:22px;">Διαγράμματα</h1>${graphsHtml}` : ''}`;
+}
+
+$('#printBtn').addEventListener('click', ()=>{
+  const area = $('#printExportArea');
+  area.innerHTML = buildExportHtml();
+  window.print();
+});
+
+$('#wordBtn').addEventListener('click', ()=>{
+  const content = buildExportHtml();
+  const pre = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset="utf-8"><title>Λύση Άσκησης</title>
+    <style>
+      body{font-family:Calibri,Arial,sans-serif;color:#111;}
+      h1{font-size:20px;}
+      h4{color:#1f6fa8;text-transform:uppercase;font-size:12px;letter-spacing:.05em;}
+      .line{font-family:'Courier New',monospace;font-size:13px;line-height:1.9;}
+      .res{color:#b3541e;font-weight:bold;}
+      .arrow{color:#888;}
+      .gi{border:1px solid #ccc;border-radius:4px;padding:6px 9px;display:inline-block;margin:3px;font-family:'Courier New',monospace;font-size:13px;}
+      .k{display:block;font-size:10px;color:#666;font-family:Arial,sans-serif;}
+      .sol-block{margin-bottom:16px;}
+      .sol-note{font-size:12px;color:#666;font-style:italic;margin-top:6px;}
+    </style></head><body>`;
+  const post = `</body></html>`;
+  const full = pre + content + post;
+  const blob = new Blob(['\ufeff', full], {type:'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lysi-askisis.doc';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// ---------------- Resize ----------------
+window.addEventListener('resize', ()=>{ drawAll(); });
+
+// ---------------- Init ----------------
+initGraphs();
+onParamsChanged();
+})();
+</script>
+</body>
+</html>
