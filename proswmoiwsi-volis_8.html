@@ -1,0 +1,3057 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Προσομοίωση Βολής</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --vel-color:#DCEEFF;
+  --vx-color:#4ADE80;
+  --vy-color:#FDE047;
+  --acc-color:#FF6FCF;
+  --resist-color:#E0685A;
+  --totaldisp-color:#B79CFF;
+  --hdisp-color:#7DB8FF;
+  --vdisp-color:#7DE2FF;
+  --heightvec-color:#5EEAD4;
+}
+
+body.theme-minimal{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --vel-color:#1F2D3D;
+  --vx-color:#16A34A;
+  --vy-color:#CA8A04;
+  --acc-color:#DB2777;
+  --resist-color:#D64545;
+  --totaldisp-color:#7C4DFF;
+  --hdisp-color:#2563EB;
+  --vdisp-color:#0891B2;
+  --heightvec-color:#0D9488;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+  padding: 18px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;}
+}
+
+.wrap{max-width: 1180px; margin:0 auto;}
+
+header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(22px, 4vw, 32px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.byline{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  color: var(--paper-dim);
+  margin-top:4px;
+}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+.header-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+.theme-toggle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  padding:6px 10px;
+}
+.theme-toggle span{color: var(--gold);}
+
+.layout{
+  display:flex;
+  flex-direction:column;
+  gap: 20px;
+}
+
+.controls{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap:14px;
+}
+
+@media (min-width: 600px) and (max-width: 1080px){
+  body{ padding: 24px 26px 64px; }
+  .controls{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+  .card{ padding: 18px 20px; }
+  .field{ margin-bottom:18px; }
+  .stage-readouts{ top:44px; right:20px; }
+  .stage-readouts .ov-line{ font-size:13.5px; }
+}
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px;
+  position:relative;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+}
+canvas{
+  width:100%;
+  height:auto;
+  aspect-ratio: 16/10;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+  touch-action: none;
+  cursor: grab;
+}
+canvas.grabbing{cursor:grabbing;}
+
+.hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:8px;
+  text-align:center;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:6px;
+}
+.field-row label{
+  font-size:14.5px;
+  color: var(--paper);
+}
+.field-row .val{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  color: var(--gold);
+  min-width: 64px;
+  text-align:right;
+}
+
+.val-wrap{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.val-input{
+  width:68px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--gold);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  text-align:right;
+  padding:8px 7px;
+  border-radius: var(--radius);
+  -moz-appearance:textfield;
+}
+.val-input::-webkit-outer-spin-button, .val-input::-webkit-inner-spin-button{
+  -webkit-appearance:none; margin:0;
+}
+.val-input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.unit{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  color: var(--paper-dim);
+  white-space:nowrap;
+}
+
+.vec-ico{
+  display:inline-block;
+  font-family:'IBM Plex Mono', monospace;
+  font-weight:700;
+  font-style:italic;
+  font-size: calc(14px * var(--vec-icon-scale, 1));
+  min-width: calc(1.7em * var(--vec-icon-scale, 1));
+  margin-right:7px;
+  text-align:left;
+}
+
+.mini-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:11px 12px;
+}
+.mini-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  color: var(--paper-dim);
+  cursor:pointer;
+  padding:4px 0;
+}
+.mini-check input{
+  accent-color: var(--gold);
+  width:19px; height:19px;
+  margin:0;
+  cursor:pointer;
+}
+
+input[type=range]{
+  -webkit-appearance:none;
+  width:100%;
+  height:5px;
+  background: var(--line-dim);
+  border-radius:3px;
+  outline:none;
+  touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:24px;height:24px;
+  border-radius:50%;
+  background: var(--gold);
+  border: 2px solid var(--bg-deep);
+  cursor:pointer;
+  margin-top:-9.5px;
+}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px;
+  border-radius:50%;
+  background: var(--gold);
+  border: 2px solid var(--bg-deep);
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:5px; background: var(--line-dim); border-radius:3px;
+}
+input[type=range]:focus-visible::-webkit-slider-thumb{
+  outline: 2px solid var(--line-bright);
+  outline-offset: 2px;
+}
+input[type=range]:focus-visible{
+  outline: none;
+}
+input[type=range]:disabled{opacity:0.3; cursor:not-allowed;}
+
+.mode-row{
+  display:flex;
+  gap:6px;
+}
+.mode-btn{
+  flex:1;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:12px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:12px 4px;
+  min-height:44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper-dim);
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.mode-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.mode-btn:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+
+.card.dim{opacity:0.45;}
+.card.dim input, .card.dim button{pointer-events:none;}
+.toggle-row.dim{opacity:0.45;}
+.toggle-row.dim input{pointer-events:none;}
+
+.toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-height:32px;
+}
+.toggle-row + .toggle-row{margin-top:13px;}
+.toggle-row label{font-size:13.5px;}
+.switch{
+  position:relative;
+  width:46px;height:26px;
+  flex:none;
+}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{
+  position:absolute; inset:0;
+  background: var(--line-dim);
+  border-radius:26px;
+  transition: background 0.15s;
+  border:1px solid var(--line-dim);
+  pointer-events:none;
+}
+.slider-pill:before{
+  content:"";
+  position:absolute;
+  width:18px;height:18px;
+  left:3px; top:3px;
+  background: var(--paper-dim);
+  border-radius:50%;
+  transition: transform 0.15s, background 0.15s;
+}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
+.switch input:focus-visible + .slider-pill{outline:2px solid var(--line-bright); outline-offset:2px;}
+
+.drag-sub{
+  max-height:0;
+  overflow:hidden;
+  transition: max-height 0.2s ease;
+}
+.drag-sub.open{max-height:420px; margin-top:12px;}
+
+.target-input-row{
+  display:flex; gap:8px;
+}
+.target-input-row input[type=number]{
+  flex:1;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  min-width:0;
+}
+.target-input-row input[type=number]:focus-visible{outline: 2px solid var(--line-bright); outline-offset:1px;}
+
+button{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  letter-spacing:0.05em;
+  font-size:13px;
+  text-transform:uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper);
+  padding: 12px 16px;
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height:44px;
+}
+button:hover{border-color: var(--gold-dim); color: var(--gold);}
+button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+button.primary{
+  background: var(--gold);
+  color: var(--bg-deep);
+  border-color: var(--gold);
+}
+button.primary:hover{background: #f0c665; color:var(--bg-deep);}
+button.small{padding:10px 12px; font-size:11.5px; min-height:40px;}
+button:disabled{opacity:0.35; cursor:not-allowed;}
+
+.btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+
+.msg{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:10px;
+  line-height:1.5;
+}
+.msg.warn{color: var(--danger);}
+
+.readout-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.readout{
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 9px 10px;
+}
+.readout .k{
+  font-size:10px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+  display:block;
+  margin-bottom:4px;
+}
+.readout .v{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:16px;
+  color: var(--line-bright);
+}
+.readout .u{font-size:11px; color: var(--paper-dim);}
+
+.summary{
+  margin-top:12px;
+  padding-top:12px;
+  border-top: 1px dashed var(--gold-dim);
+}
+
+.stage-stats-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top: 1px dashed var(--line-dim);
+}
+.stage-stats-toggle label{
+  font-size:13px;
+  color: var(--paper);
+}
+.stage-readouts{
+  position:absolute;
+  top:40px;
+  right:22px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:3px;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity 0.2s ease;
+  z-index:3;
+}
+.stage-readouts.open{opacity:1;}
+.stage-readouts .ov-line{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  white-space:nowrap;
+  text-shadow: 0 0 5px var(--bg-deep), 0 0 9px var(--bg-deep), 0 0 9px var(--bg-deep);
+}
+.stage-readouts .ov-k{
+  color: var(--paper-dim);
+  margin-right:6px;
+}
+.stage-readouts .v{
+  font-weight:600;
+  color: var(--line-bright);
+}
+.stage-readouts .u{
+  color: var(--paper-dim);
+  font-size:11px;
+  margin-left:3px;
+}
+.summary .row{
+  display:flex; justify-content:space-between;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  padding: 3px 0;
+  color: var(--paper);
+}
+.summary .row span:last-child{color:var(--gold);}
+
+/* ---- main tabs ---- */
+.main-tab-row{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  margin-bottom:16px;
+  -ms-overflow-style:none;
+  scrollbar-width:none;
+}
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:13px 20px;
+  min-height:46px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: var(--bg-panel);
+  color: var(--paper-dim);
+  cursor:pointer;
+  white-space:nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+#tab-exercise, #tab-solution, #tab-saved{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap:14px;
+}
+#tab-exercise.tab-panel:not(.active), #tab-solution.tab-panel:not(.active), #tab-saved.tab-panel:not(.active){display:none;}
+
+/* ---- exercise ---- */
+.ex-select{
+  width:100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:12px;
+  border-radius: var(--radius);
+}
+.hint-text{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  line-height:1.6;
+  margin-top:8px;
+}
+.ex-result{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  color: var(--paper);
+  line-height:1.9;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:14px;
+}
+.ex-result .given{color: var(--line-bright);}
+.ex-result .asked{color: var(--gold);}
+.ex-result .answer{color: #4ADE80; font-weight:600;}
+
+.ex-toggle-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom: 1px dashed var(--line-dim);
+}
+.ex-toggle-row:last-child{border-bottom:none;}
+.ex-toggle-row .ex-given-value{width:90px; flex:none;}
+.ex-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  color: var(--paper);
+  cursor:pointer;
+}
+.ex-check input{
+  accent-color: var(--gold);
+  width:18px; height:18px;
+  margin:0;
+  cursor:pointer;
+}
+#exerciseAsked{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 16px;
+  padding-top:10px;
+}
+
+/* ---- solution ---- */
+.solution-content{
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  color: var(--paper);
+}
+.solution-content h3{
+  font-family:'Oswald', sans-serif;
+  font-size:15px;
+  color: var(--gold);
+  margin:0 0 14px 0;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.solution-content .sol-block{margin-bottom:18px;}
+.solution-content .sol-block h4{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:12.5px;
+  color: var(--gold);
+  text-transform:uppercase;
+  letter-spacing:0.07em;
+  margin:0 0 9px 0;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--gold-dim);
+}
+.solution-content .givens-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px,1fr));
+  gap:8px;
+}
+.solution-content .gi{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:8px 10px;
+}
+.solution-content .gi .k{color: var(--gold); margin-right:6px; font-weight:700;}
+.solution-content .line{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  padding:8px 2px;
+  border-bottom: 1px dashed var(--line-dim);
+}
+.solution-content .line:last-child{border-bottom:none;}
+.solution-content .res{color:#4ADE80; font-weight:700;}
+.solution-content .sol-note{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-bottom:14px;
+  line-height:1.6;
+}
+.solution-snapshot{
+  max-width:100%;
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  margin-bottom:18px;
+  display:block;
+}
+
+/* ---- saved presets ---- */
+.preset-name-input{
+  width:100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:12px;
+  border-radius: var(--radius);
+  margin-bottom:12px;
+}
+.preset-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:12px 14px;
+  margin-bottom:8px;
+}
+.preset-row:last-child{margin-bottom:0;}
+.preset-info{min-width:0;}
+.preset-title{
+  font-size:14px; color: var(--paper); margin-bottom:3px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.preset-meta{
+  font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--paper-dim);
+}
+.preset-btns{display:flex; gap:6px; flex:none;}
+button.danger{
+  border-color: rgba(224,104,90,0.4);
+  color: #ffb3a8;
+  padding:9px 14px;
+  min-height:auto;
+  font-size:11.5px;
+}
+button.danger:hover{background: rgba(224,104,90,0.15); border-color: var(--danger); color:#ffb3a8;}
+
+@media print{
+  body *{visibility:hidden;}
+  #printExportArea, #printExportArea *{visibility:visible;}
+  #printExportArea{
+    position:absolute; top:0; left:0; width:100%;
+    background:#fff; color:#111; padding:20px;
+    display:block !important;
+    font-family: Georgia, serif;
+  }
+  #printExportArea h3{color:#8a6a1a; border-bottom:1px solid #ccc; padding-bottom:4px;}
+  #printExportArea .sol-block h4{color:#8a6a1a; border-bottom:1px solid #ddd;}
+  #printExportArea .gi{background:#f7f7f7; border:1px solid #ddd; color:#222;}
+  #printExportArea .gi .k{color:#8a6a1a;}
+  #printExportArea .line{border-bottom:1px dashed #ddd; color:#222;}
+  #printExportArea .res{color:#1a7a3d;}
+  #printExportArea .sol-note{color:#666;}
+  #printExportArea .solution-snapshot{border:1px solid #ccc;}
+}
+#printExportArea{display:none;}
+
+footer{
+  margin-top: 22px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  text-align:center;
+  letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Προσομοίωση <span>Βολής</span></h1>
+      <div class="byline">Τάσος Σλάβης</div>
+    </div>
+    <div class="header-right">
+      <div class="subtitle">Κινηματική βλήματος · sim v2</div>
+      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span>Τροχιά</span>
+        <span id="stateLabel">ΕΤΟΙΜΟ</span>
+      </div>
+      <div class="stage-readouts open" id="stageReadouts">
+        <div class="ov-line"><span class="ov-k">Ύψος</span><span class="v" id="outHeight">0.0</span><span class="u">m</span></div>
+        <div class="ov-line"><span class="ov-k">Οριζ. απόσταση</span><span class="v" id="outX">0.0</span><span class="u">m</span></div>
+        <div class="ov-line"><span class="ov-k">Κατακ. απόσταση</span><span class="v" id="outDy">0.0</span><span class="u">m</span></div>
+        <div class="ov-line"><span class="ov-k">Χρόνος</span><span class="v" id="outT">0.00</span><span class="u">s</span></div>
+        <div class="ov-line"><span class="ov-k">Ταχύτητα</span><span class="v" id="outV">0.0</span><span class="u">m/s</span></div>
+        <div class="ov-line"><span class="ov-k">Οριζ. ταχύτητα</span><span class="v" id="outVx">0.0</span><span class="u">m/s</span></div>
+        <div class="ov-line"><span class="ov-k">Κατακ. ταχύτητα</span><span class="v" id="outVy">0.0</span><span class="u">m/s</span></div>
+        <div class="ov-line"><span class="ov-k">Γωνία v</span><span class="v" id="outTheta">0.0</span><span class="u">°</span></div>
+        <div class="ov-line"><span class="ov-k">Επιτάχυνση</span><span class="v" id="outAccel">0.0</span><span class="u">m/s²</span></div>
+      </div>
+      <canvas id="canvas" width="900" height="562"></canvas>
+      <div class="hint">Σύρε το βλήμα πάνω στην τροχιά για να δεις τα στοιχεία κίνησης σε κάθε σημείο</div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="primary" id="launchBtn">▶ Εκτόξευση</button>
+        <button id="slowBtn">🐢 Αργή κίνηση</button>
+        <button id="resetBtn">↺ Επαναφορά</button>
+        <button id="soundBtn">🔊 Ήχος</button>
+      </div>
+      <div class="field" style="margin-top:10px; margin-bottom:0;">
+        <div class="field-row">
+          <label for="speedSlider">Ταχύτητα αναπαραγωγής</label>
+          <span class="val-wrap"><span class="unit">×</span><input type="number" class="val-input" id="speedNum" value="1" step="0.05" min="0.1" max="2"></span>
+        </div>
+        <input type="range" id="speedSlider" min="0.1" max="2" step="0.05" value="1">
+      </div>
+
+      <div class="stage-stats-toggle">
+        <label for="showLiveStats">Μετρήσεις σε πραγματικό χρόνο εντός πλαισίου</label>
+        <div class="switch"><input type="checkbox" id="showLiveStats" checked><span class="slider-pill"></span></div>
+      </div>
+
+      <div class="summary" id="summary">
+        <div class="row"><span id="sumRangeLabel">Βεληνεκές (R)</span><span id="sumRange">–</span></div>
+        <div class="row"><span>Μέγιστο ύψος (H)</span><span id="sumMaxH">–</span></div>
+        <div class="row"><span>Χρόνος πτήσης (T)</span><span id="sumFlightT">–</span></div>
+      </div>
+    </div>
+
+    <div class="main-tab-row" id="mainTabRow">
+      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+      <button type="button" class="main-tab-btn" data-tab="exercise">📝 Άσκηση</button>
+      <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
+      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-settings">
+    <div class="controls">
+      <div class="card">
+        <h2>Παράμετροι Εκτόξευσης</h2>
+
+        <div class="field">
+          <div class="field-row"><label>Τύπος βολής</label></div>
+          <div class="mode-row" id="modeRow">
+            <button type="button" class="mode-btn" data-mode="vertical">Κατακόρυφη</button>
+            <button type="button" class="mode-btn" data-mode="horizontal">Οριζόντια</button>
+            <button type="button" class="mode-btn active" data-mode="oblique">Πλάγια</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="v0">Αρχική ταχύτητα</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="v0Num" value="20" step="0.5" min="1" max="60"><span class="unit">m/s</span></span>
+          </div>
+          <input type="range" id="v0" min="1" max="60" step="0.5" value="20">
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="angle">Γωνία βολής</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="angleNum" value="45" step="0.5" min="0" max="90"><span class="unit">°</span></span>
+          </div>
+          <input type="range" id="angle" min="0" max="90" step="0.5" value="45">
+        </div>
+
+        <div class="toggle-row" id="apexRow" style="margin-bottom:14px;">
+          <label for="stopApexToggle">Διακοπή στο μέγιστο ύψος</label>
+          <div class="switch">
+            <input type="checkbox" id="stopApexToggle">
+            <span class="slider-pill"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="h0">Ύψος εκτόξευσης</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="h0Num" value="0" step="0.5" min="0" max="50"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="h0" min="0" max="50" step="0.5" value="0">
+        </div>
+
+        <div class="toggle-row dim" id="downConvRow" style="margin-bottom:14px;">
+          <label for="downConvToggle">Θετική φορά κατακ. άξονα προς τα κάτω</label>
+          <div class="switch">
+            <input type="checkbox" id="downConvToggle" disabled>
+            <span class="slider-pill"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="g">Επιτάχυνση βαρύτητας</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="gNum" value="9.8" step="0.1" min="1" max="25"><span class="unit">m/s²</span></span>
+          </div>
+          <input type="range" id="g" min="1" max="25" step="0.1" value="9.8">
+          <div class="btn-row" style="margin-top:8px;">
+            <button type="button" class="small" id="gEarthBtn">🌍 Γη (9.81 m/s²)</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <div class="field-row">
+            <label for="mass">Μάζα σώματος</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="massNum" value="1" step="0.1" min="0.1" max="20"><span class="unit">kg</span></span>
+          </div>
+          <input type="range" id="mass" min="0.1" max="20" step="0.1" value="1">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Ταχύτητα, Επιτάχυνση &amp; Αντιστάσεις</h2>
+        <div class="field">
+          <div class="field-row">
+            <label for="vecSizeSlider">Μέγεθος συμβόλων &amp; διανυσμάτων</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="vecSizeNum" value="1" step="0.1" min="0.5" max="2.5"><span class="unit">×</span></span>
+          </div>
+          <input type="range" id="vecSizeSlider" min="0.5" max="2.5" step="0.1" value="1">
+        </div>
+        <div class="toggle-row">
+          <label for="showLabel">Ετικέτα στοιχείων κίνησης</label>
+          <div class="switch"><input type="checkbox" id="showLabel" checked><span class="slider-pill"></span></div>
+        </div>
+        <div class="drag-sub open" id="labelFieldsSub">
+          <div class="mini-grid" style="margin-top:12px;">
+            <label class="mini-check"><input type="checkbox" id="lblX" checked> x</label>
+            <label class="mini-check"><input type="checkbox" id="lblY" checked> y (ύψος)</label>
+            <label class="mini-check"><input type="checkbox" id="lblDist" checked> απ. βολής</label>
+            <label class="mini-check"><input type="checkbox" id="lblVx" checked> vx</label>
+            <label class="mini-check"><input type="checkbox" id="lblVy" checked> vy</label>
+            <label class="mini-check"><input type="checkbox" id="lblVmag" checked> |v|</label>
+            <label class="mini-check"><input type="checkbox" id="lblTheta" checked> θ</label>
+            <label class="mini-check"><input type="checkbox" id="lblAccel" checked> α</label>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <label for="showVelocity"><span class="vec-ico" style="color:var(--vel-color)">v</span>Διάνυσμα ταχύτητας</label>
+          <div class="switch"><input type="checkbox" id="showVelocity" checked><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showComponents"><span class="vec-ico" style="color:var(--vx-color)">vx</span><span class="vec-ico" style="color:var(--vy-color)">vy</span>Συνιστώσες ταχύτητας</label>
+          <div class="switch"><input type="checkbox" id="showComponents"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showAccel"><span class="vec-ico" style="color:var(--acc-color)">α</span>Διάνυσμα επιτάχυνσης</label>
+          <div class="switch"><input type="checkbox" id="showAccel"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showHResistVec"><span class="vec-ico" style="color:var(--resist-color)">Fx</span>Διάνυσμα οριζ. αντίστασης</label>
+          <div class="switch"><input type="checkbox" id="showHResistVec"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showVResistVec"><span class="vec-ico" style="color:var(--resist-color)">Fy</span>Διάνυσμα κατακ. αντίστασης</label>
+          <div class="switch"><input type="checkbox" id="showVResistVec"><span class="slider-pill"></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Διανύσματα Μετατόπισης</h2>
+        <div class="toggle-row">
+          <label for="showTotalDisp"><span class="vec-ico" style="color:var(--totaldisp-color)">Δs</span>Συνολική μετατόπιση</label>
+          <div class="switch"><input type="checkbox" id="showTotalDisp"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showHDisp"><span class="vec-ico" style="color:var(--hdisp-color)">Δx</span>Οριζόντια μετατόπιση</label>
+          <div class="switch"><input type="checkbox" id="showHDisp"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showVDisp"><span class="vec-ico" style="color:var(--vdisp-color)">Δy</span>Κατακόρυφη μετατόπιση</label>
+          <div class="switch"><input type="checkbox" id="showVDisp"><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showHeightVec"><span class="vec-ico" style="color:var(--heightvec-color)">h</span>Ύψος από το έδαφος</label>
+          <div class="switch"><input type="checkbox" id="showHeightVec"><span class="slider-pill"></span></div>
+        </div>
+      </div>
+
+      <div class="card" id="targetCard">
+        <h2>Καθορισμός Βεληνεκούς</h2>
+        <div class="target-input-row">
+          <input type="number" id="targetRange" placeholder="π.χ. 35" min="0" step="0.5">
+          <button class="small" id="calcBtn">Υπολογισμός γωνίας</button>
+        </div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button class="small" id="clearTargetBtn">Καθαρισμός στόχου</button>
+        </div>
+        <div class="msg" id="targetMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Εμπόδιο στο Έδαφος</h2>
+        <div class="toggle-row">
+          <label for="obstacleToggle">Ενεργό εμπόδιο</label>
+          <div class="switch">
+            <input type="checkbox" id="obstacleToggle">
+            <span class="slider-pill"></span>
+          </div>
+        </div>
+        <div class="drag-sub" id="obstacleSub">
+          <div class="field" style="margin-top:12px;">
+            <div class="field-row">
+              <label for="obstacleDist">Απόσταση από σημείο βολής</label>
+              <span class="val-wrap"><input type="number" class="val-input" id="obstacleDistNum" value="15" step="0.5" min="0" max="100"><span class="unit">m</span></span>
+            </div>
+            <input type="range" id="obstacleDist" min="0" max="100" step="0.5" value="15">
+          </div>
+          <div class="field">
+            <div class="field-row">
+              <label for="obstacleHeight">Ύψος εμποδίου</label>
+              <span class="val-wrap"><input type="number" class="val-input" id="obstacleHeightNum" value="5" step="0.5" min="0.5" max="50"><span class="unit">m</span></span>
+            </div>
+            <input type="range" id="obstacleHeight" min="0.5" max="50" step="0.5" value="5">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <div class="field-row">
+              <label for="obstacleWidth">Πλάτος εμποδίου</label>
+              <span class="val-wrap"><input type="number" class="val-input" id="obstacleWidthNum" value="2" step="0.5" min="0.5" max="20"><span class="unit">m</span></span>
+            </div>
+            <input type="range" id="obstacleWidth" min="0.5" max="20" step="0.5" value="2">
+          </div>
+        </div>
+        <div class="msg" id="obstacleMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Αντίσταση Αέρα</h2>
+        <div class="toggle-row">
+          <label for="hResistToggle">Οριζόντια αντίσταση</label>
+          <div class="switch">
+            <input type="checkbox" id="hResistToggle">
+            <span class="slider-pill"></span>
+          </div>
+        </div>
+        <div class="drag-sub" id="hResistSub">
+          <div class="field" style="margin-top:12px; margin-bottom:0;">
+            <div class="field-row">
+              <label for="hResistN">Δύναμη αντίστασης Fx</label>
+              <span class="val-wrap"><input type="number" class="val-input" id="hResistNNum" value="5" step="0.5" min="0" max="100"><span class="unit">N</span></span>
+            </div>
+            <input type="range" id="hResistN" min="0" max="100" step="0.5" value="5">
+          </div>
+        </div>
+
+        <div class="toggle-row" style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--line-dim);">
+          <label for="vResistToggle">Κατακόρυφη αντίσταση</label>
+          <div class="switch">
+            <input type="checkbox" id="vResistToggle">
+            <span class="slider-pill"></span>
+          </div>
+        </div>
+        <div class="drag-sub" id="vResistSub">
+          <div class="field" style="margin-top:12px; margin-bottom:0;">
+            <div class="field-row">
+              <label for="vResistN">Δύναμη αντίστασης Fy</label>
+              <span class="val-wrap"><input type="number" class="val-input" id="vResistNNum" value="5" step="0.5" min="0" max="100"><span class="unit">N</span></span>
+            </div>
+            <input type="range" id="vResistN" min="0" max="100" step="0.5" value="5">
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /tab-settings -->
+
+    <div class="tab-panel" id="tab-exercise">
+      <div class="card">
+        <h2>Τύπος Βολής</h2>
+        <div class="mode-row" id="exerciseTypeRow">
+          <button type="button" class="mode-btn" data-extype="horizontal">Οριζόντια</button>
+          <button type="button" class="mode-btn" data-extype="vertical">Κατακόρυφη</button>
+          <button type="button" class="mode-btn active" data-extype="oblique">Πλάγια</button>
+        </div>
+        <div class="hint-text" id="exerciseTypeHint"></div>
+      </div>
+
+      <div class="card">
+        <h2>Δεδομένα</h2>
+        <div id="exerciseFixed"></div>
+        <div id="exerciseGiven"></div>
+
+        <h2 style="margin-top:18px;">Ζητούμενα</h2>
+        <div id="exerciseAsked"></div>
+      </div>
+
+      <div class="card">
+        <h2>Αποτελέσματα</h2>
+        <div id="exerciseResult" class="ex-result">Επίλεξε δεδομένα και ζητούμενα, μετά πάτησε «Υπολογισμός».</div>
+        <div class="btn-row" style="margin-top:14px;">
+          <button class="primary" id="exerciseSolveBtn">Υπολογισμός</button>
+          <button id="exerciseApplyBtn" disabled>▶ Εφαρμογή στην προσομοίωση</button>
+        </div>
+      </div>
+    </div><!-- /tab-exercise -->
+
+    <div class="tab-panel" id="tab-solution">
+      <div class="card">
+        <h2>Λύση</h2>
+        <div class="btn-row" style="margin-bottom:16px;">
+          <button id="solutionRefreshBtn">↻ Ανανέωση από τρέχουσα βολή</button>
+          <button id="solutionPrintBtn">🖨️ Εκτύπωση / PDF</button>
+          <button id="solutionWordBtn">📄 Λήψη Word</button>
+        </div>
+        <div id="solutionContent" class="solution-content">
+          <div class="hint-text">Η λύση υπολογίζεται αυτόματα από τις τρέχουσες τιμές της προσομοίωσης (ή από την άσκηση που έλυσες στην αντίστοιχη καρτέλα).</div>
+        </div>
+      </div>
+    </div><!-- /tab-solution -->
+
+    <div class="tab-panel" id="tab-saved">
+      <div class="card">
+        <h2>Αποθήκευση Τρέχουσας Προσομοίωσης</h2>
+        <div class="field">
+          <input type="text" id="presetNameInput" placeholder="Όνομα (π.χ. Άσκηση 3 - Πλάγια βολή)" class="preset-name-input">
+        </div>
+        <div class="btn-row">
+          <button class="primary" id="presetSaveBtn">💾 Αποθήκευση</button>
+          <button id="presetExportBtn">⬇ Εξαγωγή όλων (JSON)</button>
+          <button id="presetImportBtn">⬆ Εισαγωγή JSON</button>
+          <input type="file" id="presetImportFile" accept=".json" style="display:none;">
+        </div>
+        <div class="hint-text" style="margin-top:10px;">Οι αποθηκευμένες προσομοιώσεις μένουν στον browser αυτού του υπολογιστή. Χρησιμοποίησε «Εξαγωγή/Εισαγωγή JSON» για να τις μεταφέρεις σε άλλη συσκευή.</div>
+      </div>
+
+      <div class="card">
+        <h2>Αποθηκευμένες <span id="presetCount" style="color:var(--paper-dim); text-transform:none; letter-spacing:0; font-weight:400;"></span></h2>
+        <div id="presetList"><div class="hint-text">Δεν έχεις αποθηκεύσει καμία προσομοίωση ακόμη.</div></div>
+      </div>
+    </div><!-- /tab-saved -->
+  </div><!-- /layout -->
+
+  <footer>Κατακ. απόσταση από σημείο βολής = ύψος − ύψος εκτόξευσης (+ πάνω από το σημείο βολής, − κάτω)</footer>
+</div>
+
+<div id="printExportArea"></div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const v0Slider = document.getElementById('v0');
+  const angleSlider = document.getElementById('angle');
+  const h0Slider = document.getElementById('h0');
+  const gSlider = document.getElementById('g');
+  const gEarthBtn = document.getElementById('gEarthBtn');
+  const massSlider = document.getElementById('mass');
+  const massNum = document.getElementById('massNum');
+
+  const hResistToggle = document.getElementById('hResistToggle');
+  const hResistSub = document.getElementById('hResistSub');
+  const hResistN = document.getElementById('hResistN');
+  const hResistNNum = document.getElementById('hResistNNum');
+  const vResistToggle = document.getElementById('vResistToggle');
+  const vResistSub = document.getElementById('vResistSub');
+  const vResistN = document.getElementById('vResistN');
+  const vResistNNum = document.getElementById('vResistNNum');
+
+  const v0Num = document.getElementById('v0Num');
+  const angleNum = document.getElementById('angleNum');
+  const h0Num = document.getElementById('h0Num');
+  const gNum = document.getElementById('gNum');
+
+  const launchBtn = document.getElementById('launchBtn');
+  const slowBtn = document.getElementById('slowBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const soundBtn = document.getElementById('soundBtn');
+  const stateLabel = document.getElementById('stateLabel');
+  const speedSlider = document.getElementById('speedSlider');
+  const speedNum = document.getElementById('speedNum');
+  const showLiveStats = document.getElementById('showLiveStats');
+  const stageReadouts = document.getElementById('stageReadouts');
+
+  const apexRow = document.getElementById('apexRow');
+  const stopApexToggle = document.getElementById('stopApexToggle');
+  const downConvRow = document.getElementById('downConvRow');
+  const downConvToggle = document.getElementById('downConvToggle');
+
+  const targetRangeInput = document.getElementById('targetRange');
+  const calcBtn = document.getElementById('calcBtn');
+  const clearTargetBtn = document.getElementById('clearTargetBtn');
+  const targetMsg = document.getElementById('targetMsg');
+  const targetCard = document.getElementById('targetCard');
+
+  const modeRow = document.getElementById('modeRow');
+  const modeBtns = Array.from(modeRow.querySelectorAll('.mode-btn'));
+
+  const obstacleToggle = document.getElementById('obstacleToggle');
+  const obstacleSub = document.getElementById('obstacleSub');
+  const obstacleDist = document.getElementById('obstacleDist');
+  const obstacleHeight = document.getElementById('obstacleHeight');
+  const obstacleWidth = document.getElementById('obstacleWidth');
+  const obstacleDistNum = document.getElementById('obstacleDistNum');
+  const obstacleHeightNum = document.getElementById('obstacleHeightNum');
+  const obstacleWidthNum = document.getElementById('obstacleWidthNum');
+  const sumRangeLabel = document.getElementById('sumRangeLabel');
+
+  const showLabel = document.getElementById('showLabel');
+  const showVelocity = document.getElementById('showVelocity');
+  const showComponents = document.getElementById('showComponents');
+  const showAccel = document.getElementById('showAccel');
+  const showHResistVec = document.getElementById('showHResistVec');
+  const showVResistVec = document.getElementById('showVResistVec');
+  const showTotalDisp = document.getElementById('showTotalDisp');
+  const showHDisp = document.getElementById('showHDisp');
+  const showVDisp = document.getElementById('showVDisp');
+  const showHeightVec = document.getElementById('showHeightVec');
+
+  const lblX = document.getElementById('lblX');
+  const lblY = document.getElementById('lblY');
+  const lblDist = document.getElementById('lblDist');
+  const lblVx = document.getElementById('lblVx');
+  const lblVy = document.getElementById('lblVy');
+  const lblVmag = document.getElementById('lblVmag');
+  const lblTheta = document.getElementById('lblTheta');
+  const lblAccel = document.getElementById('lblAccel');
+  const labelFieldsSub = document.getElementById('labelFieldsSub');
+
+  const vecSizeSlider = document.getElementById('vecSizeSlider');
+  const vecSizeNum = document.getElementById('vecSizeNum');
+  let vecSizeScale = 1;
+  function applyVecSize(){
+    vecSizeScale = parseFloat(vecSizeSlider.value) || 1;
+    document.body.style.setProperty('--vec-icon-scale', vecSizeScale);
+  }
+
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const themeNameEl = document.getElementById('themeName');
+
+  const THEMES = {
+    blueprint: {
+      grid: 'rgba(143,184,217,0.14)', gridText: 'rgba(175,195,218,0.65)',
+      ground: '#8FB8D9', groundDim: 'rgba(143,184,217,0.5)',
+      buildingFill: 'rgba(110,151,190,0.16)', buildingStroke: '#8FB8D9',
+      buildingWindow: 'rgba(143,184,217,0.5)', buildingLedge: 'rgba(220,238,255,0.6)',
+      obstacleFill: 'rgba(110,151,190,0.22)', obstacleStroke: '#8FB8D9',
+      obstacleHatch: 'rgba(143,184,217,0.55)', obstacleText: 'rgba(220,238,255,0.75)',
+      targetLine: 'rgba(224,104,90,0.85)', targetFlag: '#E0685A',
+      trajectory: '#E8B84B', trajGlow: 'rgba(232,184,75,0.5)', trajGlowBlur: 4, trajDash: [1,5],
+      launchDot: 'rgba(220,238,255,0.8)',
+      ballOuter: '#6E97BE', ballMid: '#DCEEFF', ballInner: '#FFFFFF',
+      ballGlow: 'rgba(220,238,255,0.7)', ballGlowBlur: 10,
+      velColor: '#DCEEFF', vxColor: '#4ADE80', vyColor: '#FDE047', accColor: '#FF6FCF',
+      resistColor: '#E0685A',
+      totalDispColor: '#B79CFF', hDispColor: '#7DB8FF', vDispColor: '#7DE2FF', heightVecColor: '#5EEAD4',
+      burstLand: '#E8B84B', burstBlock: '#E0685A',
+      labelBg: 'rgba(11,27,48,0.9)', labelBorder: 'rgba(232,184,75,0.55)',
+      labelText: '#DCEEFF', labelLeader: 'rgba(232,184,75,0.4)',
+      fontMain: "'IBM Plex Mono', monospace"
+    },
+    minimal: {
+      grid: 'rgba(31,45,61,0.08)', gridText: 'rgba(107,118,134,0.9)',
+      ground: '#1F2D3D', groundDim: 'rgba(31,45,61,0.4)',
+      buildingFill: '#E4ECF7', buildingStroke: '#1F2D3D',
+      buildingWindow: 'rgba(31,45,61,0.35)', buildingLedge: '#1F2D3D',
+      obstacleFill: 'rgba(46,111,237,0.08)', obstacleStroke: '#2E6FED',
+      obstacleHatch: 'rgba(46,111,237,0.4)', obstacleText: '#2E6FED',
+      targetLine: 'rgba(214,69,69,0.85)', targetFlag: '#D64545',
+      trajectory: '#F0932B', trajGlow: 'rgba(240,147,43,0)', trajGlowBlur: 0, trajDash: [7,6],
+      launchDot: '#1F2D3D',
+      ballOuter: '#1F2D3D', ballMid: '#F0932B', ballInner: '#FFF3E6',
+      ballGlow: 'rgba(240,147,43,0)', ballGlowBlur: 0,
+      velColor: '#1F2D3D', vxColor: '#16A34A', vyColor: '#CA8A04', accColor: '#DB2777',
+      resistColor: '#D64545',
+      totalDispColor: '#7C4DFF', hDispColor: '#2563EB', vDispColor: '#0891B2', heightVecColor: '#0D9488',
+      burstLand: '#F0932B', burstBlock: '#D64545',
+      labelBg: '#FFFFFF', labelBorder: '#DCE3EC',
+      labelText: '#1F2D3D', labelLeader: 'rgba(31,45,61,0.35)',
+      fontMain: "'Inter', 'Helvetica Neue', Arial, sans-serif"
+    }
+  };
+  let currentTheme = 'blueprint';
+  let T = THEMES.blueprint;
+
+  const outHeight = document.getElementById('outHeight');
+  const outX = document.getElementById('outX');
+  const outDy = document.getElementById('outDy');
+  const outT = document.getElementById('outT');
+  const outV = document.getElementById('outV');
+  const outVx = document.getElementById('outVx');
+  const outVy = document.getElementById('outVy');
+  const outTheta = document.getElementById('outTheta');
+  const outAccel = document.getElementById('outAccel');
+
+  const sumRange = document.getElementById('sumRange');
+  const sumMaxH = document.getElementById('sumMaxH');
+  const sumFlightT = document.getElementById('sumFlightT');
+
+  let targetRange = null;
+
+  function fmt(n, d=1){ return (Math.abs(n) < 0.05 ? 0 : n).toFixed(d); }
+
+  function params(){
+    return {
+      v0: parseFloat(v0Slider.value),
+      angleDeg: parseFloat(angleSlider.value),
+      h0: parseFloat(h0Slider.value),
+      g: parseFloat(gSlider.value),
+      mass: parseFloat(massSlider.value),
+      stopAtApex: stopApexToggle.checked && !stopApexToggle.disabled,
+      downPositive: downConvToggle.checked && !downConvToggle.disabled,
+      hResistOn: hResistToggle.checked,
+      hResistN: parseFloat(hResistN.value),
+      vResistOn: vResistToggle.checked,
+      vResistN: parseFloat(vResistN.value),
+      obstacleOn: obstacleToggle.checked,
+      obstacleDist: parseFloat(obstacleDist.value),
+      obstacleHeight: parseFloat(obstacleHeight.value),
+      obstacleWidth: parseFloat(obstacleWidth.value)
+    };
+  }
+
+  function updateLabels(){
+    const p = params();
+    v0Num.value = p.v0.toFixed(1);
+    angleNum.value = p.angleDeg.toFixed(1);
+    h0Num.value = p.h0.toFixed(1);
+    gNum.value = p.g.toFixed(2);
+    massNum.value = p.mass.toFixed(1);
+    hResistNNum.value = p.hResistN.toFixed(1);
+    vResistNNum.value = p.vResistN.toFixed(1);
+    obstacleDistNum.value = p.obstacleDist.toFixed(1);
+    obstacleHeightNum.value = p.obstacleHeight.toFixed(1);
+    obstacleWidthNum.value = p.obstacleWidth.toFixed(1);
+  }
+
+  // keeps a range slider and its typeable number input mirrored; typing commits on blur/Enter
+  function linkSliderNumber(sliderEl, numEl, onChange){
+    sliderEl.addEventListener('input', () => {
+      numEl.value = sliderEl.value;
+      onChange();
+    });
+    numEl.addEventListener('change', () => {
+      const min = parseFloat(sliderEl.min), max = parseFloat(sliderEl.max);
+      let v = parseFloat(numEl.value);
+      if (isNaN(v)) v = parseFloat(sliderEl.value);
+      v = Math.min(max, Math.max(min, v));
+      sliderEl.value = v;
+      numEl.value = v;
+      onChange();
+    });
+  }
+
+  function obstacleWallWidth(p){
+    return p.obstacleWidth;
+  }
+
+  // resistance-only acceleration contributions (constant-force model: F/m opposing current motion)
+  function hResistAccel(p, vx){
+    if (!p.hResistOn) return 0;
+    if (vx > 1e-9) return -p.hResistN / p.mass;
+    if (vx < -1e-9) return p.hResistN / p.mass;
+    return 0;
+  }
+  function vResistAccel(p, vy){
+    if (!p.vResistOn) return 0;
+    if (vy > 1e-9) return -p.vResistN / p.mass;
+    if (vy < -1e-9) return p.vResistN / p.mass;
+    return 0;
+  }
+
+  function buildingWidthFor(h0){
+    if (h0 < 0.001) return 0;
+    return Math.min(14, Math.max(3, h0 * 0.3));
+  }
+
+  // ---- physics core: precompute the whole trajectory as a sampled path ----
+  let sim = null; // {points:[{t,x,y,vx,vy}], outcome:'landed'|'blocked', dt, maxH}
+
+  function buildFullPath(p){
+    const rad = p.angleDeg * Math.PI/180;
+    let vx = p.v0*Math.cos(rad), vy = p.v0*Math.sin(rad), x = 0, y = p.h0, t = 0;
+    const dt = 0.008, maxT = 60;
+    const w = p.obstacleOn ? obstacleWallWidth(p) : 0;
+    const points = [{t, x, y, vx, vy}];
+    let maxH = p.h0;
+    let outcome = 'landed';
+    let apexIndex = null;
+    while (t < maxT){
+      const ax = hResistAccel(p, vx);
+      const ay = -p.g + vResistAccel(p, vy);
+      const prevX = x, prevY = y, prevVx = vx, prevVy = vy;
+      vx += ax*dt; vy += ay*dt;
+      if (p.hResistOn && ((prevVx > 0 && vx < 0) || (prevVx < 0 && vx > 0))) vx = 0;
+      x += vx*dt; y += vy*dt; t += dt;
+      maxH = Math.max(maxH, y);
+
+      if (apexIndex === null && prevVy > 0 && vy <= 0) apexIndex = points.length;
+
+      if (p.obstacleOn){
+        const entered = x >= p.obstacleDist && x <= p.obstacleDist + w;
+        const crossed = prevX < p.obstacleDist + w && x >= p.obstacleDist;
+        if ((entered || crossed) && y <= p.obstacleHeight && y > 0){
+          x = Math.max(p.obstacleDist, Math.min(x, p.obstacleDist + w));
+          points.push({t, x, y, vx, vy});
+          return { points, outcome: 'blocked', dt, maxH, apexIndex };
+        }
+      }
+      if (y <= 0){
+        const frac = prevY / (prevY - y || 1);
+        x = prevX + (x - prevX)*frac;
+        y = 0;
+        points.push({t, x, y, vx, vy});
+        return { points, outcome: 'landed', dt, maxH, apexIndex };
+      }
+      points.push({t, x, y, vx, vy});
+    }
+    return { points, outcome, dt, maxH, apexIndex };
+  }
+
+  function fastFinalX(angleDeg, p){
+    const rad = angleDeg*Math.PI/180;
+    let vx = p.v0*Math.cos(rad), vy = p.v0*Math.sin(rad), x=0, y=p.h0, t=0;
+    const dt = 0.02, maxT = 400;
+    const w = p.obstacleOn ? obstacleWallWidth(p) : 0;
+    while (t < maxT){
+      const ax = hResistAccel(p, vx);
+      const ay = -p.g + vResistAccel(p, vy);
+      const prevX = x, prevVx = vx;
+      vx += ax*dt; vy += ay*dt;
+      if (p.hResistOn && ((prevVx > 0 && vx < 0) || (prevVx < 0 && vx > 0))) vx = 0;
+      x += vx*dt; y += vy*dt; t += dt;
+      if (p.obstacleOn){
+        const entered = x >= p.obstacleDist && x <= p.obstacleDist + w;
+        const crossed = prevX < p.obstacleDist + w && x >= p.obstacleDist;
+        if ((entered || crossed) && y <= p.obstacleHeight && y > 0){
+          return Math.max(p.obstacleDist, Math.min(x, p.obstacleDist + w));
+        }
+      }
+      if (y <= 0) return x;
+    }
+    return x;
+  }
+
+  function findAngleForRange(targetR){
+    const p = params();
+    let prevA = 0.5, prevR = fastFinalX(prevA, p);
+    let maxR = prevR, maxA = prevA;
+    for (let a = 1; a <= 89.5; a += 0.5){
+      const r = fastFinalX(a, p);
+      if (r > maxR){ maxR = r; maxA = a; }
+      if ((prevR - targetR) * (r - targetR) <= 0 && r !== prevR){
+        const frac = (targetR - prevR) / (r - prevR);
+        return { found:true, angle: prevA + frac*(a - prevA) };
+      }
+      prevA = a; prevR = r;
+    }
+    return { found:false, bestAngle: maxA, maxRange: maxR };
+  }
+
+  // ---- scaling ----
+  let scaleInfo = { scale:1, marginL:62, marginB:56, marginT:26, marginR:26, buildingWidth:0 };
+  let dpr = window.devicePixelRatio || 1;
+
+  function estimateExtents(p){
+    const rad = p.angleDeg*Math.PI/180;
+    const vx0 = p.v0*Math.cos(rad), vy0 = p.v0*Math.sin(rad);
+    const disc = Math.max(vy0*vy0 + 2*p.g*p.h0, 0);
+    const tLand = (vy0 + Math.sqrt(disc)) / p.g;
+    let range = vx0 * tLand;
+    if (p.hResistOn || p.vResistOn || p.obstacleOn){ range = fastFinalX(p.angleDeg, p); }
+    let hMax = p.h0 + (vy0 > 0 ? (vy0*vy0)/(2*p.g) : 0);
+    if (p.obstacleOn){
+      range = Math.max(range, p.obstacleDist + 6);
+      hMax = Math.max(hMax, p.obstacleHeight);
+    }
+    return {
+      range: Math.max(range, targetRange||0, 5),
+      hMax: Math.max(hMax, p.h0, 3)
+    };
+  }
+
+  function computeScale(){
+    const p0 = params();
+    const ext = estimateExtents(p0);
+    const bw = buildingWidthFor(p0.h0);
+    const cw = canvas.width, ch = canvas.height;
+    const plotW = cw - scaleInfo.marginL - scaleInfo.marginR;
+    const plotH = ch - scaleInfo.marginT - scaleInfo.marginB;
+    const totalRange = bw + ext.range * 1.22;
+    const sX = plotW / totalRange;
+    const sY = plotH / (ext.hMax * 1.35);
+    scaleInfo.scale = Math.min(sX, sY);
+    scaleInfo.buildingWidth = bw;
+    scaleInfo.originX = scaleInfo.marginL + bw*scaleInfo.scale;
+    scaleInfo.originY = ch - scaleInfo.marginB;
+  }
+
+  function toPx(x, y){
+    return {
+      px: scaleInfo.originX + x*scaleInfo.scale,
+      py: scaleInfo.originY - y*scaleInfo.scale
+    };
+  }
+
+  function niceStep(scale, targetPx){
+    const raw = targetPx / scale;
+    const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const norm = raw / mag;
+    let step;
+    if (norm < 1.5) step = 1;
+    else if (norm < 3.5) step = 2;
+    else if (norm < 7.5) step = 5;
+    else step = 10;
+    return step * mag;
+  }
+
+  // ---- playback state ----
+  let simTime = 0;
+  let playing = false;
+  let dragging = false;
+  let rafId = null;
+  let lastTime = null;
+  let apexPaused = false;
+
+  function currentIndex(){
+    if (!sim) return 0;
+    const idx = Math.round(simTime / sim.dt);
+    return Math.max(0, Math.min(sim.points.length - 1, idx));
+  }
+  function currentSample(){ return sim.points[currentIndex()]; }
+  function lastSample(){ return sim.points[sim.points.length - 1]; }
+  function apexTime(){
+    return (sim && sim.apexIndex !== null) ? sim.points[sim.apexIndex].t : null;
+  }
+
+  function setPlaying(v){
+    playing = v;
+    if (playing){
+      lastTime = null;
+      if (!rafId) rafId = requestAnimationFrame(loop);
+      const last = sim ? lastSample() : null;
+      if (last && simTime < last.t - 1e-6) startWhistle();
+    } else if (rafId){
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    if (!playing) stopWhistle();
+    updateLaunchLabel();
+    updateStateLabel();
+  }
+
+  function updateLaunchLabel(){
+    if (playing){ launchBtn.textContent = '⏸ Παύση'; return; }
+    if (!sim || simTime <= 0.0005){ launchBtn.textContent = '▶ Εκτόξευση'; return; }
+    const last = lastSample();
+    launchBtn.textContent = (simTime >= last.t - 1e-6) ? '↻ Επανάληψη' : '▶ Συνέχεια';
+  }
+
+  function loop(now){
+    if (lastTime === null) lastTime = now;
+    let elapsed = (now - lastTime)/1000;
+    lastTime = now;
+    elapsed = Math.min(elapsed, 0.05);
+    const speed = parseFloat(speedSlider.value) || 1;
+
+    if (playing && !dragging){
+      const p0 = params();
+      const last = lastSample();
+      simTime += elapsed * speed;
+      updateWhistle(currentSample());
+
+      const aT = apexTime();
+      if (p0.stopAtApex && aT !== null && !apexPaused && simTime >= aT){
+        simTime = aT;
+        apexPaused = true;
+        render();
+        setPlaying(false);
+        return;
+      }
+      if (simTime >= last.t){
+        simTime = last.t;
+        render();
+        setPlaying(false);
+        return;
+      }
+    }
+    render();
+    if (playing) rafId = requestAnimationFrame(loop);
+  }
+
+  function updateStateLabel(){
+    if (!sim) return;
+    if (dragging){ stateLabel.textContent = 'ΧΕΙΡΟΚΙΝΗΤΟ'; return; }
+    if (playing){ stateLabel.textContent = 'ΣΕ ΠΤΗΣΗ'; return; }
+    const last = lastSample();
+    if (simTime <= 0.0005){ stateLabel.textContent = 'ΕΤΟΙΜΟ'; return; }
+    const aT = apexTime();
+    if (apexPaused && aT !== null && Math.abs(simTime - aT) < 1e-6){
+      stateLabel.textContent = 'ΜΕΓΙΣΤΟ ΥΨΟΣ (παύση)';
+      return;
+    }
+    if (simTime >= last.t - 1e-6){
+      stateLabel.textContent = sim.outcome === 'blocked' ? 'ΧΤΥΠΗΣΕ ΕΜΠΟΔΙΟ' : 'ΠΡΟΣΓΕΙΩΘΗΚΕ';
+      return;
+    }
+    stateLabel.textContent = 'ΠΑΥΣΗ';
+  }
+
+  function updateSummary(){
+    const last = lastSample();
+    sumRangeLabel.textContent = sim.outcome === 'blocked' ? 'Απόσταση πρόσκρουσης' : 'Βεληνεκές (R)';
+    sumRange.textContent = fmt(last.x) + ' m';
+    sumMaxH.textContent = fmt(sim.maxH) + ' m';
+    sumFlightT.textContent = fmt(last.t, 2) + ' s';
+  }
+
+  function resetSim(){
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null; lastTime = null; playing = false; dragging = false; apexPaused = false;
+    if (explosionRafId) cancelAnimationFrame(explosionRafId);
+    explosionRafId = null; explosionStart = null; wasAtImpactEnd = false;
+    stopWhistle();
+    sim = buildFullPath(params());
+    simTime = 0;
+    computeScale();
+    updateLaunchLabel();
+    updateSummary();
+    updateStateLabel();
+    render();
+  }
+
+  // ---- sound (synthesized via Web Audio, no external assets) ----
+  let soundOn = true;
+  let audioCtx = null;
+  let whistleOsc = null, whistleFilter = null, whistleGain = null;
+
+  function ensureAudio(){
+    if (!audioCtx){
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e){ audioCtx = null; }
+    }
+    if (audioCtx && audioCtx.state === 'suspended'){
+      audioCtx.resume().catch(()=>{});
+    }
+    return audioCtx;
+  }
+
+  function startWhistle(){
+    if (!soundOn) return;
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    stopWhistle();
+    whistleOsc = ctx.createOscillator();
+    whistleOsc.type = 'triangle';
+    whistleFilter = ctx.createBiquadFilter();
+    whistleFilter.type = 'bandpass';
+    whistleFilter.Q.value = 0.9;
+    whistleGain = ctx.createGain();
+    whistleGain.gain.setValueAtTime(0, ctx.currentTime);
+    whistleGain.gain.linearRampToValueAtTime(0.11, ctx.currentTime + 0.1);
+    whistleOsc.frequency.setValueAtTime(500, ctx.currentTime);
+    whistleFilter.frequency.setValueAtTime(900, ctx.currentTime);
+    whistleOsc.connect(whistleFilter);
+    whistleFilter.connect(whistleGain);
+    whistleGain.connect(ctx.destination);
+    try { whistleOsc.start(); } catch(e){}
+  }
+
+  function updateWhistle(s){
+    if (!whistleOsc || !audioCtx) return;
+    const speed = Math.hypot(s.vx, s.vy);
+    const freq = Math.max(180, Math.min(1100, 260 + speed*14));
+    const t = audioCtx.currentTime;
+    whistleOsc.frequency.linearRampToValueAtTime(freq, t + 0.06);
+    if (whistleFilter) whistleFilter.frequency.linearRampToValueAtTime(freq*1.6, t + 0.06);
+  }
+
+  function stopWhistle(){
+    if (whistleGain && audioCtx){
+      try{
+        const t = audioCtx.currentTime;
+        whistleGain.gain.cancelScheduledValues(t);
+        whistleGain.gain.setValueAtTime(whistleGain.gain.value, t);
+        whistleGain.gain.linearRampToValueAtTime(0, t + 0.06);
+      } catch(e){}
+    }
+    const oscToStop = whistleOsc;
+    if (oscToStop){
+      setTimeout(() => { try{ oscToStop.stop(); }catch(e){} }, 90);
+    }
+    whistleOsc = null; whistleFilter = null; whistleGain = null;
+  }
+
+  function playExplosionSound(){
+    if (!soundOn) return;
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const dur = 0.55;
+    const bufferSize = Math.floor(ctx.sampleRate * dur);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i=0;i<bufferSize;i++){
+      data[i] = (Math.random()*2-1) * Math.pow(1 - i/bufferSize, 2);
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1800, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + dur);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.9, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    noise.start(); noise.stop(ctx.currentTime + dur);
+
+    const thump = ctx.createOscillator();
+    thump.type = 'sine';
+    thump.frequency.setValueAtTime(120, ctx.currentTime);
+    thump.frequency.exponentialRampToValueAtTime(38, ctx.currentTime + 0.3);
+    const thumpGain = ctx.createGain();
+    thumpGain.gain.setValueAtTime(0.8, ctx.currentTime);
+    thumpGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.32);
+    thump.connect(thumpGain); thumpGain.connect(ctx.destination);
+    thump.start(); thump.stop(ctx.currentTime + 0.32);
+  }
+
+  // ---- obstacle/ground impact explosion effect ----
+  const EXPLOSION_DURATION = 850;
+  let explosionStart = null;
+  let explosionParticles = [];
+  let explosionRafId = null;
+  let wasAtImpactEnd = false;
+
+  function triggerExplosion(){
+    explosionStart = performance.now();
+    explosionParticles = [];
+    const n = 18;
+    for (let i=0;i<n;i++){
+      explosionParticles.push({
+        ang: Math.random()*Math.PI*2,
+        speed: 30 + Math.random()*70,
+        size: 1.6 + Math.random()*3.2,
+        hot: Math.random() > 0.45
+      });
+    }
+    playExplosionSound();
+    if (explosionRafId) cancelAnimationFrame(explosionRafId);
+    explosionRafId = requestAnimationFrame(explosionDriver);
+  }
+
+  function explosionDriver(){
+    render();
+    const elapsed = performance.now() - explosionStart;
+    if (elapsed < EXPLOSION_DURATION){
+      explosionRafId = requestAnimationFrame(explosionDriver);
+    } else {
+      explosionRafId = null;
+    }
+  }
+
+  function drawExplosion(cx, cy, progress){
+    ctx.save();
+
+    // bright flash, quick fade
+    if (progress < 0.4){
+      const flashA = 1 - progress/0.4;
+      const flashR = 34 * dpr;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, flashR);
+      grad.addColorStop(0, 'rgba(255,244,214,' + (flashA*0.95) + ')');
+      grad.addColorStop(0.5, 'rgba(255,190,90,' + (flashA*0.55) + ')');
+      grad.addColorStop(1, 'rgba(255,190,90,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, flashR, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // expanding shockwave ring
+    const ringR = (8 + progress*66) * dpr;
+    ctx.strokeStyle = 'rgba(255,160,60,' + ((1-progress)*0.85) + ')';
+    ctx.lineWidth = (3 * (1 - progress*0.6)) * dpr;
+    ctx.beginPath();
+    ctx.arc(cx, cy, ringR, 0, Math.PI*2);
+    ctx.stroke();
+
+    // flying debris particles with a light gravity arc
+    explosionParticles.forEach(p => {
+      const dist = p.speed * progress * dpr;
+      const fall = 55 * progress * progress * dpr;
+      const px = cx + Math.cos(p.ang) * dist;
+      const py = cy + Math.sin(p.ang) * dist * 0.6 + fall;
+      const alpha = Math.max(0, 1 - progress*1.15);
+      const col = p.hot ? '255,150,60' : '224,104,90';
+      ctx.fillStyle = 'rgba(' + col + ',' + alpha + ')';
+      ctx.beginPath();
+      ctx.arc(px, py, Math.max(0.3, p.size*(1-progress*0.5))*dpr, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  }
+
+  function drawWorldVector(wx1, wy1, wx2, wy2, color, dash){
+    if (Math.abs(wx2-wx1) < 1e-4 && Math.abs(wy2-wy1) < 1e-4) return;
+    const from = toPx(wx1, wy1), to = toPx(wx2, wy2);
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2 * vecSizeScale * dpr;
+    ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    ctx.moveTo(from.px, from.py);
+    ctx.lineTo(to.px, to.py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const ang = Math.atan2(to.py - from.py, to.px - from.px);
+    const hl = 8 * vecSizeScale * dpr;
+    ctx.beginPath();
+    ctx.moveTo(to.px, to.py);
+    ctx.lineTo(to.px - hl*Math.cos(ang-0.4), to.py - hl*Math.sin(ang-0.4));
+    ctx.lineTo(to.px - hl*Math.cos(ang+0.4), to.py - hl*Math.sin(ang+0.4));
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawVector(wx, wy, vx, vy, factor, color, dash){
+    const mag = Math.hypot(vx, vy);
+    if (mag < 1e-4) return;
+    const from = toPx(wx, wy);
+    const lenPx = Math.min(90*vecSizeScale*dpr, Math.max(16*vecSizeScale*dpr, mag*factor*vecSizeScale*dpr));
+    const ux = vx/mag, uy = vy/mag;
+    const toXY = { px: from.px + ux*lenPx, py: from.py - uy*lenPx };
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2 * vecSizeScale * dpr;
+    ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    ctx.moveTo(from.px, from.py);
+    ctx.lineTo(toXY.px, toXY.py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const ang = Math.atan2(toXY.py - from.py, toXY.px - from.px);
+    const hl = 8 * vecSizeScale * dpr;
+    ctx.beginPath();
+    ctx.moveTo(toXY.px, toXY.py);
+    ctx.lineTo(toXY.px - hl*Math.cos(ang-0.4), toXY.py - hl*Math.sin(ang-0.4));
+    ctx.lineTo(toXY.px - hl*Math.cos(ang+0.4), toXY.py - hl*Math.sin(ang+0.4));
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawLabelBox(s, p0){
+    const d = Math.hypot(s.x - 0, s.y - p0.h0);
+    const vmag = Math.hypot(s.vx, s.vy);
+    const theta = Math.atan2(s.vy, s.vx) * 180/Math.PI;
+    const ax = hResistAccel(p0, s.vx), ay = -p0.g + vResistAccel(p0, s.vy);
+    const amag = Math.hypot(ax, ay);
+
+    const lines = [];
+    if (lblX.checked) lines.push('x: ' + fmt(s.x) + ' m');
+    if (lblY.checked) lines.push('y (ύψος): ' + fmt(s.y) + ' m');
+    if (lblDist.checked) lines.push('απ. βολής: ' + fmt(d) + ' m');
+    if (lblVx.checked) lines.push('vx: ' + fmt(s.vx) + ' m/s');
+    if (lblVy.checked) lines.push('vy: ' + fmt(p0.downPositive ? -s.vy : s.vy) + ' m/s');
+    if (lblVmag.checked) lines.push('|v|: ' + fmt(vmag) + ' m/s');
+    if (lblTheta.checked) lines.push('θ: ' + fmt(theta,1) + '°');
+    if (lblAccel.checked) lines.push('α: ' + fmt(amag,2) + ' m/s²');
+    if (lines.length === 0) return;
+
+    const fontSize = (lines.length <= 1 ? 24 : lines.length <= 2 ? 20 : lines.length <= 3 ? 18 : lines.length <= 4 ? 16 : lines.length <= 6 ? 14 : 13) * dpr;
+    const lineH = fontSize + 6*dpr;
+
+    ctx.save();
+    ctx.font = fontSize + "px " + T.fontMain;
+    const padX = 11*dpr, padY = 9*dpr;
+    let boxW = 0;
+    lines.forEach(l => { boxW = Math.max(boxW, ctx.measureText(l).width); });
+    boxW += padX*2;
+    const boxH = lines.length*lineH + padY*2 - 4*dpr;
+
+    const proj = toPx(s.x, s.y);
+    let bx = proj.px + 16*dpr, by = proj.py - boxH - 16*dpr;
+    const cw = canvas.width, ch = canvas.height;
+    if (bx + boxW > cw - 8) bx = proj.px - boxW - 16*dpr;
+    if (by < 8) by = proj.py + 16*dpr;
+    if (by + boxH > ch - 8) by = ch - boxH - 8;
+
+    ctx.strokeStyle = T.labelLeader;
+    ctx.lineWidth = 1 * dpr;
+    ctx.beginPath();
+    ctx.moveTo(proj.px, proj.py);
+    ctx.lineTo(bx + (bx < proj.px ? boxW : 0), by + boxH/2);
+    ctx.stroke();
+
+    ctx.fillStyle = T.labelBg;
+    ctx.strokeStyle = T.labelBorder;
+    ctx.lineWidth = 1 * dpr;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, by, boxW, boxH, 4*dpr);
+    else ctx.rect(bx, by, boxW, boxH);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = T.labelText;
+    lines.forEach((l,i) => { ctx.fillText(l, bx+padX, by+padY+fontSize-2*dpr+i*lineH); });
+    ctx.restore();
+  }
+
+  function updateReadouts(s, p0){
+    const sgn = p0.downPositive ? -1 : 1;
+    outHeight.textContent = fmt(s.y);
+    outX.textContent = fmt(s.x);
+    const dy = sgn * (s.y - p0.h0);
+    outDy.textContent = (dy >= 0 ? '+' : '') + fmt(dy);
+    outT.textContent = fmt(s.t, 2);
+    outV.textContent = fmt(Math.hypot(s.vx, s.vy));
+    outVx.textContent = fmt(s.vx);
+    outVy.textContent = fmt(sgn * s.vy);
+    outTheta.textContent = fmt(Math.atan2(s.vy, s.vx)*180/Math.PI, 1);
+    const ax = hResistAccel(p0, s.vx), ay = -p0.g + vResistAccel(p0, s.vy);
+    outAccel.textContent = fmt(Math.hypot(ax, ay), 2);
+  }
+
+  // ---- main render ----
+  function render(){
+    if (!sim) return;
+    T = THEMES[currentTheme];
+    const p0 = params();
+    const s = currentSample();
+    const cw = canvas.width, ch = canvas.height;
+    ctx.clearRect(0,0,cw,ch);
+
+    // measurement grid
+    const stepM = niceStep(scaleInfo.scale, 46);
+    ctx.strokeStyle = T.grid;
+    ctx.lineWidth = 1 * dpr;
+    ctx.font = (16*dpr) + "px " + T.fontMain;
+    ctx.fillStyle = T.gridText;
+    let xTickIdx = 0;
+    for (let x = 0; ; x += stepM){
+      const pp = toPx(x, 0);
+      if (pp.px > cw - scaleInfo.marginR + 4) break;
+      ctx.beginPath();
+      ctx.moveTo(pp.px, scaleInfo.marginT);
+      ctx.lineTo(pp.px, scaleInfo.originY);
+      ctx.stroke();
+      if (x > 0){
+        if (xTickIdx % 2 === 0) ctx.fillText(Math.round(x), pp.px - 9*dpr, scaleInfo.originY + 22*dpr);
+        xTickIdx++;
+      }
+    }
+    for (let y = 0; ; y += stepM){
+      const pp = toPx(0, y);
+      if (pp.py < scaleInfo.marginT - 4) break;
+      ctx.beginPath();
+      ctx.moveTo(scaleInfo.marginL, pp.py);
+      ctx.lineTo(cw - scaleInfo.marginR, pp.py);
+      ctx.stroke();
+      ctx.fillText(Math.round(y), 9*dpr, pp.py + 6*dpr);
+    }
+
+    // ground
+    ctx.strokeStyle = T.ground;
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath();
+    ctx.moveTo(scaleInfo.marginL - 14, scaleInfo.originY);
+    ctx.lineTo(cw - scaleInfo.marginR, scaleInfo.originY);
+    ctx.stroke();
+    ctx.save();
+    ctx.strokeStyle = T.groundDim;
+    ctx.lineWidth = 1 * dpr;
+    for (let i=0;i<12;i++){
+      const gx = scaleInfo.marginL - 14 + i*3.2;
+      ctx.beginPath();
+      ctx.moveTo(gx, scaleInfo.originY);
+      ctx.lineTo(gx-6, scaleInfo.originY+8);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // building (elevated launch)
+    if (p0.h0 > 0.001 && scaleInfo.buildingWidth > 0){
+      const bw = scaleInfo.buildingWidth;
+      const baseL = toPx(-bw, 0), topR = toPx(0, p0.h0);
+      const rectX = baseL.px, rectY = topR.py, rectW = topR.px - baseL.px, rectH = baseL.py - topR.py;
+      ctx.save();
+      ctx.fillStyle = T.buildingFill;
+      ctx.fillRect(rectX, rectY, rectW, rectH);
+      ctx.strokeStyle = T.buildingStroke;
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.strokeRect(rectX, rectY, rectW, rectH);
+      ctx.strokeStyle = T.buildingWindow;
+      ctx.lineWidth = 1 * dpr;
+      const cols = Math.max(1, Math.round(rectW/16));
+      const rows = Math.max(1, Math.round(rectH/20));
+      const padXc = rectW/cols, padYc = rectH/rows;
+      for (let r=0;r<rows;r++){
+        for (let c=0;c<cols;c++){
+          const wx = rectX + c*padXc + padXc*0.25;
+          const wy = rectY + r*padYc + padYc*0.25;
+          const ww = padXc*0.5, wh = padYc*0.5;
+          if (ww > 2 && wh > 2) ctx.strokeRect(wx, wy, ww, wh);
+        }
+      }
+      ctx.strokeStyle = T.buildingLedge;
+      ctx.lineWidth = 1.5 * dpr;
+      for (let i=0;i<=6;i++){
+        const rx = rectX + (rectW*i/6);
+        ctx.beginPath();
+        ctx.moveTo(rx, rectY);
+        ctx.lineTo(rx, rectY-6);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // obstacle wall
+    if (p0.obstacleOn){
+      const w = obstacleWallWidth(p0);
+      const base = toPx(p0.obstacleDist, 0);
+      const top = toPx(p0.obstacleDist + w, p0.obstacleHeight);
+      const rectX = base.px, rectY = top.py, rectW = top.px - base.px, rectH = base.py - top.py;
+      ctx.save();
+      ctx.fillStyle = T.obstacleFill;
+      ctx.fillRect(rectX, rectY, rectW, rectH);
+      ctx.strokeStyle = T.obstacleStroke;
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.strokeRect(rectX, rectY, rectW, rectH);
+      ctx.beginPath();
+      ctx.strokeStyle = T.obstacleHatch;
+      ctx.lineWidth = 1 * dpr;
+      const hatchGap = 7;
+      for (let hx = rectX - rectH; hx < rectX + rectW; hx += hatchGap){
+        ctx.moveTo(Math.max(hx, rectX), rectY + Math.max(0, rectX - hx));
+        ctx.lineTo(Math.min(hx + rectH, rectX + rectW), rectY + rectH - Math.max(0, (hx+rectH)-(rectX+rectW)));
+      }
+      ctx.stroke();
+      ctx.restore();
+      ctx.font = (12*dpr) + "px " + T.fontMain;
+      ctx.fillStyle = T.obstacleText;
+      ctx.fillText('εμπόδιο ' + p0.obstacleHeight.toFixed(1) + 'm', rectX, rectY - 6);
+    }
+
+    // target marker
+    if (targetRange !== null){
+      const tp = toPx(targetRange, 0);
+      ctx.save();
+      ctx.strokeStyle = T.targetLine;
+      ctx.setLineDash([5,4]);
+      ctx.lineWidth = 1.3 * dpr;
+      ctx.beginPath();
+      ctx.moveTo(tp.px, scaleInfo.originY);
+      ctx.lineTo(tp.px, scaleInfo.originY - 30);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = T.targetFlag;
+      ctx.beginPath();
+      ctx.moveTo(tp.px, scaleInfo.originY - 30);
+      ctx.lineTo(tp.px + 12, scaleInfo.originY - 25);
+      ctx.lineTo(tp.px, scaleInfo.originY - 20);
+      ctx.closePath();
+      ctx.fill();
+      ctx.font = (12*dpr) + "px " + T.fontMain;
+      ctx.fillText('στόχος ' + targetRange + 'm', tp.px + 4, scaleInfo.originY - 34);
+      ctx.restore();
+    }
+
+    // trajectory traced so far
+    const idx = currentIndex();
+    if (idx > 0){
+      ctx.save();
+      ctx.strokeStyle = T.trajectory;
+      ctx.lineWidth = 2 * dpr;
+      ctx.setLineDash(T.trajDash);
+      ctx.lineCap = 'round';
+      ctx.shadowColor = T.trajGlow;
+      ctx.shadowBlur = T.trajGlowBlur * dpr;
+      ctx.beginPath();
+      const first = toPx(sim.points[0].x, sim.points[0].y);
+      ctx.moveTo(first.px, first.py);
+      const stride = Math.max(1, Math.floor(idx/400));
+      for (let i=stride;i<=idx;i+=stride){
+        const pp = toPx(sim.points[i].x, sim.points[i].y);
+        ctx.lineTo(pp.px, pp.py);
+      }
+      const lastPt = toPx(s.x, s.y);
+      ctx.lineTo(lastPt.px, lastPt.py);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // launch point marker
+    const lp = toPx(0, p0.h0);
+    ctx.fillStyle = T.launchDot;
+    ctx.beginPath();
+    ctx.arc(lp.px, lp.py, 3*dpr, 0, Math.PI*2);
+    ctx.fill();
+
+    // projectile
+    const proj = toPx(s.x, s.y);
+    const grad = ctx.createRadialGradient(proj.px-2*dpr, proj.py-2*dpr, 1, proj.px, proj.py, 9*dpr);
+    grad.addColorStop(0, T.ballInner);
+    grad.addColorStop(0.5, T.ballMid);
+    grad.addColorStop(1, T.ballOuter);
+    ctx.save();
+    ctx.shadowColor = T.ballGlow;
+    ctx.shadowBlur = T.ballGlowBlur * dpr;
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(proj.px, proj.py, 7*dpr, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // vectors
+    const axNet = hResistAccel(p0, s.vx);
+    const ayNet = -p0.g + vResistAccel(p0, s.vy);
+    if (showVelocity.checked) drawVector(s.x, s.y, s.vx, s.vy, 3.2, T.velColor);
+    if (showComponents.checked){
+      drawVector(s.x, s.y, s.vx, 0, 3.2, T.vxColor, [4,3]);
+      drawVector(s.x, s.y, 0, s.vy, 3.2, T.vyColor, [4,3]);
+    }
+    if (showAccel.checked) drawVector(s.x, s.y, axNet, ayNet, 6, T.accColor);
+    if (showHResistVec.checked && p0.hResistOn) drawVector(s.x, s.y, hResistAccel(p0, s.vx), 0, 6, T.resistColor);
+    if (showVResistVec.checked && p0.vResistOn) drawVector(s.x, s.y, 0, vResistAccel(p0, s.vy), 6, T.resistColor);
+
+    // displacement vectors (drawn true-to-scale, not velocity-scaled)
+    if (showTotalDisp.checked) drawWorldVector(0, p0.h0, s.x, s.y, T.totalDispColor);
+    if (showHDisp.checked) drawWorldVector(0, p0.h0, s.x, p0.h0, T.hDispColor, [4,3]);
+    if (showVDisp.checked) drawWorldVector(s.x, p0.h0, s.x, s.y, T.vDispColor, [4,3]);
+    if (showHeightVec.checked) drawWorldVector(s.x, 0, s.x, s.y, T.heightVecColor, [2,3]);
+
+    // apex checkpoint marker (shown whenever the current frame is at the recorded max-height point)
+    if (p0.stopAtApex && sim.apexIndex !== null && idx === sim.apexIndex){
+      const apexPx = toPx(s.x, s.y);
+      ctx.save();
+      ctx.strokeStyle = T.trajectory;
+      ctx.setLineDash([5,4]);
+      ctx.lineWidth = 1.3 * dpr;
+      ctx.beginPath();
+      ctx.moveTo(scaleInfo.marginL - 14, apexPx.py);
+      ctx.lineTo(cw - scaleInfo.marginR, apexPx.py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = (13*dpr) + "px " + T.fontMain;
+      ctx.fillStyle = T.trajectory;
+      ctx.fillText('μέγιστο ύψος', cw - scaleInfo.marginR - 104*dpr, apexPx.py - 7*dpr);
+      ctx.restore();
+    }
+
+    // impact explosion once path fully played to its true end (ground landing or obstacle hit)
+    const last = lastSample();
+    const atImpactEnd = idx >= sim.points.length - 1 && simTime >= last.t - 1e-6;
+
+    if (atImpactEnd){
+      if (!wasAtImpactEnd) triggerExplosion();
+      const land = toPx(last.x, last.y);
+      const progress = explosionStart === null ? 1 : Math.min(1, (performance.now() - explosionStart) / EXPLOSION_DURATION);
+      drawExplosion(land.px, land.py, progress);
+    }
+    wasAtImpactEnd = atImpactEnd;
+
+    // on-body data label (drawn last, on top)
+    if (showLabel.checked) drawLabelBox(s, p0);
+
+    updateReadouts(s, p0);
+  }
+
+  // ---- controls wiring ----
+  launchBtn.addEventListener('click', () => {
+    if (playing){ setPlaying(false); return; }
+    const last = lastSample();
+    if (simTime >= last.t - 1e-6) simTime = 0;
+    setPlaying(true);
+  });
+  resetBtn.addEventListener('click', resetSim);
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊 Ήχος' : '🔇 Σίγαση';
+    if (!soundOn) stopWhistle();
+    else ensureAudio();
+  });
+
+  slowBtn.addEventListener('click', () => {
+    const cur = parseFloat(speedSlider.value);
+    const next = cur <= 0.3 ? 1 : 0.25;
+    speedSlider.value = next;
+    speedNum.value = next;
+  });
+  linkSliderNumber(speedSlider, speedNum, () => {});
+  showLiveStats.addEventListener('change', () => {
+    stageReadouts.classList.toggle('open', showLiveStats.checked);
+  });
+  linkSliderNumber(vecSizeSlider, vecSizeNum, () => { applyVecSize(); render(); });
+
+  function updateDownConvState(){
+    const h0 = parseFloat(h0Slider.value);
+    const applies = h0 > 0.001;
+    downConvRow.classList.toggle('dim', !applies);
+    downConvToggle.disabled = !applies;
+    if (!applies) downConvToggle.checked = false;
+  }
+
+  [
+    [v0Slider, v0Num], [angleSlider, angleNum], [gSlider, gNum],
+    [massSlider, massNum], [hResistN, hResistNNum], [vResistN, vResistNNum],
+    [obstacleDist, obstacleDistNum], [obstacleHeight, obstacleHeightNum], [obstacleWidth, obstacleWidthNum]
+  ].forEach(([slider, num]) => {
+    linkSliderNumber(slider, num, () => { updateLabels(); resetSim(); });
+  });
+  linkSliderNumber(h0Slider, h0Num, () => { updateDownConvState(); updateLabels(); resetSim(); });
+  downConvToggle.addEventListener('change', () => render());
+
+  gEarthBtn.addEventListener('click', () => {
+    gSlider.value = 9.81;
+    updateLabels();
+    resetSim();
+  });
+  hResistToggle.addEventListener('change', () => {
+    hResistSub.classList.toggle('open', hResistToggle.checked);
+    resetSim();
+  });
+  vResistToggle.addEventListener('change', () => {
+    vResistSub.classList.toggle('open', vResistToggle.checked);
+    resetSim();
+  });
+  obstacleToggle.addEventListener('change', () => {
+    obstacleSub.classList.toggle('open', obstacleToggle.checked);
+    resetSim();
+  });
+  stopApexToggle.addEventListener('change', () => {
+    updateTargetCardState();
+    resetSim();
+  });
+  showLabel.addEventListener('change', () => {
+    labelFieldsSub.classList.toggle('open', showLabel.checked);
+    render();
+  });
+  [showVelocity, showComponents, showAccel, showHResistVec, showVResistVec,
+   showTotalDisp, showHDisp, showVDisp, showHeightVec,
+   lblX, lblY, lblDist, lblVx, lblVy, lblVmag, lblTheta, lblAccel].forEach(el => {
+    el.addEventListener('change', () => render());
+  });
+
+  function applyTheme(name){
+    currentTheme = name;
+    T = THEMES[name];
+    document.body.classList.toggle('theme-minimal', name === 'minimal');
+    themeNameEl.textContent = name === 'minimal' ? 'Σχολικό' : 'Blueprint';
+    if (sim) render();
+  }
+  themeToggleBtn.addEventListener('click', () => {
+    applyTheme(currentTheme === 'blueprint' ? 'minimal' : 'blueprint');
+  });
+
+  let currentMode = 'oblique';
+
+  function updateTargetCardState(){
+    const obliqueOnly = currentMode === 'oblique';
+    targetCard.classList.toggle('dim', !obliqueOnly);
+    targetRangeInput.disabled = !obliqueOnly;
+    calcBtn.disabled = !obliqueOnly;
+    if (!obliqueOnly){
+      targetRange = null;
+      targetRangeInput.value = '';
+      targetMsg.textContent = 'Διαθέσιμο μόνο σε πλάγια βολή.';
+      targetMsg.classList.remove('warn');
+    } else {
+      targetMsg.textContent = '';
+    }
+  }
+
+  function setMode(newMode){
+    currentMode = newMode;
+    modeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === newMode));
+    if (newMode === 'vertical'){
+      angleSlider.value = 90; angleNum.value = 90;
+      angleSlider.disabled = true; angleNum.disabled = true;
+    } else if (newMode === 'horizontal'){
+      angleSlider.value = 0; angleNum.value = 0;
+      angleSlider.disabled = true; angleNum.disabled = true;
+    } else {
+      angleSlider.disabled = false; angleNum.disabled = false;
+      if (parseFloat(angleSlider.value) === 90 || parseFloat(angleSlider.value) === 0){
+        angleSlider.value = 45; angleNum.value = 45;
+      }
+    }
+    const apexApplies = newMode !== 'horizontal';
+    apexRow.classList.toggle('dim', !apexApplies);
+    stopApexToggle.disabled = !apexApplies;
+    if (!apexApplies) stopApexToggle.checked = false;
+    updateTargetCardState();
+    updateLabels();
+    resetSim();
+  }
+  modeBtns.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+  calcBtn.addEventListener('click', () => {
+    const val = parseFloat(targetRangeInput.value);
+    if (isNaN(val) || val <= 0){
+      targetMsg.textContent = 'Δώσε έγκυρη τιμή βεληνεκούς σε μέτρα.';
+      targetMsg.classList.add('warn');
+      return;
+    }
+    targetRange = val;
+    const res = findAngleForRange(val);
+    if (res.found){
+      angleSlider.value = Math.max(0, Math.min(90, res.angle)).toFixed(1);
+      angleNum.value = angleSlider.value;
+      targetMsg.textContent = 'Γωνία ρυθμίστηκε στις ' + angleSlider.value + '° για βεληνεκές ' + val + ' m.';
+      targetMsg.classList.remove('warn');
+    } else {
+      angleSlider.value = res.bestAngle.toFixed(1);
+      angleNum.value = angleSlider.value;
+      targetMsg.textContent = 'Μη εφικτό βεληνεκές με τις τρέχουσες ρυθμίσεις (μέγιστο ≈ ' + res.maxRange.toFixed(1) + ' m). Ρυθμίστηκε η γωνία μέγιστης εμβέλειας.';
+      targetMsg.classList.add('warn');
+    }
+    updateLabels();
+    resetSim();
+  });
+
+  clearTargetBtn.addEventListener('click', () => {
+    targetRange = null;
+    targetRangeInput.value = '';
+    targetMsg.textContent = '';
+    targetMsg.classList.remove('warn');
+    computeScale();
+    render();
+  });
+
+  // ---- drag-to-scrub on the canvas ----
+  let pointerActive = false;
+
+  function scrubToPointer(e){
+    if (!sim) return;
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const px = (e.clientX - rect.left) * dpr;
+    const py = (e.clientY - rect.top) * dpr;
+    const wx = (px - scaleInfo.originX) / scaleInfo.scale;
+    const wy = (scaleInfo.originY - py) / scaleInfo.scale;
+    const pts = sim.points;
+    const stride = pts.length > 1500 ? Math.ceil(pts.length/1500) : 1;
+    let bestIdx = 0, bestD = Infinity;
+    for (let i=0;i<pts.length;i+=stride){
+      const dx = pts[i].x - wx, dy = pts[i].y - wy;
+      const d = dx*dx + dy*dy;
+      if (d < bestD){ bestD = d; bestIdx = i; }
+    }
+    const lo = Math.max(0, bestIdx-stride), hi = Math.min(pts.length-1, bestIdx+stride);
+    for (let i=lo;i<=hi;i++){
+      const dx = pts[i].x - wx, dy = pts[i].y - wy;
+      const d = dx*dx + dy*dy;
+      if (d < bestD){ bestD = d; bestIdx = i; }
+    }
+    simTime = pts[bestIdx].t;
+    render();
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!sim) return;
+    pointerActive = true;
+    dragging = true;
+    canvas.classList.add('grabbing');
+    setPlaying(false);
+    try { canvas.setPointerCapture(e.pointerId); } catch(err){}
+    scrubToPointer(e);
+    updateStateLabel();
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!pointerActive) return;
+    scrubToPointer(e);
+  });
+  function endDrag(){
+    pointerActive = false;
+    dragging = false;
+    canvas.classList.remove('grabbing');
+    updateLaunchLabel();
+    updateStateLabel();
+    render();
+  }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', () => { if (pointerActive) endDrag(); });
+
+  // ============================================================
+  // ---- main tabs ----
+  // ============================================================
+  const mainTabRow = document.getElementById('mainTabRow');
+  const mainTabBtns = Array.from(mainTabRow.querySelectorAll('.main-tab-btn'));
+  const tabPanels = {
+    settings: document.getElementById('tab-settings'),
+    exercise: document.getElementById('tab-exercise'),
+    solution: document.getElementById('tab-solution'),
+    saved: document.getElementById('tab-saved')
+  };
+  function switchTab(name){
+    mainTabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    Object.keys(tabPanels).forEach(k => tabPanels[k].classList.toggle('active', k === name));
+    if (name === 'solution') refreshSolution();
+    if (name === 'saved') renderPresetList();
+  }
+  mainTabBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+  // ============================================================
+  // ---- exercise (Άσκηση): τύπος βολής + δεδομένα/ζητούμενα ----
+  // ============================================================
+  const QLABEL = {
+    v0:{label:'v₀', unit:'m/s'}, angle:{label:'θ', unit:'°'}, h0:{label:'h₀', unit:'m'},
+    g:{label:'g', unit:'m/s²'}, R:{label:'βεληνεκές R', unit:'m'}, H:{label:'μέγιστο ύψος H', unit:'m'},
+    T:{label:'χρόνος πτήσης T', unit:'s'}, u:{label:'ταχύτητα πρόσκρουσης u', unit:'m/s'}
+  };
+
+  function fastR(v0,angleDeg,h0,g){
+    const rad=angleDeg*Math.PI/180;
+    const vx=v0*Math.cos(rad), vy=v0*Math.sin(rad);
+    const disc=Math.max(vy*vy+2*g*h0,0);
+    const T=(vy+Math.sqrt(disc))/g;
+    return vx*T;
+  }
+  function numericSolveAngleFromR(v0,h0,g,targetR){
+    let prevA=0.5, prevR=fastR(v0,prevA,h0,g);
+    for(let a=1;a<=89.5;a+=0.5){
+      const r=fastR(v0,a,h0,g);
+      if((prevR-targetR)*(r-targetR)<=0 && r!==prevR){
+        const frac=(targetR-prevR)/(r-prevR);
+        return prevA+frac*(a-prevA);
+      }
+      prevA=a; prevR=r;
+    }
+    return null;
+  }
+  function numericSolveV0FromR(angleDeg,h0,g,targetR){
+    if (targetR<=0) return null;
+    let lo=0.01, hi=500;
+    const rHi = fastR(hi,angleDeg,h0,g);
+    if (rHi<targetR) return null;
+    for(let i=0;i<60;i++){
+      const mid=(lo+hi)/2;
+      const rMid=fastR(mid,angleDeg,h0,g);
+      if (rMid<targetR) lo=mid; else hi=mid;
+    }
+    return (lo+hi)/2;
+  }
+  function obliqueForward(v0,angleDeg,h0,g){
+    const rad=angleDeg*Math.PI/180;
+    const vx=v0*Math.cos(rad), vy=v0*Math.sin(rad);
+    const disc=Math.max(vy*vy+2*g*h0,0);
+    const T=(vy+Math.sqrt(disc))/g;
+    const R=vx*T;
+    const H=h0+(vy>0?(vy*vy)/(2*g):0);
+    const vyEnd=vy-g*T;
+    const u=Math.hypot(vx,vyEnd);
+    return {vx,vy,T,R,H,u,vyEnd};
+  }
+
+  function solveObliqueWrapper(known, fixed){
+    const h0=fixed.h0, g=fixed.g;
+    const has = k => known[k]!==undefined;
+    const steps=[];
+    let v0, angle;
+
+    if (has('v0') && has('angle')){
+      v0=known.v0; angle=known.angle;
+      steps.push('Δίνονται απευθείας v₀ = ' + fmt(v0,2) + ' m/s και θ = ' + fmt(angle,1) + '°.');
+    } else if (has('v0') && has('R')){
+      const a = numericSolveAngleFromR(known.v0,h0,g,known.R);
+      if (a===null) return {error:'Δεν βρέθηκε γωνία που να δίνει αυτό το βεληνεκές με αυτή την v₀.'};
+      v0=known.v0; angle=a;
+      steps.push('Τύπος: R = v₀·cosθ·t (το t εξαρτάται από τη θ μέσω του h₀). Λύνουμε αριθμητικά (δοκιμή γωνιών) την εξίσωση R(θ) = ' + fmt(known.R,2) + ' m.');
+      steps.push('Βρίσκουμε θ ≈ ' + fmt(angle,1) + '° για v₀ = ' + fmt(v0,2) + ' m/s.');
+    } else if (has('v0') && has('H')){
+      const s = Math.sqrt(2*g*(known.H-h0));
+      if (isNaN(s)) return {error:'Το μέγιστο ύψος H πρέπει να είναι ≥ h₀.'};
+      const ratio = s/known.v0;
+      if (ratio>1) return {error:'Δεν υπάρχει έγκυρη γωνία — χρειάζεται μεγαλύτερη v₀ για αυτό το ύψος.'};
+      angle = Math.asin(ratio)*180/Math.PI; v0=known.v0;
+      steps.push('Τύπος μέγιστου ύψους: H = h₀ + (v₀·sinθ)²/(2g) &nbsp;⟹&nbsp; v₀·sinθ = √(2g(H−h₀))');
+      steps.push('v₀·sinθ = √(2·' + fmt(g,2) + '·(' + fmt(known.H,2) + '−' + fmt(h0,2) + ')) = ' + fmt(s,2) + ' m/s');
+      steps.push('sinθ = ' + fmt(s,2) + '/' + fmt(v0,2) + ' = ' + fmt(ratio,3) + ' &nbsp;⟹&nbsp; θ = ' + fmt(angle,1) + '°');
+    } else if (has('v0') && has('T')){
+      const s = (g*known.T*known.T - 2*h0)/(2*known.T);
+      const ratio = s/known.v0;
+      if (ratio<-1 || ratio>1) return {error:'Μη έγκυρος συνδυασμός τιμών (έλεγξε T, h₀, v₀).'};
+      angle = Math.asin(ratio)*180/Math.PI; v0=known.v0;
+      steps.push('Από τον τύπο χρόνου πτήσης λύνουμε ως προς v₀·sinθ: v₀·sinθ = (g·T² − 2h₀)/(2T)');
+      steps.push('v₀·sinθ = (' + fmt(g,2) + '·' + fmt(known.T,2) + '² − 2·' + fmt(h0,2) + ')/(2·' + fmt(known.T,2) + ') = ' + fmt(s,2) + ' m/s');
+      steps.push('sinθ = ' + fmt(s,2) + '/' + fmt(v0,2) + ' = ' + fmt(ratio,3) + ' &nbsp;⟹&nbsp; θ = ' + fmt(angle,1) + '°');
+    } else if (has('angle') && has('R')){
+      const v0s = numericSolveV0FromR(known.angle,h0,g,known.R);
+      if (v0s===null) return {error:'Δεν βρέθηκε έγκυρη v₀ για αυτό το βεληνεκές.'};
+      v0=v0s; angle=known.angle;
+      steps.push('Λύνουμε αριθμητικά (διχοτόμηση) την εξίσωση R(v₀) = ' + fmt(known.R,2) + ' m για σταθερή θ = ' + fmt(angle,1) + '°.');
+      steps.push('Βρίσκουμε v₀ ≈ ' + fmt(v0,2) + ' m/s.');
+    } else if (has('angle') && has('H')){
+      const s = Math.sqrt(2*g*(known.H-h0));
+      const rad = known.angle*Math.PI/180;
+      v0 = s/Math.sin(rad); angle=known.angle;
+      steps.push('v₀·sinθ = √(2g(H−h₀)) = ' + fmt(s,2) + ' m/s');
+      steps.push('v₀ = ' + fmt(s,2) + ' / sin' + fmt(angle,1) + '° = ' + fmt(v0,2) + ' m/s');
+    } else if (has('angle') && has('T')){
+      const s = (g*known.T*known.T-2*h0)/(2*known.T);
+      const rad = known.angle*Math.PI/180;
+      v0 = s/Math.sin(rad); angle=known.angle;
+      steps.push('v₀·sinθ = (gT²−2h₀)/(2T) = ' + fmt(s,2) + ' m/s');
+      steps.push('v₀ = ' + fmt(s,2) + ' / sin' + fmt(angle,1) + '° = ' + fmt(v0,2) + ' m/s');
+    } else if (has('R') && has('H')){
+      const s = Math.sqrt(2*g*(known.H-h0));
+      const T = (s+Math.sqrt(s*s+2*g*h0))/g;
+      const c = known.R/T;
+      v0 = Math.hypot(s,c); angle = Math.atan2(s,c)*180/Math.PI;
+      steps.push('v₀·sinθ = √(2g(H−h₀)) = ' + fmt(s,2) + ' m/s');
+      steps.push('Χρόνος πτήσης: T = [v₀sinθ + √((v₀sinθ)²+2gh₀)]/g = ' + fmt(T,2) + ' s');
+      steps.push('v₀·cosθ = R/T = ' + fmt(known.R,2) + '/' + fmt(T,2) + ' = ' + fmt(c,2) + ' m/s');
+      steps.push('v₀ = √[(v₀sinθ)²+(v₀cosθ)²] = ' + fmt(v0,2) + ' m/s, θ = arctan[(v₀sinθ)/(v₀cosθ)] = ' + fmt(angle,1) + '°');
+    } else if (has('R') && has('T')){
+      const s = (g*known.T*known.T-2*h0)/(2*known.T);
+      const c = known.R/known.T;
+      v0 = Math.hypot(s,c); angle = Math.atan2(s,c)*180/Math.PI;
+      steps.push('v₀·sinθ = (gT²−2h₀)/(2T) = ' + fmt(s,2) + ' m/s');
+      steps.push('v₀·cosθ = R/T = ' + fmt(known.R,2) + '/' + fmt(known.T,2) + ' = ' + fmt(c,2) + ' m/s');
+      steps.push('v₀ = √[(v₀sinθ)²+(v₀cosθ)²] = ' + fmt(v0,2) + ' m/s, θ = arctan[(v₀sinθ)/(v₀cosθ)] = ' + fmt(angle,1) + '°');
+    } else {
+      return {error:'Αυτός ο συνδυασμός δεδομένων (π.χ. H και T μαζί) δεν καθορίζει μονοσήμαντα το v₀ και τη θ. Δοκίμασε άλλον συνδυασμό.'};
+    }
+
+    const fwd = obliqueForward(v0, angle, h0, g);
+    steps.push('Με v₀ = ' + fmt(v0,2) + ' m/s και θ = ' + fmt(angle,1) + '° υπολογίζουμε τα υπόλοιπα μεγέθη:');
+    steps.push('v₀ₓ = v₀·cosθ = ' + fmt(fwd.vx,2) + ' m/s, &nbsp; v₀ᵧ = v₀·sinθ = ' + fmt(fwd.vy,2) + ' m/s');
+    steps.push('Χρόνος πτήσης: t = [v₀ᵧ + √(v₀ᵧ² + 2gh₀)]/g = ' + fmt(fwd.T,2) + ' s');
+    steps.push('Βεληνεκές: R = v₀ₓ·t = ' + fmt(fwd.R,2) + ' m');
+    steps.push('Μέγιστο ύψος: H = h₀ + v₀ᵧ²/(2g) = ' + fmt(fwd.H,2) + ' m');
+    steps.push('Ταχύτητα πρόσκρουσης: u = √(v₀ₓ² + (v₀ᵧ−gt)²) = ' + fmt(fwd.u,2) + ' m/s');
+
+    return {
+      all: {v0:v0, angle:angle, h0:h0, g:g, R:fwd.R, H:fwd.H, T:fwd.T, u:fwd.u},
+      apply: {v0:v0, angle:angle, h0:h0, g:g, mode:'oblique'},
+      steps: steps
+    };
+  }
+
+  function solveHorizontalWrapper(known, fixed){
+    const h0=fixed.h0, g=fixed.g;
+    const has = k => known[k]!==undefined;
+    const T = Math.sqrt(2*h0/g);
+    const steps = ['Χρόνος πτώσης (ανεξάρτητος της v₀): t = √(2h₀/g) = √(2·' + fmt(h0,2) + '/' + fmt(g,2) + ') = ' + fmt(T,2) + ' s.'];
+    let v0;
+    if (has('v0')){
+      v0=known.v0;
+      steps.push('Δίνεται v₀ = ' + fmt(v0,2) + ' m/s.');
+    } else if (has('R')){
+      v0 = known.R/T;
+      steps.push('Από R = v₀·t λύνουμε ως προς v₀: v₀ = R/t = ' + fmt(known.R,2) + '/' + fmt(T,2) + ' = ' + fmt(v0,2) + ' m/s.');
+    } else if (has('u')){
+      const vy=g*T;
+      const v0sq = known.u*known.u - vy*vy;
+      if (v0sq<0) return {error:'Μη έγκυρη ταχύτητα πρόσκρουσης (μικρότερη από την κατακόρυφη συνιστώσα vy = ' + fmt(vy,2) + ' m/s).'};
+      v0=Math.sqrt(v0sq);
+      steps.push('Κατακόρυφη ταχύτητα πρόσκρουσης: vy = g·t = ' + fmt(vy,2) + ' m/s.');
+      steps.push('Από u² = v₀² + vy² λύνουμε ως προς v₀: v₀ = √(u²−vy²) = ' + fmt(v0,2) + ' m/s.');
+    } else {
+      return {error:'Επίλεξε τουλάχιστον ένα δεδομένο (v₀, R ή u).'};
+    }
+    const R=v0*T, vy=g*T, u=Math.hypot(v0,vy);
+    steps.push('Βεληνεκές: R = v₀·t = ' + fmt(R,2) + ' m');
+    steps.push('Ταχύτητα πρόσκρουσης: u = √(v₀² + vy²) = ' + fmt(u,2) + ' m/s');
+    return {
+      all: {v0:v0, h0:h0, g:g, T:T, R:R, u:u},
+      apply: {v0:v0, angle:0, h0:h0, g:g, mode:'horizontal'},
+      steps: steps
+    };
+  }
+
+  function solveVerticalWrapper(known, fixed){
+    const g=fixed.g;
+    const has = k => known[k]!==undefined;
+    const steps=[];
+    let v0;
+    if (has('v0')){ v0=known.v0; steps.push('Δίνεται v₀ = ' + fmt(v0,2) + ' m/s.'); }
+    else if (has('H')){ v0=Math.sqrt(2*g*known.H); steps.push('Από H = v₀²/(2g) λύνουμε ως προς v₀: v₀ = √(2gH) = √(2·' + fmt(g,2) + '·' + fmt(known.H,2) + ') = ' + fmt(v0,2) + ' m/s.'); }
+    else if (has('T')){ v0=g*known.T/2; steps.push('Από T = 2v₀/g λύνουμε ως προς v₀: v₀ = gT/2 = ' + fmt(g,2) + '·' + fmt(known.T,2) + '/2 = ' + fmt(v0,2) + ' m/s.'); }
+    else return {error:'Επίλεξε τουλάχιστον ένα δεδομένο (v₀, H ή T).'};
+    const H=v0*v0/(2*g), T=2*v0/g;
+    steps.push('Μέγιστο ύψος: H = v₀²/(2g) = ' + fmt(H,2) + ' m');
+    steps.push('Συνολικός χρόνος (άνοδος + κάθοδος): T = 2v₀/g = ' + fmt(T,2) + ' s');
+    return {
+      all: {v0:v0, g:g, H:H, T:T},
+      apply: {v0:v0, angle:90, h0:0, g:g, mode:'vertical'},
+      steps: steps
+    };
+  }
+
+  const EXERCISE_TYPES = {
+    oblique: {
+      typeLabel: 'Πλάγια Βολή',
+      hint: 'Επίλεξε ακριβώς 2 δεδομένα μεγέθη (v₀, θ, R, H ή T). Το ύψος εκτόξευσης h₀ και η βαρύτητα g θεωρούνται πάντα γνωστά.',
+      fixed: [
+        {id:'h0', label:'Ύψος εκτόξευσης h₀', unit:'m', def:0},
+        {id:'g', label:'Επιτάχυνση βαρύτητας g', unit:'m/s²', def:9.8}
+      ],
+      variable: ['v0','angle','R','H','T'],
+      askedExtra: ['u'],
+      requiredGivenCount: 2,
+      solve: solveObliqueWrapper
+    },
+    horizontal: {
+      typeLabel: 'Οριζόντια Βολή',
+      hint: 'Επίλεξε ακριβώς 1 δεδομένο μέγεθος (v₀, R ή u). Το ύψος εκτόξευσης h₀ και η βαρύτητα g θεωρούνται πάντα γνωστά.',
+      fixed: [
+        {id:'h0', label:'Ύψος εκτόξευσης h₀', unit:'m', def:20},
+        {id:'g', label:'Επιτάχυνση βαρύτητας g', unit:'m/s²', def:9.8}
+      ],
+      variable: ['v0','R','u'],
+      askedExtra: ['T'],
+      requiredGivenCount: 1,
+      solve: solveHorizontalWrapper
+    },
+    vertical: {
+      typeLabel: 'Κατακόρυφη Βολή',
+      hint: 'Επίλεξε ακριβώς 1 δεδομένο μέγεθος (v₀, H ή T). Η βολή θεωρείται από το έδαφος (h₀=0), με γνωστή βαρύτητα g.',
+      fixed: [
+        {id:'g', label:'Επιτάχυνση βαρύτητας g', unit:'m/s²', def:9.8}
+      ],
+      variable: ['v0','H','T'],
+      askedExtra: [],
+      requiredGivenCount: 1,
+      solve: solveVerticalWrapper
+    }
+  };
+
+  const exerciseTypeRow = document.getElementById('exerciseTypeRow');
+  const exerciseTypeHint = document.getElementById('exerciseTypeHint');
+  const exerciseFixedEl = document.getElementById('exerciseFixed');
+  const exerciseGivenEl = document.getElementById('exerciseGiven');
+  const exerciseAskedEl = document.getElementById('exerciseAsked');
+  const exerciseResultEl = document.getElementById('exerciseResult');
+  const exerciseSolveBtn = document.getElementById('exerciseSolveBtn');
+  const exerciseApplyBtn = document.getElementById('exerciseApplyBtn');
+
+  let exerciseType = 'oblique';
+  let lastExerciseSolution = null;
+
+  function renderExerciseAsked(){
+    const cfg = EXERCISE_TYPES[exerciseType];
+    const givenIds = Array.from(exerciseGivenEl.querySelectorAll('.ex-given-check:checked')).map(cb => cb.dataset.q);
+    const candidates = cfg.variable.filter(q => givenIds.indexOf(q) === -1).concat(cfg.askedExtra);
+    exerciseAskedEl.innerHTML = '';
+    candidates.forEach(qid => {
+      const q = QLABEL[qid];
+      const row = document.createElement('label');
+      row.className = 'ex-check';
+      row.innerHTML = '<input type="checkbox" class="ex-asked-check" data-q="' + qid + '" checked> ' + q.label + ' (' + q.unit + ')';
+      exerciseAskedEl.appendChild(row);
+    });
+  }
+
+  function renderExerciseType(){
+    const cfg = EXERCISE_TYPES[exerciseType];
+    exerciseTypeHint.textContent = cfg.hint;
+
+    exerciseFixedEl.innerHTML = '';
+    cfg.fixed.forEach(f => {
+      const field = document.createElement('div');
+      field.className = 'field';
+      field.innerHTML =
+        '<div class="field-row"><label>' + f.label + ' <span style="color:var(--paper-dim);font-size:11px;">(πάντα γνωστό)</span></label>' +
+        '<span class="val-wrap"><input type="number" class="val-input" id="exfix_' + f.id + '" value="' + f.def + '" step="0.1"><span class="unit">' + f.unit + '</span></span></div>';
+      exerciseFixedEl.appendChild(field);
+    });
+
+    exerciseGivenEl.innerHTML = '';
+    cfg.variable.forEach(qid => {
+      const q = QLABEL[qid];
+      const row = document.createElement('div');
+      row.className = 'ex-toggle-row';
+      row.innerHTML =
+        '<label class="ex-check"><input type="checkbox" class="ex-given-check" data-q="' + qid + '"> ' + q.label + ' (' + q.unit + ')</label>' +
+        '<input type="number" class="val-input ex-given-value" id="exgiven_' + qid + '" step="0.1" placeholder="τιμή" disabled>';
+      exerciseGivenEl.appendChild(row);
+    });
+    Array.from(exerciseGivenEl.querySelectorAll('.ex-given-check')).forEach(cb => {
+      cb.addEventListener('change', () => {
+        document.getElementById('exgiven_' + cb.dataset.q).disabled = !cb.checked;
+        renderExerciseAsked();
+      });
+    });
+
+    renderExerciseAsked();
+    exerciseResultEl.textContent = 'Επίλεξε δεδομένα και ζητούμενα, μετά πάτησε «Υπολογισμός».';
+    exerciseApplyBtn.disabled = true;
+    lastExerciseSolution = null;
+  }
+
+  exerciseTypeRow.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      exerciseTypeRow.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b===btn));
+      exerciseType = btn.dataset.extype;
+      renderExerciseType();
+    });
+  });
+
+  exerciseSolveBtn.addEventListener('click', () => {
+    const cfg = EXERCISE_TYPES[exerciseType];
+    const fixedVals = {};
+    cfg.fixed.forEach(f => { fixedVals[f.id] = parseFloat(document.getElementById('exfix_'+f.id).value); });
+
+    const givenChecks = Array.from(exerciseGivenEl.querySelectorAll('.ex-given-check:checked'));
+    if (givenChecks.length !== cfg.requiredGivenCount){
+      exerciseResultEl.innerHTML = '<span style="color:var(--danger)">⚠ Επίλεξε ακριβώς ' + cfg.requiredGivenCount + ' δεδομέν' + (cfg.requiredGivenCount===1?'ο μέγεθος':'α μεγέθη') + '.</span>';
+      exerciseApplyBtn.disabled = true;
+      lastExerciseSolution = null;
+      return;
+    }
+    const known = {};
+    let invalid = false;
+    givenChecks.forEach(cb => {
+      const v = parseFloat(document.getElementById('exgiven_'+cb.dataset.q).value);
+      if (isNaN(v)) invalid = true;
+      known[cb.dataset.q] = v;
+    });
+    if (invalid){
+      exerciseResultEl.innerHTML = '<span style="color:var(--danger)">⚠ Συμπλήρωσε τιμή για κάθε δεδομένο που επέλεξες.</span>';
+      exerciseApplyBtn.disabled = true;
+      return;
+    }
+
+    const res = cfg.solve(known, fixedVals);
+    if (res.error){
+      exerciseResultEl.innerHTML = '<span style="color:var(--danger)">⚠ ' + res.error + '</span>';
+      exerciseApplyBtn.disabled = true;
+      lastExerciseSolution = null;
+      return;
+    }
+
+    const askedIds = Array.from(exerciseAskedEl.querySelectorAll('.ex-asked-check:checked')).map(cb => cb.dataset.q);
+    let html = '<div class="given">Δεδομένα:</div>';
+    cfg.fixed.forEach(f => { html += '&nbsp;&nbsp;' + QLABEL[f.id].label + ' = ' + fmt(fixedVals[f.id], 2) + ' ' + QLABEL[f.id].unit + '<br>'; });
+    Object.keys(known).forEach(k => { html += '&nbsp;&nbsp;' + QLABEL[k].label + ' = ' + fmt(known[k], k==='angle'?1:2) + ' ' + QLABEL[k].unit + '<br>'; });
+    html += '<br><div class="asked">Ζητούμενα:</div>';
+    askedIds.forEach(k => {
+      html += '&nbsp;&nbsp;<span class="answer">' + QLABEL[k].label + ' = ' + fmt(res.all[k], 2) + ' ' + QLABEL[k].unit + '</span><br>';
+    });
+    exerciseResultEl.innerHTML = html;
+    exerciseApplyBtn.disabled = false;
+
+    const askedObj = {};
+    askedIds.forEach(k => { askedObj[k] = res.all[k]; });
+    lastExerciseSolution = {
+      caseLabel: cfg.typeLabel,
+      given: Object.assign({}, fixedVals, known),
+      asked: askedObj,
+      apply: res.apply,
+      steps: res.steps
+    };
+  });
+
+  exerciseApplyBtn.addEventListener('click', () => {
+    if (!lastExerciseSolution) return;
+    const ap = lastExerciseSolution.apply;
+    setMode(ap.mode);
+    v0Slider.value = ap.v0; v0Num.value = ap.v0.toFixed(1);
+    if (ap.mode === 'oblique'){ angleSlider.value = ap.angle; angleNum.value = ap.angle.toFixed(1); }
+    h0Slider.value = ap.h0; h0Num.value = ap.h0.toFixed(1);
+    gSlider.value = ap.g; gNum.value = ap.g.toFixed(2);
+    updateDownConvState();
+    updateLabels();
+    resetSim();
+    switchTab('solution');
+  });
+
+  // ============================================================
+  // ---- solution (Λύση) generator + PDF/Word export ----
+  // ============================================================
+  function refreshSolution(){
+    const box = document.getElementById('solutionContent');
+    let html = '';
+    if (lastExerciseSolution){
+      const es = lastExerciseSolution;
+      const givenItems = Object.keys(es.given).map(k => {
+        const q = QLABEL[k];
+        return '<div class="gi"><span class="k">' + q.label + '</span>' + fmt(es.given[k], k==='angle'?1:2) + ' ' + q.unit + '</div>';
+      }).join('');
+      html += '<h3>Λύση Άσκησης — ' + es.caseLabel + '</h3>';
+      html += '<div class="sol-block"><h4>Δεδομένα</h4><div class="givens-grid">' + givenItems + '</div></div>';
+      html += '<div class="sol-block"><h4>Υπολογισμός</h4>' +
+        (es.steps||[]).map(s => '<div class="line">' + s + '</div>').join('') +
+        '</div>';
+      const askedItems = Object.keys(es.asked).map(k => {
+        const q = QLABEL[k];
+        return '<div class="line">' + q.label + ' = <span class="res">' + fmt(es.asked[k],2) + ' ' + q.unit + '</span></div>';
+      }).join('');
+      html += '<div class="sol-block"><h4>Αποτελέσματα</h4>' + askedItems + '</div>';
+    } else {
+      const p = params();
+      const rad = p.angleDeg*Math.PI/180;
+      const vx = p.v0*Math.cos(rad), vy = p.v0*Math.sin(rad);
+      const disc = Math.max(vy*vy+2*p.g*p.h0, 0);
+      const t = (vy+Math.sqrt(disc))/p.g;
+      const R = vx*t;
+      const H = p.h0 + (vy>0 ? (vy*vy)/(2*p.g) : 0);
+      const vyEnd = vy - p.g*t;
+      const u = Math.hypot(vx, vyEnd);
+
+      const givenItems =
+        '<div class="gi"><span class="k">v₀</span>' + fmt(p.v0,2) + ' m/s</div>' +
+        '<div class="gi"><span class="k">θ</span>' + fmt(p.angleDeg,1) + '°</div>' +
+        '<div class="gi"><span class="k">h₀</span>' + fmt(p.h0,2) + ' m</div>' +
+        '<div class="gi"><span class="k">g</span>' + fmt(p.g,2) + ' m/s²</div>';
+
+      html += '<h3>Ανάλυση Τρέχουσας Βολής</h3>';
+      html += '<div class="sol-block"><h4>Δεδομένα</h4><div class="givens-grid">' + givenItems + '</div></div>';
+      if (p.hResistOn || p.vResistOn){
+        html += '<div class="sol-note">⚠ Η ενεργή αντίσταση αέρα δεν περιλαμβάνεται σε αυτή την αναλυτική λύση (οι τύποι ισχύουν για κίνηση χωρίς αντίσταση).</div>';
+      }
+      html += '<div class="sol-block"><h4>Υπολογισμός</h4>' +
+        '<div class="line">v₀ₓ = v₀·cosθ = ' + fmt(vx,2) + ' m/s</div>' +
+        '<div class="line">v₀ᵧ = v₀·sinθ = ' + fmt(vy,2) + ' m/s</div>' +
+        '<div class="line">Χρόνος πτήσης: t = [v₀ᵧ + √(v₀ᵧ² + 2gh₀)] / g = ' + fmt(t,2) + ' s</div>' +
+        '<div class="line">Βεληνεκές: R = v₀ₓ·t = ' + fmt(R,2) + ' m</div>' +
+        '<div class="line">Μέγιστο ύψος: H = h₀ + v₀ᵧ²/(2g) = ' + fmt(H,2) + ' m</div>' +
+        '<div class="line">Τελική κατακόρυφη ταχύτητα: vyτελ = v₀ᵧ − g·t = ' + fmt(vyEnd,2) + ' m/s</div>' +
+        '</div>';
+      html += '<div class="sol-block"><h4>Αποτελέσματα</h4>' +
+        '<div class="line">Βεληνεκές R = <span class="res">' + fmt(R,2) + ' m</span></div>' +
+        '<div class="line">Μέγιστο ύψος H = <span class="res">' + fmt(H,2) + ' m</span></div>' +
+        '<div class="line">Χρόνος πτήσης T = <span class="res">' + fmt(t,2) + ' s</span></div>' +
+        '<div class="line">Ταχύτητα πρόσκρουσης u = <span class="res">' + fmt(u,2) + ' m/s</span></div>' +
+        '</div>';
+    }
+    box.innerHTML = html;
+  }
+  document.getElementById('solutionRefreshBtn').addEventListener('click', () => { lastExerciseSolution = null; refreshSolution(); });
+
+  function solutionTitle(){
+    return lastExerciseSolution ? ('Λύση Άσκησης — ' + lastExerciseSolution.caseLabel) : 'Λύση — Ανάλυση Βολής';
+  }
+  function getCanvasSnapshot(){
+    try { return canvas.toDataURL('image/png'); }
+    catch(e){ return null; }
+  }
+
+  document.getElementById('solutionPrintBtn').addEventListener('click', () => {
+    refreshSolution();
+    const snap = getCanvasSnapshot();
+    const imgHtml = snap ? '<img class="solution-snapshot" src="' + snap + '">' : '';
+    const printArea = document.getElementById('printExportArea');
+    printArea.innerHTML = '<h1 style="font-family:Georgia,serif;">' + solutionTitle() + '</h1>' +
+      '<div style="font-family:monospace;font-size:12px;color:#555;margin-bottom:16px;">' + new Date().toLocaleDateString('el-GR') + '</div>' +
+      imgHtml +
+      document.getElementById('solutionContent').innerHTML;
+    window.print();
+  });
+
+  document.getElementById('solutionWordBtn').addEventListener('click', () => {
+    refreshSolution();
+    const snap = getCanvasSnapshot();
+    const imgHtml = snap ? '<img src="' + snap + '" style="max-width:100%;border:1px solid #ccc;margin-bottom:16px;">' : '';
+    const contentHtml = document.getElementById('solutionContent').innerHTML;
+    const docHtml = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>Λύση</title></head>' +
+      '<body style="font-family:Calibri,Arial,sans-serif;">' +
+      '<h1>' + solutionTitle() + '</h1>' +
+      '<p style="color:#666;font-size:11px;">' + new Date().toLocaleDateString('el-GR') + '</p>' +
+      imgHtml +
+      contentHtml
+        .replace(/<h3>[\s\S]*?<\/h3>/, '')
+        .replace(/class="sol-block"/g, 'style="margin-bottom:18px;"')
+        .replace(/<h4>/g, '<h4 style="font-family:Calibri,Arial,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8a6a1a;border-bottom:1px solid #ddd;padding-bottom:5px;">')
+        .replace(/class="givens-grid"/g, 'style="display:flex;flex-wrap:wrap;gap:8px;"')
+        .replace(/class="gi"/g, 'style="background:#f7f7f7;border:1px solid #ddd;border-radius:3px;padding:6px 10px;font-family:Consolas,monospace;font-size:12px;"')
+        .replace(/class="k"/g, 'style="color:#8a6a1a;font-weight:bold;margin-right:5px;"')
+        .replace(/class="line"/g, 'style="font-family:Consolas,monospace;font-size:12px;padding:6px 2px;border-bottom:1px dashed #ddd;"')
+        .replace(/class="res"/g, 'style="color:#1a7a3d;font-weight:bold;"')
+        .replace(/class="sol-note"/g, 'style="color:#666;font-size:11px;margin-bottom:12px;"') +
+      '</body></html>';
+    const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'lysi-volis.doc';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ============================================================
+  // ---- saved simulations (Αποθηκευμένες) ----
+  // ============================================================
+  const PRESET_KEY = 'volh-presets-v1';
+  function loadPresets(){
+    try { return JSON.parse(localStorage.getItem(PRESET_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function savePresetsToStorage(list){
+    try { localStorage.setItem(PRESET_KEY, JSON.stringify(list)); return true; }
+    catch(e){ return false; }
+  }
+  function snapshotParams(){
+    const p = params();
+    return {
+      v0: p.v0, angleDeg: p.angleDeg, h0: p.h0, g: p.g, mass: p.mass,
+      mode: currentMode,
+      stopAtApex: stopApexToggle.checked,
+      downPositive: downConvToggle.checked,
+      hResistOn: p.hResistOn, hResistN: p.hResistN,
+      vResistOn: p.vResistOn, vResistN: p.vResistN,
+      obstacleOn: p.obstacleOn, obstacleDist: p.obstacleDist, obstacleHeight: p.obstacleHeight, obstacleWidth: p.obstacleWidth,
+      targetRange: targetRange,
+      theme: currentTheme
+    };
+  }
+  function applySnapshot(snap){
+    setMode(snap.mode);
+    v0Slider.value = snap.v0; v0Num.value = snap.v0;
+    if (snap.mode === 'oblique'){ angleSlider.value = snap.angleDeg; angleNum.value = snap.angleDeg; }
+    h0Slider.value = snap.h0; h0Num.value = snap.h0;
+    gSlider.value = snap.g; gNum.value = snap.g;
+    massSlider.value = snap.mass; massNum.value = snap.mass;
+    stopApexToggle.checked = !!snap.stopAtApex && !stopApexToggle.disabled;
+    downConvToggle.checked = !!snap.downPositive;
+    hResistToggle.checked = !!snap.hResistOn;
+    hResistN.value = snap.hResistN; hResistNNum.value = snap.hResistN;
+    hResistSub.classList.toggle('open', hResistToggle.checked);
+    vResistToggle.checked = !!snap.vResistOn;
+    vResistN.value = snap.vResistN; vResistNNum.value = snap.vResistN;
+    vResistSub.classList.toggle('open', vResistToggle.checked);
+    obstacleToggle.checked = !!snap.obstacleOn;
+    obstacleDist.value = snap.obstacleDist; obstacleDistNum.value = snap.obstacleDist;
+    obstacleHeight.value = snap.obstacleHeight; obstacleHeightNum.value = snap.obstacleHeight;
+    obstacleWidth.value = snap.obstacleWidth; obstacleWidthNum.value = snap.obstacleWidth;
+    obstacleSub.classList.toggle('open', obstacleToggle.checked);
+    targetRange = snap.targetRange || null;
+    targetRangeInput.value = targetRange || '';
+    if (snap.theme && snap.theme !== currentTheme) applyTheme(snap.theme);
+    updateTargetCardState();
+    updateDownConvState();
+    updateLabels();
+    resetSim();
+    switchTab('settings');
+  }
+
+  const presetNameInput = document.getElementById('presetNameInput');
+  const presetSaveBtn = document.getElementById('presetSaveBtn');
+  const presetListEl = document.getElementById('presetList');
+  const presetCountEl = document.getElementById('presetCount');
+  const presetExportBtn = document.getElementById('presetExportBtn');
+  const presetImportBtn = document.getElementById('presetImportBtn');
+  const presetImportFile = document.getElementById('presetImportFile');
+
+  function renderPresetList(){
+    const list = loadPresets();
+    presetCountEl.textContent = '(' + list.length + ')';
+    if (list.length === 0){
+      presetListEl.innerHTML = '<div class="hint-text">Δεν έχεις αποθηκεύσει καμία προσομοίωση ακόμη.</div>';
+      return;
+    }
+    presetListEl.innerHTML = '';
+    list.forEach((p, idx) => {
+      const row = document.createElement('div');
+      row.className = 'preset-row';
+      const info = document.createElement('div');
+      info.className = 'preset-info';
+      const title = document.createElement('div');
+      title.className = 'preset-title';
+      title.textContent = p.name;
+      const meta = document.createElement('div');
+      meta.className = 'preset-meta';
+      meta.textContent = (p.savedAt ? new Date(p.savedAt).toLocaleString('el-GR') : '') + '  ·  v₀=' + p.data.v0 + 'm/s, θ=' + (p.data.angleDeg||0) + '°';
+      info.appendChild(title); info.appendChild(meta);
+      const btns = document.createElement('div');
+      btns.className = 'preset-btns';
+      const loadBtn = document.createElement('button');
+      loadBtn.type = 'button';
+      loadBtn.textContent = '▶ Φόρτωση';
+      loadBtn.addEventListener('click', () => applySnapshot(p.data));
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'danger';
+      delBtn.textContent = '🗑';
+      delBtn.addEventListener('click', () => {
+        if (!window.confirm('Διαγραφή "' + p.name + '";')) return;
+        const newList = loadPresets().filter((_,i) => i !== idx);
+        savePresetsToStorage(newList);
+        renderPresetList();
+      });
+      btns.appendChild(loadBtn); btns.appendChild(delBtn);
+      row.appendChild(info); row.appendChild(btns);
+      presetListEl.appendChild(row);
+    });
+  }
+
+  presetSaveBtn.addEventListener('click', () => {
+    const name = presetNameInput.value.trim() || ('Προσομοίωση ' + new Date().toLocaleString('el-GR'));
+    const list = loadPresets();
+    list.push({ name: name, savedAt: Date.now(), data: snapshotParams() });
+    const ok = savePresetsToStorage(list);
+    if (!ok){
+      alert('Δεν ήταν δυνατή η αποθήκευση (ο browser μπλόκαρε το localStorage). Χρησιμοποίησε την Εξαγωγή JSON για αποθήκευση σε αρχείο.');
+      return;
+    }
+    presetNameInput.value = '';
+    renderPresetList();
+  });
+
+  presetExportBtn.addEventListener('click', () => {
+    const list = loadPresets();
+    const blob = new Blob([JSON.stringify(list, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'apothikeymenes-proswmoiwseis-volis.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  presetImportBtn.addEventListener('click', () => presetImportFile.click());
+  presetImportFile.addEventListener('change', () => {
+    const file = presetImportFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (!Array.isArray(imported)) throw new Error('bad format');
+        const existing = loadPresets();
+        savePresetsToStorage(existing.concat(imported));
+        renderPresetList();
+      } catch(e){
+        alert('Το αρχείο δεν είναι έγκυρο JSON αποθηκευμένων προσομοιώσεων.');
+      }
+    };
+    reader.readAsText(file);
+    presetImportFile.value = '';
+  });
+
+  renderExerciseType();
+
+  // ---- canvas fit / resize ----
+  function fitCanvas(){
+    const rect = canvas.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.width * (562/900) * dpr);
+    scaleInfo.marginL = 62 * dpr;
+    scaleInfo.marginR = 26 * dpr;
+    scaleInfo.marginT = 26 * dpr;
+    scaleInfo.marginB = 56 * dpr;
+    computeScale();
+    render();
+  }
+  window.addEventListener('resize', fitCanvas);
+
+  // init
+  obstacleSub.classList.toggle('open', obstacleToggle.checked);
+  hResistSub.classList.toggle('open', hResistToggle.checked);
+  vResistSub.classList.toggle('open', vResistToggle.checked);
+  labelFieldsSub.classList.toggle('open', showLabel.checked);
+  updateTargetCardState();
+  updateDownConvState();
+  applyVecSize();
+  updateLabels();
+  resetSim();
+  requestAnimationFrame(() => { fitCanvas(); resetSim(); });
+})();
+</script>
+</body>
+</html>
