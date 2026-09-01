@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Προσομοίωση Ηλεκτρικού Κυκλώματος</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --wire:#DCEEFF;
+  --current-dot:#FDE047;
+  --resist-color:#E0685A;
+  --amp-color:#4ADE80;
+  --volt-color:#7DE2FF;
+}
+body.theme-minimal{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --wire:#1F2D3D;
+  --current-dot:#CA8A04;
+  --resist-color:#D64545;
+  --amp-color:#16A34A;
+  --volt-color:#0891B2;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+  padding: 18px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1180px; margin:0 auto;}
+
+header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(20px, 4vw, 30px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+.header-right{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+.theme-toggle{font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:8px 12px;}
+.theme-toggle span{color: var(--gold);}
+
+.layout{display:flex; flex-direction:column; gap:20px;}
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px;
+  position:relative;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.stage-label .readouts{display:flex; gap:14px; flex-wrap:wrap;}
+.stage-label .readouts b{color:var(--paper); font-weight:600;}
+canvas{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+}
+.hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:8px;
+  text-align:center;
+}
+
+.controls{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.card h2 .panel-btns{display:flex; gap:6px;}
+.panel-btn{
+  border:1px solid var(--line-dim);
+  background:transparent;
+  color:var(--paper-dim);
+  width:24px; height:24px;
+  padding:0;
+  font-size:13px;
+  line-height:1;
+  border-radius:var(--radius);
+  cursor:pointer;
+}
+.panel-btn:hover{border-color:var(--gold-dim); color:var(--paper);}
+.card.collapsed .card-body{display:none;}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; gap:8px;}
+.field-row label{font-size:14px; color: var(--paper);}
+.val-wrap{display:flex; align-items:center; gap:5px;}
+.val-input{
+  width:72px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--gold);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  text-align:right;
+  padding:8px 7px;
+  border-radius: var(--radius);
+  -moz-appearance:textfield;
+}
+.val-input::-webkit-outer-spin-button, .val-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+.val-input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.unit{font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--paper-dim); white-space:nowrap;}
+
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:5px;
+  background: var(--line-dim); border-radius:3px; outline:none; touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:24px;height:24px; border-radius:50%;
+  background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer; margin-top:-9.5px;
+}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px; border-radius:50%; background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px; background: var(--line-dim); border-radius:3px;}
+
+.toggle-row{display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px;}
+.toggle-row + .toggle-row{margin-top:11px;}
+.toggle-row label{font-size:13.5px;}
+.switch{position:relative; width:44px;height:25px; flex:none;}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{position:absolute; inset:0; background: var(--line-dim); border-radius:26px; transition: background .15s; border:1px solid var(--line-dim); pointer-events:none;}
+.slider-pill:before{content:""; position:absolute; width:17px;height:17px; left:3px; top:3px; background: var(--paper-dim); border-radius:50%; transition: transform .15s, background .15s;}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(19px); background: var(--gold);}
+
+button{
+  font-family:'Oswald', sans-serif; font-weight:500; letter-spacing:0.05em; font-size:12.5px;
+  text-transform:uppercase; border-radius: var(--radius); border: 1px solid var(--line-dim);
+  background: transparent; color: var(--paper); padding: 11px 14px; cursor:pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+button:hover{border-color: var(--gold-dim); color: var(--paper);}
+button.primary{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+button.primary:hover{opacity:0.9;}
+button.danger-btn{border-color:var(--danger); color:var(--danger);}
+button.danger-btn:hover{background:var(--danger); color:#fff;}
+.btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+
+/* main tabs */
+.main-tab-row{display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; -ms-overflow-style:none; scrollbar-width:none;}
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none; font-family:'Oswald', sans-serif; font-weight:500; font-size:13px; letter-spacing:0.03em;
+  text-transform:uppercase; padding:13px 18px; min-height:46px; border-radius: var(--radius);
+  border: 1px solid var(--line-dim); background: var(--bg-panel); color: var(--paper-dim); cursor:pointer;
+  white-space:nowrap; transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* block list */
+.block-item{
+  border:1px solid var(--line-dim); border-radius:var(--radius); padding:10px 12px; margin-bottom:10px;
+  background: rgba(11,27,48,0.35);
+}
+body.theme-minimal .block-item{background: rgba(0,0,0,0.02);}
+.block-item-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;}
+.block-item-head .tag{
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; color: var(--gold);
+}
+.block-item-head .rm{
+  width:26px; height:26px; padding:0; border-color:var(--line-dim); color:var(--paper-dim); font-size:14px;
+}
+.block-item-head .rm:hover{border-color:var(--danger); color:var(--danger);}
+.branch-row{
+  display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;
+  padding:6px 8px; border:1px dashed var(--line-dim); border-radius:var(--radius);
+}
+.branch-row:last-of-type{margin-bottom:0;}
+.branch-row .bname{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--paper-dim); min-width:26px;
+}
+.branch-row input.val-input{width:64px;}
+.meter-chk{display:flex; align-items:center; gap:4px; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--paper-dim); cursor:pointer;}
+.meter-chk input{accent-color: var(--gold); width:16px; height:16px; cursor:pointer; margin:0;}
+.meter-chk.amp{color:var(--amp-color);}
+.meter-chk.volt{color:var(--volt-color);}
+.branch-row .rm-branch{width:22px;height:22px; padding:0; font-size:12px; margin-left:auto;}
+.add-branch-btn{font-size:11px; padding:7px 10px;}
+
+/* results table */
+.res-table{width:100%; border-collapse:collapse; font-family:'IBM Plex Mono', monospace; font-size:12.5px;}
+.res-table th, .res-table td{padding:7px 8px; text-align:right; border-bottom:1px solid var(--line-dim);}
+.res-table th:first-child, .res-table td:first-child{text-align:left;}
+.res-table th{color:var(--paper-dim); font-weight:500; text-transform:uppercase; font-size:10.5px; letter-spacing:0.05em;}
+.res-table td{color:var(--paper);}
+.res-table td.gold{color:var(--gold); font-weight:600;}
+.res-table tr.total td{border-top:1px solid var(--gold-dim); border-bottom:none; padding-top:10px;}
+.res-table tr.total td:first-child{color:var(--gold); text-transform:uppercase; font-size:11px;}
+
+/* solution */
+.sol-block{margin-bottom:16px;}
+.sol-block:last-child{margin-bottom:0;}
+.sol-block h3{
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px; letter-spacing:0.08em;
+  text-transform:uppercase; color:var(--gold); margin:0 0 8px 0;
+}
+.sol-line{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--paper); margin-bottom:5px; line-height:1.5;}
+.sol-line .muted{color:var(--paper-dim);}
+
+/* saved */
+.preset-item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:9px 10px; border:1px solid var(--line-dim); border-radius:var(--radius); margin-bottom:8px;
+}
+.preset-item .pname{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--paper);}
+.preset-item .pbtns{display:flex; gap:6px;}
+.preset-item button{padding:7px 9px; font-size:11px;}
+textarea.json-io{
+  width:100%; min-height:100px; background: var(--bg-deep); border:1px solid var(--line-dim); color:var(--paper);
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; padding:8px; border-radius:var(--radius); resize:vertical;
+}
+.empty-note{font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--paper-dim); text-align:center; padding:14px 0;}
+
+@media (min-width: 600px){
+  body{padding: 24px 26px 64px;}
+  .controls{gap:16px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>ΚΥΚΛΩΜΑ <span>DC</span></h1>
+      <div class="subtitle">Σειρά · Παράλληλα · Αμπερόμετρα &amp; Βολτόμετρα</div>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggle">Θέμα: <span id="themeLabel">Blueprint</span></button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span>Διάγραμμα Κυκλώματος</span>
+        <div class="readouts">
+          <span>V<sub>πηγής</sub> = <b id="roV">—</b> V</span>
+          <span>R<sub>ολ</sub> = <b id="roR">—</b> Ω</span>
+          <span>I<sub>ολ</sub> = <b id="roI">—</b> A</span>
+        </div>
+      </div>
+      <canvas id="circuitCanvas"></canvas>
+      <div class="hint">Ενεργοποίησε αμπερόμετρα (Α) και βολτόμετρα (V) στα Στοιχεία Κυκλώματος για να τα δεις πάνω στο διάγραμμα · οι κουκκίδες δείχνουν τη συμβατική φορά του ρεύματος</div>
+    </div>
+
+    <div class="main-tab-row" id="mainTabRow">
+      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+      <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
+      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
+    </div>
+
+    <div id="tab-settings" class="tab-panel active">
+      <div class="controls">
+        <div class="card" id="cardSource">
+          <h2><span>Πηγή Τάσης</span>
+            <span class="panel-btns"><button class="panel-btn" data-collapse="cardSource" title="Ελαχιστοποίηση">⊖</button></span>
+          </h2>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-row"><label>Τάση πηγής V</label>
+                <div class="val-wrap"><input class="val-input" type="number" id="vSourceNum" step="0.1" min="0.1" max="100" value="12"><span class="unit">V</span></div>
+              </div>
+              <input type="range" id="vSourceRange" min="0.1" max="100" step="0.1" value="12">
+            </div>
+            <div class="toggle-row">
+              <label for="useInternal">Εσωτερική αντίσταση πηγής r</label>
+              <div class="switch"><input type="checkbox" id="useInternal"><span class="slider-pill"></span></div>
+            </div>
+            <div class="field" id="rInternalField" style="margin-top:12px; display:none;">
+              <div class="field-row"><label>r</label>
+                <div class="val-wrap"><input class="val-input" type="number" id="rInternalNum" step="0.1" min="0" max="20" value="0.5"><span class="unit">Ω</span></div>
+              </div>
+              <input type="range" id="rInternalRange" min="0" max="20" step="0.1" value="0.5">
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="cardMain" style="grid-column: 1 / -1;">
+          <h2><span>Στοιχεία Κυκλώματος (σειρά)</span>
+            <span class="panel-btns"><button class="panel-btn" data-collapse="cardMain" title="Ελαχιστοποίηση">⊖</button></span>
+          </h2>
+          <div class="card-body">
+            <div id="blockList"></div>
+            <div class="btn-row" style="margin-top:4px;">
+              <button id="addSeriesBtn">+ Αντίσταση σε σειρά</button>
+              <button id="addParallelBtn">+ Κλάδος παράλληλα</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="cardResults" style="grid-column: 1 / -1;">
+          <h2><span>Τιμές Κυκλώματος</span>
+            <span class="panel-btns"><button class="panel-btn" data-collapse="cardResults" title="Ελαχιστοποίηση">⊖</button></span>
+          </h2>
+          <div class="card-body">
+            <table class="res-table" id="resTable">
+              <thead><tr><th>Στοιχείο</th><th>R (Ω)</th><th>V (V)</th><th>I (A)</th></tr></thead>
+              <tbody id="resTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-solution" class="tab-panel">
+      <div class="controls">
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2><span>Λύση</span></h2>
+          <div class="card-body" id="solutionBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-saved" class="tab-panel">
+      <div class="controls">
+        <div class="card">
+          <h2><span>Αποθήκευση</span></h2>
+          <div class="card-body">
+            <div class="field">
+              <div class="field-row"><label>Όνομα ρύθμισης</label></div>
+              <div class="val-wrap" style="width:100%;">
+                <input type="text" id="presetName" placeholder="π.χ. Άσκηση 1" style="flex:1; background:var(--bg-deep); border:1px solid var(--line-dim); color:var(--paper); font-family:'IBM Plex Mono',monospace; font-size:13px; padding:9px 10px; border-radius:var(--radius);">
+              </div>
+            </div>
+            <div class="btn-row"><button class="primary" id="savePresetBtn">Αποθήκευση Τρέχοντος</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2><span>Αποθηκευμένες</span></h2>
+          <div class="card-body" id="presetList"></div>
+        </div>
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2><span>Εξαγωγή / Εισαγωγή JSON</span></h2>
+          <div class="card-body">
+            <div class="field"><textarea class="json-io" id="jsonIo" placeholder="Εδώ εμφανίζεται η εξαγωγή ή επικόλλησε JSON για εισαγωγή..."></textarea></div>
+            <div class="btn-row">
+              <button id="exportJsonBtn">Εξαγωγή Τρέχοντος</button>
+              <button id="importJsonBtn">Εισαγωγή</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------------- state ---------------- */
+let idCounter = 1;
+function nextId(){ return 'b' + (idCounter++); }
+
+let circuit = {
+  V: 12,
+  useInternal: false,
+  r: 0.5,
+  blocks: []
+};
+
+function makeSeriesBlock(R){
+  return { id: nextId(), type:'series', R: R!=null?R:10, meterA:false, meterV:false };
+}
+function makeParallelBlock(){
+  return { id: nextId(), type:'parallel', meterA:false,
+    branches: [ {id:nextId(), R:20, meterA:false, meterV:false}, {id:nextId(), R:30, meterA:false, meterV:false} ] };
+}
+
+// default starter circuit
+circuit.blocks.push(makeSeriesBlock(10));
+circuit.blocks.push(makeParallelBlock());
+circuit.blocks.push(makeSeriesBlock(15));
+
+/* ---------------- computation ---------------- */
+function calcBlockR(block){
+  if(block.type === 'series') return Math.max(block.R || 0.0001, 0.0001);
+  let sum = 0;
+  block.branches.forEach(function(b){ sum += 1/Math.max(b.R || 0.0001, 0.0001); });
+  return sum > 0 ? 1/sum : Infinity;
+}
+
+function computeCircuit(){
+  let Rtotal = 0;
+  circuit.blocks.forEach(function(b){ b._R = calcBlockR(b); Rtotal += b._R; });
+  let r = circuit.useInternal ? (circuit.r || 0) : 0;
+  let Itotal = circuit.V / (Rtotal + r);
+  if(!isFinite(Itotal)) Itotal = 0;
+  circuit.blocks.forEach(function(b){
+    b._I = Itotal;
+    b._V = Itotal * b._R;
+    if(b.type === 'parallel'){
+      b.branches.forEach(function(br){
+        br._V = b._V;
+        br._I = b._V / Math.max(br.R || 0.0001, 0.0001);
+      });
+    }
+  });
+  return { Rtotal:Rtotal, Itotal:Itotal, r:r, Vterminal: circuit.V - Itotal*r };
+}
+
+/* ---------------- number formatting ---------------- */
+function fmt(n, d){
+  if(n==null || !isFinite(n)) return '—';
+  d = d==null?2:d;
+  let v = Number(n.toFixed(d));
+  return v.toString().replace('.', ',');
+}
+
+/* ---------------- controls rendering ---------------- */
+const blockListEl = document.getElementById('blockList');
+
+function renderBlockList(){
+  blockListEl.innerHTML = '';
+  let seriesCount = 0, parCount = 0;
+  circuit.blocks.forEach(function(block, idx){
+    const item = document.createElement('div');
+    item.className = 'block-item';
+    if(block.type === 'series'){
+      seriesCount++;
+      const label = 'R' + seriesCount;
+      item.innerHTML =
+        '<div class="block-item-head"><span class="tag">Αντίσταση '+label+' (σειρά)</span>'+
+        '<button class="rm" data-rm="'+block.id+'" title="Αφαίρεση">✕</button></div>'+
+        '<div class="field-row" style="margin-bottom:8px;"><label>'+label+'</label>'+
+        '<div class="val-wrap"><input class="val-input" type="number" min="0.1" step="0.1" value="'+block.R+'" data-rfield="'+block.id+'"><span class="unit">Ω</span></div></div>'+
+        '<div style="display:flex; gap:14px;">'+
+        '<label class="meter-chk amp"><input type="checkbox" data-meter="A" data-block="'+block.id+'" '+(block.meterA?'checked':'')+'> Αμπερόμετρο</label>'+
+        '<label class="meter-chk volt"><input type="checkbox" data-meter="V" data-block="'+block.id+'" '+(block.meterV?'checked':'')+'> Βολτόμετρο</label>'+
+        '</div>';
+    } else {
+      parCount++;
+      const groupLabel = 'Ομάδα ' + parCount;
+      let branchesHtml = '';
+      block.branches.forEach(function(br, bi){
+        const bname = String.fromCharCode(97+bi); // a, b, c...
+        branchesHtml +=
+          '<div class="branch-row">'+
+          '<span class="bname">R'+parCount+bname+'</span>'+
+          '<div class="val-wrap"><input class="val-input" type="number" min="0.1" step="0.1" value="'+br.R+'" data-branchfield="'+block.id+'|'+br.id+'"><span class="unit">Ω</span></div>'+
+          '<label class="meter-chk amp"><input type="checkbox" data-brmeter="A" data-block="'+block.id+'" data-branch="'+br.id+'" '+(br.meterA?'checked':'')+'> Α</label>'+
+          '<label class="meter-chk volt"><input type="checkbox" data-brmeter="V" data-block="'+block.id+'" data-branch="'+br.id+'" '+(br.meterV?'checked':'')+'> V</label>'+
+          (block.branches.length>2 ? '<button class="rm-branch" data-rmbranch="'+block.id+'|'+br.id+'" title="Αφαίρεση κλάδου">✕</button>' : '')+
+          '</div>';
+      });
+      item.innerHTML =
+        '<div class="block-item-head"><span class="tag">'+groupLabel+' (παράλληλα, '+block.branches.length+' κλάδοι)</span>'+
+        '<button class="rm" data-rm="'+block.id+'" title="Αφαίρεση ομάδας">✕</button></div>'+
+        branchesHtml+
+        '<div style="display:flex; gap:14px; align-items:center; margin-top:8px;">'+
+        (block.branches.length<4 ? '<button class="add-branch-btn" data-addbranch="'+block.id+'">+ Κλάδος</button>' : '')+
+        '<label class="meter-chk amp"><input type="checkbox" data-meter="A" data-block="'+block.id+'" '+(block.meterA?'checked':'')+'> Αμπερόμετρο ομάδας</label>'+
+        '</div>';
+    }
+    blockListEl.appendChild(item);
+  });
+  if(circuit.blocks.length === 0){
+    blockListEl.innerHTML = '<div class="empty-note">Δεν υπάρχουν στοιχεία — πρόσθεσε αντίσταση ή κλάδο παράλληλα.</div>';
+  }
+  bindBlockListEvents();
+}
+
+function bindBlockListEvents(){
+  blockListEl.querySelectorAll('[data-rm]').forEach(function(el){
+    el.addEventListener('click', function(){
+      circuit.blocks = circuit.blocks.filter(function(b){ return b.id !== el.dataset.rm; });
+      renderAll();
+    });
+  });
+  blockListEl.querySelectorAll('[data-rfield]').forEach(function(el){
+    el.addEventListener('input', function(){
+      const b = circuit.blocks.find(function(x){ return x.id === el.dataset.rfield; });
+      if(b){ b.R = Math.max(parseFloat(el.value)||0.1, 0.1); renderComputedOnly(); }
+    });
+  });
+  blockListEl.querySelectorAll('[data-branchfield]').forEach(function(el){
+    el.addEventListener('input', function(){
+      const parts = el.dataset.branchfield.split('|');
+      const b = circuit.blocks.find(function(x){ return x.id === parts[0]; });
+      if(b){
+        const br = b.branches.find(function(x){ return x.id === parts[1]; });
+        if(br){ br.R = Math.max(parseFloat(el.value)||0.1, 0.1); renderComputedOnly(); }
+      }
+    });
+  });
+  blockListEl.querySelectorAll('[data-meter]').forEach(function(el){
+    el.addEventListener('change', function(){
+      const b = circuit.blocks.find(function(x){ return x.id === el.dataset.block; });
+      if(b){
+        if(el.dataset.meter === 'A') b.meterA = el.checked; else b.meterV = el.checked;
+        renderComputedOnly();
+      }
+    });
+  });
+  blockListEl.querySelectorAll('[data-brmeter]').forEach(function(el){
+    el.addEventListener('change', function(){
+      const b = circuit.blocks.find(function(x){ return x.id === el.dataset.block; });
+      if(b){
+        const br = b.branches.find(function(x){ return x.id === el.dataset.branch; });
+        if(br){
+          if(el.dataset.brmeter === 'A') br.meterA = el.checked; else br.meterV = el.checked;
+          renderComputedOnly();
+        }
+      }
+    });
+  });
+  blockListEl.querySelectorAll('[data-addbranch]').forEach(function(el){
+    el.addEventListener('click', function(){
+      const b = circuit.blocks.find(function(x){ return x.id === el.dataset.addbranch; });
+      if(b && b.branches.length < 4){
+        b.branches.push({id:nextId(), R:20, meterA:false, meterV:false});
+        renderAll();
+      }
+    });
+  });
+  blockListEl.querySelectorAll('[data-rmbranch]').forEach(function(el){
+    el.addEventListener('click', function(){
+      const parts = el.dataset.rmbranch.split('|');
+      const b = circuit.blocks.find(function(x){ return x.id === parts[0]; });
+      if(b && b.branches.length > 2){
+        b.branches = b.branches.filter(function(x){ return x.id !== parts[1]; });
+        renderAll();
+      }
+    });
+  });
+}
+
+document.getElementById('addSeriesBtn').addEventListener('click', function(){
+  if(circuit.blocks.length >= 8) return;
+  circuit.blocks.push(makeSeriesBlock(10));
+  renderAll();
+});
+document.getElementById('addParallelBtn').addEventListener('click', function(){
+  if(circuit.blocks.length >= 8) return;
+  circuit.blocks.push(makeParallelBlock());
+  renderAll();
+});
+
+/* ---------------- source controls ---------------- */
+const vNum = document.getElementById('vSourceNum');
+const vRange = document.getElementById('vSourceRange');
+const useInternalChk = document.getElementById('useInternal');
+const rInternalField = document.getElementById('rInternalField');
+const rNum = document.getElementById('rInternalNum');
+const rRange = document.getElementById('rInternalRange');
+
+function syncSourceUI(){
+  vNum.value = circuit.V; vRange.value = circuit.V;
+  useInternalChk.checked = circuit.useInternal;
+  rInternalField.style.display = circuit.useInternal ? '' : 'none';
+  rNum.value = circuit.r; rRange.value = circuit.r;
+}
+vNum.addEventListener('input', function(){ circuit.V = Math.max(parseFloat(vNum.value)||0.1,0.1); vRange.value=circuit.V; renderComputedOnly(); });
+vRange.addEventListener('input', function(){ circuit.V = parseFloat(vRange.value); vNum.value=circuit.V; renderComputedOnly(); });
+useInternalChk.addEventListener('change', function(){ circuit.useInternal = useInternalChk.checked; rInternalField.style.display = circuit.useInternal?'':'none'; renderComputedOnly(); });
+rNum.addEventListener('input', function(){ circuit.r = Math.max(parseFloat(rNum.value)||0,0); rRange.value=circuit.r; renderComputedOnly(); });
+rRange.addEventListener('input', function(){ circuit.r = parseFloat(rRange.value); rNum.value=circuit.r; renderComputedOnly(); });
+
+/* ---------------- panel collapse ---------------- */
+document.querySelectorAll('[data-collapse]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const card = document.getElementById(btn.dataset.collapse);
+    card.classList.toggle('collapsed');
+    btn.textContent = card.classList.contains('collapsed') ? '⊞' : '⊖';
+  });
+});
+
+/* ---------------- main tabs ---------------- */
+const mainTabBtns = Array.from(document.querySelectorAll('.main-tab-btn'));
+mainTabBtns.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    mainTabBtns.forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- theme ---------------- */
+const themeBtn = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+function setTheme(t){
+  if(t === 'minimal'){ document.body.classList.add('theme-minimal'); themeLabel.textContent='Minimal'; }
+  else { document.body.classList.remove('theme-minimal'); themeLabel.textContent='Blueprint'; }
+  drawCircuit();
+}
+themeBtn.addEventListener('click', function(){
+  setTheme(document.body.classList.contains('theme-minimal') ? 'blueprint' : 'minimal');
+});
+
+/* ---------------- results table + top readouts ---------------- */
+const resTableBody = document.getElementById('resTableBody');
+const roV = document.getElementById('roV'), roR = document.getElementById('roR'), roI = document.getElementById('roI');
+
+function renderResultsTable(computed){
+  resTableBody.innerHTML = '';
+  let seriesCount=0, parCount=0;
+  circuit.blocks.forEach(function(b){
+    if(b.type === 'series'){
+      seriesCount++;
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>R'+seriesCount+' (σειρά)</td><td>'+fmt(b.R)+'</td><td class="gold">'+fmt(b._V)+'</td><td class="gold">'+fmt(b._I)+'</td>';
+      resTableBody.appendChild(tr);
+    } else {
+      parCount++;
+      const trh = document.createElement('tr');
+      trh.innerHTML = '<td>Ομάδα '+parCount+' (R<sub>ισοδ</sub>)</td><td>'+fmt(b._R)+'</td><td class="gold">'+fmt(b._V)+'</td><td class="gold">'+fmt(b._I)+'</td>';
+      resTableBody.appendChild(trh);
+      b.branches.forEach(function(br, bi){
+        const bname = String.fromCharCode(97+bi);
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td style="padding-left:18px;">R'+parCount+bname+'</td><td>'+fmt(br.R)+'</td><td>'+fmt(br._V)+'</td><td>'+fmt(br._I)+'</td>';
+        resTableBody.appendChild(tr);
+      });
+    }
+  });
+  const trTotal = document.createElement('tr');
+  trTotal.className = 'total';
+  trTotal.innerHTML = '<td>Σύνολο</td><td>'+fmt(computed.Rtotal)+'</td><td>'+fmt(circuit.V)+'</td><td>'+fmt(computed.Itotal)+'</td>';
+  resTableBody.appendChild(trTotal);
+
+  roV.textContent = fmt(circuit.V);
+  roR.textContent = fmt(computed.Rtotal);
+  roI.textContent = fmt(computed.Itotal, 3);
+}
+
+/* ---------------- solution tab ---------------- */
+const solutionBody = document.getElementById('solutionBody');
+function renderSolution(computed){
+  let html = '';
+  let seriesCount=0, parCount=0;
+  circuit.blocks.forEach(function(b){
+    if(b.type === 'series'){
+      seriesCount++;
+      html += '<div class="sol-block"><h3>Αντίσταση R'+seriesCount+' (σειρά)</h3>'+
+        '<div class="sol-line">R'+seriesCount+' = '+fmt(b.R)+' Ω <span class="muted">(δίνεται)</span></div></div>';
+    } else {
+      parCount++;
+      const terms = b.branches.map(function(br,bi){ return '1/R'+parCount+String.fromCharCode(97+bi); }).join(' + ');
+      const nums = b.branches.map(function(br){ return '1/'+fmt(br.R); }).join(' + ');
+      html += '<div class="sol-block"><h3>Ομάδα '+parCount+' (παράλληλα)</h3>'+
+        '<div class="sol-line">1/R<sub>ισοδ</sub> = '+terms+' = '+nums+'</div>'+
+        '<div class="sol-line">R<sub>ισοδ,'+parCount+'</sub> = <span class="muted">→</span> '+fmt(b._R)+' Ω</div></div>';
+    }
+  });
+
+  html += '<div class="sol-block"><h3>Ολική αντίσταση κυκλώματος</h3>'+
+    '<div class="sol-line">R<sub>ολ</sub> = ' + circuit.blocks.map(function(b,i){ return 'R'+(i+1)+(b.type==='parallel'?'(ισοδ)':''); }).join(' + ') + '</div>'+
+    '<div class="sol-line">R<sub>ολ</sub> = ' + circuit.blocks.map(function(b){ return fmt(b._R); }).join(' + ') + ' = <b style="color:var(--gold)">'+fmt(computed.Rtotal)+' Ω</b></div></div>';
+
+  if(circuit.useInternal){
+    html += '<div class="sol-block"><h3>Ολικό ρεύμα (με εσωτερική αντίσταση)</h3>'+
+      '<div class="sol-line">I<sub>ολ</sub> = V / (R<sub>ολ</sub> + r) = '+fmt(circuit.V)+' / ('+fmt(computed.Rtotal)+' + '+fmt(circuit.r)+') = <b style="color:var(--gold)">'+fmt(computed.Itotal,3)+' A</b></div>'+
+      '<div class="sol-line">Τάση στους πόλους: V<sub>πόλων</sub> = V − I·r = '+fmt(circuit.V)+' − '+fmt(computed.Itotal,3)+'·'+fmt(circuit.r)+' = '+fmt(computed.Vterminal)+' V</div></div>';
+  } else {
+    html += '<div class="sol-block"><h3>Ολικό ρεύμα (Νόμος του Ohm)</h3>'+
+      '<div class="sol-line">I<sub>ολ</sub> = V / R<sub>ολ</sub> = '+fmt(circuit.V)+' / '+fmt(computed.Rtotal)+' = <b style="color:var(--gold)">'+fmt(computed.Itotal,3)+' A</b></div></div>';
+  }
+
+  seriesCount=0; parCount=0;
+  circuit.blocks.forEach(function(b){
+    if(b.type === 'series'){
+      seriesCount++;
+      html += '<div class="sol-block"><h3>Τάση &amp; ρεύμα στην R'+seriesCount+'</h3>'+
+        '<div class="sol-line">I'+seriesCount+' = I<sub>ολ</sub> = '+fmt(b._I,3)+' A <span class="muted">(σε σειρά, ίδιο ρεύμα)</span></div>'+
+        '<div class="sol-line">V'+seriesCount+' = I·R = '+fmt(b._I,3)+'·'+fmt(b.R)+' = <b style="color:var(--gold)">'+fmt(b._V)+' V</b></div></div>';
+    } else {
+      parCount++;
+      html += '<div class="sol-block"><h3>Τάση &amp; ρεύματα στην Ομάδα '+parCount+'</h3>'+
+        '<div class="sol-line">V<sub>ομάδας</sub> = I<sub>ολ</sub>·R<sub>ισοδ</sub> = '+fmt(computed.Itotal,3)+'·'+fmt(b._R)+' = <b style="color:var(--gold)">'+fmt(b._V)+' V</b> <span class="muted">(ίδια σε όλους τους κλάδους)</span></div>';
+      b.branches.forEach(function(br,bi){
+        const bname = String.fromCharCode(97+bi);
+        html += '<div class="sol-line">I'+parCount+bname+' = V/R'+parCount+bname+' = '+fmt(br._V)+'/'+fmt(br.R)+' = '+fmt(br._I,3)+' A</div>';
+      });
+      html += '</div>';
+    }
+  });
+
+  solutionBody.innerHTML = html || '<div class="empty-note">Πρόσθεσε στοιχεία κυκλώματος για να δεις τη λύση.</div>';
+}
+
+/* ---------------- canvas circuit drawing ---------------- */
+const canvas = document.getElementById('circuitCanvas');
+const ctx = canvas.getContext('2d');
+let animT = 0;
+let lastComputed = null;
+
+function cssVar(name){
+  return getComputedStyle(document.body).getPropertyValue(name).trim();
+}
+
+function zigzag(ctx, x1, y, x2, amp, n){
+  // draws a horizontal resistor zigzag centered between x1..x2 at height y
+  const w = x2 - x1;
+  const leadLen = Math.min(18, w*0.22);
+  const bodyStart = x1 + leadLen, bodyEnd = x2 - leadLen;
+  const bodyW = bodyEnd - bodyStart;
+  const segN = n || 6;
+  const seg = bodyW / segN;
+  ctx.beginPath();
+  ctx.moveTo(x1, y);
+  ctx.lineTo(bodyStart, y);
+  for(let i=0;i<segN;i++){
+    const sx = bodyStart + i*seg;
+    const ex = sx + seg;
+    const midx = (sx+ex)/2;
+    const dir = (i%2===0)? -1: 1;
+    ctx.lineTo(midx, y + dir*amp);
+    ctx.lineTo(ex, y);
+  }
+  ctx.lineTo(x2, y);
+  ctx.stroke();
+  return { bodyStart:bodyStart, bodyEnd:bodyEnd };
+}
+
+function drawMeter(ctx, x, y, label, value, unit, color){
+  ctx.save();
+  ctx.fillStyle = cssVar('--bg-panel');
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x, y, 15, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.font = '700 13px IBM Plex Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, x, y+1);
+  ctx.restore();
+  // readout box
+  ctx.save();
+  ctx.font = '600 12px IBM Plex Mono, monospace';
+  const text = value+' '+unit;
+  const tw = ctx.measureText(text).width + 12;
+  ctx.fillStyle = cssVar('--bg-deep');
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  const bx = x - tw/2, by = y + 20;
+  ctx.beginPath();
+  if(ctx.roundRect) ctx.roundRect(bx, by, tw, 20, 3); else ctx.rect(bx,by,tw,20);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, by+10);
+  ctx.restore();
+}
+
+function layoutCircuit(){
+  const marginL = 76, marginR = 56, topY = 130;
+  const rowGap = 92;
+  const blockGap = 48;
+  let x = marginL;
+  const blockLayouts = [];
+  let maxRows = 0;
+  circuit.blocks.forEach(function(b, bi){
+    if(bi>0) x += blockGap;
+    if(b.type === 'series'){
+      const w = 140;
+      blockLayouts.push({ block:b, type:'series', x1:x, x2:x+w });
+      x += w;
+    } else {
+      const w = 200;
+      const leftBus = x + 28, rightBus = x + w - 28;
+      blockLayouts.push({ block:b, type:'parallel', x1:x, x2:x+w, leftBus:leftBus, rightBus:rightBus, rowGap:rowGap });
+      maxRows = Math.max(maxRows, b.branches.length);
+      x += w;
+    }
+  });
+  const rightNodeX = x + blockGap;
+  const totalW = rightNodeX + marginR;
+  const contentBottom = topY + (maxRows>0 ? maxRows*rowGap + 26 : 0);
+  const bottomY = contentBottom + 80;
+  const totalH = bottomY + 44;
+  return { marginL:marginL, marginR:marginR, topY:topY, bottomY:bottomY, blockLayouts:blockLayouts, rightNodeX:rightNodeX, totalW:Math.max(totalW,560), totalH:Math.max(totalH,300) };
+}
+
+function drawCircuit(){
+  const computed = computeCircuit();
+  lastComputed = computed;
+  const L = layoutCircuit();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = L.totalW * dpr;
+  canvas.height = L.totalH * dpr;
+  canvas.style.aspectRatio = (L.totalW/L.totalH).toFixed(3);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,L.totalW,L.totalH);
+
+  const wire = cssVar('--wire');
+  const gold = cssVar('--gold');
+  const resistColor = cssVar('--resist-color');
+  const ampColor = cssVar('--amp-color');
+  const voltColor = cssVar('--volt-color');
+  const paper = cssVar('--paper');
+  const paperDim = cssVar('--paper-dim');
+
+  const topY = L.topY, bottomY = L.bottomY;
+  const leftNodeX = L.marginL, rightNodeX = L.rightNodeX;
+
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = wire;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // dot animation paths: collect segments {x1,y1,x2,y2,I}
+  const segments = [];
+
+  // top rail through blocks
+  let cx = leftNodeX;
+  ctx.beginPath();
+  L.blockLayouts.forEach(function(bl){
+    if(bl.type === 'series'){
+      ctx.moveTo(cx, topY); ctx.lineTo(bl.x1, topY); ctx.stroke();
+      segments.push({x1:cx,y1:topY,x2:bl.x1,y2:topY, I:bl.block._I});
+      ctx.beginPath();
+      const zz = zigzag(ctx, bl.x1, topY, bl.x2, 9, 6);
+      ctx.strokeStyle = resistColor;
+      ctx.lineWidth = 2.5;
+      // redraw the zigzag portion in resist color (zigzag already stroked in wire color above via reuse) — fix: draw again explicitly
+      ctx.stroke();
+      ctx.strokeStyle = wire;
+      cx = bl.x2;
+      ctx.beginPath();
+      // resistor label + value below the wire
+      ctx.fillStyle = resistColor;
+      ctx.font = '600 12px IBM Plex Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('R='+fmt(bl.block.R)+'Ω', (bl.x1+bl.x2)/2, topY+22);
+    } else {
+      // incoming wire to left bus
+      ctx.moveTo(cx, topY); ctx.lineTo(bl.leftBus, topY); ctx.stroke();
+      segments.push({x1:cx,y1:topY,x2:bl.leftBus,y2:topY, I:bl.block._I});
+      ctx.beginPath();
+      const lastRowY = topY + bl.block.branches.length * bl.rowGap;
+      // buses
+      ctx.moveTo(bl.leftBus, topY); ctx.lineTo(bl.leftBus, lastRowY); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(bl.rightBus, topY); ctx.lineTo(bl.rightBus, lastRowY); ctx.stroke();
+      ctx.beginPath();
+      bl.block.branches.forEach(function(br, bi){
+        const rowY = topY + bl.rowGap*(bi+1);
+        ctx.moveTo(bl.leftBus, rowY); ctx.lineTo(bl.leftBus+14, rowY); ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = resistColor;
+        zigzag(ctx, bl.leftBus+14, rowY, bl.rightBus-14, 7, 5);
+        ctx.strokeStyle = wire;
+        ctx.beginPath();
+        ctx.moveTo(bl.rightBus-14, rowY); ctx.lineTo(bl.rightBus, rowY); ctx.stroke();
+        ctx.beginPath();
+        segments.push({x1:bl.leftBus,y1:rowY,x2:bl.rightBus,y2:rowY, I:br._I, branch:{block:bl.block, br:br}});
+        ctx.fillStyle = resistColor;
+        ctx.font = '600 11px IBM Plex Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(fmt(br.R)+'Ω', (bl.leftBus+bl.rightBus)/2, rowY+26);
+      });
+      // outgoing wire
+      ctx.moveTo(bl.rightBus, topY); ctx.lineTo(bl.x2, topY); ctx.stroke();
+      segments.push({x1:bl.rightBus,y1:topY,x2:bl.x2,y2:topY, I:bl.block._I});
+      ctx.beginPath();
+      cx = bl.x2;
+    }
+  });
+  ctx.moveTo(cx, topY); ctx.lineTo(rightNodeX, topY); ctx.stroke();
+  segments.push({x1:cx,y1:topY,x2:rightNodeX,y2:topY, I:computed.Itotal});
+  ctx.beginPath();
+
+  // right wire down
+  ctx.moveTo(rightNodeX, topY); ctx.lineTo(rightNodeX, bottomY); ctx.stroke();
+  segments.push({x1:rightNodeX,y1:topY,x2:rightNodeX,y2:bottomY, I:computed.Itotal});
+  ctx.beginPath();
+  // bottom wire
+  ctx.moveTo(rightNodeX, bottomY); ctx.lineTo(leftNodeX, bottomY); ctx.stroke();
+  segments.push({x1:rightNodeX,y1:bottomY,x2:leftNodeX,y2:bottomY, I:computed.Itotal});
+  ctx.beginPath();
+  // battery: left wire from bottom up to topY, with battery symbol at mid
+  const battMidY = (topY+bottomY)/2;
+  ctx.moveTo(leftNodeX, bottomY); ctx.lineTo(leftNodeX, battMidY+16); ctx.stroke();
+  segments.push({x1:leftNodeX,y1:bottomY,x2:leftNodeX,y2:battMidY+16, I:computed.Itotal});
+  ctx.beginPath();
+  ctx.moveTo(leftNodeX, battMidY-16); ctx.lineTo(leftNodeX, topY); ctx.stroke();
+  segments.push({x1:leftNodeX,y1:battMidY-16,x2:leftNodeX,y2:topY, I:computed.Itotal});
+  ctx.beginPath();
+
+  // battery plates
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(leftNodeX-14, battMidY-16); ctx.lineTo(leftNodeX+14, battMidY-16); ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(leftNodeX-7, battMidY+2); ctx.lineTo(leftNodeX+7, battMidY+2); ctx.stroke();
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(leftNodeX-14, battMidY+16); ctx.lineTo(leftNodeX+14, battMidY+16); ctx.stroke();
+
+  ctx.fillStyle = gold;
+  ctx.font = '700 12px IBM Plex Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('+', leftNodeX+20, battMidY-14);
+  ctx.fillText('−', leftNodeX+20, battMidY+18);
+  ctx.font = '700 13px IBM Plex Mono, monospace';
+  ctx.fillText('V = '+fmt(circuit.V)+' V', leftNodeX-64, battMidY+42);
+  if(circuit.useInternal){
+    ctx.fillStyle = paperDim;
+    ctx.font = '600 11px IBM Plex Mono, monospace';
+    ctx.fillText('r = '+fmt(circuit.r)+' Ω', leftNodeX-64, battMidY+58);
+  }
+
+  // corner nodes dots
+  ctx.fillStyle = wire;
+  [[leftNodeX,topY],[rightNodeX,topY],[leftNodeX,bottomY],[rightNodeX,bottomY]].forEach(function(p){
+    ctx.beginPath(); ctx.arc(p[0],p[1],3,0,Math.PI*2); ctx.fill();
+  });
+
+  // meters (drawn after everything else so readouts sit clearly on top)
+  L.blockLayouts.forEach(function(bl){
+    if(bl.type === 'series'){
+      const midx = (bl.x1+bl.x2)/2;
+      if(bl.block.meterV) drawMeter(ctx, midx, topY-64, 'V', fmt(bl.block._V), 'V', voltColor);
+      if(bl.block.meterA) drawMeter(ctx, bl.x2+30, topY, 'A', fmt(bl.block._I,3), 'A', ampColor);
+    } else {
+      if(bl.block.meterA) drawMeter(ctx, bl.x1-24, topY, 'A', fmt(bl.block._I,3), 'A', ampColor);
+      bl.block.branches.forEach(function(br, bi){
+        const rowY = topY + bl.rowGap*(bi+1);
+        const midx = (bl.leftBus+bl.rightBus)/2;
+        if(br.meterV) drawMeter(ctx, midx, rowY-38, 'V', fmt(br._V), 'V', voltColor);
+        if(br.meterA) drawMeter(ctx, bl.rightBus+30, rowY, 'A', fmt(br._I,3), 'A', ampColor);
+      });
+    }
+  });
+
+  // animated current dots
+  const maxI = Math.max(computed.Itotal, 0.0001);
+  segments.forEach(function(seg){
+    if(seg.I <= 0.00001) return;
+    const len = Math.hypot(seg.x2-seg.x1, seg.y2-seg.y1);
+    if(len < 4) return;
+    const speed = 26 * (0.4 + 0.6*(seg.I/maxI));
+    const spacing = 26;
+    const nDots = Math.max(1, Math.floor(len/spacing));
+    const dx = (seg.x2-seg.x1)/len, dy = (seg.y2-seg.y1)/len;
+    for(let i=0;i<nDots;i++){
+      let t = ((i*spacing + animT*speed) % len + len) % len;
+      const px = seg.x1 + dx*t, py = seg.y1 + dy*t;
+      ctx.beginPath();
+      ctx.fillStyle = cssVar('--current-dot');
+      ctx.arc(px, py, 2.6, 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+
+  renderResultsTable(computed);
+}
+
+function renderComputedOnly(){ drawCircuit(); renderSolution(lastComputed); }
+function renderAll(){ syncSourceUI(); renderBlockList(); drawCircuit(); renderSolution(lastComputed); }
+
+let lastTime = null;
+function animate(ts){
+  if(lastTime==null) lastTime = ts;
+  const dt = (ts-lastTime)/1000;
+  lastTime = ts;
+  animT += dt;
+  drawCircuit();
+  requestAnimationFrame(animate);
+}
+
+/* ---------------- presets / save-load ---------------- */
+const STORAGE_KEY = 'kyklomatos_presets_v1';
+function loadPresets(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }catch(e){ return []; }
+}
+function savePresetsList(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+function serializeCircuit(){
+  return JSON.parse(JSON.stringify(circuit));
+}
+function renderPresetList(){
+  const list = loadPresets();
+  const el = document.getElementById('presetList');
+  el.innerHTML = '';
+  if(list.length===0){ el.innerHTML = '<div class="empty-note">Δεν υπάρχουν αποθηκευμένες ρυθμίσεις.</div>'; return; }
+  list.forEach(function(p, idx){
+    const row = document.createElement('div');
+    row.className = 'preset-item';
+    row.innerHTML = '<span class="pname">'+p.name+'</span><div class="pbtns">'+
+      '<button data-load="'+idx+'">Φόρτωση</button>'+
+      '<button class="danger-btn" data-del="'+idx+'">Διαγραφή</button></div>';
+    el.appendChild(row);
+  });
+  el.querySelectorAll('[data-load]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const list2 = loadPresets();
+      const p = list2[parseInt(btn.dataset.load)];
+      if(p){ circuit = p.circuit; idCounter += 1000; renderAll(); }
+    });
+  });
+  el.querySelectorAll('[data-del]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const list2 = loadPresets();
+      list2.splice(parseInt(btn.dataset.del),1);
+      savePresetsList(list2);
+      renderPresetList();
+    });
+  });
+}
+document.getElementById('savePresetBtn').addEventListener('click', function(){
+  const nameEl = document.getElementById('presetName');
+  const name = (nameEl.value||'').trim() || ('Ρύθμιση '+ new Date().toLocaleString('el-GR'));
+  const list = loadPresets();
+  list.push({ name:name, circuit: serializeCircuit() });
+  savePresetsList(list);
+  nameEl.value = '';
+  renderPresetList();
+});
+document.getElementById('exportJsonBtn').addEventListener('click', function(){
+  document.getElementById('jsonIo').value = JSON.stringify(serializeCircuit(), null, 2);
+});
+document.getElementById('importJsonBtn').addEventListener('click', function(){
+  try{
+    const data = JSON.parse(document.getElementById('jsonIo').value);
+    if(data && data.blocks){ circuit = data; idCounter += 1000; renderAll(); }
+  }catch(e){ alert('Μη έγκυρο JSON'); }
+});
+
+/* ---------------- init ---------------- */
+syncSourceUI();
+renderBlockList();
+renderPresetList();
+drawCircuit();
+renderSolution(lastComputed);
+requestAnimationFrame(animate);
+window.addEventListener('resize', drawCircuit);
+
+})();
+</script>
+</body>
+</html>
