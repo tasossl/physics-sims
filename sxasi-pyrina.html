@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Σχάση Ατομικού Πυρήνα</title>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('fission-sim-theme') || 'blueprint';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ document.documentElement.setAttribute('data-theme','blueprint'); }
+})();
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --proton-color:#E0685A;
+  --neutron-color:#8FA9C4;
+  --neutron-free-color:#7DE2FF;
+  --frag1-color:#E8B84B;
+  --frag2-color:#FF6FCF;
+  --energy-color:#FDE047;
+  --used-color: rgba(143,184,217,0.28);
+}
+:root[data-theme="light"]{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --proton-color:#D64545;
+  --neutron-color:#5C7086;
+  --neutron-free-color:#0891B2;
+  --frag1-color:#F0932B;
+  --frag2-color:#DB2777;
+  --energy-color:#CA8A04;
+  --used-color: rgba(31,45,61,0.16);
+}
+
+*{box-sizing:border-box;}
+html{height:100%;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  height:100%;
+  margin:0;
+  padding: 14px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow:hidden;
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1400px; margin:0 auto; height:100%; display:flex; flex-direction:column; min-height:0;}
+
+header{
+  flex:none;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(20px, 3.6vw, 30px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.byline{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; color: var(--paper-dim); margin-top:4px; }
+.subtitle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color: var(--paper-dim); }
+.header-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.theme-toggle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:6px 10px; }
+.theme-toggle span{color: var(--gold);}
+
+.layout{ flex:1; min-height:0; display:flex; flex-direction:column; gap: 14px; }
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 12px;
+  position:relative;
+  flex:none;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:6px;
+  display:flex;
+  justify-content:space-between;
+}
+canvas{
+  width:100%;
+  height:auto;
+  aspect-ratio: 4/3;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+  touch-action: none;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.canvas-caption{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  text-align:center;
+  margin-top:4px;
+}
+
+.stage-body{ display:flex; flex-direction:column; gap:12px; }
+.stage-canvas-col{ width:100%; }
+.stage-info-col{ display:flex; flex-direction:column; gap:10px; }
+
+@media (min-width: 861px){
+  .layout{ display:grid; grid-template-columns: 1fr minmax(240px, 310px); gap:16px; overflow:hidden; }
+  .stage{ height:100%; overflow-y:auto; display:flex; flex-direction:column; }
+  .side-panel{ height:100%; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+  .side-panel .main-tab-row{ flex:none; position:sticky; top:0; background:var(--bg-deep); z-index:5; padding-top:2px; }
+  .side-panel-scroll{ flex:1; min-height:0; overflow-y:auto; padding-right:4px; }
+
+  .stage-body{ flex-direction:row; align-items:flex-start; gap:20px; }
+  .stage-canvas-col{ flex: 1 1 560px; min-width:280px; }
+  .stage-info-col{ flex: 0 0 220px; min-width:200px; padding-top:6px; }
+  canvas{ max-width:none; margin:0; }
+  .stage-readouts{ margin:0; max-width:none; grid-template-columns: 1fr; }
+  .legend{ justify-content:flex-start; }
+  .btn-row{ justify-content:flex-start; margin-top:6px; }
+}
+@media (max-width: 860px){
+  html, body{ height:auto; overflow:visible; min-height:100%; }
+  .wrap{ height:auto; }
+}
+
+.stage-readouts{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap:4px 16px;
+  margin: 12px auto 0;
+  max-width: 620px;
+}
+.stage-readouts .ov-line{ white-space:nowrap; }
+.stage-readouts .ov-k{ color: var(--paper-dim); margin-right:6px; }
+.stage-readouts .v{ font-weight:600; color: var(--line-bright); }
+.stage-readouts .v.energy{ color: var(--energy-color); }
+.stage-readouts .u{ color: var(--paper-dim); font-size:11px; margin-left:2px; }
+
+.legend{
+  display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--paper-dim);
+  margin-top:10px;
+}
+.legend .dot{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+.legend .dot.n{ background: var(--neutron-free-color); }
+.legend .dot.nuc{ background: var(--gold); }
+.legend .dot.used{ background: var(--used-color); }
+
+.hint{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-top:10px; text-align:center; }
+
+.btn-row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px;}
+
+button{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  letter-spacing:0.05em;
+  font-size:13px;
+  text-transform:uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper);
+  padding: 12px 16px;
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height:44px;
+}
+button:hover{border-color: var(--gold-dim); color: var(--gold);}
+button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+button.primary{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+button.primary:hover{background: #f0c665; color:var(--bg-deep);}
+button.small{padding:8px 12px; font-size:13px; min-height:38px;}
+button.danger{ color: var(--danger); border-color: rgba(224,104,90,0.4); }
+button.danger:hover{ background: rgba(224,104,90,0.15); border-color: var(--danger); color:#ffb3a8; }
+button:disabled{opacity:0.35; cursor:not-allowed;}
+
+.mode-row{ display:flex; gap:6px; }
+.mode-btn{
+  flex:1;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:12px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:12px 4px;
+  min-height:44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper-dim);
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.mode-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+
+.main-tab-row{ display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; -ms-overflow-style:none; scrollbar-width:none; }
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:13px 18px;
+  min-height:46px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: var(--bg-panel);
+  color: var(--paper-dim);
+  cursor:pointer;
+  white-space:nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+#tab-settings, #tab-info, #tab-energy, #tab-saved{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.field-row label{ font-size:14px; color: var(--paper); }
+.field-row .val{ font-family:'IBM Plex Mono', monospace; font-size:13px; color: var(--gold); }
+
+select{
+  width:100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:12px;
+  border-radius: var(--radius);
+}
+
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:5px; background: var(--line-dim);
+  border-radius:3px; outline:none; touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:22px;height:22px; border-radius:50%;
+  background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer; margin-top:-9px;
+}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px; border-radius:50%; background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{ height:5px; background: var(--line-dim); border-radius:3px; }
+
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px; }
+.toggle-row + .toggle-row{margin-top:13px;}
+.toggle-row label{font-size:13.5px;}
+.switch{ position:relative; width:46px;height:26px; flex:none; }
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{
+  position:absolute; inset:0; background: var(--line-dim); border-radius:26px;
+  transition: background 0.15s; border:1px solid var(--line-dim); pointer-events:none;
+}
+.slider-pill:before{
+  content:""; position:absolute; width:18px;height:18px; left:3px; top:3px;
+  background: var(--paper-dim); border-radius:50%; transition: transform 0.15s, background 0.15s;
+}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
+
+.info-text{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  color: var(--paper);
+  line-height:1.85;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:14px;
+  white-space:pre-line;
+}
+.equation{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:15px;
+  font-weight:600;
+  text-align:center;
+  color: var(--gold);
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:14px 10px;
+  line-height:1.7;
+}
+
+.big-readout{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:26px;
+  font-weight:600;
+  text-align:center;
+  color: var(--energy-color);
+  padding: 6px 0 2px;
+}
+.big-readout-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  text-align:center;
+  color: var(--paper-dim);
+}
+.eq-row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:12.5px; padding:4px 0; }
+.eq-row span:last-child{ color: var(--gold); }
+
+.chart-wrap{
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:8px;
+}
+.chart-wrap canvas{ aspect-ratio: auto; max-width:none; width:100%; height:110px; }
+
+.preset-row{ display:flex; gap:8px; margin-bottom:10px; }
+.preset-row input[type=text]{
+  flex:1; background: var(--bg-deep); border: 1px solid var(--line-dim); color: var(--paper);
+  font-family:'Inter', sans-serif; font-size:14px; padding:10px 12px; border-radius: var(--radius);
+}
+.preset-list{ display:flex; flex-direction:column; gap:8px; }
+.preset-item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius); padding:9px 11px;
+}
+.preset-item .pi-name{ font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--paper); }
+.preset-item .pi-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--paper-dim); }
+.preset-item .pi-actions{ display:flex; gap:6px; }
+.preset-empty{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--paper-dim); text-align:center; padding:10px; }
+#presetImportFile{ display:none; }
+
+footer{
+  margin-top: 10px;
+  flex:none;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  text-align:center;
+  letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Σχάση <span>Ατομικού Πυρήνα</span></h1>
+      <div class="byline">Τάσος Σλάβης</div>
+    </div>
+    <div class="header-right">
+      <div class="subtitle">Πυρηνική Σχάση · Αλυσιδωτή Αντίδραση · Ενέργεια</div>
+      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span id="stageTitle">Μονή Σχάση</span>
+        <span id="stateLabel">ΕΤΟΙΜΟ</span>
+      </div>
+      <div class="stage-body">
+        <div class="stage-canvas-col">
+          <canvas id="canvas" width="1000" height="750"></canvas>
+          <div class="canvas-caption">Σχηματική απεικόνιση — οι πυρήνες δεν απεικονίζονται σε πραγματική κλίμακα</div>
+        </div>
+        <div class="stage-info-col">
+          <div class="stage-readouts" id="stageReadouts">
+            <div class="ov-line"><span class="ov-k">Πυρήνας</span><span class="v" id="outIso">-</span></div>
+            <div class="ov-line"><span class="ov-k">Λειτουργία</span><span class="v" id="outMode">-</span></div>
+            <div class="ov-line"><span class="ov-k">Σχάσεις</span><span class="v" id="outFissions">-</span></div>
+            <div class="ov-line"><span class="ov-k">Ελεύθερα n</span><span class="v" id="outFreeN">-</span></div>
+            <div class="ov-line"><span class="ov-k">Ενέργεια</span><span class="v energy" id="outEnergyMeV">-</span></div>
+          </div>
+
+          <div class="legend">
+            <span><span class="dot nuc"></span>Άθικτος πυρήνας</span>
+            <span><span class="dot n"></span>Νετρόνιο</span>
+            <span><span class="dot used"></span>Πυρήνας μετά</span>
+          </div>
+
+          <div class="hint" id="stageHint">Πάτησε ▶ Έναρξη για να δεις τη σχάση</div>
+
+          <div class="btn-row">
+            <button class="primary" id="startBtn">▶ Έναρξη</button>
+            <button id="pauseBtn">⏸ Παύση</button>
+            <button id="resetBtn">↺ Επαναφορά</button>
+            <button id="throwNBtn">🎯 Ρίξε νετρόνιο</button>
+            <button id="soundBtn">🔊 Ήχος</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-panel">
+      <div class="main-tab-row" id="mainTabRow">
+        <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+        <button type="button" class="main-tab-btn" data-tab="info">🔬 Πληροφορίες</button>
+        <button type="button" class="main-tab-btn" data-tab="energy">⚡ Ενέργεια</button>
+        <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένα</button>
+      </div>
+
+      <div class="side-panel-scroll">
+      <div class="tab-panel active" id="panel-settings">
+        <div id="tab-settings">
+          <div class="card">
+            <h2>Είδος Πυρήνα</h2>
+            <div class="field" style="margin-bottom:0;">
+              <select id="isotopeSelect"></select>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Λειτουργία</h2>
+            <div class="mode-row">
+              <button type="button" class="mode-btn active" data-mode="single">Μονή Σχάση</button>
+              <button type="button" class="mode-btn" data-mode="chain">Αλυσιδωτή Αντίδραση</button>
+            </div>
+          </div>
+
+          <div class="card" id="chainSettingsCard" style="display:none;">
+            <h2>Ρυθμίσεις Δείγματος</h2>
+            <div class="field">
+              <div class="field-row"><label>Αριθμός πυρήνων στο δείγμα</label><span class="val" id="densityVal">60</span></div>
+              <input type="range" id="densitySlider" min="12" max="160" step="4" value="60">
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <div class="field-row"><label>Ταχύτητα προσομοίωσης</label><span class="val" id="speedVal">×1.0</span></div>
+              <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="1">
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Οπτικές επιλογές</h2>
+            <div class="toggle-row">
+              <label for="showTrails">Ίχνη νετρονίων</label>
+              <div class="switch"><input type="checkbox" id="showTrails" checked><span class="slider-pill"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-info">
+        <div id="tab-info">
+          <div class="card">
+            <h2>Εξίσωση Σχάσης</h2>
+            <div class="equation" id="infoEquation">-</div>
+          </div>
+          <div class="card">
+            <h2>Ισοζύγιο Μάζας — Ενέργειας</h2>
+            <div class="info-text" id="infoMassEnergy">-</div>
+          </div>
+          <div class="card">
+            <h2>Πυρήνας &amp; Αλυσιδωτή Αντίδραση</h2>
+            <div class="info-text" id="infoNucleus">-</div>
+          </div>
+          <div class="card">
+            <h2>Κρίσιμη Μάζα (σχηματικά)</h2>
+            <div class="info-text">Στο μοντέλο αυτό, όσο μεγαλύτερο είναι το "δείγμα" (περισσότεροι πυρήνες), τόσο πιο δύσκολο είναι για τα νετρόνια να διαφύγουν πριν συναντήσουν άλλον πυρήνα — αυτό αντιστοιχεί στην έννοια της κρίσιμης μάζας. Είναι μια απλοποιημένη 2Δ αναπαράσταση για εποπτικούς λόγους, όχι ακριβής υπολογισμός πραγματικής κρίσιμης μάζας (που εξαρτάται από γεωμετρία, καθαρότητα υλικού, ανακλαστήρες κ.ά.).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-energy">
+        <div id="tab-energy">
+          <div class="card">
+            <h2>Συνολική Ενέργεια</h2>
+            <div class="big-readout-label">Αθροιστική ενέργεια που ελευθερώθηκε</div>
+            <div class="big-readout" id="energyBigMeV">0 MeV</div>
+            <div class="eq-row"><span>σε Joule (J)</span><span id="energyJ">0</span></div>
+            <div class="eq-row"><span>σε kWh</span><span id="energyKWh">0</span></div>
+            <div class="eq-row"><span>ισοδύναμο TNT</span><span id="energyTNT">0</span></div>
+          </div>
+          <div class="card">
+            <h2>Πορεία Ενέργειας</h2>
+            <div class="chart-wrap"><canvas id="energyChart" width="600" height="220"></canvas></div>
+          </div>
+          <div class="card">
+            <h2>Στατιστικά</h2>
+            <div class="eq-row"><span>Σχάσεις</span><span id="statFissions">0</span></div>
+            <div class="eq-row"><span>Νετρόνια που παράχθηκαν</span><span id="statNeutrons">0</span></div>
+            <div class="eq-row"><span>Ενέργεια ανά σχάση</span><span id="statPerFission">-</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-saved">
+        <div id="tab-saved">
+          <div class="card">
+            <h2>Αποθήκευση Ρυθμίσεων</h2>
+            <div class="preset-row">
+              <input type="text" id="presetName" placeholder="Όνομα (π.χ. U-235 αλυσίδα)">
+              <button class="primary" id="savePresetBtn">💾 Αποθήκευση</button>
+            </div>
+            <div class="btn-row" style="margin-top:0; justify-content:flex-start;">
+              <button id="exportBtn">⬇ Εξαγωγή JSON</button>
+              <button id="importBtn">⬆ Εισαγωγή JSON</button>
+              <input type="file" id="presetImportFile" accept="application/json">
+            </div>
+          </div>
+          <div class="card">
+            <h2>Αποθηκευμένες Ρυθμίσεις</h2>
+            <div class="preset-list" id="presetList"></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Προσομοίωση Σχάσης Ατομικού Πυρήνα · Τάσος Σλάβης</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------------------------------------------------------------
+  // Φυσικές σταθερές
+  // ---------------------------------------------------------------
+  const MEV_TO_J = 1.602176634e-13;
+  const J_PER_TON_TNT = 4.184e9;
+  const J_PER_KWH = 3.6e6;
+
+  // ---------------------------------------------------------------
+  // Δεδομένα ισοτόπων — ενδεικτικές (όχι μοναδικές) αντιδράσεις σχάσης.
+  // Στην πραγματικότητα κάθε σχάση δίνει στατιστικά διαφορετικό ζεύγος
+  // θραυσμάτων· εδώ δείχνουμε ένα τυπικό παράδειγμα ανά πυρήνα.
+  // ---------------------------------------------------------------
+  const ISOTOPES = [
+    {
+      key:'U235', symbol:'U', mass:235, z:92,
+      name:'Ουράνιο-235', label:'²³⁵U', compoundLabel:'²³⁶U*',
+      thermalFissile:true, energyMeV:202, nuBar:2.43, fissionProb:0.90,
+      frag1:{symbol:'Ba', mass:141, z:56, label:'¹⁴¹Ba'},
+      frag2:{symbol:'Kr', mass:92,  z:36, label:'⁹²Kr'},
+      note:'Σχάζεται εύκολα ακόμη και με αργά (θερμικά) νετρόνια — γι\' αυτό χρησιμοποιείται σε πυρηνικούς αντιδραστήρες.'
+    },
+    {
+      key:'PU239', symbol:'Pu', mass:239, z:94,
+      name:'Πλουτώνιο-239', label:'²³⁹Pu', compoundLabel:'²⁴⁰Pu*',
+      thermalFissile:true, energyMeV:207, nuBar:2.88, fissionProb:0.92,
+      frag1:{symbol:'Xe', mass:134, z:54, label:'¹³⁴Xe'},
+      frag2:{symbol:'Zr', mass:103, z:40, label:'¹⁰³Zr'},
+      note:'Παράγεται τεχνητά σε αντιδραστήρες από το U-238. Σχάζεται εύκολα με αργά νετρόνια, όπως το U-235.'
+    },
+    {
+      key:'U238', symbol:'U', mass:238, z:92,
+      name:'Ουράνιο-238', label:'²³⁸U', compoundLabel:'²³⁹U*',
+      thermalFissile:false, energyMeV:200, nuBar:2.50, fissionProb:0.15,
+      frag1:{symbol:'Xe', mass:140, z:54, label:'¹⁴⁰Xe'},
+      frag2:{symbol:'Sr', mass:96,  z:38, label:'⁹⁶Sr'},
+      note:'ΔΕΝ σχάζεται εύκολα με αργά νετρόνια· χρειάζεται γρήγορα νετρόνια υψηλής ενέργειας. Τα περισσότερα αργά νετρόνια απλώς "δεσμεύονται" χωρίς να προκαλέσουν σχάση — γι\' αυτό δεν συντηρεί μόνο του αλυσιδωτή αντίδραση με αργά νετρόνια.'
+    }
+  ];
+  const ISO_BY_KEY = {}; ISOTOPES.forEach(i=>ISO_BY_KEY[i.key]=i);
+
+  function fmt(n, d){ return Number(n).toLocaleString('el-GR', {maximumFractionDigits: d===undefined?2:d, minimumFractionDigits:0}); }
+  function fmtSci(n){
+    if (n === 0) return '0';
+    const exp = Math.floor(Math.log10(Math.abs(n)));
+    const mant = n / Math.pow(10, exp);
+    return mant.toFixed(2) + '×10' + superscriptNum(exp);
+  }
+  const SUP = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  function superscriptNum(n){ return String(n).split('').map(c=>SUP[c]||c).join(''); }
+
+  // ---------------------------------------------------------------
+  // Κατάσταση εφαρμογής
+  // ---------------------------------------------------------------
+  let isoKey = 'U235';
+  let mode = 'single'; // 'single' | 'chain'
+  let density = 60;
+  let speed = 1.0;
+  let showTrails = true;
+
+  let running = false;
+  let paused = false;
+
+  // ---- μονή σχάση ----
+  let singleProgress = 0; // 0..1
+  let singleDone = false;
+
+  // ---- αλυσιδωτή αντίδραση ----
+  let nuclei = [];      // {x,y,r,state:'live'|'used'}
+  let neutrons = [];    // {x,y,vx,vy,trail:[]}
+  let fragments = [];   // {x,y,vx,vy,color,life}
+  let flashes = [];     // {x,y,life,maxLife}
+  let chainFissions = 0;
+  let chainFreeNeutrons = 0;
+  let chainTotalNeutronsEmitted = 0;
+  let cumulativeEnergyMeV = 0;
+  let energyHistory = []; // [{t, mev}]
+  let simTime = 0;
+
+  function currentIso(){ return ISO_BY_KEY[isoKey]; }
+
+  // ---------------------------------------------------------------
+  // UI στοιχεία
+  // ---------------------------------------------------------------
+  const isotopeSelect = document.getElementById('isotopeSelect');
+  ISOTOPES.forEach(iso=>{
+    const opt = document.createElement('option');
+    opt.value = iso.key;
+    opt.textContent = iso.name + ' (' + iso.label + ')' + (iso.thermalFissile ? '' : ' — δύσσχιστο');
+    isotopeSelect.appendChild(opt);
+  });
+  isotopeSelect.value = isoKey;
+  isotopeSelect.addEventListener('change', ()=>{
+    isoKey = isotopeSelect.value;
+    resetAll();
+    updateInfo();
+  });
+
+  const modeBtns = Array.from(document.querySelectorAll('.mode-btn'));
+  const chainSettingsCard = document.getElementById('chainSettingsCard');
+  const stageTitle = document.getElementById('stageTitle');
+  const stageHint = document.getElementById('stageHint');
+  modeBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      modeBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      chainSettingsCard.style.display = mode === 'chain' ? '' : 'none';
+      stageTitle.textContent = mode === 'chain' ? 'Αλυσιδωτή Αντίδραση' : 'Μονή Σχάση';
+      stageHint.textContent = mode === 'chain'
+        ? 'Πάτησε ▶ Έναρξη για να ρίξεις το πρώτο νετρόνιο στο δείγμα'
+        : 'Πάτησε ▶ Έναρξη για να δεις τη σχάση';
+      document.getElementById('throwNBtn').style.display = mode === 'chain' ? '' : 'none';
+      resetAll();
+      updateInfo();
+    });
+  });
+  document.getElementById('throwNBtn').style.display = 'none';
+
+  const densitySlider = document.getElementById('densitySlider');
+  const densityVal = document.getElementById('densityVal');
+  densitySlider.addEventListener('input', ()=>{
+    density = parseInt(densitySlider.value, 10);
+    densityVal.textContent = density;
+    if (mode === 'chain') resetAll();
+  });
+  const speedSlider = document.getElementById('speedSlider');
+  const speedVal = document.getElementById('speedVal');
+  speedSlider.addEventListener('input', ()=>{
+    speed = parseFloat(speedSlider.value);
+    speedVal.textContent = '×' + speed.toFixed(1);
+  });
+  document.getElementById('showTrails').addEventListener('change', (e)=>{ showTrails = e.target.checked; });
+
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    if (mode === 'single'){
+      if (!running || singleDone){ singleProgress = 0; singleDone = false; }
+      running = true; paused = false;
+      playTone('start');
+    } else {
+      if (nuclei.length === 0) setupChain();
+      running = true; paused = false;
+      if (chainFreeNeutrons === 0 && chainFissions === 0) spawnNeutron();
+      playTone('start');
+    }
+    updateStateLabel();
+  });
+  document.getElementById('pauseBtn').addEventListener('click', ()=>{
+    if (!running) return;
+    paused = !paused;
+    updateStateLabel();
+  });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{ resetAll(); playTone('reset'); });
+  document.getElementById('throwNBtn').addEventListener('click', ()=>{
+    if (mode !== 'chain') return;
+    if (nuclei.length === 0) setupChain();
+    spawnNeutron();
+    running = true; paused = false;
+    updateStateLabel();
+    playTone('n');
+  });
+
+  function updateStateLabel(){
+    const el = document.getElementById('stateLabel');
+    if (!running) el.textContent = 'ΕΤΟΙΜΟ';
+    else if (paused) el.textContent = 'ΠΑΥΣΗ';
+    else if (mode==='single' && singleDone) el.textContent = 'ΟΛΟΚΛΗΡΩΘΗΚΕ';
+    else el.textContent = 'ΣΕ ΕΞΕΛΙΞΗ';
+  }
+
+  function resetAll(){
+    running = false; paused = false;
+    singleProgress = 0; singleDone = false;
+    neutrons = []; fragments = []; flashes = [];
+    chainFissions = 0; chainFreeNeutrons = 0; chainTotalNeutronsEmitted = 0;
+    cumulativeEnergyMeV = 0; energyHistory = [{t:0, mev:0}]; simTime = 0;
+    if (mode === 'chain') setupChain(); else nuclei = [];
+    updateReadouts();
+    updateEnergyPanel();
+    updateStateLabel();
+  }
+
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function setupChain(){
+    nuclei = [];
+    const rnd = mulberry32(density * 97 + isoKey.length);
+    const W = 1000, H = 750, margin = 60;
+    for (let i=0;i<density;i++){
+      nuclei.push({
+        x: margin + rnd() * (W - margin*2),
+        y: margin + rnd() * (H - margin*2),
+        state: 'live'
+      });
+    }
+  }
+
+  function spawnNeutron(){
+    const W = 1000, H = 750;
+    const edge = Math.floor(Math.random()*4);
+    let x,y,vx,vy;
+    const sp = 140;
+    if (edge === 0){ x = 0; y = Math.random()*H; }
+    else if (edge === 1){ x = W; y = Math.random()*H; }
+    else if (edge === 2){ x = Math.random()*W; y = 0; }
+    else { x = Math.random()*W; y = H; }
+    const cx = W/2 + (Math.random()-0.5)*200, cy = H/2 + (Math.random()-0.5)*200;
+    const ang = Math.atan2(cy-y, cx-x) + (Math.random()-0.5)*0.9;
+    vx = Math.cos(ang)*sp; vy = Math.sin(ang)*sp;
+    neutrons.push({x,y,vx,vy,trail:[]});
+    chainFreeNeutrons++;
+    chainTotalNeutronsEmitted++;
+  }
+
+  // ---------------------------------------------------------------
+  // Ήχος
+  // ---------------------------------------------------------------
+  let soundOn = true, audioCtx = null;
+  const soundBtn = document.getElementById('soundBtn');
+  function ensureAudio(){
+    if (!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; } }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    return audioCtx;
+  }
+  function playTone(kind){
+    if (!soundOn) return;
+    const ctx = ensureAudio(); if (!ctx) return;
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    let f0=500,f1=500,dur=0.12,type='sine',vol=0.08;
+    if (kind==='fission'){ f0=180; f1=60; type='sawtooth'; dur=0.28; vol=0.14; }
+    else if (kind==='n'){ f0=700; f1=900; type='triangle'; dur=0.08; vol=0.05; }
+    else if (kind==='start'){ f0=440; f1=660; type='sine'; dur=0.1; vol=0.06; }
+    else { f0=500; f1=350; type='sine'; dur=0.08; vol=0.05; }
+    osc.type = type;
+    const t = ctx.currentTime;
+    osc.frequency.setValueAtTime(f0, t);
+    osc.frequency.linearRampToValueAtTime(f1, t+dur);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t+0.01);
+    gain.gain.linearRampToValueAtTime(0, t+dur);
+    try{ osc.start(t); osc.stop(t+dur+0.02); }catch(e){}
+  }
+  soundBtn.addEventListener('click', ()=>{
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊 Ήχος' : '🔇 Σίγαση';
+    if (soundOn) ensureAudio();
+  });
+
+  // ---------------------------------------------------------------
+  // Θέμα
+  // ---------------------------------------------------------------
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const themeName = document.getElementById('themeName');
+  function currentTheme(){ return document.documentElement.getAttribute('data-theme') || 'blueprint'; }
+  function applyThemeLabel(){ themeName.textContent = currentTheme()==='light' ? 'Minimal' : 'Blueprint'; }
+  applyThemeLabel();
+  themeToggleBtn.addEventListener('click', ()=>{
+    const next = currentTheme()==='light' ? 'blueprint' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('fission-sim-theme', next); }catch(e){}
+    applyThemeLabel();
+  });
+
+  // ---------------------------------------------------------------
+  // Καρτέλες
+  // ---------------------------------------------------------------
+  const mainTabRow = document.getElementById('mainTabRow');
+  const tabBtns = Array.from(mainTabRow.querySelectorAll('.main-tab-btn'));
+  tabBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------------------------------------------------------------
+  // Πληροφορίες (δυναμικό κείμενο)
+  // ---------------------------------------------------------------
+  function updateInfo(){
+    const iso = currentIso();
+    document.getElementById('infoEquation').textContent =
+      'n + ' + iso.label + ' → ' + iso.compoundLabel + ' → ' + iso.frag1.label + ' + ' + iso.frag2.label + ' + 3n + ~' + iso.energyMeV + ' MeV';
+
+    const E_J = iso.energyMeV * MEV_TO_J;
+    const c = 299792458;
+    const dm_kg = E_J / (c*c);
+    const dm_u = dm_kg / 1.66053906660e-27;
+    document.getElementById('infoMassEnergy').textContent =
+      'Κατά τη σχάση, η συνολική μάζα των προϊόντων είναι ελαφρώς μικρότερη από τη μάζα του αρχικού πυρήνα + νετρονίου. Αυτή η "ελλείπουσα" μάζα (έλλειμμα μάζας, Δm) μετατρέπεται σε ενέργεια σύμφωνα με τη σχέση του Einstein:\n\n' +
+      'E = Δm·c²\n\n' +
+      'Για ενέργεια σχάσης ≈ ' + iso.energyMeV + ' MeV = ' + fmtSci(E_J) + ' J:\n' +
+      'Δm = E / c² ≈ ' + fmtSci(dm_kg) + ' kg ≈ ' + dm_u.toFixed(3) + ' u\n\n' +
+      '(1 u·c² ≈ 931.5 MeV — η γνωστή μετατροπή που χρησιμοποιείται σε ασκήσεις πυρηνικής φυσικής)';
+
+    document.getElementById('infoNucleus').textContent =
+      iso.name + ' (Z=' + iso.z + ', A=' + iso.mass + ')\n' + iso.note + '\n\n' +
+      'Μέσος αριθμός νετρονίων ανά σχάση: ν̄ ≈ ' + iso.nuBar + '\n' +
+      (iso.thermalFissile
+        ? 'Επειδή κάθε σχάση ελευθερώνει περισσότερα από ένα νετρόνια, καθένα από αυτά μπορεί να προκαλέσει νέα σχάση σε γειτονικό πυρήνα — αν αρκετά από αυτά δεν "χαθούν", η αντίδραση μπορεί να αυτοσυντηρηθεί (αλυσιδωτή αντίδραση).'
+        : 'Επειδή σχάζεται δύσκολα με αργά νετρόνια, δεν μπορεί μόνο του να συντηρήσει αλυσιδωτή αντίδραση με αργά νετρόνια — δοκίμασε τη λειτουργία "Αλυσιδωτή Αντίδραση" και σύγκρινε με το U-235.');
+  }
+
+  // ---------------------------------------------------------------
+  // Ζωντανές ενδείξεις
+  // ---------------------------------------------------------------
+  function updateReadouts(){
+    const iso = currentIso();
+    document.getElementById('outIso').textContent = iso.label;
+    document.getElementById('outMode').textContent = mode === 'chain' ? 'Αλυσίδα' : 'Μονή';
+    document.getElementById('outFissions').textContent = mode === 'chain' ? chainFissions : (singleDone ? 1 : 0);
+    document.getElementById('outFreeN').textContent = mode === 'chain' ? chainFreeNeutrons : '-';
+    const mev = mode === 'chain' ? cumulativeEnergyMeV : (singleDone ? iso.energyMeV : 0);
+    document.getElementById('outEnergyMeV').textContent = fmt(mev,0) + ' MeV';
+  }
+
+  function updateEnergyPanel(){
+    const iso = currentIso();
+    const mev = mode === 'chain' ? cumulativeEnergyMeV : (singleDone ? iso.energyMeV : 0);
+    const J = mev * MEV_TO_J;
+    document.getElementById('energyBigMeV').textContent = fmt(mev,0) + ' MeV';
+    document.getElementById('energyJ').textContent = fmtSci(J) + ' J';
+    document.getElementById('energyKWh').textContent = fmtSci(J / J_PER_KWH) + ' kWh';
+    document.getElementById('energyTNT').textContent = fmtSci(J / J_PER_TON_TNT) + ' τόνοι TNT';
+    document.getElementById('statFissions').textContent = mode==='chain' ? chainFissions : (singleDone?1:0);
+    document.getElementById('statNeutrons').textContent = mode==='chain' ? chainTotalNeutronsEmitted : (singleDone?3:0);
+    document.getElementById('statPerFission').textContent = '≈ ' + iso.energyMeV + ' MeV';
+    drawEnergyChart();
+  }
+
+  // ---------------------------------------------------------------
+  // Γραφική παράσταση ενέργειας
+  // ---------------------------------------------------------------
+  const echartCanvas = document.getElementById('energyChart');
+  const ectx = echartCanvas.getContext('2d');
+  function drawEnergyChart(){
+    const w = echartCanvas.width, h = echartCanvas.height;
+    ectx.clearRect(0,0,w,h);
+    const lineDim = getComputedStyle(document.documentElement).getPropertyValue('--line-dim').trim();
+    const gold = getComputedStyle(document.documentElement).getPropertyValue('--energy-color').trim() || '#FDE047';
+    const paperDim = getComputedStyle(document.documentElement).getPropertyValue('--paper-dim').trim();
+    ectx.strokeStyle = lineDim; ectx.lineWidth = 1;
+    for (let i=0;i<=3;i++){
+      const y = 10 + (h-30)*i/3;
+      ectx.beginPath(); ectx.moveTo(30,y); ectx.lineTo(w-10,y); ectx.stroke();
+    }
+    const data = energyHistory.length ? energyHistory : [{t:0,mev:0}];
+    const maxMeV = Math.max(10, ...data.map(d=>d.mev));
+    const maxT = Math.max(1, data[data.length-1].t);
+    function px(d){ return 30 + (w-40) * (d.t/maxT); }
+    function py(d){ return (h-20) - (h-30) * (d.mev/maxMeV) ; }
+    ectx.beginPath();
+    ectx.strokeStyle = gold; ectx.lineWidth = 2;
+    data.forEach((d,i)=>{ const x=px(d), y=py(d); if (i===0) ectx.moveTo(x,y); else ectx.lineTo(x,y); });
+    ectx.stroke();
+    ectx.fillStyle = paperDim;
+    ectx.font = "10px 'IBM Plex Mono', monospace";
+    ectx.textAlign = 'left';
+    ectx.fillText(fmt(maxMeV,0)+' MeV', 4, 14);
+    ectx.fillText('0', 4, h-14);
+  }
+
+  // ---------------------------------------------------------------
+  // Αποθηκευμένα
+  // ---------------------------------------------------------------
+  const PRESET_KEY = 'fission-sim-presets';
+  function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }
+  function savePresets(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); return true; }catch(e){ return false; } }
+  function renderPresetList(){
+    const list = loadPresets();
+    const wrap = document.getElementById('presetList');
+    wrap.innerHTML = '';
+    if (!list.length){ wrap.innerHTML = '<div class="preset-empty">Δεν υπάρχουν αποθηκευμένες ρυθμίσεις ακόμη.</div>'; return; }
+    list.forEach((p, idx)=>{
+      const iso = ISO_BY_KEY[p.iso] || ISOTOPES[0];
+      const item = document.createElement('div');
+      item.className = 'preset-item';
+      item.innerHTML =
+        '<div><div class="pi-name">' + (p.name || iso.label) + '</div>' +
+        '<div class="pi-meta">' + iso.label + ' · ' + (p.mode==='chain'?'Αλυσίδα':'Μονή') + (p.mode==='chain'?(' · '+p.density+' πυρήνες'):'') + '</div></div>' +
+        '<div class="pi-actions"><button class="small" data-act="load" data-idx="'+idx+'">▶</button>' +
+        '<button class="small danger" data-act="del" data-idx="'+idx+'">✕</button></div>';
+      wrap.appendChild(item);
+    });
+    wrap.querySelectorAll('button[data-act]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const idx = parseInt(btn.dataset.idx,10);
+        const list = loadPresets(); const p = list[idx]; if (!p) return;
+        if (btn.dataset.act === 'load'){
+          isoKey = p.iso; isotopeSelect.value = isoKey;
+          mode = p.mode;
+          modeBtns.forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+          chainSettingsCard.style.display = mode==='chain' ? '' : 'none';
+          stageTitle.textContent = mode==='chain' ? 'Αλυσιδωτή Αντίδραση' : 'Μονή Σχάση';
+          document.getElementById('throwNBtn').style.display = mode==='chain' ? '' : 'none';
+          density = p.density || 60; densitySlider.value = density; densityVal.textContent = density;
+          resetAll(); updateInfo();
+        } else if (btn.dataset.act === 'del'){
+          list.splice(idx,1); savePresets(list); renderPresetList();
+        }
+      });
+    });
+  }
+  document.getElementById('savePresetBtn').addEventListener('click', ()=>{
+    const nameInput = document.getElementById('presetName');
+    const iso = currentIso();
+    const name = nameInput.value.trim() || (iso.label + ' — ' + (mode==='chain'?'Αλυσίδα':'Μονή'));
+    const list = loadPresets();
+    list.push({name, iso:isoKey, mode, density, ts:Date.now()});
+    savePresets(list); nameInput.value=''; renderPresetList(); playTone('n');
+  });
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const list = loadPresets();
+    const blob = new Blob([JSON.stringify(list,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='sxasi-presets.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  const presetImportFile = document.getElementById('presetImportFile');
+  document.getElementById('importBtn').addEventListener('click', ()=>presetImportFile.click());
+  presetImportFile.addEventListener('change', ()=>{
+    const file = presetImportFile.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const imported = JSON.parse(reader.result);
+        if (!Array.isArray(imported)) throw new Error('bad');
+        savePresets(loadPresets().concat(imported));
+        renderPresetList();
+      }catch(e){ alert('Το αρχείο δεν είναι έγκυρο JSON αποθηκευμένων ρυθμίσεων.'); }
+    };
+    reader.readAsText(file);
+    presetImportFile.value = '';
+  });
+
+  // ---------------------------------------------------------------
+  // Σχεδίαση κύριου καμβά
+  // ---------------------------------------------------------------
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const LOGICAL_W = 1000, LOGICAL_H = 750;
+  let dpr = window.devicePixelRatio || 1;
+  let cssW = LOGICAL_W, cssH = LOGICAL_H;
+
+  function fitCanvas(){
+    const rect = canvas.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    cssW = rect.width || LOGICAL_W;
+    cssH = rect.height || (cssW * LOGICAL_H/LOGICAL_W);
+    canvas.width = Math.round(cssW*dpr);
+    canvas.height = Math.round(cssH*dpr);
+    const scaleX = cssW/LOGICAL_W, scaleY = cssH/LOGICAL_H;
+    ctx.setTransform(dpr*scaleX, 0, 0, dpr*scaleY, 0, 0);
+  }
+  window.addEventListener('resize', fitCanvas);
+
+  function themeColor(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function packPositions(count, radius){
+    const golden = Math.PI*(3-Math.sqrt(5));
+    const pts = [];
+    for (let i=0;i<count;i++){
+      const r = radius*Math.sqrt((i+0.5)/count);
+      const th = i*golden;
+      pts.push({x:r*Math.cos(th), y:r*Math.sin(th)});
+    }
+    return pts;
+  }
+
+  function drawNucleusBlob(cx, cy, radius, mixColor1, mixColor2, ratio, seed, glowColor){
+    const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
+    grad.addColorStop(0, mixColor1);
+    grad.addColorStop(1, mixColor2);
+    ctx.beginPath(); ctx.fillStyle = grad; ctx.arc(cx,cy,radius,0,Math.PI*2); ctx.fill();
+    if (glowColor){
+      ctx.save();
+      ctx.shadowColor = glowColor; ctx.shadowBlur = 18;
+      ctx.beginPath(); ctx.strokeStyle = glowColor; ctx.globalAlpha=0.7; ctx.lineWidth=2;
+      ctx.arc(cx,cy,radius,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+    const speckCount = Math.max(18, Math.min(70, Math.round(radius*1.4)));
+    const rnd = mulberry32(seed);
+    const pts = packPositions(speckCount, radius*0.86);
+    for (let i=0;i<pts.length;i++){
+      const isP = rnd() < ratio;
+      ctx.beginPath();
+      ctx.fillStyle = isP ? themeColor('--proton-color') : themeColor('--neutron-color');
+      const r2 = Math.max(1.3, radius*0.09);
+      ctx.arc(cx+pts[i].x, cy+pts[i].y, r2, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function drawLabel(text, x, y, color, size, align){
+    ctx.font = (size||13) + "px 'IBM Plex Mono', monospace";
+    ctx.fillStyle = color || themeColor('--paper');
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y);
+  }
+
+  // ---- σχεδίαση: μονή σχάση ----
+  function renderSingle(){
+    const iso = currentIso();
+    const W = LOGICAL_W, H = LOGICAL_H;
+    const cx = W/2, cy = H/2;
+    ctx.clearRect(0,0,W,H);
+
+    const p = Math.max(0, Math.min(1, singleProgress));
+    const paper = themeColor('--paper');
+    const paperDim = themeColor('--paper-dim');
+    const gold = themeColor('--gold');
+    const nColor = themeColor('--neutron-free-color');
+    const frag1Color = themeColor('--frag1-color');
+    const frag2Color = themeColor('--frag2-color');
+    const energyColor = themeColor('--energy-color');
+    const protonColor = themeColor('--proton-color');
+    const neutronColor = themeColor('--neutron-color');
+
+    const nucleusR = 76;
+
+    if (p < 0.18){
+      // στάδιο 1: το νετρόνιο πλησιάζει
+      const t = p/0.18;
+      const nx = cx - 340 + t*(340-nucleusR-20);
+      drawNucleusBlob(cx,cy,nucleusR, protonColor, themeColor('--bg-panel'), iso.z/iso.mass, iso.mass, null);
+      drawLabel(iso.label, cx, cy+nucleusR+22, gold, 15);
+      ctx.beginPath(); ctx.fillStyle = nColor; ctx.arc(nx, cy, 7, 0, Math.PI*2); ctx.fill();
+      drawLabel('n', nx, cy-16, nColor, 13);
+      drawLabel('Το νετρόνιο πλησιάζει τον πυρήνα ' + iso.label, cx, H-40, paperDim, 13);
+    } else if (p < 0.42){
+      // στάδιο 2: σύνθετος διεγερμένος πυρήνας
+      const t = (p-0.18)/0.24;
+      const wobble = Math.sin(t*Math.PI*6) * 4 * t;
+      const rx = nucleusR + t*10;
+      const ry = nucleusR - t*10;
+      ctx.save();
+      ctx.translate(cx+wobble, cy);
+      ctx.scale(rx/nucleusR, ry/nucleusR);
+      drawNucleusBlob(0,0,nucleusR, protonColor, themeColor('--bg-panel'), iso.z/iso.mass, iso.mass+1, gold);
+      ctx.restore();
+      drawLabel(iso.compoundLabel, cx, cy+nucleusR+26, gold, 15);
+      drawLabel('Διεγερμένος σύνθετος πυρήνας', cx, H-40, paperDim, 13);
+    } else if (p < 0.75){
+      // στάδιο 3: διάσπαση σε δύο θραύσματα + νετρόνια
+      const t = (p-0.42)/0.33;
+      const sep = t*150;
+      const r1 = nucleusR*0.72, r2 = nucleusR*0.72;
+      const x1 = cx - sep, x2 = cx + sep;
+      drawNucleusBlob(x1,cy,r1, frag1Color, themeColor('--bg-panel'), iso.frag1.z/iso.frag1.mass, iso.frag1.mass, t>0.05?frag1Color:null);
+      drawNucleusBlob(x2,cy,r2, frag2Color, themeColor('--bg-panel'), iso.frag2.z/iso.frag2.mass, iso.frag2.mass, t>0.05?frag2Color:null);
+      drawLabel(iso.frag1.label, x1, cy+r1+20, frag1Color, 14);
+      drawLabel(iso.frag2.label, x2, cy+r2+20, frag2Color, 14);
+
+      const neutronAngles = [-0.9, 0, 0.9];
+      neutronAngles.forEach((a,i)=>{
+        const dist = t*160;
+        const nx = cx + Math.cos(a)*dist;
+        const ny = cy + Math.sin(a)*dist*0.6 - 10;
+        ctx.beginPath(); ctx.fillStyle = nColor; ctx.arc(nx, ny, 6, 0, Math.PI*2); ctx.fill();
+      });
+
+      if (t > 0.1 && t < 0.5){
+        const flashR = 20 + t*160;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - t*2.2);
+        ctx.beginPath(); ctx.strokeStyle = energyColor; ctx.lineWidth = 3;
+        ctx.arc(cx, cy, flashR, 0, Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }
+      if (t > 0.15){
+        drawLabel('+' + iso.energyMeV + ' MeV', cx, cy - nucleusR - 34, energyColor, 20);
+      }
+      drawLabel('Ο πυρήνας διασπάται σε δύο θραύσματα + 3 νετρόνια + ενέργεια', cx, H-40, paperDim, 13);
+    } else {
+      // στάδιο 4: απομάκρυνση
+      const t = (p-0.75)/0.25;
+      const sep = 150 + t*90;
+      const r1 = nucleusR*0.72, r2 = nucleusR*0.72;
+      const x1 = cx - sep, x2 = cx + sep;
+      drawNucleusBlob(x1,cy,r1, frag1Color, themeColor('--bg-panel'), iso.frag1.z/iso.frag1.mass, iso.frag1.mass, null);
+      drawNucleusBlob(x2,cy,r2, frag2Color, themeColor('--bg-panel'), iso.frag2.z/iso.frag2.mass, iso.frag2.mass, null);
+      drawLabel(iso.frag1.label, x1, cy+r1+20, frag1Color, 14);
+      drawLabel(iso.frag2.label, x2, cy+r2+20, frag2Color, 14);
+      const neutronAngles = [-0.9, 0, 0.9];
+      neutronAngles.forEach((a)=>{
+        const dist = 160 + t*130;
+        const nx = cx + Math.cos(a)*dist;
+        const ny = cy + Math.sin(a)*dist*0.6 - 10;
+        if (nx > -20 && nx < W+20){
+          ctx.beginPath(); ctx.fillStyle = nColor; ctx.arc(nx, ny, 6, 0, Math.PI*2); ctx.fill();
+        }
+      });
+      drawLabel('+' + iso.energyMeV + ' MeV', cx, cy - nucleusR - 34, energyColor, 20);
+      drawLabel('Ολοκληρώθηκε η σχάση — πάτησε ↺ Επαναφορά για επανάληψη', cx, H-40, paperDim, 13);
+    }
+  }
+
+  // ---- σχεδίαση: αλυσιδωτή αντίδραση ----
+  function renderChain(){
+    const W = LOGICAL_W, H = LOGICAL_H;
+    ctx.clearRect(0,0,W,H);
+    const gold = themeColor('--gold');
+    const used = themeColor('--used-color');
+    const nColor = themeColor('--neutron-free-color');
+    const paperDim = themeColor('--paper-dim');
+    const energyColor = themeColor('--energy-color');
+
+    // πλαίσιο δείγματος
+    ctx.save();
+    ctx.strokeStyle = themeColor('--line-dim');
+    ctx.setLineDash([4,5]);
+    ctx.strokeRect(30,30, W-60, H-60);
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    nuclei.forEach(nu=>{
+      ctx.beginPath();
+      ctx.fillStyle = nu.state === 'live' ? gold : used;
+      ctx.arc(nu.x, nu.y, nu.state==='live'?7:4, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    fragments.forEach(f=>{
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, f.life);
+      ctx.beginPath(); ctx.fillStyle = f.color; ctx.arc(f.x, f.y, 4.5, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    neutrons.forEach(n=>{
+      if (showTrails && n.trail.length > 1){
+        ctx.save();
+        ctx.strokeStyle = nColor; ctx.globalAlpha = 0.28; ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        n.trail.forEach((pt,i)=>{ if (i===0) ctx.moveTo(pt.x,pt.y); else ctx.lineTo(pt.x,pt.y); });
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.beginPath(); ctx.fillStyle = nColor; ctx.arc(n.x, n.y, 4, 0, Math.PI*2); ctx.fill();
+    });
+
+    flashes.forEach(fl=>{
+      const t = 1 - fl.life/fl.maxLife;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, fl.life/fl.maxLife);
+      ctx.beginPath(); ctx.strokeStyle = energyColor; ctx.lineWidth = 2.5;
+      ctx.arc(fl.x, fl.y, 8 + t*30, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    });
+
+    drawLabel(currentIso().label + ' · δείγμα ' + nuclei.length + ' πυρήνων', W/2, 16, paperDim, 12);
+  }
+
+  // ---------------------------------------------------------------
+  // Φυσική βήματος (chain)
+  // ---------------------------------------------------------------
+  function stepChain(dt){
+    const iso = currentIso();
+    const W = LOGICAL_W, H = LOGICAL_H;
+    const captureR = 16;
+
+    for (let i=neutrons.length-1;i>=0;i--){
+      const n = neutrons[i];
+      n.x += n.vx*dt; n.y += n.vy*dt;
+      if (showTrails){
+        n.trail.push({x:n.x,y:n.y});
+        if (n.trail.length > 14) n.trail.shift();
+      }
+      let removed = false;
+      if (n.x < -10 || n.x > W+10 || n.y < -10 || n.y > H+10){
+        neutrons.splice(i,1); chainFreeNeutrons--; removed = true;
+      }
+      if (!removed){
+        for (let j=0;j<nuclei.length;j++){
+          const nu = nuclei[j];
+          if (nu.state !== 'live') continue;
+          const dx = n.x-nu.x, dy = n.y-nu.y;
+          if (dx*dx+dy*dy < captureR*captureR){
+            neutrons.splice(i,1); chainFreeNeutrons--; removed = true;
+            const causesFission = Math.random() < iso.fissionProb;
+            if (causesFission){
+              doFission(nu);
+            } else {
+              nu.state = 'used';
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    for (let i=fragments.length-1;i>=0;i--){
+      const f = fragments[i];
+      f.x += f.vx*dt; f.y += f.vy*dt; f.life -= dt*0.6;
+      if (f.life <= 0) fragments.splice(i,1);
+    }
+    for (let i=flashes.length-1;i>=0;i--){
+      flashes[i].life -= dt;
+      if (flashes[i].life <= 0) flashes.splice(i,1);
+    }
+
+    if (running && !paused && (neutrons.length===0) && chainFissions>0){
+      // η αλυσίδα σταμάτησε — δεν κάνουμε τίποτα άλλο, μένει σε ΟΛΟΚΛΗΡΩΘΗΚΕ οπτικά
+    }
+  }
+
+  function doFission(nu){
+    const iso = currentIso();
+    nu.state = 'used';
+    chainFissions++;
+    cumulativeEnergyMeV += iso.energyMeV;
+    energyHistory.push({t:simTime, mev:cumulativeEnergyMeV});
+    if (energyHistory.length > 400) energyHistory.shift();
+
+    flashes.push({x:nu.x, y:nu.y, life:0.5, maxLife:0.5});
+
+    const frag1color = themeColor('--frag1-color');
+    const frag2color = themeColor('--frag2-color');
+    [frag1color, frag2color].forEach((c,i)=>{
+      const a = Math.random()*Math.PI*2;
+      fragments.push({x:nu.x,y:nu.y, vx:Math.cos(a)*20, vy:Math.sin(a)*20, color:c, life:1});
+    });
+
+    const nuBarFloor = Math.floor(iso.nuBar);
+    const frac = iso.nuBar - nuBarFloor;
+    const emitCount = Math.random() < frac ? nuBarFloor+1 : nuBarFloor;
+    for (let k=0;k<emitCount;k++){
+      const a = Math.random()*Math.PI*2;
+      const sp = 130;
+      neutrons.push({x:nu.x, y:nu.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, trail:[]});
+      chainFreeNeutrons++; chainTotalNeutronsEmitted++;
+    }
+    playTone('fission');
+  }
+
+  // ---------------------------------------------------------------
+  // Κύριος βρόχος
+  // ---------------------------------------------------------------
+  let lastTime = performance.now();
+  function loop(now){
+    const dtRaw = Math.min(0.05, (now-lastTime)/1000);
+    lastTime = now;
+
+    if (mode === 'single'){
+      if (running && !paused && !singleDone){
+        singleProgress += dtRaw * speed * 0.55;
+        if (singleProgress >= 1){ singleProgress = 1; singleDone = true; playTone('fission'); }
+      }
+      renderSingle();
+    } else {
+      if (running && !paused){
+        simTime += dtRaw*speed;
+        stepChain(dtRaw*speed*1.4);
+      }
+      renderChain();
+    }
+    updateReadouts();
+    if (document.getElementById('panel-energy').classList.contains('active')) updateEnergyPanel();
+    updateStateLabel();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------------------------------------------------------------
+  // Εκκίνηση
+  // ---------------------------------------------------------------
+  fitCanvas();
+  updateInfo();
+  resetAll();
+  renderPresetList();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
