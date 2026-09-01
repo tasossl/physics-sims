@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ηλεκτρικό Εκκρεμές</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --pos-color:#E0685A;
+  --neg-color:#4AA3DF;
+  --neutral-color:#8FA6BE;
+  --attract-color:#4ADE80;
+  --repel-color:#FF6FCF;
+  --spark-color:#FDE047;
+}
+
+body.theme-minimal{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --pos-color:#D64545;
+  --neg-color:#2563EB;
+  --neutral-color:#7A8899;
+  --attract-color:#16A34A;
+  --repel-color:#DB2777;
+  --spark-color:#CA8A04;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+  padding: 18px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1180px; margin:0 auto;}
+
+header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(22px, 4vw, 32px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+.header-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.theme-toggle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:6px 10px; }
+.theme-toggle span{color: var(--gold);}
+
+.layout{ display:flex; flex-direction:column; gap: 20px; }
+
+.controls{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap:14px;
+}
+@media (min-width: 600px) and (max-width: 1080px){
+  body{ padding: 24px 26px 64px; }
+  .controls{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+  .card{ padding: 18px 20px; }
+  .field{ margin-bottom:18px; }
+}
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px;
+  position:relative;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+}
+canvas{
+  width:100%;
+  height:auto;
+  aspect-ratio: 16/10;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+  touch-action: none;
+  cursor: grab;
+}
+canvas.grabbing{cursor:grabbing;}
+
+.hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:8px;
+  text-align:center;
+}
+
+.stage-readouts{
+  position:absolute;
+  top:40px;
+  right:22px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:3px;
+  opacity:1;
+  pointer-events:none;
+  z-index:3;
+}
+.stage-readouts .ov-line{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  white-space:nowrap;
+  text-shadow: 0 0 5px var(--bg-deep), 0 0 9px var(--bg-deep), 0 0 9px var(--bg-deep);
+}
+.stage-readouts .ov-k{ color: var(--paper-dim); margin-right:6px; }
+.stage-readouts .v{ font-weight:600; color: var(--line-bright); }
+.stage-readouts .u{ color: var(--paper-dim); font-size:11px; margin-left:3px; }
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+}
+.card.dim{opacity:0.45;}
+.card.dim input, .card.dim button{pointer-events:none;}
+.sub-dim{opacity:0.35; pointer-events:none;}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.field-row label{ font-size:14.5px; color: var(--paper); }
+.field-row .val{ font-family:'IBM Plex Mono', monospace; font-size:14px; color: var(--gold); min-width: 64px; text-align:right; }
+.val-wrap{ display:flex; align-items:center; gap:5px; }
+.val-input{
+  width:68px; background: var(--bg-deep); border: 1px solid var(--line-dim);
+  color: var(--gold); font-family:'IBM Plex Mono', monospace; font-size:14px;
+  text-align:right; padding:8px 7px; border-radius: var(--radius); -moz-appearance:textfield;
+}
+.val-input::-webkit-outer-spin-button, .val-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.val-input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.unit{ font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--paper-dim); white-space:nowrap; }
+
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:5px;
+  background: var(--line-dim); border-radius:3px; outline:none; touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:24px;height:24px; border-radius:50%;
+  background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer; margin-top:-9.5px;
+}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px; border-radius:50%; background: var(--gold); border: 2px solid var(--bg-deep); cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{ height:5px; background: var(--line-dim); border-radius:3px; }
+input[type=range]:focus-visible::-webkit-slider-thumb{ outline: 2px solid var(--line-bright); outline-offset: 2px; }
+input[type=range]:focus-visible{ outline: none; }
+input[type=range]:disabled{opacity:0.3; cursor:not-allowed;}
+
+.mode-row{ display:flex; gap:6px; }
+.mode-btn{
+  flex:1; font-family:'Oswald', sans-serif; font-weight:500; font-size:12px;
+  letter-spacing:0.03em; text-transform:uppercase; padding:12px 4px; min-height:44px;
+  border-radius: var(--radius); border: 1px solid var(--line-dim); background: transparent;
+  color: var(--paper-dim); cursor:pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.mode-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.mode-btn.pos.active{background: var(--pos-color); border-color: var(--pos-color); color:#0B1B30;}
+.mode-btn.neg.active{background: var(--neg-color); border-color: var(--neg-color); color:#0B1B30;}
+.mode-btn:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px; }
+.toggle-row + .toggle-row{margin-top:13px;}
+.toggle-row label{font-size:13.5px;}
+.switch{ position:relative; width:46px;height:26px; flex:none; }
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{
+  position:absolute; inset:0; background: var(--line-dim); border-radius:26px;
+  transition: background 0.15s; border:1px solid var(--line-dim); pointer-events:none;
+}
+.slider-pill:before{
+  content:""; position:absolute; width:18px;height:18px; left:3px; top:3px;
+  background: var(--paper-dim); border-radius:50%; transition: transform 0.15s, background 0.15s;
+}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
+.switch input:focus-visible + .slider-pill{outline:2px solid var(--line-bright); outline-offset:2px;}
+
+button{
+  font-family:'Oswald', sans-serif; font-weight:500; letter-spacing:0.05em; font-size:13px;
+  text-transform:uppercase; border-radius: var(--radius); border: 1px solid var(--line-dim);
+  background: transparent; color: var(--paper); padding: 12px 16px; cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent; min-height:44px;
+}
+button:hover{border-color: var(--gold-dim); color: var(--gold);}
+button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+button.primary{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+button.primary:hover{background: #f0c665; color:var(--bg-deep);}
+button.small{padding:10px 12px; font-size:11.5px; min-height:40px;}
+button:disabled{opacity:0.35; cursor:not-allowed;}
+.btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+
+.msg{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-top:10px; line-height:1.5; }
+.msg.warn{color: var(--danger);}
+
+.readout-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.readout{ background: var(--bg-deep); border: 1px solid var(--line-dim); border-radius: var(--radius); padding: 9px 10px; }
+.readout .k{ font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--paper-dim); display:block; margin-bottom:4px; }
+.readout .v{ font-family:'IBM Plex Mono', monospace; font-size:16px; color: var(--line-bright); }
+.readout .u{font-size:11px; color: var(--paper-dim);}
+
+.main-tab-row{ display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; -ms-overflow-style:none; scrollbar-width:none; }
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none; font-family:'Oswald', sans-serif; font-weight:500; font-size:13px; letter-spacing:0.03em;
+  text-transform:uppercase; padding:13px 20px; min-height:46px; border-radius: var(--radius);
+  border: 1px solid var(--line-dim); background: var(--bg-panel); color: var(--paper-dim); cursor:pointer;
+  white-space:nowrap; -webkit-tap-highlight-color: transparent; transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+#tab-solution, #tab-saved{ display:grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap:14px; }
+
+.sol-text{ font-size:14px; line-height:1.75; }
+.sol-text .eq{
+  font-family:'IBM Plex Mono', monospace; background: var(--bg-deep); border:1px solid var(--line-dim);
+  border-radius: var(--radius); padding:8px 12px; margin:8px 0; display:block; color: var(--line-bright);
+}
+.sol-text b{color:var(--gold); font-weight:600;}
+.sol-text .num{color:var(--gold); font-family:'IBM Plex Mono', monospace;}
+.sol-text hr{border:none; border-top:1px dashed var(--line-dim); margin:14px 0;}
+
+.preset-item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius);
+  padding:9px 10px; margin-bottom:8px; font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+}
+.preset-item:last-child{margin-bottom:0;}
+.preset-item .pname{color:var(--line-bright); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.preset-item .pbtns{display:flex; gap:5px;}
+
+textarea.jsonbox{
+  width:100%; min-height:90px; background: var(--bg-deep); border:1px solid var(--line-dim);
+  color: var(--paper); font-family:'IBM Plex Mono', monospace; font-size:11.5px; border-radius: var(--radius);
+  padding:8px; resize:vertical;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Ηλεκτρικό <span>Εκκρεμές</span></h1>
+      <div class="subtitle" style="margin-top:6px;">Ηλεκτροστατική επαγωγή &amp; μεταφορά φορτίου με επαφή</div>
+    </div>
+    <div class="header-right">
+      <div class="subtitle">Ηλεκτροστατικό εκκρεμές · sim v1</div>
+      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span>Πειραματική διάταξη</span>
+        <span id="stateLabel">ΗΡΕΜΙΑ</span>
+      </div>
+      <div class="stage-readouts" id="stageReadouts">
+        <div class="ov-line"><span class="ov-k">Γωνία εκτροπής θ</span><span class="v" id="outTheta">0.0</span><span class="u">°</span></div>
+        <div class="ov-line"><span class="ov-k">Δύναμη F</span><span class="v" id="outForce">0.00</span><span class="u">N</span></div>
+        <div class="ov-line"><span class="ov-k">Απόσταση r</span><span class="v" id="outR">0.0</span><span class="u">cm</span></div>
+        <div class="ov-line"><span class="ov-k">Κατάσταση</span><span class="v" id="outStatus">–</span></div>
+      </div>
+      <canvas id="canvas" width="900" height="562"></canvas>
+      <div class="hint">Σύρε με το ποντίκι/δάχτυλο το εξωτερικό σώμα για να το πλησιάσεις ή να το απομακρύνεις από το εκκρεμές</div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="primary" id="contactBtn">🤝 Επαφή με το εκκρεμές</button>
+        <button id="removeBtn">↔ Απομάκρυνση</button>
+        <button id="pauseBtn">⏸ Παύση</button>
+        <button id="resetBtn">↺ Επαναφορά</button>
+        <button id="soundBtn">🔊 Ήχος</button>
+      </div>
+      <div class="msg" id="eventMsg">Τα δύο φορτισμένα σώματα έχουν αντίθετο πρόσημο — το εκκρεμές έλκεται.</div>
+    </div>
+
+    <div class="main-tab-row" id="mainTabRow">
+      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+      <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
+      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-settings">
+    <div class="controls">
+
+      <div class="card">
+        <h2>Σφαίρα Εκκρεμούς</h2>
+        <div class="field">
+          <div class="field-row"><label>Φορτίο σφαίρας</label></div>
+          <div class="mode-row" id="pendSignRow">
+            <button type="button" class="mode-btn pos" data-sign="1">Θετικό +</button>
+            <button type="button" class="mode-btn" data-sign="0">Ουδέτερο</button>
+            <button type="button" class="mode-btn neg" data-sign="-1">Αρνητικό −</button>
+          </div>
+        </div>
+        <div class="field" id="pendMagField">
+          <div class="field-row">
+            <label for="pendMagSlider">Μέγεθος φορτίου |q<sub>1</sub>|</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="pendMagNum" value="1.0" step="0.1" min="0.1" max="3"><span class="unit">μC</span></span>
+          </div>
+          <input type="range" id="pendMagSlider" min="0.1" max="3" step="0.1" value="1.0">
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <label for="massSlider">Μάζα σφαίρας m</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="massNum" value="5" step="0.5" min="1" max="20"><span class="unit">g</span></span>
+          </div>
+          <input type="range" id="massSlider" min="1" max="20" step="0.5" value="5">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Εξωτερικό Σώμα</h2>
+        <div class="field">
+          <div class="field-row"><label>Φορτίο εξωτερικού σώματος</label></div>
+          <div class="mode-row" id="extSignRow">
+            <button type="button" class="mode-btn pos" data-sign="1">Θετικό +</button>
+            <button type="button" class="mode-btn" data-sign="0">Ουδέτερο</button>
+            <button type="button" class="mode-btn neg" data-sign="-1">Αρνητικό −</button>
+          </div>
+        </div>
+        <div class="field" id="extMagField">
+          <div class="field-row">
+            <label for="extMagSlider">Μέγεθος φορτίου |q<sub>2</sub>|</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="extMagNum" value="0.8" step="0.1" min="0.1" max="3"><span class="unit">μC</span></span>
+          </div>
+          <input type="range" id="extMagSlider" min="0.1" max="3" step="0.1" value="0.8">
+        </div>
+        <div class="msg">Οι δύο σφαίρες θεωρούνται όμοιες (ίδιας ακτίνας) — σε επαφή μοιράζονται εξίσου το συνολικό φορτίο.</div>
+      </div>
+
+      <div class="card">
+        <h2>Νήμα &amp; Γεωμετρία</h2>
+        <div class="field">
+          <div class="field-row">
+            <label for="lengthSlider">Μήκος νήματος L</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="lengthNum" value="0.6" step="0.05" min="0.2" max="1.2"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="lengthSlider" min="0.2" max="1.2" step="0.05" value="0.6">
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <label for="distSlider">Απόσταση προσέγγισης</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="distNum" value="0.40" step="0.01" min="0.04" max="0.5"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="distSlider" min="0.04" max="0.5" step="0.01" value="0.40">
+        </div>
+        <div class="field">
+          <div class="field-row"><label>Πλευρά προσέγγισης</label></div>
+          <div class="mode-row" id="sideRow">
+            <button type="button" class="mode-btn active" data-side="1">Δεξιά →</button>
+            <button type="button" class="mode-btn" data-side="-1">← Αριστερά</button>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <label for="showVectors">Εμφάνιση διανυσμάτων δύναμης</label>
+          <div class="switch"><input type="checkbox" id="showVectors" checked><span class="slider-pill"></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Μετρήσεις σε πραγματικό χρόνο</h2>
+        <div class="readout-grid">
+          <div class="readout"><span class="k">Γωνία εκτροπής</span><span class="v" id="rTheta">0.0</span><span class="u">°</span></div>
+          <div class="readout"><span class="k">Δύναμη</span><span class="v" id="rForce">0.00</span><span class="u">N</span></div>
+          <div class="readout"><span class="k">Τάνυση Τ</span><span class="v" id="rTension">0.00</span><span class="u">N</span></div>
+          <div class="readout"><span class="k">Βάρος mg</span><span class="v" id="rWeight">0.00</span><span class="u">N</span></div>
+          <div class="readout"><span class="k">Φορτίο σφαίρας</span><span class="v" id="rQ1">0.0</span><span class="u">μC</span></div>
+          <div class="readout"><span class="k">Φορτίο εξωτ. σώμ.</span><span class="v" id="rQ2">0.0</span><span class="u">μC</span></div>
+        </div>
+        <div class="msg">Τα φορτία σε μC είναι εξιδανικευμένες τιμές (όπως στις ασκήσεις), ώστε η εκτροπή να φαίνεται καθαρά.</div>
+      </div>
+
+    </div>
+    </div>
+
+    <div class="tab-panel" id="tab-solution">
+      <div class="card" style="grid-column:1/-1;">
+        <h2>Θεωρία &amp; Λύση</h2>
+        <div class="sol-text" id="solBody"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-saved">
+      <div class="card">
+        <h2>Αποθήκευση τρέχουσας κατάστασης</h2>
+        <div class="field">
+          <div class="field-row"><label for="presetName">Όνομα</label></div>
+          <input type="text" id="presetName" class="val-input" style="width:100%; text-align:left;" placeholder="π.χ. Έλξη ανόμοιων φορτίων">
+        </div>
+        <div class="btn-row">
+          <button class="primary" id="savePresetBtn">💾 Αποθήκευση</button>
+          <button class="small" id="exportBtn">⬇ Εξαγωγή JSON</button>
+          <button class="small" id="importBtn">⬆ Εισαγωγή JSON</button>
+        </div>
+        <div class="field" style="margin-top:12px; display:none;" id="importBox">
+          <textarea class="jsonbox" id="importText" placeholder="Επικόλλησε εδώ JSON..."></textarea>
+          <div class="btn-row" style="margin-top:8px;">
+            <button class="small primary" id="importConfirmBtn">Εισαγωγή</button>
+            <button class="small" id="importCancelBtn">Άκυρο</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Αποθηκευμένες ρυθμίσεις</h2>
+        <div id="presetList"></div>
+        <div class="msg" id="presetEmptyMsg">Δεν υπάρχουν ακόμη αποθηκευμένες ρυθμίσεις.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+
+// ---------- Physics constants ----------
+const K = 8.99e9;        // Coulomb constant
+const G = 9.8;            // gravity
+const BALL_R = 0.025;     // sphere radius (m), identical spheres assumption
+const GAMMA = 1.6;        // angular damping coefficient
+const SCALE = 280;        // px per meter
+const PIVOT = {x: 450, y: 55}; // canvas px
+
+// ---------- State ----------
+const state = {
+  pendSign: 1, pendMag: 1.0,   // μC magnitude
+  extSign: -1, extMag: 0.8,
+  mass: 5,      // g
+  length: 0.6,  // m
+  dist: 0.40,   // m (approach distance, used by slider)
+  side: 1,      // +1 right, -1 left
+  showVectors: true,
+  soundOn: true,
+  paused: false,
+  theme: 'blueprint',
+  // dynamic
+  theta: 0, omega: 0,
+  extX: 0, extY: 0, // meters, relative to pivot
+  touching: false,
+  approaching: false,
+  retreating: false,
+  dragging: false,
+  lastTime: null,
+  flashT: 0
+};
+
+function qp(){ return state.pendSign * state.pendMag * 1e-6; }
+function qe(){ return state.extSign * state.extMag * 1e-6; }
+
+// ---------- Init external body position from distance/side ----------
+function placeExternalDefault(){
+  state.extX = state.side * state.dist;
+  state.extY = state.length;
+}
+placeExternalDefault();
+
+// ---------- Audio ----------
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  }
+}
+function playSpark(){
+  if(!state.soundOn) return;
+  ensureAudio();
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const dur = 0.16;
+  const bufferSize = Math.floor(audioCtx.sampleRate*dur);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++){ data[i]=(Math.random()*2-1)*Math.pow(1-i/bufferSize,2); }
+  const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+  const filter = audioCtx.createBiquadFilter(); filter.type='highpass'; filter.frequency.value=1800;
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0.55,t);
+  gainNode.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  noise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
+  noise.start(t); noise.stop(t+dur);
+}
+function playClick(){
+  if(!state.soundOn) return;
+  ensureAudio();
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  osc.type='sine'; osc.frequency.setValueAtTime(520,t); osc.frequency.exponentialRampToValueAtTime(300,t+0.08);
+  gainNode.gain.setValueAtTime(0.18,t); gainNode.gain.exponentialRampToValueAtTime(0.001,t+0.1);
+  osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t+0.1);
+}
+
+// ---------- Physics: electric force on pendulum ball ----------
+// theta: angle from vertical (rad); extPos {x,y} in meters relative to pivot
+// returns {fx, fy, r, attract, mode} force on ball in Newtons (world coords, y down)
+function computeForce(theta, extX, extY){
+  const bx = state.length*Math.sin(theta);
+  const by = state.length*Math.cos(theta);
+  let dx = extX-bx, dy = extY-by;
+  let r = Math.hypot(dx,dy);
+  const rMin = 2*BALL_R*0.999;
+  if(r < rMin) r = rMin;
+  const ux = dx/r, uy = dy/r;
+  const Qp = qp(), Qe = qe();
+  let Fmag = 0, attract = true, mode='none';
+  if(Qp!==0 && Qe!==0){
+    Fmag = K*Math.abs(Qp*Qe)/(r*r);
+    attract = (Qp*Qe) < 0;
+    mode = 'coulomb';
+  } else if(Qp!==0 || Qe!==0){
+    const Qc = Qp!==0 ? Math.abs(Qp) : Math.abs(Qe);
+    const denom = Math.pow(r*r - BALL_R*BALL_R, 2);
+    Fmag = K*Qc*Qc*BALL_R*r/Math.max(denom,1e-12);
+    attract = true;
+    mode = 'induction';
+  }
+  const FMAX = 6; // N, safety clamp
+  if(Fmag>FMAX) Fmag = FMAX;
+  const dirSign = attract ? 1 : -1;
+  const fx = dirSign*ux*Fmag;
+  const fy = dirSign*uy*Fmag;
+  return {fx, fy, r, Fmag, attract, mode, bx, by};
+}
+
+function derivatives(theta, omega, extX, extY){
+  const f = computeForce(theta, extX, extY);
+  const m = state.mass/1000;
+  const L = state.length;
+  const domega = -(G/L)*Math.sin(theta) + (f.fx*Math.cos(theta) - f.fy*Math.sin(theta))/(m*L) - GAMMA*omega;
+  return {dtheta: omega, domega};
+}
+
+function rk4Step(theta, omega, dt, extX, extY){
+  const k1 = derivatives(theta, omega, extX, extY);
+  const k2 = derivatives(theta+0.5*dt*k1.dtheta, omega+0.5*dt*k1.domega, extX, extY);
+  const k3 = derivatives(theta+0.5*dt*k2.dtheta, omega+0.5*dt*k2.domega, extX, extY);
+  const k4 = derivatives(theta+dt*k3.dtheta, omega+dt*k3.domega, extX, extY);
+  return {
+    theta: theta + (dt/6)*(k1.dtheta+2*k2.dtheta+2*k3.dtheta+k4.dtheta),
+    omega: omega + (dt/6)*(k1.domega+2*k2.domega+2*k3.domega+k4.domega)
+  };
+}
+
+// ---------- Contact / conduction ----------
+function handleContact(){
+  const Qp = qp(), Qe = qe();
+  const total = Qp+Qe;
+  const newQ = total/2;
+  const newMag = Math.abs(newQ)*1e6; // μC
+  const newSign = Math.abs(newQ) < 1e-9 ? 0 : (newQ>0?1:-1);
+  state.pendSign = newSign; state.extSign = newSign;
+  state.pendMag = Math.min(3, Math.max(0.1, newMag || 0.1));
+  state.extMag = state.pendMag;
+  if(newSign===0){ state.pendMag = 1.0; state.extMag = 1.0; }
+  refreshChargeUI();
+  playSpark();
+  state.flashT = 0.35;
+  setEventMsg('Έγινε επαφή! Το συνολικό φορτίο μοιράστηκε εξίσου στις δύο (όμοιες) σφαίρες: q = (q₁+q₂)/2 = ' + fmt(newQ*1e6,2) + ' μC έκαστη.');
+  document.getElementById('stateLabel').textContent = 'ΕΠΑΦΗ!';
+}
+
+// ---------- Animation loop ----------
+let dragTarget = null;
+
+function step(dt){
+  if(state.paused) return;
+  // approaching / retreating animation of external body
+  const speed = 0.5; // m/s
+  const bx = state.length*Math.sin(state.theta), by = state.length*Math.cos(state.theta);
+  if(state.approaching){
+    const dx = bx-state.extX, dy = by-state.extY;
+    const d = Math.hypot(dx,dy);
+    const targetGap = 2*BALL_R;
+    if(d > targetGap+0.002){
+      const ux=dx/d, uy=dy/d;
+      const move = Math.min(speed*dt, d-targetGap);
+      state.extX += ux*move; state.extY += uy*move;
+    } else {
+      state.approaching = false;
+    }
+  }
+  if(state.retreating){
+    const homeX = state.side*Math.max(state.dist,0.3);
+    const homeY = state.length;
+    const dx = homeX-state.extX, dy = homeY-state.extY;
+    const d = Math.hypot(dx,dy);
+    if(d > 0.004){
+      const ux=dx/d, uy=dy/d;
+      const move = Math.min(speed*dt, d);
+      state.extX += ux*move; state.extY += uy*move;
+    } else {
+      state.retreating = false;
+    }
+  }
+
+  // substep integration
+  let remaining = Math.min(dt, 0.05);
+  const sub = 0.005;
+  while(remaining > 1e-6){
+    const h = Math.min(sub, remaining);
+    const res = rk4Step(state.theta, state.omega, h, state.extX, state.extY);
+    state.theta = res.theta; state.omega = res.omega;
+    remaining -= h;
+  }
+
+  // contact detection
+  const f = computeForce(state.theta, state.extX, state.extY);
+  const contactNow = f.r <= 2*BALL_R + 0.0005;
+  if(contactNow && !state.touching){
+    state.touching = true;
+    if(qp()!==0 || qe()!==0) handleContact();
+    state.omega *= -0.15; // soft bounce
+  } else if(!contactNow && f.r > 2*BALL_R+0.01){
+    state.touching = false;
+  }
+  if(state.flashT>0) state.flashT = Math.max(0, state.flashT-dt);
+}
+
+// ---------- Rendering ----------
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function cssVar(name){
+  return getComputedStyle(document.body).getPropertyValue(name).trim();
+}
+
+function drawArrow(x1,y1,x2,y2,color,width){
+  const len = Math.hypot(x2-x1,y2-y1);
+  if(len<2) return;
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width||2.5;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const ang = Math.atan2(y2-y1,x2-x1);
+  const headLen = Math.min(11, len*0.35);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-headLen*Math.cos(ang-0.4), y2-headLen*Math.sin(ang-0.4));
+  ctx.lineTo(x2-headLen*Math.cos(ang+0.4), y2-headLen*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function chargeColor(sign){
+  if(sign>0) return cssVar('--pos-color');
+  if(sign<0) return cssVar('--neg-color');
+  return cssVar('--neutral-color');
+}
+
+function drawSphere(cx, cy, r, sign, otherDir, induced){
+  // otherDir: angle (rad) pointing from this sphere toward the other body (for induction split coloring)
+  ctx.save();
+  if(sign===0 && induced){
+    // polarized neutral sphere: near-side (toward other) opposite/attracted shade, far side own shade
+    const grad = ctx.createLinearGradient(
+      cx - r*Math.cos(otherDir), cy - r*Math.sin(otherDir),
+      cx + r*Math.cos(otherDir), cy + r*Math.sin(otherDir)
+    );
+    grad.addColorStop(0, cssVar('--neutral-color'));
+    grad.addColorStop(0.5, cssVar('--neutral-color'));
+    grad.addColorStop(0.5, cssVar('--gold-dim'));
+    grad.addColorStop(1, cssVar('--gold-dim'));
+    ctx.fillStyle = grad;
+  } else {
+    ctx.fillStyle = chargeColor(sign);
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+  ctx.lineWidth=1.5; ctx.strokeStyle = cssVar('--bg-deep'); ctx.stroke();
+
+  // charge symbols
+  ctx.fillStyle = '#0B1B30';
+  ctx.font = '700 '+Math.round(r*1.05)+'px IBM Plex Mono, monospace';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  if(sign!==0){
+    ctx.fillText(sign>0?'+':'−', cx, cy+1);
+  }
+  ctx.restore();
+}
+
+function render(){
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  const px = PIVOT.x, py = PIVOT.y;
+  const bx = px + state.length*Math.sin(state.theta)*SCALE;
+  const by = py + state.length*Math.cos(state.theta)*SCALE;
+  const ex = px + state.extX*SCALE;
+  const ey = py + state.extY*SCALE;
+
+  // ceiling hatch
+  ctx.save();
+  ctx.strokeStyle = cssVar('--line-dim'); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(px-40,py); ctx.lineTo(px+40,py); ctx.stroke();
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath(); ctx.moveTo(px+i*10, py); ctx.lineTo(px+i*10-8, py-10); ctx.stroke();
+  }
+  ctx.restore();
+
+  // vertical reference dashed
+  ctx.save();
+  ctx.setLineDash([5,5]);
+  ctx.strokeStyle = cssVar('--line-dim'); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px, py+state.length*SCALE+30); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // angle arc + label
+  const thetaDeg = state.theta*180/Math.PI;
+  if(Math.abs(thetaDeg) > 0.4){
+    ctx.save();
+    const arcR = 46;
+    ctx.strokeStyle = cssVar('--gold'); ctx.lineWidth=1.8;
+    ctx.beginPath();
+    const a0 = Math.PI/2; // pointing down
+    const a1 = Math.PI/2 - state.theta;
+    ctx.arc(px, py, arcR, Math.min(a0,a1), Math.max(a0,a1));
+    ctx.stroke();
+    ctx.fillStyle = cssVar('--gold');
+    ctx.font = '600 13px IBM Plex Mono, monospace';
+    ctx.textAlign = state.theta>=0 ? 'left':'right';
+    ctx.fillText(fmt(Math.abs(thetaDeg),1)+'°', px + (state.theta>=0?arcR+8:-arcR-8), py+22);
+    ctx.restore();
+  }
+
+  // thread
+  ctx.save();
+  ctx.strokeStyle = cssVar('--paper-dim'); ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(bx,by); ctx.stroke();
+  ctx.restore();
+
+  // pivot
+  ctx.save();
+  ctx.fillStyle = cssVar('--line-bright');
+  ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  const f = computeForce(state.theta, state.extX, state.extY);
+  const otherDirBall = Math.atan2(ey-by, ex-bx);
+  const otherDirExt = Math.atan2(by-ey, bx-ex);
+  const inducedActive = f.mode==='induction';
+
+  // force vectors
+  if(state.showVectors){
+    const m = state.mass/1000;
+    const weightPx = 26; // fixed visual length reference for mg
+    drawArrow(bx,by, bx, by+weightPx, cssVar('--paper-dim'), 2);
+    if(f.Fmag>1e-6){
+      const dir = f.attract ? otherDirBall : (otherDirBall+Math.PI);
+      const flen = Math.min(70, 18+f.Fmag*22);
+      const color = f.attract ? cssVar('--attract-color') : cssVar('--repel-color');
+      drawArrow(bx,by, bx+flen*Math.cos(dir), by+flen*Math.sin(dir), color, 3);
+    }
+  }
+
+  // visual sphere radius (mildly exaggerated vs. the point-charge physics radius, for legibility)
+  const VIS_R = 12;
+  drawSphere(ex, ey, VIS_R, state.extSign, otherDirExt, inducedActive && qe()===0);
+  // pendulum ball
+  drawSphere(bx, by, VIS_R*1.15, state.pendSign, otherDirBall, inducedActive && qp()===0);
+
+  // contact flash
+  if(state.flashT>0){
+    ctx.save();
+    const alpha = state.flashT/0.35;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = cssVar('--spark-color');
+    const midx=(bx+ex)/2, midy=(by+ey)/2;
+    for(let i=0;i<6;i++){
+      const ang = Math.random()*Math.PI*2;
+      const len = 6+Math.random()*14;
+      ctx.beginPath();
+      ctx.moveTo(midx,midy);
+      ctx.lineTo(midx+len*Math.cos(ang), midy+len*Math.sin(ang));
+      ctx.strokeStyle = cssVar('--spark-color'); ctx.lineWidth=2; ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // dashed connecting line ball-external (subtle, shows r)
+  ctx.save();
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle = cssVar('--line-dim'); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(ex,ey); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  updateReadouts(f, thetaDeg);
+}
+
+// ---------- Readouts ----------
+function fmt(x, d){ if(!isFinite(x)) return '–'; return x.toFixed(d===undefined?1:d); }
+
+function updateReadouts(f, thetaDeg){
+  const m = state.mass/1000;
+  const T = Math.sqrt(Math.pow(m*G,2) + Math.pow(f.Fmag,2)); // approx tension magnitude at quasi-equilibrium
+  document.getElementById('outTheta').textContent = fmt(Math.abs(thetaDeg),1);
+  document.getElementById('outForce').textContent = fmt(f.Fmag,3);
+  document.getElementById('outR').textContent = fmt(f.r*100,1);
+  document.getElementById('rTheta').textContent = fmt(Math.abs(thetaDeg),1);
+  document.getElementById('rForce').textContent = fmt(f.Fmag,3);
+  document.getElementById('rTension').textContent = fmt(T,3);
+  document.getElementById('rWeight').textContent = fmt(m*G,3);
+  document.getElementById('rQ1').textContent = (state.pendSign===0?'0.0':(state.pendSign>0?'+':'−')+fmt(state.pendMag,1));
+  document.getElementById('rQ2').textContent = (state.extSign===0?'0.0':(state.extSign>0?'+':'−')+fmt(state.extMag,1));
+
+  let statusText;
+  if(state.touching) statusText = 'ΕΠΑΦΗ!';
+  else if(qp()===0 && qe()===0) statusText = 'Καμία δύναμη';
+  else if(f.Fmag<1e-5) statusText = 'Αμελητέα δύναμη';
+  else if(f.attract) statusText = f.mode==='induction' ? 'Έλξη (επαγωγή)' : 'Έλξη';
+  else statusText = 'Άπωση';
+  document.getElementById('outStatus').textContent = statusText;
+  document.getElementById('stateLabel').textContent = state.touching ? 'ΕΠΑΦΗ!' : (state.paused ? 'ΠΑΥΣΗ' : (Math.abs(state.omega)>0.05?'ΤΑΛΑΝΤΩΣΗ':'ΗΡΕΜΙΑ'));
+}
+
+function setEventMsg(txt){
+  document.getElementById('eventMsg').textContent = txt;
+}
+
+// ---------- Solution tab ----------
+function updateSolution(){
+  const body = document.getElementById('solBody');
+  const m = state.mass/1000, L = state.length;
+  const f = computeForce(state.theta, state.extX, state.extY);
+  const thetaDeg = Math.abs(state.theta*180/Math.PI);
+  const Qp = qp(), Qe = qe();
+  let html = '';
+  html += '<p>Στην (σχεδόν) ισορροπία, στη σφαίρα του εκκρεμούς ασκούνται τρεις δυνάμεις: το βάρος <b>mg</b>, η τάση του νήματος <b>Τ</b> και η ηλεκτρική δύναμη <b>F</b>. Από τη συνθήκη ισορροπίας κατά τους δύο άξονες:</p>';
+  html += '<span class="eq">T·cosθ = mg &nbsp;&nbsp;(1)&nbsp;&nbsp;&nbsp;&nbsp; T·sinθ = F &nbsp;&nbsp;(2)</span>';
+  html += '<p>Διαιρώντας τη (2) με την (1) προκύπτει η βασική σχέση του ηλεκτρικού εκκρεμούς:</p>';
+  html += '<span class="eq">tanθ = F / (mg)</span>';
+  html += '<hr>';
+  if(Qp!==0 && Qe!==0){
+    html += '<p><b>Νόμος Coulomb</b> (και τα δύο σώματα φορτισμένα):</p>';
+    html += '<span class="eq">F = k·|q₁·q₂| / r²</span>';
+    html += '<p>Με τις τρέχουσες τιμές: k = 8,99×10⁹ N·m²/C², q₁ = <span class="num">'+fmt(Qp*1e6,2)+'</span> μC, q₂ = <span class="num">'+fmt(Qe*1e6,2)+'</span> μC, r = <span class="num">'+fmt(f.r*100,1)+'</span> cm ⇒ F ≈ <span class="num">'+fmt(f.Fmag,3)+'</span> N.</p>';
+    html += '<p>Το γινόμενο q₁·q₂ είναι '+(Qp*Qe<0?'<b>αρνητικό</b> (ετερώνυμα φορτία) ⇒ η δύναμη είναι <b>ελκτική</b>.':'<b>θετικό</b> (ομώνυμα φορτία) ⇒ η δύναμη είναι <b>απωστική</b>.')+'</p>';
+  } else if(Qp!==0 || Qe!==0){
+    html += '<p><b>Ηλεκτροστατική επαγωγή</b> (το ένα σώμα είναι αφόρτιστο αγωγός): το φορτισμένο σώμα πολώνει το αφόρτιστο, δημιουργώντας κοντά του φορτίο αντίθετου προσήμου. Το αποτέλεσμα είναι πάντα <b>ελκτική</b> δύναμη, ασχέτως του προσήμου του φορτισμένου σώματος.</p>';
+    html += '<p>Δεν υπολογίζεται με τον απλό νόμο Coulomb· μια προσεγγιστική έκφραση (μέθοδος ειδώλου, για αγώγιμη σφαίρα ακτίνας α) δίνει:</p>';
+    html += '<span class="eq">F ≈ k·Q²·α·r / (r² − α²)²</span>';
+    html += '<p>Με Q = <span class="num">'+fmt((Qp!==0?Math.abs(Qp):Math.abs(Qe))*1e6,2)+'</span> μC, α = 2,5 cm, r = <span class="num">'+fmt(f.r*100,1)+'</span> cm ⇒ F ≈ <span class="num">'+fmt(f.Fmag,3)+'</span> N. Παρατήρησε ότι για ίδιο r, η δύναμη επαγωγής είναι συνήθως ασθενέστερη από τη δύναμη Coulomb μεταξύ δύο φορτισμένων σωμάτων.</p>';
+  } else {
+    html += '<p>Και τα δύο σώματα είναι αφόρτιστα — δεν ασκείται ηλεκτρική δύναμη, F = 0, οπότε tanθ = 0 και το εκκρεμές παραμένει κατακόρυφο.</p>';
+  }
+  html += '<hr>';
+  html += '<p><b>Τρέχουσα κατάσταση προσομοίωσης:</b> m = '+fmt(state.mass,1)+' g, L = '+fmt(L,2)+' m ⇒ mg = <span class="num">'+fmt(m*G,3)+'</span> N. Από τη σχέση tanθ = F/(mg) προκύπτει θ ≈ <span class="num">'+fmt(Math.atan2(f.Fmag,m*G)*180/Math.PI,1)+'</span>°, τιμή που συμφωνεί με την προσομοιωμένη γωνία (θ<sub>sim</sub> ≈ <span class="num">'+fmt(thetaDeg,1)+'</span>°, μικρές αποκλίσεις οφείλονται στη δυναμική ταλάντωση).</p>';
+  html += '<hr>';
+  html += '<p><b>Μεταφορά φορτίου με επαφή:</b> όταν δύο όμοιες αγώγιμες σφαίρες έρθουν σε επαφή, το συνολικό φορτίο μοιράζεται εξίσου:</p>';
+  html += '<span class="eq">q₁′ = q₂′ = (q₁ + q₂) / 2</span>';
+  html += '<p>Επειδή μετά την επαφή τα δύο σώματα αποκτούν <b>το ίδιο πρόσημο</b> φορτίου (εκτός αν το άθροισμα είναι μηδέν), απομακρύνοντας το εξωτερικό σώμα το εκκρεμές συνήθως παραμένει εκτρεπόμενο — αλλά τώρα λόγω <b>άπωσης</b> αντί για έλξη. Δοκίμασε το με το κουμπί «Επαφή με το εκκρεμές» και μετά «Απομάκρυνση».</p>';
+  body.innerHTML = html;
+}
+
+// ---------- UI wiring ----------
+function refreshChargeUI(){
+  document.querySelectorAll('#pendSignRow .mode-btn').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.sign)===state.pendSign);
+  });
+  document.querySelectorAll('#extSignRow .mode-btn').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.sign)===state.extSign);
+  });
+  document.getElementById('pendMagField').classList.toggle('sub-dim', state.pendSign===0);
+  document.getElementById('extMagField').classList.toggle('sub-dim', state.extSign===0);
+  document.getElementById('pendMagSlider').value = state.pendMag;
+  document.getElementById('pendMagNum').value = state.pendMag;
+  document.getElementById('extMagSlider').value = state.extMag;
+  document.getElementById('extMagNum').value = state.extMag;
+  document.getElementById('massSlider').value = state.mass;
+  document.getElementById('massNum').value = state.mass;
+  document.getElementById('lengthSlider').value = state.length;
+  document.getElementById('lengthNum').value = state.length;
+  document.getElementById('distSlider').value = state.dist;
+  document.getElementById('distNum').value = state.dist;
+  document.querySelectorAll('#sideRow .mode-btn').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.side)===state.side);
+  });
+
+  const Qp=qp(), Qe=qe();
+  if(Qp!==0 && Qe!==0){
+    setEventMsg(Qp*Qe<0 ? 'Τα δύο φορτισμένα σώματα έχουν αντίθετο πρόσημο — το εκκρεμές έλκεται.' : 'Τα δύο φορτισμένα σώματα έχουν ίδιο πρόσημο — το εκκρεμές απωθείται.');
+  } else if(Qp!==0 || Qe!==0){
+    setEventMsg('Το αφόρτιστο σώμα πολώνεται από το φορτισμένο (επαγωγή) — πάντα έλξη.');
+  } else {
+    setEventMsg('Και τα δύο σώματα είναι αφόρτιστα — καμία δύναμη.');
+  }
+}
+
+function bindModeRow(rowId, prop, attr, extra){
+  document.querySelectorAll('#'+rowId+' .mode-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state[prop] = Number(btn.dataset[attr]);
+      if(extra) extra();
+      refreshChargeUI();
+      playClick();
+    });
+  });
+}
+bindModeRow('pendSignRow','pendSign','sign');
+bindModeRow('extSignRow','extSign','sign');
+bindModeRow('sideRow','side','side', ()=>{ placeExternalDefault(); });
+
+function bindSlider(sliderId, numId, prop, isInt){
+  const slider = document.getElementById(sliderId), num = document.getElementById(numId);
+  function apply(v){
+    v = Number(v);
+    if(isNaN(v)) return;
+    state[prop] = v;
+    slider.value = v; num.value = v;
+    if(prop==='length' || prop==='dist'){ placeExternalDefault(); }
+    refreshChargeUI();
+  }
+  slider.addEventListener('input', ()=>apply(slider.value));
+  num.addEventListener('change', ()=>apply(num.value));
+}
+bindSlider('pendMagSlider','pendMagNum','pendMag');
+bindSlider('extMagSlider','extMagNum','extMag');
+bindSlider('massSlider','massNum','mass');
+bindSlider('lengthSlider','lengthNum','length');
+bindSlider('distSlider','distNum','dist');
+
+document.getElementById('showVectors').addEventListener('change', function(){ state.showVectors=this.checked; });
+
+document.getElementById('contactBtn').addEventListener('click', ()=>{
+  state.dragging=false; state.retreating=false; state.approaching=true;
+  playClick();
+});
+document.getElementById('removeBtn').addEventListener('click', ()=>{
+  state.dragging=false; state.approaching=false; state.retreating=true;
+  playClick();
+});
+document.getElementById('pauseBtn').addEventListener('click', function(){
+  state.paused = !state.paused;
+  this.textContent = state.paused ? '▶ Συνέχεια' : '⏸ Παύση';
+});
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  state.theta=0; state.omega=0; state.touching=false; state.approaching=false; state.retreating=false; state.flashT=0;
+  state.pendSign=1; state.pendMag=1.0; state.extSign=-1; state.extMag=0.8;
+  state.mass=5; state.length=0.6; state.dist=0.40; state.side=1;
+  placeExternalDefault();
+  refreshChargeUI();
+  playClick();
+});
+document.getElementById('soundBtn').addEventListener('click', function(){
+  state.soundOn = !state.soundOn;
+  this.textContent = state.soundOn ? '🔊 Ήχος' : '🔇 Σίγαση';
+});
+
+// theme toggle
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  const isMinimal = document.body.classList.toggle('theme-minimal');
+  document.getElementById('themeName').textContent = isMinimal ? 'Minimal' : 'Blueprint';
+});
+
+// main tabs
+document.querySelectorAll('.main-tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.main-tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='saved') renderPresets();
+  });
+});
+
+// ---------- Canvas dragging of external body ----------
+function canvasToWorld(clientX, clientY){
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width/rect.width, sy = canvas.height/rect.height;
+  const cx = (clientX-rect.left)*sx, cy = (clientY-rect.top)*sy;
+  return { x: (cx-PIVOT.x)/SCALE, y: (cy-PIVOT.y)/SCALE };
+}
+function pointerPos(e){
+  if(e.touches && e.touches[0]) return {clientX:e.touches[0].clientX, clientY:e.touches[0].clientY};
+  return {clientX:e.clientX, clientY:e.clientY};
+}
+function hitExternal(clientX, clientY){
+  const w = canvasToWorld(clientX, clientY);
+  const dx = w.x-state.extX, dy = w.y-state.extY;
+  return Math.hypot(dx,dy) < BALL_R*3.2;
+}
+function startDrag(e){
+  const p = pointerPos(e);
+  if(hitExternal(p.clientX, p.clientY)){
+    state.dragging = true; state.approaching=false; state.retreating=false;
+    canvas.classList.add('grabbing');
+    e.preventDefault();
+  }
+}
+function moveDrag(e){
+  if(!state.dragging) return;
+  const p = pointerPos(e);
+  const w = canvasToWorld(p.clientX, p.clientY);
+  state.extX = Math.max(-0.9, Math.min(0.9, w.x));
+  state.extY = Math.max(-0.15, Math.min(state.length+0.5, w.y));
+  e.preventDefault();
+}
+function endDrag(){
+  state.dragging = false;
+  canvas.classList.remove('grabbing');
+}
+canvas.addEventListener('mousedown', startDrag);
+window.addEventListener('mousemove', moveDrag);
+window.addEventListener('mouseup', endDrag);
+canvas.addEventListener('touchstart', startDrag, {passive:false});
+window.addEventListener('touchmove', moveDrag, {passive:false});
+window.addEventListener('touchend', endDrag);
+
+// ---------- Presets (save/load) ----------
+const STORAGE_KEY = 'ekkremes_presets_v1';
+function loadPresets(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ return []; }
+}
+function savePresets(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+function renderPresets(){
+  const list = loadPresets();
+  const container = document.getElementById('presetList');
+  const emptyMsg = document.getElementById('presetEmptyMsg');
+  container.innerHTML = '';
+  emptyMsg.style.display = list.length ? 'none' : 'block';
+  list.forEach((p, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'preset-item';
+    div.innerHTML = '<span class="pname">'+escapeHtml(p.name)+'</span>'+
+      '<span class="pbtns">'+
+      '<button class="small" data-act="load" data-idx="'+idx+'">Φόρτωση</button>'+
+      '<button class="small" data-act="del" data-idx="'+idx+'">Διαγραφή</button>'+
+      '</span>';
+    container.appendChild(div);
+  });
+  container.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = Number(btn.dataset.idx);
+      const list2 = loadPresets();
+      if(btn.dataset.act==='load'){
+        const p = list2[idx];
+        Object.assign(state, p.state);
+        placeExternalDefault();
+        refreshChargeUI();
+      } else {
+        list2.splice(idx,1);
+        savePresets(list2);
+        renderPresets();
+      }
+    });
+  });
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+document.getElementById('savePresetBtn').addEventListener('click', ()=>{
+  const nameInput = document.getElementById('presetName');
+  const name = nameInput.value.trim() || ('Ρύθμιση '+new Date().toLocaleString('el-GR'));
+  const list = loadPresets();
+  list.push({
+    name,
+    state: {
+      pendSign: state.pendSign, pendMag: state.pendMag,
+      extSign: state.extSign, extMag: state.extMag,
+      mass: state.mass, length: state.length, dist: state.dist, side: state.side
+    }
+  });
+  savePresets(list);
+  nameInput.value='';
+  renderPresets();
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const list = loadPresets();
+  const blob = new Blob([JSON.stringify(list,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ekkremes-presets.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importBox').style.display='block';
+});
+document.getElementById('importCancelBtn').addEventListener('click', ()=>{
+  document.getElementById('importBox').style.display='none';
+});
+document.getElementById('importConfirmBtn').addEventListener('click', ()=>{
+  try{
+    const data = JSON.parse(document.getElementById('importText').value);
+    if(Array.isArray(data)){
+      const list = loadPresets().concat(data);
+      savePresets(list);
+      renderPresets();
+      document.getElementById('importBox').style.display='none';
+      document.getElementById('importText').value='';
+    }
+  }catch(e){ alert('Μη έγκυρο JSON.'); }
+});
+
+// ---------- Main loop ----------
+let solTickAcc = 0;
+function loop(ts){
+  if(state.lastTime===null) state.lastTime = ts;
+  let dt = (ts-state.lastTime)/1000;
+  state.lastTime = ts;
+  dt = Math.min(dt, 0.05);
+  step(dt);
+  render();
+  solTickAcc += dt;
+  if(solTickAcc>0.25 && document.getElementById('tab-solution').classList.contains('active')){
+    solTickAcc=0;
+    updateSolution();
+  }
+  requestAnimationFrame(loop);
+}
+
+refreshChargeUI();
+renderPresets();
+updateSolution();
+requestAnimationFrame(loop);
+
+})();
+
+</script>
+</body>
+</html>
