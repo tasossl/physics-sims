@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Προσομοίωση Διάθλασης Φωτός</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --ray1-color:#E8B84B;
+  --ray2-color:#5EEAD4;
+  --normal-color:#7DB8FF;
+  --apparent-color:#FF6FCF;
+  --water-top:#0E3A5C;
+  --water-bot:#061423;
+  --sky-top:#1B3A5C;
+  --sky-bot:#0B1B30;
+}
+
+body.theme-minimal{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --ray1-color:#C97A12;
+  --ray2-color:#0D9488;
+  --normal-color:#2563EB;
+  --apparent-color:#DB2777;
+  --water-top:#BFE0F5;
+  --water-bot:#7FB3D9;
+  --sky-top:#EAF3FB;
+  --sky-bot:#FFFFFF;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  min-height:100vh;
+  padding: 18px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1180px; margin:0 auto;}
+
+header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(22px, 4vw, 32px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.byline{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  color: var(--paper-dim);
+  margin-top:4px;
+}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+.header-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.theme-toggle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:6px 10px; }
+.theme-toggle span{color: var(--gold);}
+
+.layout{ display:flex; flex-direction:column; gap: 20px; }
+
+.controls{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap:14px;
+}
+
+@media (min-width: 600px) and (max-width: 1080px){
+  body{ padding: 24px 26px 64px; }
+  .controls{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+  .card{ padding: 18px 20px; }
+  .field{ margin-bottom:18px; }
+  .stage-readouts{ top:44px; right:20px; }
+  .stage-readouts .ov-line{ font-size:13.5px; }
+}
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px;
+  position:relative;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+}
+canvas{
+  width:100%;
+  height:auto;
+  aspect-ratio: 16/11;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+  touch-action: none;
+  cursor: grab;
+}
+canvas.grabbing{cursor:grabbing;}
+
+.hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:8px;
+  text-align:center;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.field-row label{ font-size:14.5px; color: var(--paper); }
+.field-row .val{ font-family:'IBM Plex Mono', monospace; font-size:14px; color: var(--gold); min-width: 64px; text-align:right; }
+
+.val-wrap{ display:flex; align-items:center; gap:5px; }
+.val-input{
+  width:68px;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--gold);
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14px;
+  text-align:right;
+  padding:8px 7px;
+  border-radius: var(--radius);
+  -moz-appearance:textfield;
+}
+.val-input::-webkit-outer-spin-button, .val-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.val-input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.unit{ font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--paper-dim); white-space:nowrap; }
+
+.select-el, .ex-select{
+  width:100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:12px;
+  border-radius: var(--radius);
+}
+
+input[type=range]{
+  -webkit-appearance:none;
+  width:100%;
+  height:5px;
+  background: var(--line-dim);
+  border-radius:3px;
+  outline:none;
+  touch-action:pan-y;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:24px;height:24px;
+  border-radius:50%;
+  background: var(--gold);
+  border: 2px solid var(--bg-deep);
+  cursor:pointer;
+  margin-top:-9.5px;
+}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px;
+  border-radius:50%;
+  background: var(--gold);
+  border: 2px solid var(--bg-deep);
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{ height:5px; background: var(--line-dim); border-radius:3px; }
+input[type=range]:focus-visible::-webkit-slider-thumb{ outline: 2px solid var(--line-bright); outline-offset: 2px; }
+input[type=range]:focus-visible{ outline: none; }
+
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px; }
+.toggle-row + .toggle-row{margin-top:13px;}
+.toggle-row label{font-size:13.5px;}
+.switch{ position:relative; width:46px;height:26px; flex:none; }
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{
+  position:absolute; inset:0;
+  background: var(--line-dim);
+  border-radius:26px;
+  transition: background 0.15s;
+  border:1px solid var(--line-dim);
+  pointer-events:none;
+}
+.slider-pill:before{
+  content:"";
+  position:absolute;
+  width:18px;height:18px;
+  left:3px; top:3px;
+  background: var(--paper-dim);
+  border-radius:50%;
+  transition: transform 0.15s, background 0.15s;
+}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
+.switch input:focus-visible + .slider-pill{outline:2px solid var(--line-bright); outline-offset:2px;}
+
+button{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  letter-spacing:0.05em;
+  font-size:13px;
+  text-transform:uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper);
+  padding: 12px 16px;
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height:44px;
+}
+button:hover{border-color: var(--gold-dim); color: var(--gold);}
+button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+button.primary{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+button.primary:hover{background: #f0c665; color:var(--bg-deep);}
+button.small{padding:10px 12px; font-size:11.5px; min-height:40px;}
+button:disabled{opacity:0.35; cursor:not-allowed;}
+button.danger{ border-color: rgba(224,104,90,0.4); color: #ffb3a8; padding:9px 14px; min-height:auto; font-size:11.5px; }
+button.danger:hover{background: rgba(224,104,90,0.15); border-color: var(--danger); color:#ffb3a8;}
+
+.btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+
+.msg{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-top:10px; line-height:1.5; }
+.msg.warn{color: var(--danger);}
+.msg.ok{color:#4ADE80;}
+
+.readout-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.readout{ background: var(--bg-deep); border: 1px solid var(--line-dim); border-radius: var(--radius); padding: 9px 10px; }
+.readout .k{ font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--paper-dim); display:block; margin-bottom:4px; }
+.readout .v{ font-family:'IBM Plex Mono', monospace; font-size:16px; color: var(--line-bright); }
+.readout .u{font-size:11px; color: var(--paper-dim);}
+
+.stage-stats-toggle{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-top:14px; padding-top:12px; border-top: 1px dashed var(--line-dim);
+}
+.stage-stats-toggle label{ font-size:13px; color: var(--paper); }
+.stage-readouts{
+  position:absolute; top:40px; right:22px;
+  display:flex; flex-direction:column; align-items:flex-end; gap:3px;
+  opacity:0; pointer-events:none; transition: opacity 0.2s ease; z-index:3;
+}
+.stage-readouts.open{opacity:1;}
+.stage-readouts .ov-line{
+  font-family:'IBM Plex Mono', monospace; font-size:12.5px; white-space:nowrap;
+  text-shadow: 0 0 5px var(--bg-deep), 0 0 9px var(--bg-deep), 0 0 9px var(--bg-deep);
+}
+.stage-readouts .ov-k{ color: var(--paper-dim); margin-right:6px; }
+.stage-readouts .v{ font-weight:600; color: var(--line-bright); }
+.stage-readouts .u{ color: var(--paper-dim); font-size:11px; margin-left:3px; }
+
+.summary{ margin-top:12px; padding-top:12px; border-top: 1px dashed var(--gold-dim); }
+.summary .row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:12.5px; padding: 3px 0; color: var(--paper); }
+.summary .row span:last-child{color:var(--gold);}
+
+.main-tab-row{ display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; -ms-overflow-style:none; scrollbar-width:none; }
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none; font-family:'Oswald', sans-serif; font-weight:500; font-size:13px; letter-spacing:0.03em; text-transform:uppercase;
+  padding:13px 20px; min-height:46px; border-radius: var(--radius);
+  border: 1px solid var(--line-dim); background: var(--bg-panel); color: var(--paper-dim);
+  cursor:pointer; white-space:nowrap; -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+#tab-exercise, #tab-solution, #tab-saved{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap:14px;
+}
+#tab-exercise.tab-panel:not(.active), #tab-solution.tab-panel:not(.active), #tab-saved.tab-panel:not(.active){display:none;}
+
+.hint-text{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); line-height:1.6; margin-top:8px; }
+.ex-result{
+  font-family:'IBM Plex Mono', monospace; font-size:13px; color: var(--paper); line-height:1.9;
+  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius); padding:14px;
+}
+.ex-result .given{color: var(--line-bright);}
+.ex-result .asked{color: var(--gold);}
+
+.field-inline{ display:flex; align-items:center; gap:8px; }
+.field-inline input[type=number]{
+  flex:1; background: var(--bg-deep); border: 1px solid var(--line-dim); color: var(--paper);
+  font-family:'IBM Plex Mono', monospace; font-size:14px; padding: 10px; border-radius: var(--radius); min-width:0;
+}
+.field-inline input[type=number]:focus-visible{outline: 2px solid var(--line-bright); outline-offset:1px;}
+
+.solution-content{ font-family:'Inter', sans-serif; font-size:14px; line-height:1.6; color: var(--paper); }
+.solution-content h3{
+  font-family:'Oswald', sans-serif; font-size:15px; color: var(--gold); margin:0 0 14px 0;
+  text-transform:uppercase; letter-spacing:0.05em;
+}
+.solution-content .sol-block{margin-bottom:18px;}
+.solution-content .sol-block h4{
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px; color: var(--gold);
+  text-transform:uppercase; letter-spacing:0.07em; margin:0 0 9px 0; padding-bottom:6px; border-bottom:1px solid var(--gold-dim);
+}
+.solution-content .givens-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap:8px; }
+.solution-content .gi{
+  font-family:'IBM Plex Mono', monospace; font-size:13px; background: var(--bg-deep);
+  border:1px solid var(--line-dim); border-radius: var(--radius); padding:8px 10px;
+}
+.solution-content .gi .k{color: var(--gold); margin-right:6px; font-weight:700;}
+.solution-content .line{ font-family:'IBM Plex Mono', monospace; font-size:13px; padding:8px 2px; border-bottom: 1px dashed var(--line-dim); }
+.solution-content .line:last-child{border-bottom:none;}
+.solution-content .res{color:#4ADE80; font-weight:700;}
+.solution-content .sol-note{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-bottom:14px; line-height:1.6; }
+
+.preset-name-input{
+  width:100%; background: var(--bg-deep); border: 1px solid var(--line-dim); color: var(--paper);
+  font-family:'Inter', sans-serif; font-size:14px; padding:12px; border-radius: var(--radius); margin-bottom:12px;
+}
+.preset-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius);
+  padding:12px 14px; margin-bottom:8px;
+}
+.preset-row:last-child{margin-bottom:0;}
+.preset-info{min-width:0;}
+.preset-title{ font-size:14px; color: var(--paper); margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.preset-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--paper-dim); }
+.preset-btns{display:flex; gap:6px; flex:none;}
+
+footer{
+  margin-top: 22px; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+  color: var(--paper-dim); text-align:center; letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Διάθλαση <span>Φωτός</span></h1>
+      <div class="byline">Τάσος Σλάβης</div>
+    </div>
+    <div class="header-right">
+      <div class="subtitle">Αέρας → Νερό · φαινόμενη θέση</div>
+      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span>Πορεία ακτίνας</span>
+        <span id="stateLabel">n₁ &gt; n₂</span>
+      </div>
+      <div class="stage-readouts open" id="stageReadouts">
+        <div class="ov-line"><span class="ov-k">θ₁ (νερό)</span><span class="v" id="outTheta1">0.0</span><span class="u">°</span></div>
+        <div class="ov-line"><span class="ov-k">θ₂ (αέρας)</span><span class="v" id="outTheta2">0.0</span><span class="u">°</span></div>
+        <div class="ov-line"><span class="ov-k">Πραγμ. βάθος</span><span class="v" id="outDepth">0.0</span><span class="u">m</span></div>
+        <div class="ov-line"><span class="ov-k">Φαιν. βάθος</span><span class="v" id="outAppDepth">0.0</span><span class="u">m</span></div>
+      </div>
+      <canvas id="canvas" width="900" height="620"></canvas>
+      <div class="hint">Σύρε το αντικείμενο ή το μάτι του παρατηρητή για να αλλάξεις θέση</div>
+
+      <div class="stage-stats-toggle">
+        <label for="showLiveStats">Μετρήσεις γωνιών εντός πλαισίου</label>
+        <div class="switch"><input type="checkbox" id="showLiveStats" checked><span class="slider-pill"></span></div>
+      </div>
+
+      <div class="summary" id="summary">
+        <div class="row"><span>Δείκτης διάθλασης κάτω μέσου (n₁)</span><span id="sumN1">–</span></div>
+        <div class="row"><span>Δείκτης διάθλασης πάνω μέσου (n₂)</span><span id="sumN2">–</span></div>
+        <div class="row"><span>Γωνία πρόσπτωσης (θ₁)</span><span id="sumTheta1">–</span></div>
+        <div class="row"><span>Γωνία διάθλασης (θ₂)</span><span id="sumTheta2">–</span></div>
+        <div class="row"><span>Πραγματικό βάθος (h)</span><span id="sumDepth">–</span></div>
+        <div class="row"><span>Φαινόμενο βάθος (h′)</span><span id="sumAppDepth">–</span></div>
+      </div>
+    </div>
+
+    <div class="main-tab-row" id="mainTabRow">
+      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+      <button type="button" class="main-tab-btn" data-tab="exercise">📝 Άσκηση</button>
+      <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
+      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-settings">
+    <div class="controls">
+
+      <div class="card">
+        <h2>Θέση αντικειμένου</h2>
+        <div class="field">
+          <div class="field-row">
+            <label for="objXSlider">Οριζόντια θέση (x)</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="objXNum" value="0.0" step="0.1" min="-3" max="3"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="objXSlider" min="-3" max="3" step="0.05" value="0">
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <label for="objDepthSlider">Βάθος (h)</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="objDepthNum" value="1.5" step="0.1" min="0.2" max="4"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="objDepthSlider" min="0.2" max="4" step="0.05" value="1.5">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Θέση παρατηρητή</h2>
+        <div class="field">
+          <div class="field-row">
+            <label for="obsXSlider">Οριζόντια θέση (x)</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="obsXNum" value="1.5" step="0.1" min="-4" max="4"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="obsXSlider" min="-4" max="4" step="0.05" value="1.5">
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <label for="obsHSlider">Ύψος ματιού</label>
+            <span class="val-wrap"><input type="number" class="val-input" id="obsHNum" value="1.7" step="0.1" min="0.3" max="4"><span class="unit">m</span></span>
+          </div>
+          <input type="range" id="obsHSlider" min="0.3" max="4" step="0.05" value="1.7">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Υλικά</h2>
+        <div class="field">
+          <div class="field-row"><label for="matBottom">Κάτω μέσο (γύρω από το αντικείμενο)</label></div>
+          <select class="select-el" id="matBottom"></select>
+          <div class="field-inline" id="matBottomCustomWrap" style="display:none; margin-top:8px;">
+            <input type="number" id="matBottomCustom" step="0.01" min="1.0" max="3.0" value="1.33">
+            <span class="unit">δείκτης n</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="matTop">Πάνω μέσο (γύρω από τον παρατηρητή)</label></div>
+          <select class="select-el" id="matTop"></select>
+          <div class="field-inline" id="matTopCustomWrap" style="display:none; margin-top:8px;">
+            <input type="number" id="matTopCustom" step="0.01" min="1.0" max="3.0" value="1.00">
+            <span class="unit">δείκτης n</span>
+          </div>
+        </div>
+        <div class="msg" id="matMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Εμφάνιση</h2>
+        <div class="toggle-row">
+          <label for="showAngles">Γωνίες θ₁, θ₂</label>
+          <div class="switch"><input type="checkbox" id="showAngles" checked><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showNormal">Κάθετος στο σημείο πρόσπτωσης</label>
+          <div class="switch"><input type="checkbox" id="showNormal" checked><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showApparent">Φαινόμενη θέση αντικειμένου</label>
+          <div class="switch"><input type="checkbox" id="showApparent" checked><span class="slider-pill"></span></div>
+        </div>
+        <div class="toggle-row">
+          <label for="showGrid">Κάνναβος κλίμακας (m)</label>
+          <div class="switch"><input type="checkbox" id="showGrid" checked><span class="slider-pill"></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Ενδείξεις</h2>
+        <div class="readout-grid">
+          <div class="readout"><span class="k">n₁ (κάτω)</span><span class="v" id="rN1">–</span></div>
+          <div class="readout"><span class="k">n₂ (πάνω)</span><span class="v" id="rN2">–</span></div>
+          <div class="readout"><span class="k">θ₁</span><span class="v" id="rTheta1">–</span><span class="u">°</span></div>
+          <div class="readout"><span class="k">θ₂</span><span class="v" id="rTheta2">–</span><span class="u">°</span></div>
+          <div class="readout"><span class="k">Πραγμ. βάθος</span><span class="v" id="rDepth">–</span><span class="u">m</span></div>
+          <div class="readout"><span class="k">Φαιν. βάθος</span><span class="v" id="rAppDepth">–</span><span class="u">m</span></div>
+        </div>
+        <div class="msg" id="critMsg"></div>
+      </div>
+
+    </div>
+    </div>
+
+    <div class="tab-panel" id="tab-exercise">
+      <div class="card">
+        <h2>Δεδομένα άσκησης</h2>
+        <div class="ex-result" id="exGiven"></div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="primary" id="newExerciseBtn">🎲 Νέα άσκηση</button>
+          <button id="applyExerciseBtn">↳ Εφαρμογή στην προσομοίωση</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Ερωτήματα</h2>
+        <div class="field">
+          <div class="field-row"><label for="exTheta2Input">Γωνία διάθλασης θ₂</label></div>
+          <div class="field-inline">
+            <input type="number" id="exTheta2Input" step="0.1" placeholder="π.χ. 32.5">
+            <span class="unit">°</span>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="exAppDepthInput">Φαινόμενο βάθος h′</label></div>
+          <div class="field-inline">
+            <input type="number" id="exAppDepthInput" step="0.01" placeholder="π.χ. 1.10">
+            <span class="unit">m</span>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="primary" id="checkExerciseBtn">✓ Έλεγχος</button>
+        </div>
+        <div class="msg" id="exFeedback"></div>
+        <div class="hint-text">Νόμος του Snell: n₁·sinθ₁ = n₂·sinθ₂. Για σχεδόν κάθετη παρατήρηση, το φαινόμενο βάθος δίνεται από h′ = h·(n₂/n₁).</div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-solution">
+      <div class="card" style="grid-column: 1 / -1;">
+        <h2>Λύση τρέχουσας άσκησης</h2>
+        <div class="solution-content" id="solutionContent"></div>
+        <div class="btn-row" style="margin-top:8px;">
+          <button id="solutionRefreshBtn">↺ Επανυπολογισμός</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-saved">
+      <div class="card">
+        <h2>Αποθήκευση τρέχουσας διάταξης</h2>
+        <input type="text" class="preset-name-input" id="presetName" placeholder="Όνομα διάταξης (π.χ. Ψάρι πλάγια θέαση)">
+        <div class="btn-row">
+          <button class="primary" id="savePresetBtn">💾 Αποθήκευση</button>
+          <button id="exportPresetsBtn">⇩ Εξαγωγή JSON</button>
+          <button id="importPresetsBtn">⇧ Εισαγωγή JSON</button>
+          <input type="file" id="importPresetsFile" accept="application/json" style="display:none;">
+        </div>
+        <div class="msg" id="presetMsg"></div>
+      </div>
+      <div class="card">
+        <h2>Αποθηκευμένες διατάξεις</h2>
+        <div id="presetList"><div class="msg">Δεν υπάρχουν ακόμη αποθηκευμένες διατάξεις.</div></div>
+      </div>
+    </div>
+
+  </div>
+  <footer>Προσομοίωση διάθλασης φωτός · Φυσική Γυμνασίου / Λυκείου</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------------- materials ---------------- */
+  const MATERIALS = [
+    {id:'air', name:'Αέρας', n:1.00},
+    {id:'ice', name:'Πάγος', n:1.31},
+    {id:'water', name:'Νερό', n:1.33},
+    {id:'ethanol', name:'Αιθυλική αλκοόλη', n:1.36},
+    {id:'glycerine', name:'Γλυκερίνη', n:1.47},
+    {id:'plexiglass', name:'Πλεξιγκλάς', n:1.49},
+    {id:'glass', name:'Γυαλί (κοινό)', n:1.52},
+    {id:'cs2', name:'Θειούχος άνθρακας', n:1.63},
+    {id:'diamond', name:'Αδάμαντας', n:2.42},
+    {id:'custom', name:'Προσαρμοσμένο…', n:null},
+  ];
+
+  function fillMaterialSelect(sel, defaultId){
+    MATERIALS.forEach(m=>{
+      const opt=document.createElement('option');
+      opt.value=m.id; opt.textContent = m.id==='custom' ? m.name : (m.name+' (n='+m.n.toFixed(2)+')');
+      if(m.id===defaultId) opt.selected=true;
+      sel.appendChild(opt);
+    });
+  }
+  const matBottomSel = document.getElementById('matBottom');
+  const matTopSel = document.getElementById('matTop');
+  fillMaterialSelect(matBottomSel,'water');
+  fillMaterialSelect(matTopSel,'air');
+  const matBottomCustomWrap = document.getElementById('matBottomCustomWrap');
+  const matTopCustomWrap = document.getElementById('matTopCustomWrap');
+  const matBottomCustom = document.getElementById('matBottomCustom');
+  const matTopCustom = document.getElementById('matTopCustom');
+
+  function getN(which){
+    const sel = which==='bottom'?matBottomSel:matTopSel;
+    const custom = which==='bottom'?matBottomCustom:matTopCustom;
+    const found = MATERIALS.find(m=>m.id===sel.value);
+    if(!found || found.id==='custom') return clamp(parseFloat(custom.value)||1.0, 1.0, 3.0);
+    return found.n;
+  }
+  function getMatName(which){
+    const sel = which==='bottom'?matBottomSel:matTopSel;
+    const custom = which==='bottom'?matBottomCustom:matTopCustom;
+    const found = MATERIALS.find(m=>m.id===sel.value);
+    if(!found || found.id==='custom') return 'Προσαρμοσμένο (n='+getN(which).toFixed(2)+')';
+    return found.name;
+  }
+  function syncCustomVisibility(){
+    matBottomCustomWrap.style.display = matBottomSel.value==='custom' ? 'flex':'none';
+    matTopCustomWrap.style.display = matTopSel.value==='custom' ? 'flex':'none';
+  }
+  matBottomSel.addEventListener('change', ()=>{ syncCustomVisibility(); updateAll(); });
+  matTopSel.addEventListener('change', ()=>{ syncCustomVisibility(); updateAll(); });
+  matBottomCustom.addEventListener('input', updateAll);
+  matTopCustom.addEventListener('input', updateAll);
+  syncCustomVisibility();
+
+  /* ---------------- helpers ---------------- */
+  function clamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+  function degToRad(d){ return d*Math.PI/180; }
+  function radToDeg(r){ return r*180/Math.PI; }
+  function fmt(n, d=2){ return (Math.abs(n) < 0.005 ? 0 : n).toFixed(d); }
+  function fmtDeg(rad){ const d = radToDeg(rad); return (Math.abs(d) < 0.05 ? 0 : d).toFixed(1); }
+
+  /* ---------------- slider <-> number linking ---------------- */
+  function linkSliderNumber(sliderEl, numEl, onChange){
+    sliderEl.addEventListener('input', () => {
+      numEl.value = sliderEl.value;
+      onChange();
+    });
+    numEl.addEventListener('change', () => {
+      let v = parseFloat(numEl.value);
+      if(isNaN(v)) v = parseFloat(sliderEl.value);
+      v = clamp(v, parseFloat(sliderEl.min), parseFloat(sliderEl.max));
+      numEl.value = v;
+      sliderEl.value = v;
+      onChange();
+    });
+  }
+
+  const objXSlider = document.getElementById('objXSlider');
+  const objXNum = document.getElementById('objXNum');
+  const objDepthSlider = document.getElementById('objDepthSlider');
+  const objDepthNum = document.getElementById('objDepthNum');
+  const obsXSlider = document.getElementById('obsXSlider');
+  const obsXNum = document.getElementById('obsXNum');
+  const obsHSlider = document.getElementById('obsHSlider');
+  const obsHNum = document.getElementById('obsHNum');
+
+  linkSliderNumber(objXSlider, objXNum, updateAll);
+  linkSliderNumber(objDepthSlider, objDepthNum, updateAll);
+  linkSliderNumber(obsXSlider, obsXNum, updateAll);
+  linkSliderNumber(obsHSlider, obsHNum, updateAll);
+
+  const showAngles = document.getElementById('showAngles');
+  const showNormal = document.getElementById('showNormal');
+  const showApparent = document.getElementById('showApparent');
+  const showGrid = document.getElementById('showGrid');
+  const showLiveStats = document.getElementById('showLiveStats');
+  [showAngles, showNormal, showApparent, showGrid].forEach(el=> el.addEventListener('change', render));
+  showLiveStats.addEventListener('change', ()=>{
+    document.getElementById('stageReadouts').classList.toggle('open', showLiveStats.checked);
+  });
+
+  /* ---------------- physics ---------------- */
+  function solveRefractionPoint(objX,objDepth,obsX,obsHeight,n1,n2){
+    function F(xp){
+      const L1=Math.hypot(xp-objX, objDepth);
+      const L2=Math.hypot(obsX-xp, obsHeight);
+      return n1*(xp-objX)/L1 - n2*(obsX-xp)/L2;
+    }
+    let lo = Math.min(objX,obsX) - 60, hi = Math.max(objX,obsX) + 60;
+    let flo = F(lo);
+    for(let i=0;i<90;i++){
+      const mid = (lo+hi)/2;
+      const fm = F(mid);
+      if((fm<0) === (flo<0)){ lo=mid; flo=fm; } else { hi=mid; }
+    }
+    return (lo+hi)/2;
+  }
+
+  function computeScene(){
+    const objX = parseFloat(objXNum.value);
+    const objDepth = parseFloat(objDepthNum.value);
+    const obsX = parseFloat(obsXNum.value);
+    const obsHeight = parseFloat(obsHNum.value);
+    const n1 = getN('bottom');
+    const n2 = getN('top');
+
+    const xp = solveRefractionPoint(objX, objDepth, obsX, obsHeight, n1, n2);
+    const L1 = Math.hypot(xp-objX, objDepth);
+    const L2 = Math.hypot(obsX-xp, obsHeight);
+    const sinT1 = clamp((xp-objX)/L1, -1, 1);
+    const sinT2 = clamp((obsX-xp)/L2, -1, 1);
+    const theta1 = Math.asin(sinT1);
+    const theta2 = Math.asin(sinT2);
+
+    // apparent position: extend the eye->P ray straight (unbent) until x == objX
+    const denom = xp - obsX;
+    let appDepth, appX = objX, appValid = true;
+    if(Math.abs(denom) < 1e-5){
+      appDepth = objDepth * (n2/n1);
+    } else {
+      const t = (objX - obsX) / denom;
+      const yApp = obsHeight * (1 - t);
+      appDepth = -yApp;
+      if(!isFinite(appDepth) || appDepth <= 0.01 || appDepth > 12){
+        appDepth = objDepth * (n2/n1);
+        appValid = (t > 1);
+      }
+    }
+
+    let critAngle = null;
+    if(n1 > n2) critAngle = Math.asin(clamp(n2/n1,-1,1));
+
+    return {objX, objDepth, obsX, obsHeight, n1, n2, xp, theta1, theta2, appX, appDepth, appValid, critAngle};
+  }
+
+  /* ---------------- canvas rendering ---------------- */
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let dpr = window.devicePixelRatio || 1;
+
+  function resizeCanvas(){
+    dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width*dpr);
+    canvas.height = Math.round(rect.height*dpr);
+  }
+
+  function cssVar(name){ return getComputedStyle(document.body).getPropertyValue(name).trim(); }
+
+  function computeTransform(s){
+    const w = canvas.width, h = canvas.height;
+    const padPx = 46*dpr;
+    const minX = Math.min(s.objX, s.obsX, s.appX, -2.2) - 0.8;
+    const maxX = Math.max(s.objX, s.obsX, s.appX, 2.2) + 0.8;
+    const minY = -Math.max(s.objDepth, s.appDepth, 1.5) - 0.6; // world y negative = below surface
+    const maxY = Math.max(s.obsHeight, 1.5) + 0.6;
+    const worldW = maxX-minX, worldH = maxY-minY;
+    const scale = Math.min((w-2*padPx)/worldW, (h-2*padPx)/worldH);
+    const originPx = {
+      x: (w - worldW*scale)/2 - minX*scale,
+      y: padPx + maxY*scale
+    };
+    return {scale, originPx, minX, maxX, minY, maxY};
+  }
+  function toPx(t, x, y){ return {x: t.originPx.x + x*t.scale, y: t.originPx.y - y*t.scale}; }
+  function toWorld(t, px, py){ return {x: (px - t.originPx.x)/t.scale, y: (t.originPx.y - py)/t.scale}; }
+
+  function niceStep(scale, targetPx){
+    const raw = targetPx/scale;
+    const pow10 = Math.pow(10, Math.floor(Math.log10(raw)));
+    const n = raw/pow10;
+    let step;
+    if(n<1.5) step=1; else if(n<3.5) step=2; else if(n<7.5) step=5; else step=10;
+    return step*pow10;
+  }
+
+  function drawScene(){
+    const s = computeScene();
+    const t = computeTransform(s);
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+
+    const surfacePx = toPx(t, 0, 0).y;
+
+    // sky
+    const skyGrad = ctx.createLinearGradient(0,0,0,surfacePx);
+    skyGrad.addColorStop(0, cssVar('--sky-top'));
+    skyGrad.addColorStop(1, cssVar('--sky-bot'));
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0,0,w,surfacePx);
+
+    // water
+    const waterGrad = ctx.createLinearGradient(0,surfacePx,0,h);
+    waterGrad.addColorStop(0, cssVar('--water-top'));
+    waterGrad.addColorStop(1, cssVar('--water-bot'));
+    ctx.fillStyle = waterGrad;
+    ctx.fillRect(0,surfacePx,w,h-surfacePx);
+
+    // grid
+    if(showGrid.checked){
+      ctx.save();
+      ctx.strokeStyle = cssVar('--line-dim');
+      ctx.lineWidth = 1*dpr;
+      const stepX = niceStep(t.scale, 55*dpr);
+      const stepY = niceStep(t.scale, 55*dpr);
+      ctx.font = (11*dpr)+'px IBM Plex Mono, monospace';
+      ctx.fillStyle = cssVar('--paper-dim');
+      for(let x = Math.ceil(t.minX/stepX)*stepX; x<=t.maxX; x+=stepX){
+        const p1=toPx(t,x,t.minY), p2=toPx(t,x,t.maxY);
+        ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+      }
+      for(let y = Math.ceil(t.minY/stepY)*stepY; y<=t.maxY; y+=stepY){
+        if(Math.abs(y) < 1e-6) continue;
+        const p1=toPx(t,t.minX,y), p2=toPx(t,t.maxX,y);
+        ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+        ctx.textAlign='left'; ctx.textBaseline='middle';
+        const lbl = (y<0 ? (-y).toFixed(y%1===0?0:1)+'m ↓' : y.toFixed(y%1===0?0:1)+'m ↑');
+        ctx.fillText(lbl, p1.x+4*dpr, p1.y);
+      }
+      ctx.restore();
+    }
+
+    // surface line with subtle wave pattern
+    ctx.save();
+    ctx.strokeStyle = cssVar('--line-bright');
+    ctx.lineWidth = 2*dpr;
+    ctx.beginPath();
+    const waveAmp = 2.5*dpr, waveLen = 26*dpr;
+    for(let px=0; px<=w; px+=4*dpr){
+      const py = surfacePx + Math.sin(px/waveLen)*waveAmp;
+      if(px===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    const P = toPx(t, s.xp, 0);
+    const Oobj = toPx(t, s.objX, -s.objDepth);
+    const Eeye = toPx(t, s.obsX, s.obsHeight);
+
+    // normal line
+    if(showNormal.checked){
+      ctx.save();
+      ctx.setLineDash([5*dpr,5*dpr]);
+      ctx.strokeStyle = cssVar('--normal-color');
+      ctx.lineWidth = 1.3*dpr;
+      const normTop = toPx(t, s.xp, t.maxY);
+      const normBot = toPx(t, s.xp, t.minY);
+      ctx.beginPath(); ctx.moveTo(normTop.x,normTop.y); ctx.lineTo(normBot.x,normBot.y); ctx.stroke();
+      ctx.restore();
+    }
+
+    // apparent position construction
+    if(showApparent.checked && s.appDepth>0){
+      const appPx = toPx(t, s.appX, -s.appDepth);
+      ctx.save();
+      ctx.setLineDash([3*dpr,4*dpr]);
+      ctx.strokeStyle = cssVar('--apparent-color');
+      ctx.lineWidth = 1.6*dpr;
+      // extension of eye->P line, continued to apparent point
+      ctx.beginPath(); ctx.moveTo(P.x,P.y); ctx.lineTo(appPx.x,appPx.y); ctx.stroke();
+      // vertical guide between real and apparent object
+      ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(appPx.x,appPx.y); ctx.stroke();
+      ctx.restore();
+
+      // ghost marker
+      ctx.save();
+      ctx.setLineDash([]);
+      ctx.strokeStyle = cssVar('--apparent-color');
+      ctx.fillStyle = 'transparent';
+      ctx.lineWidth = 2*dpr;
+      ctx.beginPath(); ctx.arc(appPx.x, appPx.y, 9*dpr, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(appPx.x-6*dpr, appPx.y-6*dpr); ctx.lineTo(appPx.x+6*dpr, appPx.y+6*dpr);
+      ctx.moveTo(appPx.x+6*dpr, appPx.y-6*dpr); ctx.lineTo(appPx.x-6*dpr, appPx.y+6*dpr);
+      ctx.stroke();
+      ctx.font = '600 '+(11.5*dpr)+'px IBM Plex Mono, monospace';
+      ctx.fillStyle = cssVar('--apparent-color');
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText('φαινομ. θέση', appPx.x, appPx.y+12*dpr);
+      ctx.restore();
+    }
+
+    // ray path: object -> P -> eye
+    ctx.save();
+    ctx.lineWidth = 2.6*dpr;
+    ctx.strokeStyle = cssVar('--ray1-color');
+    ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(P.x,P.y); ctx.stroke();
+    ctx.strokeStyle = cssVar('--ray2-color');
+    ctx.beginPath(); ctx.moveTo(P.x,P.y); ctx.lineTo(Eeye.x,Eeye.y); ctx.stroke();
+    // arrow at eye end
+    const ang = Math.atan2(Eeye.y-P.y, Eeye.x-P.x);
+    ctx.fillStyle = cssVar('--ray2-color');
+    ctx.beginPath();
+    ctx.moveTo(Eeye.x,Eeye.y);
+    ctx.lineTo(Eeye.x-10*dpr*Math.cos(ang-0.35), Eeye.y-10*dpr*Math.sin(ang-0.35));
+    ctx.lineTo(Eeye.x-10*dpr*Math.cos(ang+0.35), Eeye.y-10*dpr*Math.sin(ang+0.35));
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // angle arcs
+    if(showAngles.checked){
+      ctx.save();
+      ctx.lineWidth = 1.6*dpr;
+      ctx.font = '600 '+(13*dpr)+'px IBM Plex Mono, monospace';
+      // theta1: between downward normal and P->object direction (water side)
+      const a_down = Math.PI/2; // canvas angle pointing straight down
+      const aObj = Math.atan2(Oobj.y-P.y, Oobj.x-P.x);
+      ctx.strokeStyle = cssVar('--ray1-color');
+      ctx.beginPath(); ctx.arc(P.x,P.y, 34*dpr, Math.min(a_down,aObj), Math.max(a_down,aObj)); ctx.stroke();
+      ctx.fillStyle = cssVar('--ray1-color');
+      const midA1 = (a_down+aObj)/2;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('θ₁='+fmtDeg(s.theta1)+'°', P.x+50*dpr*Math.cos(midA1), P.y+50*dpr*Math.sin(midA1));
+
+      // theta2: between upward normal and P->eye direction (air side)
+      const a_up = -Math.PI/2;
+      const aEye = Math.atan2(Eeye.y-P.y, Eeye.x-P.x);
+      ctx.strokeStyle = cssVar('--ray2-color');
+      ctx.beginPath(); ctx.arc(P.x,P.y, 46*dpr, Math.min(a_up,aEye), Math.max(a_up,aEye)); ctx.stroke();
+      ctx.fillStyle = cssVar('--ray2-color');
+      const midA2 = (a_up+aEye)/2;
+      ctx.fillText('θ₂='+fmtDeg(s.theta2)+'°', P.x+66*dpr*Math.cos(midA2), P.y+66*dpr*Math.sin(midA2));
+      ctx.restore();
+    }
+
+    // object marker (fish-like)
+    drawObjectMarker(Oobj.x, Oobj.y, cssVar('--gold'));
+    // real depth guide dashed to surface
+    ctx.save();
+    ctx.setLineDash([2*dpr,4*dpr]);
+    ctx.strokeStyle = cssVar('--line');
+    ctx.lineWidth = 1*dpr;
+    const surfAtObj = toPx(t, s.objX, 0);
+    ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(surfAtObj.x,surfAtObj.y); ctx.stroke();
+    ctx.restore();
+
+    // observer marker (eye)
+    drawEyeMarker(Eeye.x, Eeye.y);
+
+    // refraction point marker
+    ctx.save();
+    ctx.fillStyle = cssVar('--line-bright');
+    ctx.beginPath(); ctx.arc(P.x,P.y,3.2*dpr,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    updateStageReadouts(s);
+    updateSummary(s);
+    return s;
+  }
+
+  function drawObjectMarker(x,y,color){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = cssVar('--bg-deep');
+    ctx.lineWidth = 1.4*dpr;
+    ctx.beginPath();
+    ctx.ellipse(0,0, 13*dpr, 7.5*dpr, 0, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-13*dpr,0); ctx.lineTo(-20*dpr,-6*dpr); ctx.lineTo(-20*dpr,6*dpr); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = cssVar('--bg-deep');
+    ctx.beginPath(); ctx.arc(7*dpr,-1.5*dpr,1.6*dpr,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  function drawEyeMarker(x,y){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.fillStyle = cssVar('--paper');
+    ctx.strokeStyle = cssVar('--bg-deep');
+    ctx.lineWidth = 1.4*dpr;
+    ctx.beginPath(); ctx.ellipse(0,0,12*dpr,7*dpr,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = cssVar('--ray2-color');
+    ctx.beginPath(); ctx.arc(0,0,4*dpr,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = cssVar('--bg-deep');
+    ctx.beginPath(); ctx.arc(0,0,1.8*dpr,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function updateStageReadouts(s){
+    document.getElementById('outTheta1').textContent = fmt(radToDeg(s.theta1),1);
+    document.getElementById('outTheta2').textContent = fmt(radToDeg(s.theta2),1);
+    document.getElementById('outDepth').textContent = fmt(s.objDepth,2);
+    document.getElementById('outAppDepth').textContent = fmt(s.appDepth,2);
+  }
+  function updateSummary(s){
+    document.getElementById('sumN1').textContent = s.n1.toFixed(2)+' ('+getMatName('bottom')+')';
+    document.getElementById('sumN2').textContent = s.n2.toFixed(2)+' ('+getMatName('top')+')';
+    document.getElementById('sumTheta1').textContent = fmt(radToDeg(s.theta1),1)+'°';
+    document.getElementById('sumTheta2').textContent = fmt(radToDeg(s.theta2),1)+'°';
+    document.getElementById('sumDepth').textContent = fmt(s.objDepth,2)+' m';
+    document.getElementById('sumAppDepth').textContent = fmt(s.appDepth,2)+' m';
+
+    document.getElementById('rN1').textContent = s.n1.toFixed(2);
+    document.getElementById('rN2').textContent = s.n2.toFixed(2);
+    document.getElementById('rTheta1').textContent = fmt(radToDeg(s.theta1),1);
+    document.getElementById('rTheta2').textContent = fmt(radToDeg(s.theta2),1);
+    document.getElementById('rDepth').textContent = fmt(s.objDepth,2);
+    document.getElementById('rAppDepth').textContent = fmt(s.appDepth,2);
+
+    const critMsg = document.getElementById('critMsg');
+    if(s.critAngle!==null){
+      critMsg.textContent = 'Κρίσιμη γωνία (ολική ανάκλαση) ≈ '+fmt(radToDeg(s.critAngle),1)+'° — για μεγαλύτερες γωνίες πρόσπτωσης το φως δεν εξέρχεται στον αέρα.';
+      critMsg.className = 'msg';
+    } else {
+      critMsg.textContent = '';
+    }
+
+    const matMsg = document.getElementById('matMsg');
+    if(s.n1 <= s.n2){
+      matMsg.textContent = 'Το κάτω μέσο έχει n₁ ≤ n₂: η ακτίνα θα απομακρύνεται από την κάθετο πιο αργά ή θα πλησιάζει σε αυτήν.';
+      matMsg.className='msg';
+    } else { matMsg.textContent=''; }
+  }
+
+  function render(){ drawScene(); }
+  function updateAll(){ render(); }
+
+  /* ---------------- drag interaction ---------------- */
+  let dragTarget = null; // 'object' | 'observer'
+  function pointerWorld(e){
+    const rect = canvas.getBoundingClientRect();
+    const px = (e.clientX-rect.left)*dpr;
+    const py = (e.clientY-rect.top)*dpr;
+    return {px,py};
+  }
+  function nearestTarget(px,py){
+    const s = computeScene();
+    const t = computeTransform(s);
+    const Oobj = toPx(t, s.objX, -s.objDepth);
+    const Eeye = toPx(t, s.obsX, s.obsHeight);
+    const dO = Math.hypot(px-Oobj.x, py-Oobj.y);
+    const dE = Math.hypot(px-Eeye.x, py-Eeye.y);
+    const thresh = 34*dpr;
+    if(dO<thresh && dO<=dE) return {which:'object', t};
+    if(dE<thresh) return {which:'observer', t};
+    return null;
+  }
+  let pointerActive=false;
+  canvas.addEventListener('pointerdown', (e)=>{
+    const {px,py} = pointerWorld(e);
+    const hit = nearestTarget(px,py);
+    if(hit){
+      dragTarget = hit.which;
+      pointerActive = true;
+      canvas.classList.add('grabbing');
+      canvas.setPointerCapture(e.pointerId);
+    }
+  });
+  canvas.addEventListener('pointermove', (e)=>{
+    if(!pointerActive || !dragTarget) return;
+    const {px,py} = pointerWorld(e);
+    const s = computeScene();
+    const t = computeTransform(s);
+    const world = toWorld(t, px, py);
+    if(dragTarget==='object'){
+      const x = clamp(world.x, parseFloat(objXSlider.min), parseFloat(objXSlider.max));
+      const depth = clamp(-world.y, parseFloat(objDepthSlider.min), parseFloat(objDepthSlider.max));
+      objXNum.value = x.toFixed(2); objXSlider.value = x;
+      objDepthNum.value = depth.toFixed(2); objDepthSlider.value = depth;
+    } else {
+      const x = clamp(world.x, parseFloat(obsXSlider.min), parseFloat(obsXSlider.max));
+      const hgt = clamp(world.y, parseFloat(obsHSlider.min), parseFloat(obsHSlider.max));
+      obsXNum.value = x.toFixed(2); obsXSlider.value = x;
+      obsHNum.value = hgt.toFixed(2); obsHSlider.value = hgt;
+    }
+    render();
+  });
+  function endDrag(){ pointerActive=false; dragTarget=null; canvas.classList.remove('grabbing'); }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', ()=>{ if(pointerActive) endDrag(); });
+
+  window.addEventListener('resize', ()=>{ resizeCanvas(); render(); });
+
+  /* ---------------- theme ---------------- */
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const themeName = document.getElementById('themeName');
+  function applyTheme(name){
+    document.body.classList.toggle('theme-minimal', name==='minimal');
+    themeName.textContent = name==='minimal' ? 'Minimal' : 'Blueprint';
+    render();
+  }
+  let currentTheme = 'blueprint';
+  document.documentElement.setAttribute('data-theme','blueprint');
+  themeToggleBtn.addEventListener('click', ()=>{
+    currentTheme = currentTheme==='blueprint' ? 'minimal' : 'blueprint';
+    applyTheme(currentTheme);
+  });
+
+  /* ---------------- tabs ---------------- */
+  const mainTabBtns = document.querySelectorAll('.main-tab-btn');
+  function switchTab(name){
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    mainTabBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+    if(name==='solution') refreshSolution();
+  }
+  mainTabBtns.forEach(b=> b.addEventListener('click', ()=> switchTab(b.dataset.tab)));
+
+  /* ---------------- exercise ---------------- */
+  const EX_BOTTOM_POOL = ['water','ice','ethanol','glycerine','plexiglass','glass'];
+  let exVars = null;
+
+  function generateExercise(){
+    const matId = EX_BOTTOM_POOL[Math.floor(Math.random()*EX_BOTTOM_POOL.length)];
+    const mat = MATERIALS.find(m=>m.id===matId);
+    const n1 = mat.n, n2 = 1.00;
+    const critDeg = radToDeg(Math.asin(n2/n1));
+    const maxAngle = Math.min(40, critDeg-6);
+    const theta1Deg = Math.round((10 + Math.random()*(maxAngle-10))*10)/10;
+    const depth = Math.round((0.5 + Math.random()*2.5)*10)/10;
+    exVars = {n1, n2, name1: mat.name, name2:'Αέρας', theta1Deg, depth};
+    renderExercise();
+  }
+
+  function renderExercise(){
+    if(!exVars) generateExercise();
+    const v = exVars;
+    document.getElementById('exGiven').innerHTML =
+      '<span class="given">Κάτω μέσο:</span> '+v.name1+' (n₁ = '+v.n1.toFixed(2)+')<br>'+
+      '<span class="given">Πάνω μέσο:</span> '+v.name2+' (n₂ = '+v.n2.toFixed(2)+')<br>'+
+      '<span class="given">Πραγματικό βάθος αντικειμένου:</span> h = '+v.depth.toFixed(1)+' m<br>'+
+      '<span class="asked">Γωνία πρόσπτωσης (στο νερό):</span> θ₁ = '+v.theta1Deg.toFixed(1)+'°<br><br>'+
+      'Βρες: <span class="asked">(α)</span> τη γωνία διάθλασης θ₂ και <span class="asked">(β)</span> το φαινόμενο βάθος h′ (σχεδόν κάθετη παρατήρηση).';
+    document.getElementById('exTheta2Input').value='';
+    document.getElementById('exAppDepthInput').value='';
+    document.getElementById('exFeedback').textContent='';
+    document.getElementById('exFeedback').className='msg';
+  }
+
+  document.getElementById('newExerciseBtn').addEventListener('click', generateExercise);
+
+  document.getElementById('checkExerciseBtn').addEventListener('click', ()=>{
+    if(!exVars) return;
+    const v=exVars;
+    const correctT2 = radToDeg(Math.asin(clamp(v.n1/v.n2*Math.sin(degToRad(v.theta1Deg)),-1,1)));
+    const correctApp = v.depth*(v.n2/v.n1);
+    const guessT2 = parseFloat(document.getElementById('exTheta2Input').value);
+    const guessApp = parseFloat(document.getElementById('exAppDepthInput').value);
+    const okT2 = !isNaN(guessT2) && Math.abs(guessT2-correctT2) <= 1.5;
+    const okApp = !isNaN(guessApp) && Math.abs(guessApp-correctApp) <= Math.max(0.05, 0.04*v.depth);
+    const fb = document.getElementById('exFeedback');
+    let lines=[];
+    lines.push((okT2?'✓':'✗')+' θ₂: σωστή τιμή ≈ '+correctT2.toFixed(1)+'°'+(isNaN(guessT2)?' (δεν δόθηκε απάντηση)':''));
+    lines.push((okApp?'✓':'✗')+' h′: σωστή τιμή ≈ '+correctApp.toFixed(2)+' m'+(isNaN(guessApp)?' (δεν δόθηκε απάντηση)':''));
+    fb.innerHTML = lines.join('<br>');
+    fb.className = 'msg ' + ((okT2&&okApp) ? 'ok' : 'warn');
+  });
+
+  document.getElementById('applyExerciseBtn').addEventListener('click', ()=>{
+    if(!exVars) generateExercise();
+    const v=exVars;
+    matBottomSel.value = EX_BOTTOM_POOL.find(id=>MATERIALS.find(m=>m.id===id).name===v.name1) || 'water';
+    matTopSel.value = 'air';
+    syncCustomVisibility();
+    const depth = v.depth;
+    const theta1Rad = degToRad(v.theta1Deg);
+    const theta2Rad = Math.asin(clamp(v.n1/v.n2*Math.sin(theta1Rad),-1,1));
+    const objX = 0;
+    const xp = objX + depth*Math.tan(theta1Rad);
+    const obsHeight = 1.6;
+    const obsX = xp + obsHeight*Math.tan(theta2Rad);
+    objXNum.value=objX; objXSlider.value=objX;
+    objDepthNum.value=depth.toFixed(2); objDepthSlider.value=depth;
+    obsHNum.value=obsHeight; obsHSlider.value=obsHeight;
+    obsXNum.value=clamp(obsX,parseFloat(obsXSlider.min),parseFloat(obsXSlider.max)).toFixed(2);
+    obsXSlider.value=obsXNum.value;
+    switchTab('settings');
+    render();
+  });
+
+  /* ---------------- solution ---------------- */
+  function refreshSolution(){
+    if(!exVars) generateExercise();
+    const v = exVars;
+    const correctT2 = radToDeg(Math.asin(clamp(v.n1/v.n2*Math.sin(degToRad(v.theta1Deg)),-1,1)));
+    const correctApp = v.depth*(v.n2/v.n1);
+    const el = document.getElementById('solutionContent');
+    el.innerHTML =
+      '<div class="sol-block"><h4>Δεδομένα</h4><div class="givens-grid">'+
+        '<div class="gi"><span class="k">n₁</span>'+v.n1.toFixed(2)+' ('+v.name1+')</div>'+
+        '<div class="gi"><span class="k">n₂</span>'+v.n2.toFixed(2)+' ('+v.name2+')</div>'+
+        '<div class="gi"><span class="k">h</span>'+v.depth.toFixed(1)+' m</div>'+
+        '<div class="gi"><span class="k">θ₁</span>'+v.theta1Deg.toFixed(1)+'°</div>'+
+      '</div></div>'+
+      '<div class="sol-block"><h4>(α) Γωνία διάθλασης</h4>'+
+        '<div class="line">Νόμος του Snell: n₁·sinθ₁ = n₂·sinθ₂</div>'+
+        '<div class="line">sinθ₂ = (n₁/n₂)·sinθ₁ = ('+v.n1.toFixed(2)+'/'+v.n2.toFixed(2)+')·sin('+v.theta1Deg.toFixed(1)+'°) = '+ (v.n1/v.n2*Math.sin(degToRad(v.theta1Deg))).toFixed(4) +'</div>'+
+        '<div class="line">θ₂ = <span class="res">'+correctT2.toFixed(1)+'°</span></div>'+
+      '</div>'+
+      '<div class="sol-block"><h4>(β) Φαινόμενο βάθος</h4>'+
+        '<div class="sol-note">Για παρατηρητή σχεδόν πάνω από το αντικείμενο (μικρές γωνίες), το φαινόμενο βάθος συνδέεται με το πραγματικό μέσω h′ = h·(n₂/n₁).</div>'+
+        '<div class="line">h′ = h·(n₂/n₁) = '+v.depth.toFixed(1)+'·('+v.n2.toFixed(2)+'/'+v.n1.toFixed(2)+')</div>'+
+        '<div class="line">h′ = <span class="res">'+correctApp.toFixed(2)+' m</span></div>'+
+        '<div class="sol-note">Το αντικείμενο φαίνεται ρηχότερο επειδή n₁ &gt; n₂ (το κάτω μέσο είναι πιο πυκνό οπτικά).</div>'+
+      '</div>';
+  }
+  document.getElementById('solutionRefreshBtn').addEventListener('click', refreshSolution);
+
+  /* ---------------- saved presets ---------------- */
+  const PRESET_KEY = 'diathlasi_fotos_presets_v1';
+  function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }
+  function savePresetsToStorage(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); return true; }catch(e){ return false; } }
+
+  function currentSettingsSnapshot(){
+    return {
+      objX: parseFloat(objXNum.value), objDepth: parseFloat(objDepthNum.value),
+      obsX: parseFloat(obsXNum.value), obsH: parseFloat(obsHNum.value),
+      matBottom: matBottomSel.value, matBottomCustom: matBottomCustom.value,
+      matTop: matTopSel.value, matTopCustom: matTopCustom.value
+    };
+  }
+  function applySnapshot(sn){
+    objXNum.value=sn.objX; objXSlider.value=sn.objX;
+    objDepthNum.value=sn.objDepth; objDepthSlider.value=sn.objDepth;
+    obsXNum.value=sn.obsX; obsXSlider.value=sn.obsX;
+    obsHNum.value=sn.obsH; obsHSlider.value=sn.obsH;
+    matBottomSel.value=sn.matBottom; matBottomCustom.value=sn.matBottomCustom||1.33;
+    matTopSel.value=sn.matTop; matTopCustom.value=sn.matTopCustom||1.00;
+    syncCustomVisibility();
+    render();
+  }
+
+  function renderPresetList(){
+    const list = loadPresets();
+    const wrap = document.getElementById('presetList');
+    if(list.length===0){ wrap.innerHTML='<div class="msg">Δεν υπάρχουν ακόμη αποθηκευμένες διατάξεις.</div>'; return; }
+    wrap.innerHTML='';
+    list.slice().reverse().forEach((p)=>{
+      const idx = list.indexOf(p);
+      const row = document.createElement('div');
+      row.className='preset-row';
+      const date = new Date(p.ts);
+      row.innerHTML = '<div class="preset-info"><div class="preset-title">'+p.name+'</div>'+
+        '<div class="preset-meta">'+date.toLocaleDateString('el-GR')+' · h='+p.settings.objDepth+'m</div></div>'+
+        '<div class="preset-btns"><button class="small" data-act="load">Φόρτωση</button><button class="small danger" data-act="del">Διαγραφή</button></div>';
+      row.querySelector('[data-act="load"]').addEventListener('click', ()=>{ applySnapshot(p.settings); });
+      row.querySelector('[data-act="del"]').addEventListener('click', ()=>{
+        const l = loadPresets(); l.splice(idx,1); savePresetsToStorage(l); renderPresetList();
+      });
+      wrap.appendChild(row);
+    });
+  }
+  renderPresetList();
+
+  document.getElementById('savePresetBtn').addEventListener('click', ()=>{
+    const nameEl = document.getElementById('presetName');
+    const name = nameEl.value.trim() || ('Διάταξη '+new Date().toLocaleTimeString('el-GR'));
+    const list = loadPresets();
+    list.push({name, ts: Date.now(), settings: currentSettingsSnapshot()});
+    savePresetsToStorage(list);
+    nameEl.value='';
+    document.getElementById('presetMsg').textContent='Αποθηκεύτηκε η διάταξη «'+name+'».';
+    document.getElementById('presetMsg').className='msg ok';
+    renderPresetList();
+  });
+
+  document.getElementById('exportPresetsBtn').addEventListener('click', ()=>{
+    const list = loadPresets();
+    const blob = new Blob([JSON.stringify(list,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='diathlasi-fotos-presets.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('importPresetsBtn').addEventListener('click', ()=>{
+    document.getElementById('importPresetsFile').click();
+  });
+  document.getElementById('importPresetsFile').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const imported = JSON.parse(reader.result);
+        if(!Array.isArray(imported)) throw new Error('bad format');
+        const list = loadPresets().concat(imported);
+        savePresetsToStorage(list);
+        renderPresetList();
+        document.getElementById('presetMsg').textContent='Έγινε εισαγωγή '+imported.length+' διατάξεων.';
+        document.getElementById('presetMsg').className='msg ok';
+      }catch(err){
+        document.getElementById('presetMsg').textContent='Το αρχείο δεν είναι έγκυρο JSON διατάξεων.';
+        document.getElementById('presetMsg').className='msg warn';
+      }
+    };
+    reader.readAsText(file);
+    e.target.value='';
+  });
+
+  /* ---------------- init ---------------- */
+  resizeCanvas();
+  generateExercise();
+  render();
+})();
+</script>
+</body>
+</html>
