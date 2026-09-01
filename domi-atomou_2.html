@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Δομή Ατόμου</title>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('atom-sim-theme') || 'blueprint';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){ document.documentElement.setAttribute('data-theme','blueprint'); }
+})();
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --bg-deep:#0B1B30;
+  --bg:#10243D;
+  --bg-panel:#132A47;
+  --line-dim: rgba(143,184,217,0.18);
+  --line: #6E97BE;
+  --line-bright:#DCEEFF;
+  --gold:#E8B84B;
+  --gold-dim: rgba(232,184,75,0.35);
+  --paper:#F5F8FC;
+  --paper-dim:#AFC3DA;
+  --danger:#E0685A;
+  --radius: 3px;
+  --proton-color:#E0685A;
+  --neutron-color:#8FA9C4;
+  --electron-color:#E8B84B;
+  --electron-glow: rgba(232,184,75,0.55);
+}
+:root[data-theme="light"]{
+  --bg-deep:#FFFFFF;
+  --bg:#F3F6FA;
+  --bg-panel:#FFFFFF;
+  --line-dim: rgba(31,45,61,0.08);
+  --line:#B9C2CE;
+  --line-bright:#1F2D3D;
+  --gold:#F0932B;
+  --gold-dim: rgba(240,147,43,0.35);
+  --paper:#1F2D3D;
+  --paper-dim:#6B7686;
+  --danger:#D64545;
+  --proton-color:#D64545;
+  --neutron-color:#5C7086;
+  --electron-color:#F0932B;
+  --electron-glow: rgba(240,147,43,0.45);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+html{height:100%;}
+body{
+  background: var(--bg-deep);
+  background-image:
+    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
+  color: var(--paper);
+  font-family: 'Inter', sans-serif;
+  height:100%;
+  padding: 14px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow:hidden;
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+.wrap{max-width: 1400px; margin:0 auto; height:100%; display:flex; flex-direction:column; min-height:0;}
+
+header{
+  flex:none;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+h1{
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  letter-spacing: 0.02em;
+  font-size: clamp(22px, 4vw, 32px);
+  margin:0;
+  color: var(--paper);
+}
+h1 span{color: var(--gold);}
+.byline{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.04em;
+  color: var(--paper-dim);
+  margin-top:4px;
+}
+.subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--paper-dim);
+}
+.header-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.theme-toggle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:6px 10px; }
+.theme-toggle span{color: var(--gold);}
+
+.layout{ flex:1; min-height:0; display:flex; flex-direction:column; gap: 14px; }
+
+.stage{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 12px;
+  position:relative;
+  flex:none;
+}
+.stage-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:6px;
+  display:flex;
+  justify-content:space-between;
+}
+canvas{
+  width:100%;
+  height:auto;
+  aspect-ratio: 1/1;
+  display:block;
+  border-radius: var(--radius);
+  background: transparent;
+  touch-action: none;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.stage-body{ display:flex; flex-direction:column; gap:12px; }
+.stage-canvas-col{ width:100%; }
+.stage-info-col{ display:flex; flex-direction:column; gap:10px; }
+
+/* ---- δύο στήλες σε ευρείς χώρους: μικρότερο άτομο αριστερά, πάνελ δεξιά, χωρίς κύλιση σελίδας ---- */
+@media (min-width: 861px){
+  .layout{ display:grid; grid-template-columns: 1fr minmax(230px, 300px); gap:16px; overflow:hidden; }
+  .stage{ height:100%; overflow-y:auto; display:flex; flex-direction:column; }
+  .side-panel{ height:100%; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+  .side-panel .main-tab-row{ flex:none; position:sticky; top:0; background:var(--bg-deep); z-index:5; padding-top:2px; }
+  .side-panel-scroll{ flex:1; min-height:0; overflow-y:auto; padding-right:4px; }
+
+  /* Πληροφορίες/κουμπιά του ατόμου δεξιά από το ίδιο το άτομο, μέσα στο ίδιο πλαίσιο */
+  .stage-body{ flex-direction:row; align-items:flex-start; gap:20px; }
+  .stage-canvas-col{ flex: 0 1 420px; min-width:220px; }
+  .stage-info-col{ flex: 1 1 200px; min-width:190px; padding-top:6px; }
+  canvas{ max-width:none; margin:0; }
+  .stage-readouts{ margin:0; max-width:none; grid-template-columns: 1fr; }
+  .legend{ justify-content:flex-start; }
+  .btn-row{ justify-content:flex-start; margin-top:6px; }
+}
+@media (max-width: 860px){
+  html, body{ height:auto; overflow:visible; min-height:100%; }
+  .wrap{ height:auto; }
+}
+
+.stage-readouts{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:10px 12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap:4px 16px;
+  margin: 12px auto 0;
+  max-width: 620px;
+}
+.stage-readouts .ov-line{ white-space:nowrap; }
+.stage-readouts .ov-k{ color: var(--paper-dim); margin-right:6px; }
+.stage-readouts .v{ font-weight:600; color: var(--line-bright); }
+.stage-readouts .v.pos{ color: var(--gold); }
+.stage-readouts .v.neg{ color: var(--danger); }
+.stage-readouts .u{ color: var(--paper-dim); font-size:11px; margin-left:2px; }
+
+.legend{
+  display:flex; gap:16px; flex-wrap:wrap; justify-content:center;
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--paper-dim);
+  margin-top:10px;
+}
+.legend .dot{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+.legend .dot.p{ background: var(--proton-color); }
+.legend .dot.n{ background: var(--neutron-color); }
+.legend .dot.e{ background: var(--electron-color); }
+
+.hint{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  color: var(--paper-dim);
+  margin-top:10px;
+  text-align:center;
+}
+
+.btn-row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px;}
+
+button{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  letter-spacing:0.05em;
+  font-size:13px;
+  text-transform:uppercase;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: transparent;
+  color: var(--paper);
+  padding: 12px 16px;
+  cursor:pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height:44px;
+}
+button:hover{border-color: var(--gold-dim); color: var(--gold);}
+button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+button.primary{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
+button.primary:hover{background: #f0c665; color:var(--bg-deep);}
+button.small{padding:8px 12px; font-size:15px; min-height:38px; min-width:38px;}
+button.danger{ color: var(--danger); border-color: rgba(224,104,90,0.4); }
+button.danger:hover{ background: rgba(224,104,90,0.15); border-color: var(--danger); color:#ffb3a8; }
+button:disabled{opacity:0.35; cursor:not-allowed;}
+
+/* ---- main tabs ---- */
+.main-tab-row{
+  display:flex; gap:6px; overflow-x:auto; margin-bottom:16px;
+  -ms-overflow-style:none; scrollbar-width:none;
+}
+.main-tab-row::-webkit-scrollbar{display:none;}
+.main-tab-btn{
+  flex:none;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  padding:13px 20px;
+  min-height:46px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-dim);
+  background: var(--bg-panel);
+  color: var(--paper-dim);
+  cursor:pointer;
+  white-space:nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
+.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+#tab-settings, #tab-info, #tab-saved{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+@media (min-width: 1180px){
+  #tab-info{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:12px;
+  }
+}
+
+.card{
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.card h2{
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:13px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin: 0 0 12px 0;
+  border-bottom: 1px dashed var(--gold-dim);
+  padding-bottom:8px;
+}
+
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+.field-row label{ font-size:14.5px; color: var(--paper); }
+.field-row .val{ font-family:'IBM Plex Mono', monospace; font-size:14px; color: var(--gold); }
+
+.stepper{ display:flex; align-items:center; gap:8px; }
+.stepper .num{
+  flex:1;
+  text-align:center;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:16px;
+  font-weight:600;
+  color: var(--line-bright);
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:9px 4px;
+}
+
+select{
+  width:100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:12px;
+  border-radius: var(--radius);
+}
+
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px; }
+.toggle-row + .toggle-row{margin-top:13px;}
+.toggle-row label{font-size:13.5px;}
+.switch{ position:relative; width:46px;height:26px; flex:none; }
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
+.slider-pill{
+  position:absolute; inset:0; background: var(--line-dim); border-radius:26px;
+  transition: background 0.15s; border:1px solid var(--line-dim); pointer-events:none;
+}
+.slider-pill:before{
+  content:""; position:absolute; width:18px;height:18px; left:3px; top:3px;
+  background: var(--paper-dim); border-radius:50%; transition: transform 0.15s, background 0.15s;
+}
+.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
+.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
+.switch input:focus-visible + .slider-pill{outline:2px solid var(--line-bright); outline-offset:2px;}
+
+.info-text{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  color: var(--paper);
+  line-height:1.9;
+  background: var(--bg-deep);
+  border:1px solid var(--line-dim);
+  border-radius: var(--radius);
+  padding:14px;
+  white-space:pre-line;
+}
+.notation-big{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:34px;
+  font-weight:600;
+  text-align:center;
+  padding: 10px 0 4px;
+  color: var(--gold);
+}
+.notation-label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  text-align:center;
+  color: var(--paper-dim);
+  margin-bottom:6px;
+}
+
+.preset-row{
+  display:flex; gap:8px; margin-bottom:10px;
+}
+.preset-row input[type=text]{
+  flex:1;
+  background: var(--bg-deep);
+  border: 1px solid var(--line-dim);
+  color: var(--paper);
+  font-family:'Inter', sans-serif;
+  font-size:14px;
+  padding:10px 12px;
+  border-radius: var(--radius);
+}
+.preset-list{ display:flex; flex-direction:column; gap:8px; }
+.preset-item{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius);
+  padding:9px 11px;
+}
+.preset-item .pi-name{ font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--paper); }
+.preset-item .pi-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--paper-dim); }
+.preset-item .pi-actions{ display:flex; gap:6px; }
+.preset-empty{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--paper-dim); text-align:center; padding:10px; }
+#presetImportFile{ display:none; }
+
+footer{
+  margin-top: 22px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;
+  color: var(--paper-dim);
+  text-align:center;
+  letter-spacing:0.04em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Δομή <span>Ατόμου</span></h1>
+      <div class="byline">Τάσος Σλάβης</div>
+    </div>
+    <div class="header-right">
+      <div class="subtitle">Πρωτόνια · Νετρόνια · Ηλεκτρόνια · Φορτίο</div>
+      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="stage-label">
+        <span>Άτομο</span>
+        <span id="stateLabel">-</span>
+      </div>
+      <div class="stage-body">
+        <div class="stage-canvas-col">
+          <canvas id="canvas" width="640" height="640"></canvas>
+        </div>
+        <div class="stage-info-col">
+          <div class="stage-readouts" id="stageReadouts">
+            <div class="ov-line"><span class="ov-k">Στοιχείο</span><span class="v" id="outName">-</span></div>
+            <div class="ov-line"><span class="ov-k">Ζ (p⁺)</span><span class="v" id="outZ">-</span></div>
+            <div class="ov-line"><span class="ov-k">A (p⁺+n)</span><span class="v" id="outA">-</span></div>
+            <div class="ov-line"><span class="ov-k">N (n)</span><span class="v" id="outN">-</span></div>
+            <div class="ov-line"><span class="ov-k">e⁻</span><span class="v" id="outE">-</span></div>
+            <div class="ov-line"><span class="ov-k">Φορτίο</span><span class="v" id="outQ">-</span></div>
+          </div>
+
+          <div class="legend">
+            <span><span class="dot p"></span>Πρωτόνιο (p⁺)</span>
+            <span><span class="dot n"></span>Νετρόνιο (n)</span>
+            <span><span class="dot e"></span>Ηλεκτρόνιο (e⁻)</span>
+          </div>
+
+          <div class="hint">Πάτησε ➕ e⁻ / ➖ e⁻ για να δεις πώς αλλάζει το φορτίο του ατόμου</div>
+
+          <div class="btn-row">
+            <button id="removeEBtn">➖ e⁻</button>
+            <button class="primary" id="resetBtn">↺ Ουδέτερο άτομο</button>
+            <button id="addEBtn">➕ e⁻</button>
+            <button id="randomBtn">🎲 Τυχαίο</button>
+            <button id="soundBtn">🔊 Ήχος</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-panel">
+    <div class="main-tab-row" id="mainTabRow">
+      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
+      <button type="button" class="main-tab-btn" data-tab="info">🔬 Πληροφορίες</button>
+      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένα</button>
+    </div>
+
+    <div class="side-panel-scroll">
+    <div class="tab-panel active" id="panel-settings">
+      <div id="tab-settings">
+        <div class="card">
+          <h2>Επιλογή Στοιχείου</h2>
+          <div class="field">
+            <select id="elementSelect"></select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <div class="field-row"><label>Σημειογραφία ιόντος</label></div>
+            <div class="notation-label" id="notationLabel">ΟΥΔΕΤΕΡΟ ΑΤΟΜΟ</div>
+            <div class="notation-big" id="notationBig">-</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Σωματίδια</h2>
+          <div class="field">
+            <div class="field-row"><label>Πρωτόνια (p⁺) — ορίζουν το στοιχείο</label><span class="val" id="protonVal">-</span></div>
+            <div class="stepper">
+              <button class="small" id="protonMinus">−</button>
+              <div class="num" id="protonNum">-</div>
+              <button class="small" id="protonPlus">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-row"><label>Νετρόνια (n) — ισότοπο</label><span class="val" id="neutronVal">-</span></div>
+            <div class="stepper">
+              <button class="small" id="neutronMinus">−</button>
+              <div class="num" id="neutronNum">-</div>
+              <button class="small" id="neutronPlus">+</button>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <div class="field-row"><label>Ηλεκτρόνια (e⁻) — καθορίζουν το φορτίο</label><span class="val" id="electronVal">-</span></div>
+            <div class="stepper">
+              <button class="small" id="electronMinus">−</button>
+              <div class="num" id="electronNum">-</div>
+              <button class="small" id="electronPlus">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Οπτικές επιλογές</h2>
+          <div class="toggle-row">
+            <label for="showShellLabels">Ονόματα στιβάδων (K, L, M…)</label>
+            <div class="switch"><input type="checkbox" id="showShellLabels" checked><span class="slider-pill"></span></div>
+          </div>
+          <div class="toggle-row">
+            <label for="animateElectrons">Κίνηση ηλεκτρονίων</label>
+            <div class="switch"><input type="checkbox" id="animateElectrons" checked><span class="slider-pill"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-info">
+      <div id="tab-info">
+        <div class="card">
+          <h2>Στοιχείο</h2>
+          <div class="info-text" id="infoElement">-</div>
+        </div>
+        <div class="card">
+          <h2>Ηλεκτρονιακή Διάταξη</h2>
+          <div class="info-text" id="infoShells">-</div>
+        </div>
+        <div class="card">
+          <h2>Φορτίο &amp; Ιόν</h2>
+          <div class="info-text" id="infoCharge">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-saved">
+      <div id="tab-saved">
+        <div class="card">
+          <h2>Αποθήκευση Τρέχοντος Ατόμου</h2>
+          <div class="preset-row">
+            <input type="text" id="presetName" placeholder="Όνομα (π.χ. Νάτριο +1)">
+            <button class="primary" id="savePresetBtn">💾 Αποθήκευση</button>
+          </div>
+          <div class="btn-row" style="margin-top:0; justify-content:flex-start;">
+            <button id="exportBtn">⬇ Εξαγωγή JSON</button>
+            <button id="importBtn">⬆ Εισαγωγή JSON</button>
+            <input type="file" id="presetImportFile" accept="application/json">
+          </div>
+        </div>
+        <div class="card">
+          <h2>Αποθηκευμένα Άτομα</h2>
+          <div class="preset-list" id="presetList"></div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+
+  <footer>Προσομοίωση Δομής Ατόμου · Τάσος Σλάβης</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------------------------------------------------------------
+  // Δεδομένα στοιχείων (Z, σύμβολο, όνομα, τυπικός μαζικός αριθμός A)
+  // ---------------------------------------------------------------
+  const ELEMENTS = [
+    {z:1,  sym:'H',  name:'Υδρογόνο',   a:1},
+    {z:2,  sym:'He', name:'Ήλιο',       a:4},
+    {z:3,  sym:'Li', name:'Λίθιο',      a:7},
+    {z:4,  sym:'Be', name:'Βηρύλλιο',   a:9},
+    {z:5,  sym:'B',  name:'Βόριο',      a:11},
+    {z:6,  sym:'C',  name:'Άνθρακας',   a:12},
+    {z:7,  sym:'N',  name:'Άζωτο',      a:14},
+    {z:8,  sym:'O',  name:'Οξυγόνο',    a:16},
+    {z:9,  sym:'F',  name:'Φθόριο',     a:19},
+    {z:10, sym:'Ne', name:'Νέον',       a:20},
+    {z:11, sym:'Na', name:'Νάτριο',     a:23},
+    {z:12, sym:'Mg', name:'Μαγνήσιο',   a:24},
+    {z:13, sym:'Al', name:'Αργίλιο',    a:27},
+    {z:14, sym:'Si', name:'Πυρίτιο',    a:28},
+    {z:15, sym:'P',  name:'Φωσφόρος',   a:31},
+    {z:16, sym:'S',  name:'Θείο',       a:32},
+    {z:17, sym:'Cl', name:'Χλώριο',     a:35},
+    {z:18, sym:'Ar', name:'Αργό',       a:40},
+    {z:19, sym:'K',  name:'Κάλιο',      a:39},
+    {z:20, sym:'Ca', name:'Ασβέστιο',   a:40},
+    {z:21, sym:'Sc', name:'Σκάνδιο',    a:45},
+    {z:22, sym:'Ti', name:'Τιτάνιο',    a:48},
+    {z:23, sym:'V',  name:'Βανάδιο',    a:51},
+    {z:24, sym:'Cr', name:'Χρώμιο',     a:52},
+    {z:25, sym:'Mn', name:'Μαγγάνιο',   a:55},
+    {z:26, sym:'Fe', name:'Σίδηρος',    a:56},
+    {z:27, sym:'Co', name:'Κοβάλτιο',   a:59},
+    {z:28, sym:'Ni', name:'Νικέλιο',    a:59},
+    {z:29, sym:'Cu', name:'Χαλκός',     a:63},
+    {z:30, sym:'Zn', name:'Ψευδάργυρος',a:65},
+    {z:31, sym:'Ga', name:'Γάλλιο',     a:70},
+    {z:32, sym:'Ge', name:'Γερμάνιο',   a:73},
+    {z:33, sym:'As', name:'Αρσενικό',   a:75},
+    {z:34, sym:'Se', name:'Σελήνιο',    a:79},
+    {z:35, sym:'Br', name:'Βρώμιο',     a:80},
+    {z:36, sym:'Kr', name:'Κρυπτό',     a:84},
+  ];
+  const ELEMENTS_BY_Z = {};
+  ELEMENTS.forEach(e=>ELEMENTS_BY_Z[e.z]=e);
+  const SHELL_LETTERS = ['K','L','M','N','O','P','Q'];
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+
+  // Πραγματική ηλεκτρονιακή διάταξη στιβάδων (K,L,M,N…) του ουδέτερου ατόμου,
+  // Ζ = 1..36 (περιλαμβάνει τις γνωστές "ανωμαλίες" Cr και Cu).
+  const NEUTRAL_SHELLS = {
+    1:[1], 2:[2], 3:[2,1], 4:[2,2], 5:[2,3], 6:[2,4], 7:[2,5], 8:[2,6], 9:[2,7], 10:[2,8],
+    11:[2,8,1], 12:[2,8,2], 13:[2,8,3], 14:[2,8,4], 15:[2,8,5], 16:[2,8,6], 17:[2,8,7], 18:[2,8,8],
+    19:[2,8,8,1], 20:[2,8,8,2], 21:[2,8,9,2], 22:[2,8,10,2], 23:[2,8,11,2], 24:[2,8,13,1],
+    25:[2,8,13,2], 26:[2,8,14,2], 27:[2,8,15,2], 28:[2,8,16,2], 29:[2,8,18,1], 30:[2,8,18,2],
+    31:[2,8,18,3], 32:[2,8,18,4], 33:[2,8,18,5], 34:[2,8,18,6], 35:[2,8,18,7], 36:[2,8,18,8]
+  };
+
+  // Ηλεκτρονιακή διάταξη για Ζ πρωτόνια και δεδομένο (πιθανώς διαφορετικό λόγω ιοντισμού)
+  // αριθμό ηλεκτρονίων: ξεκινά από την πραγματική διάταξη του ουδέτερου ατόμου και προσθέτει/
+  // αφαιρεί ηλεκτρόνια από την εξωτερική στιβάδα (όπως συμβαίνει στον σχηματισμό ιόντων).
+  function shellsFor(z, targetElectrons){
+    let shells = (NEUTRAL_SHELLS[z] || NEUTRAL_SHELLS[36]).slice();
+    let current = shells.reduce((a,b)=>a+b, 0);
+    while (current < targetElectrons){
+      const last = shells.length - 1;
+      const cap = last === 0 ? 2 : 8;
+      if (shells[last] < cap){ shells[last]++; }
+      else { shells.push(1); }
+      current++;
+    }
+    while (current > targetElectrons){
+      let last = shells.length - 1;
+      while (last >= 0 && shells[last] === 0){ shells.pop(); last--; }
+      if (last < 0) break;
+      shells[last]--;
+      if (shells[last] === 0) shells.pop();
+      current--;
+    }
+    return shells;
+  }
+
+  function superscript(n){
+    return String(Math.abs(n)).split('').map(d=>SUP[d]||d).join('');
+  }
+
+  function ionNotation(sym, q){
+    if (q === 0) return sym;
+    const abs = Math.abs(q);
+    const num = abs === 1 ? '' : superscript(abs);
+    return sym + num + (q > 0 ? '⁺' : '⁻');
+  }
+
+  // ---------------------------------------------------------------
+  // Κατάσταση
+  // ---------------------------------------------------------------
+  let state = { z: 11, a: 23, electrons: 11 };
+
+  function neutronsOf(s){ return Math.max(0, s.a - s.z); }
+  function chargeOf(s){ return s.z - s.electrons; }
+  function currentElement(){ return ELEMENTS_BY_Z[state.z] || {z:state.z, sym:'?', name:'Άγνωστο', a:state.a}; }
+
+  function setElement(z){
+    const el = ELEMENTS_BY_Z[z];
+    if (!el) return;
+    state.z = el.z;
+    state.a = el.a;
+    state.electrons = el.z; // ουδέτερο άτομο εξ ορισμού
+    afterChange('new-element');
+  }
+
+  function changeProtons(delta){
+    const newZ = Math.min(36, Math.max(1, state.z + delta));
+    if (newZ === state.z) return;
+    setElement(newZ);
+  }
+  function changeNeutrons(delta){
+    const n = neutronsOf(state);
+    const newN = Math.max(0, n + delta);
+    state.a = state.z + newN;
+    afterChange('isotope');
+  }
+  function changeElectrons(delta){
+    const maxE = state.z + 6;
+    const newE = Math.min(maxE, Math.max(0, state.electrons + delta));
+    if (newE === state.electrons) return;
+    state.electrons = newE;
+    afterChange(delta > 0 ? 'add-e' : 'remove-e');
+  }
+  function resetNeutral(){
+    const el = ELEMENTS_BY_Z[state.z];
+    state.a = el ? el.a : state.a;
+    state.electrons = state.z;
+    afterChange('reset');
+  }
+
+  // ---------------------------------------------------------------
+  // UI στοιχεία
+  // ---------------------------------------------------------------
+  const elementSelect = document.getElementById('elementSelect');
+  ELEMENTS.forEach(e=>{
+    const opt = document.createElement('option');
+    opt.value = e.z;
+    opt.textContent = e.z + ' — ' + e.sym + ' — ' + e.name;
+    elementSelect.appendChild(opt);
+  });
+  elementSelect.addEventListener('change', ()=>{
+    setElement(parseInt(elementSelect.value, 10));
+    playTone('select');
+  });
+
+  document.getElementById('protonMinus').addEventListener('click', ()=>{ changeProtons(-1); playTone('select'); });
+  document.getElementById('protonPlus').addEventListener('click', ()=>{ changeProtons(1); playTone('select'); });
+  document.getElementById('neutronMinus').addEventListener('click', ()=>{ changeNeutrons(-1); playTone('neutron'); });
+  document.getElementById('neutronPlus').addEventListener('click', ()=>{ changeNeutrons(1); playTone('neutron'); });
+  document.getElementById('electronMinus').addEventListener('click', ()=>{ changeElectrons(-1); playTone('remove'); });
+  document.getElementById('electronPlus').addEventListener('click', ()=>{ changeElectrons(1); playTone('add'); });
+  document.getElementById('removeEBtn').addEventListener('click', ()=>{ changeElectrons(-1); playTone('remove'); });
+  document.getElementById('addEBtn').addEventListener('click', ()=>{ changeElectrons(1); playTone('add'); });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{ resetNeutral(); playTone('select'); });
+  document.getElementById('randomBtn').addEventListener('click', ()=>{
+    const z = 1 + Math.floor(Math.random()*36);
+    setElement(z);
+    elementSelect.value = z;
+    playTone('select');
+  });
+
+  const showShellLabels = document.getElementById('showShellLabels');
+  const animateElectrons = document.getElementById('animateElectrons');
+  showShellLabels.addEventListener('change', render);
+  animateElectrons.addEventListener('change', ()=>{ lastTime = performance.now(); });
+
+  let flashUntil = 0, flashType = null;
+  function afterChange(kind){
+    elementSelect.value = state.z;
+    if (kind === 'add-e' || kind === 'remove-e'){
+      flashUntil = performance.now() + 380;
+      flashType = kind;
+    }
+    updateReadouts();
+    updateInfo();
+    renderPresetList();
+  }
+
+  function updateReadouts(){
+    const el = currentElement();
+    const N = neutronsOf(state);
+    const q = chargeOf(state);
+    document.getElementById('outName').textContent = el.name + ' (' + el.sym + ')';
+    document.getElementById('outZ').textContent = state.z;
+    document.getElementById('outA').textContent = state.a;
+    document.getElementById('outN').textContent = N;
+    document.getElementById('outE').textContent = state.electrons;
+    const qEl = document.getElementById('outQ');
+    qEl.textContent = (q > 0 ? '+' : '') + q + ' e';
+    qEl.classList.toggle('pos', q > 0);
+    qEl.classList.toggle('neg', q < 0);
+    document.getElementById('stateLabel').textContent = q === 0 ? 'ΟΥΔΕΤΕΡΟ' : (q > 0 ? 'ΚΑΤΙΟΝ' : 'ΑΝΙΟΝ');
+
+    document.getElementById('protonVal').textContent = state.z;
+    document.getElementById('protonNum').textContent = state.z;
+    document.getElementById('neutronVal').textContent = N;
+    document.getElementById('neutronNum').textContent = N;
+    document.getElementById('electronVal').textContent = state.electrons;
+    document.getElementById('electronNum').textContent = state.electrons;
+
+    const notation = ionNotation(el.sym, q);
+    document.getElementById('notationBig').textContent = notation;
+    document.getElementById('notationLabel').textContent =
+      q === 0 ? 'ΟΥΔΕΤΕΡΟ ΑΤΟΜΟ' : (q > 0 ? 'ΚΑΤΙΟΝ (ΘΕΤΙΚΟ ΙΟΝ)' : 'ΑΝΙΟΝ (ΑΡΝΗΤΙΚΟ ΙΟΝ)');
+  }
+
+  function updateInfo(){
+    const el = currentElement();
+    const N = neutronsOf(state);
+    const q = chargeOf(state);
+    const shells = shellsFor(state.z, state.electrons);
+    const isIsotopeDefault = ELEMENTS_BY_Z[state.z] && ELEMENTS_BY_Z[state.z].a === state.a;
+
+    document.getElementById('infoElement').textContent =
+      'Όνομα: ' + el.name + '\n' +
+      'Σύμβολο: ' + el.sym + '\n' +
+      'Ατομικός αριθμός Ζ: ' + state.z + '\n' +
+      'Μαζικός αριθμός Α: ' + state.a + (isIsotopeDefault ? '  (συνηθισμένο ισότοπο)' : '  (ισότοπο)') + '\n' +
+      'Πρωτόνια p⁺ = Z = ' + state.z + '\n' +
+      'Νετρόνια n = A − Z = ' + N;
+
+    let shellsTxt = shells.map((c,i)=> (SHELL_LETTERS[i]||('#'+(i+1))) + ': ' + c).join('\n');
+    if (!shellsTxt) shellsTxt = '(κανένα ηλεκτρόνιο)';
+    document.getElementById('infoShells').textContent =
+      'Ηλεκτρόνια e⁻ = ' + state.electrons + '\n\n' + shellsTxt;
+
+    let chargeTxt =
+      'q = Z − e⁻ = ' + state.z + ' − ' + state.electrons + ' = ' + (q>0?'+':'') + q + ' e\n' +
+      'Σημειογραφία: ' + ionNotation(el.sym, q) + '\n\n';
+    if (q === 0){
+      chargeTxt += 'Το άτομο έχει ίσο αριθμό πρωτονίων και ηλεκτρονίων, άρα είναι ηλεκτρικά ουδέτερο.';
+    } else if (q > 0){
+      chargeTxt += 'Έφυγαν ' + q + ' ηλεκτρόνιο' + (q>1?'α':'') + ' από το άτομο. Τα πρωτόνια είναι πλέον περισσότερα από τα ηλεκτρόνια, οπότε το άτομο αποκτά θετικό φορτίο +' + q + 'e και γίνεται κατιόν.';
+    } else {
+      chargeTxt += 'Προστέθηκαν ' + Math.abs(q) + ' ηλεκτρόνιο' + (Math.abs(q)>1?'α':'') + ' στο άτομο. Τα ηλεκτρόνια είναι πλέον περισσότερα από τα πρωτόνια, οπότε το άτομο αποκτά αρνητικό φορτίο ' + q + 'e και γίνεται ανιόν.';
+    }
+    document.getElementById('infoCharge').textContent = chargeTxt;
+  }
+
+  // ---------------------------------------------------------------
+  // Ήχος (συνθετικός, χωρίς εξωτερικά αρχεία)
+  // ---------------------------------------------------------------
+  let soundOn = true;
+  let audioCtx = null;
+  const soundBtn = document.getElementById('soundBtn');
+  function ensureAudio(){
+    if (!audioCtx){
+      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e){ audioCtx = null; }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    return audioCtx;
+  }
+  function playTone(kind){
+    if (!soundOn) return;
+    const ctx = ensureAudio();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    let f0 = 500, f1 = 500, dur = 0.12, type = 'sine', vol = 0.09;
+    if (kind === 'add'){ f0 = 480; f1 = 880; type='triangle'; }
+    else if (kind === 'remove'){ f0 = 760; f1 = 340; type='triangle'; }
+    else if (kind === 'neutron'){ f0 = 300; f1 = 340; type='square'; vol=0.05; dur=0.08; }
+    else { f0 = 600; f1 = 600; type='sine'; vol=0.06; dur=0.06; }
+    osc.type = type;
+    const t = ctx.currentTime;
+    osc.frequency.setValueAtTime(f0, t);
+    osc.frequency.linearRampToValueAtTime(f1, t + dur);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.01);
+    gain.gain.linearRampToValueAtTime(0, t + dur);
+    try{ osc.start(t); osc.stop(t + dur + 0.02); }catch(e){}
+  }
+  soundBtn.addEventListener('click', ()=>{
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '🔊 Ήχος' : '🔇 Σίγαση';
+    if (soundOn) ensureAudio();
+  });
+
+  // ---------------------------------------------------------------
+  // Θέμα
+  // ---------------------------------------------------------------
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const themeName = document.getElementById('themeName');
+  function currentTheme(){ return document.documentElement.getAttribute('data-theme') || 'blueprint'; }
+  function applyThemeLabel(){
+    themeName.textContent = currentTheme() === 'light' ? 'Minimal' : 'Blueprint';
+  }
+  applyThemeLabel();
+  themeToggleBtn.addEventListener('click', ()=>{
+    const next = currentTheme() === 'light' ? 'blueprint' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('atom-sim-theme', next); }catch(e){}
+    applyThemeLabel();
+    render();
+  });
+
+  // ---------------------------------------------------------------
+  // Καρτέλες
+  // ---------------------------------------------------------------
+  const mainTabRow = document.getElementById('mainTabRow');
+  const tabBtns = Array.from(mainTabRow.querySelectorAll('.main-tab-btn'));
+  tabBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---------------------------------------------------------------
+  // Αποθηκευμένα (localStorage)
+  // ---------------------------------------------------------------
+  const PRESET_KEY = 'atom-sim-presets';
+  function loadPresets(){
+    try{ return JSON.parse(localStorage.getItem(PRESET_KEY) || '[]'); }catch(e){ return []; }
+  }
+  function savePresets(list){
+    try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); return true; }catch(e){ return false; }
+  }
+  function renderPresetList(){
+    const list = loadPresets();
+    const wrap = document.getElementById('presetList');
+    wrap.innerHTML = '';
+    if (!list.length){
+      wrap.innerHTML = '<div class="preset-empty">Δεν υπάρχουν αποθηκευμένα άτομα ακόμη.</div>';
+      return;
+    }
+    list.forEach((p, idx)=>{
+      const el = ELEMENTS_BY_Z[p.z];
+      const q = p.z - p.e;
+      const notation = ionNotation(el ? el.sym : '?', q);
+      const item = document.createElement('div');
+      item.className = 'preset-item';
+      item.innerHTML =
+        '<div><div class="pi-name">' + (p.name || (el?el.name:'Άτομο')) + '</div>' +
+        '<div class="pi-meta">' + notation + ' · Z=' + p.z + ' A=' + p.a + ' e⁻=' + p.e + '</div></div>' +
+        '<div class="pi-actions">' +
+        '<button class="small" data-act="load" data-idx="'+idx+'">▶</button>' +
+        '<button class="small danger" data-act="del" data-idx="'+idx+'">✕</button>' +
+        '</div>';
+      wrap.appendChild(item);
+    });
+    wrap.querySelectorAll('button[data-act]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const idx = parseInt(btn.dataset.idx, 10);
+        const list = loadPresets();
+        const p = list[idx];
+        if (!p) return;
+        if (btn.dataset.act === 'load'){
+          state = {z:p.z, a:p.a, electrons:p.e};
+          afterChange('load');
+          playTone('select');
+        } else if (btn.dataset.act === 'del'){
+          list.splice(idx,1);
+          savePresets(list);
+          renderPresetList();
+        }
+      });
+    });
+  }
+  document.getElementById('savePresetBtn').addEventListener('click', ()=>{
+    const nameInput = document.getElementById('presetName');
+    const el = currentElement();
+    const name = nameInput.value.trim() || (el.name + ' ' + ionNotation(el.sym, chargeOf(state)));
+    const list = loadPresets();
+    list.push({name, z:state.z, a:state.a, e:state.electrons, ts:Date.now()});
+    savePresets(list);
+    nameInput.value = '';
+    renderPresetList();
+    playTone('select');
+  });
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const list = loadPresets();
+    const blob = new Blob([JSON.stringify(list, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'atomo-presets.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  const presetImportFile = document.getElementById('presetImportFile');
+  document.getElementById('importBtn').addEventListener('click', ()=> presetImportFile.click());
+  presetImportFile.addEventListener('change', ()=>{
+    const file = presetImportFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const imported = JSON.parse(reader.result);
+        if (!Array.isArray(imported)) throw new Error('bad');
+        const existing = loadPresets();
+        savePresets(existing.concat(imported));
+        renderPresetList();
+      }catch(e){
+        alert('Το αρχείο δεν είναι έγκυρο JSON αποθηκευμένων ατόμων.');
+      }
+    };
+    reader.readAsText(file);
+    presetImportFile.value = '';
+  });
+
+  // ---------------------------------------------------------------
+  // Σχεδίαση (canvas)
+  // ---------------------------------------------------------------
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let dpr = window.devicePixelRatio || 1;
+  let logicalSize = 640;
+
+  function fitCanvas(){
+    const rect = canvas.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    logicalSize = rect.width || 640;
+    canvas.width = Math.round(logicalSize * dpr);
+    canvas.height = Math.round(logicalSize * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    render();
+  }
+  window.addEventListener('resize', fitCanvas);
+
+  function themeColor(varName){
+    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  }
+
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function packPositions(count, radius){
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    const pts = [];
+    for (let i=0;i<count;i++){
+      const r = radius * Math.sqrt((i + 0.5) / count);
+      const theta = i * golden;
+      pts.push({x: r*Math.cos(theta), y: r*Math.sin(theta)});
+    }
+    return pts;
+  }
+
+  function shuffledTypes(nP, nN){
+    const arr = [];
+    for (let i=0;i<nP;i++) arr.push('p');
+    for (let i=0;i<nN;i++) arr.push('n');
+    const rnd = mulberry32(nP*1000 + nN + 7);
+    for (let i=arr.length-1;i>0;i--){
+      const j = Math.floor(rnd()*(i+1));
+      const tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+    }
+    return arr;
+  }
+
+  let lastTime = performance.now();
+  let shellAngles = [];
+
+  function render(now){
+    const t = (typeof now === 'number') ? now : performance.now();
+    const dt = Math.min(0.05, (t - lastTime) / 1000);
+    lastTime = t;
+
+    const size = logicalSize;
+    const cx = size/2, cy = size/2;
+    ctx.clearRect(0,0,size,size);
+
+    const lineDim = themeColor('--line-dim') || 'rgba(143,184,217,0.18)';
+    const gold = themeColor('--gold') || '#E8B84B';
+    const paperDim = themeColor('--paper-dim') || '#AFC3DA';
+    const paper = themeColor('--paper') || '#F5F8FC';
+    const protonColor = themeColor('--proton-color') || '#E0685A';
+    const neutronColor = themeColor('--neutron-color') || '#8FA9C4';
+    const electronColor = themeColor('--electron-color') || gold;
+    const electronGlow = themeColor('--electron-glow') || 'rgba(232,184,75,0.55)';
+
+    const N = neutronsOf(state);
+    const shells = shellsFor(state.z, state.electrons);
+    const nucleonCount = Math.max(1, state.z + N);
+    const nucleusRadius = Math.min(size*0.16, 16 + 5.4 * Math.cbrt(nucleonCount));
+
+    // ---- ηλεκτρονιακές στιβάδες (τροχιές) ----
+    const maxShells = Math.max(shells.length, 1);
+    const available = size*0.46 - nucleusRadius;
+    const shellGap = Math.max(20, Math.min(38, available / (maxShells + 0.4)));
+
+    if (shellAngles.length < shells.length){
+      while (shellAngles.length < shells.length) shellAngles.push(shellAngles.length * 0.7);
+    }
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    for (let i=0;i<shells.length;i++){
+      const r = nucleusRadius + shellGap * (i+1);
+      ctx.beginPath();
+      ctx.setLineDash([3,6]);
+      ctx.strokeStyle = lineDim;
+      ctx.lineWidth = 1.2;
+      ctx.arc(0,0,r,0,Math.PI*2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (showShellLabels.checked){
+        ctx.font = "600 12px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = paperDim;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const label = (SHELL_LETTERS[i] || ('#'+(i+1))) + ':' + shells[i];
+        ctx.fillText(label, 0, -r - 10);
+      }
+    }
+
+    // ---- ηλεκτρόνια ----
+    if (animateElectrons.checked){
+      for (let i=0;i<shells.length;i++){
+        const speed = (i % 2 === 0 ? 1 : -1) * (0.9 / (i + 1.6));
+        shellAngles[i] = (shellAngles[i] || 0) + speed * dt;
+      }
+    }
+    for (let i=0;i<shells.length;i++){
+      const r = nucleusRadius + shellGap * (i+1);
+      const count = shells[i];
+      for (let k=0;k<count;k++){
+        const angle = shellAngles[i] + (k / count) * Math.PI * 2;
+        const ex = r * Math.cos(angle);
+        const ey = r * Math.sin(angle);
+        ctx.beginPath();
+        ctx.shadowColor = electronGlow;
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = electronColor;
+        ctx.arc(ex, ey, 4.6, 0, Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // ---- πυρήνας ----
+    const types = shuffledTypes(state.z, N);
+    const positions = packPositions(nucleonCount, nucleusRadius*0.86);
+    const particleR = Math.max(2.4, Math.min(7.5, (nucleusRadius / Math.sqrt(nucleonCount+1)) * 1.25));
+
+    const glowGrad = ctx.createRadialGradient(0,0,0,0,0,nucleusRadius*1.3);
+    glowGrad.addColorStop(0, electronGlow);
+    glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.fillStyle = glowGrad;
+    ctx.arc(0,0,nucleusRadius*1.3,0,Math.PI*2);
+    ctx.fill();
+
+    for (let i=0;i<nucleonCount;i++){
+      const pos = positions[i];
+      const isProton = types[i] === 'p';
+      ctx.beginPath();
+      ctx.fillStyle = isProton ? protonColor : neutronColor;
+      ctx.arc(pos.x, pos.y, particleR, 0, Math.PI*2);
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.stroke();
+    }
+
+    // ---- flash effect κατά την προσθήκη/αφαίρεση e- ----
+    if (t < flashUntil){
+      const p = 1 - Math.max(0, (flashUntil - t) / 380);
+      const ringR = nucleusRadius + shellGap * shells.length + p * 40;
+      ctx.beginPath();
+      ctx.strokeStyle = flashType === 'add-e' ? electronColor : protonColor;
+      ctx.globalAlpha = Math.max(0, 1 - p);
+      ctx.lineWidth = 2.5;
+      ctx.arc(0,0, Math.max(20, ringR), 0, Math.PI*2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.restore();
+
+    requestAnimationFrame(render);
+  }
+
+  // ---------------------------------------------------------------
+  // Εκκίνηση
+  // ---------------------------------------------------------------
+  elementSelect.value = state.z;
+  updateReadouts();
+  updateInfo();
+  renderPresetList();
+  fitCanvas();
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>
