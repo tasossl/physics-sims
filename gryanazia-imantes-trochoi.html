@@ -1,0 +1,1299 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Γρανάζια, Ιμάντες και Τροχοί</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="pw"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#CBD5E1; --line:#0F172A; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#64748B;
+  --border:#E2E8F0; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#64748B; --st-grid:rgba(15,23,42,0.06); --st-gridS:#CBD5E1;
+}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#111827;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"] header{--text:#F2F4F8;--textDim:#A8B2C2;color:var(--text);}
+:root[data-skin="gr2"] .theme-toggle{--text:#0F172A;--textDim:#4A5870;}
+:root[data-skin="gr2"] .right-col,:root[data-skin="gr2"] #simPanel{--grid:rgba(15,23,42,0.06);}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+:root[data-skin^="rt"]{
+  color-scheme:light;
+  --bg:#EEF2F8; --bg2:#E6ECF4; --panel:#FFFFFF; --panel2:#F4F7FB;
+  --grid:rgba(26,42,68,0.06); --gridStrong:#B7C2D3; --line:#1A2A44; --accent:#B5632C;
+  --accent2:#2563EB; --accent3:#15803D; --text:#1A2A44; --textDim:#66748B;
+  --border:#DDE4EE; --track:#F4F7FB; --shadowCol:rgba(26,42,68,0.12);
+  --danger:#C0392B; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#C27A0E; --e2:#C42A6B; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --st-track:#FBFCFE; --st-text:#1A2A44; --st-dim:#66748B; --st-grid:rgba(26,42,68,0.08); --st-gridS:#A9B6CA;
+}
+:root[data-skin="rt3"] .right-col{
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+:root[data-skin^="rt"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin^="ls"] .tout{color:#8A4F00;font-weight:600;}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n02"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n02"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n03"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#7C3AED;
+  --accent2:#7C3AED; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#6D28D9;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n03"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#6D28D9;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n04"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n04"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#8A4F00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n05"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n05"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n09"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9DB6D6; --line:#0F2342; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#EAF2FB; --st-text:#0F2342; --st-dim:#4A6285; --st-grid:rgba(15,35,66,0.08); --st-gridS:#9DB6D6;
+}
+:root[data-skin="n09"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n17"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#6E97BE; --line:#F5F8FC; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#FBBF24; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F2342; --st-text:#F5F8FC; --st-dim:#AFC3DA; --st-grid:rgba(143,184,217,0.16); --st-gridS:#6E97BE;
+}
+:root[data-skin="n17"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n19"]{
+  color-scheme:dark;
+  --bg:#0A0A0C; --bg2:#111113; --panel:#17171A; --panel2:#111113;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#5A5A66; --line:#F1F1F3; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#4ADE80; --text:#F1F1F3; --textDim:#A0A0A8;
+  --border:#2B2B30; --track:#0C0C0E; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#F0932B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0B0B0D; --st-text:#F1F1F3; --st-dim:#A0A0A8; --st-grid:rgba(255,255,255,0.08); --st-gridS:#5A5A66;
+}
+:root[data-skin="n19"] .right-col{--text:#F1F1F3;--textDim:#A0A0A8;--panel:#17171A;--panel2:#111113;--track:#0C0C0E;--border:#2B2B30;--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n42"]{
+  color-scheme:light;
+  --bg:#E9EBEF; --bg2:#DFE2E8; --panel:#F3F4F6; --panel2:#E5E7EB;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F59E0B;
+  --accent2:#F59E0B; --accent3:#15803D; --text:#1F2937; --textDim:#6B7280;
+  --border:#C4C9D1; --track:#D9DCE1; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A5A00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F59E0B; --htext:#1F2937; --hdim:#6B7280;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n42"] .right-col{--text:#1F2937;--textDim:#6B7280;--panel:#F3F4F6;--panel2:#E5E7EB;--track:#D9DCE1;--border:#C4C9D1;--atext:#8A5A00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+.stage-max{position:absolute;top:8px;left:8px;z-index:5;opacity:.85;}
+.stage-max:hover{opacity:1;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport.one{flex-wrap:nowrap;gap:6px;}
+.transport.one>*{flex:1 1 auto;min-width:0;white-space:nowrap;}
+.transport.one .btn,.transport.one .tbox{height:38px;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;margin:0;padding:0 8px;border-radius:var(--radius);font-size:.82rem;}
+.transport.one .tbox{background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;}
+.transport.one .tbox:hover{border-color:var(--accent2);}
+.transport.one .tbox:has(input:checked){border-color:var(--accent);}
+.transport.one .tbox select{flex:1;min-width:0;width:auto;height:100%;border:0;background:transparent;color:var(--text);padding:0 2px;}
+@media(max-width:760px){.transport.one{flex-wrap:wrap;}.transport.one>*{flex:1 1 45%;}}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+/* ---- ειδικά για τον τροχό ---- */
+:root{--p1:var(--c-ae);--p2:var(--c-th);--p3:var(--c-s);--p4:var(--c-ag);--p5:var(--e2);--p6:var(--car);}
+.frames{display:flex;gap:10px;flex-wrap:wrap;margin-top:0;}
+.frames .vframe{flex:1 1 340px;min-width:0;margin-top:0;}
+.vframe select{max-width:100%;}
+.vector-toggles + .vector-toggles{margin-top:10px;}
+.frames + .vector-toggles{margin-top:10px;}
+.ptcard{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px 2px;margin-bottom:8px;}
+.ptcard .pthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ptcard .pthead .checkline{margin:0;font-weight:600;}
+.ptcard .del{background:transparent;border:1px solid var(--border);color:var(--textDim);border-radius:var(--radius);width:26px;height:26px;cursor:pointer;font-size:.75rem;}
+.ptcard .del:hover{border-color:var(--danger);color:var(--danger);}
+.sol-block{margin-bottom:16px;}
+.sol-block h4{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.86rem;letter-spacing:0;color:var(--atext);margin:0 0 8px;}
+.sol-block .line{font-family:'IBM Plex Mono',monospace;font-size:.82rem;line-height:1.9;overflow-wrap:anywhere;}
+.sol-block .line .res{color:var(--atext);font-weight:600;}
+.sol-note{font-size:.8rem;color:var(--textDim);margin-top:4px;line-height:1.5;}
+.givens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
+.givens-grid .gi{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:.82rem;text-align:center;}
+.givens-grid .gi .k{font-family:'Inter';font-size:.68rem;color:var(--textDim);display:block;margin-bottom:2px;}
+#tabBody .guide h3:not(:first-child){margin-top:14px;}
+#tabBody>.panel .guide + div{margin-top:8px;}
+.stage canvas{touch-action:none;}
+/* ---- ειδικά για γρανάζια, ιμάντες, τροχούς ---- */
+.derived{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--textDim);line-height:1.7;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;}
+.derived b{color:var(--atext);font-weight:600;}
+.ptbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.ptbar select{flex:1 1 150px;min-width:0;}
+.ptbar .btn:disabled{opacity:.45;cursor:default;}
+.field .zero{flex-shrink:0;}
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1 id="mainTitle">Γρανάζια, Ιμάντες και Τροχοί</h1>
+      <div class="sub">Σλάβης Τάσος</div>
+    </div>
+    <select class="skin-select" id="skinSel" aria-label="Skins"></select>
+  </header>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap">
+            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση"></canvas></div>
+          </div>
+          <div class="transport one">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline tbox"><input type="checkbox" id="loopChk"> Επανάληψη</label>
+            <label class="checkline tbox"><input type="checkbox" id="stopRev"> Παύση σε κάθε περιστροφή</label>
+            <label class="spd tbox">Ταχύτητα
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.1">×0,1</option>
+                <option value="0.25">×0,25</option>
+                <option value="0.5">×0,5</option>
+                <option value="1">×1</option>
+                <option value="2">×2</option>
+                <option value="5">×5</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="20" step="0.01" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col" id="rightCol">
+      <div class="panel tabs-panel" id="tabsPanel">
+        <div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div>
+        <div id="tabBody">
+          <div class="panel"><div class="panel-body">
+            <div class="solver-toggle" id="modeSeg"><button data-v="gear" type="button">Γρανάζια</button><button data-v="belt" type="button">Ιμάντας</button><button data-v="car" type="button">Όχημα</button></div>
+            <div id="blkBelt"><div class="solver-toggle" id="beltSeg"><button data-v="open" type="button">Ανοιχτός ιμάντας</button><button data-v="cross" type="button">Σταυρωτός</button></div></div>
+            <div id="blkFrame"><div class="solver-toggle" id="frameSeg"><button data-v="ground" type="button">Παρατηρητής στο έδαφος</button><button data-v="car" type="button">Μέσα στο όχημα</button></div></div>
+            <div id="fld_R1"></div>
+            <div id="fld_R2"></div>
+            <div id="blkD"><div id="fld_d"></div></div>
+            <div id="blkL"><div id="fld_L"></div></div>
+            <div class="guide"><h3>Κίνηση του τροχού 1 (κινητήριος)</h3></div>
+            <div id="fld_f"></div>
+            <div id="fld_eps"></div>
+            <div class="derived" id="derived"></div>
+            <div style="height:12px"></div>
+            <button class="btn secondary" id="resetAll" type="button">↺ Επαναφορά ρυθμίσεων</button>
+            <div class="hintline">Ο τροχός 2 ακολουθεί τον τροχό 1. Η θετική φορά περιστροφής είναι η δεξιόστροφη.</div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+            <div class="vector-toggles"><div class="row">
+              <span class="grp">Διανύσματα</span>
+              <label><input type="checkbox" data-tg="v"><span class="swatch" style="background:var(--e1)"></span>υ γραμμική ταχύτητα</label>
+              <label><input type="checkbox" data-tg="w"><span class="swatch" style="background:var(--c-th)"></span>ω γωνιακή ταχύτητα</label>
+              <label><input type="checkbox" data-tg="ac"><span class="swatch" style="background:var(--blue)"></span>α<sub>κ</sub> κεντρομόλος</label>
+              <label><input type="checkbox" data-tg="at"><span class="swatch" style="background:var(--e2)"></span>α<sub>επ</sub> επιτρόχια</label>
+              <label><input type="checkbox" data-tg="atot"><span class="swatch" style="background:var(--et)"></span>α<sub>ολ</sub> συνολική</label>
+            </div></div>
+            <div class="vector-toggles" style="margin-top:10px"><div class="row">
+              <span class="grp">Εμφάνιση</span>
+              <label><input type="checkbox" data-opt="labels"><span class="swatch" style="background:var(--textDim)"></span>Σύμβολα</label>
+              <label><input type="checkbox" data-opt="rdv"><span class="swatch" style="background:var(--gridStrong)"></span>Τιμές πάνω δεξιά</label>
+              <label><input type="checkbox" data-opt="trail"><span class="swatch" style="background:var(--accent)"></span>Ίχνος τροχιάς</label>
+            </div></div>
+            <div style="height:12px"></div>
+            <div id="fld_zoom"></div>
+            <div id="fld_vs"></div>
+            <div id="fld_vw"></div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+            <div class="guide"><h3>Επιλογή σημείου</h3></div>
+            <div class="ptbar">
+              <select id="ptSel" aria-label="Επιλογή σημείου"></select>
+              <button class="btn secondary small" id="ptAdd" type="button">Προσθήκη σημείου</button>
+              <button class="btn secondary small" id="ptDel" type="button" aria-label="Διαγραφή σημείου" title="Διαγραφή σημείου">✕</button>
+            </div>
+            <div id="ptEdit">
+              <label class="checkline"><input type="checkbox" id="ptOn"> Εμφάνιση του σημείου</label>
+              <div class="field"><label><span class="name">Τροχός</span></label><div class="inputs"><select id="ptW" aria-label="Τροχός του σημείου"><option value="0">Τροχός 1</option><option value="1">Τροχός 2</option></select></div></div>
+              <div id="fld_pr"></div>
+              <div id="fld_pb"></div>
+            </div>
+            <div class="hintline">ρ/R = 1 είναι η περιφέρεια, μικρότερες τιμές είναι σημεία στο εσωτερικό. Η γωνία β μετριέται από την κορυφή του τροχού, δεξιόστροφα, τη στιγμή t = 0. Μπορείς επίσης να σύρεις ένα σημείο με το ποντίκι πάνω στον τροχό. Έως 8 σημεία.</div>
+          </div></div>
+          <div class="panel"><div class="panel-body"><div class="readouts" id="readouts"></div></div></div>
+          <div class="panel"><div class="panel-body">
+            <div class="guide"><h3>Υπολογισμός για το επιλεγμένο σημείο</h3></div>
+            <div id="solBody"></div>
+            <div class="guide phys" id="exBody"></div>
+          </div></div>
+          <div class="panel"><div class="panel-body"><div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<ul>
+<li><b>Γρανάζια:</b> δύο τροχοί σε επαφή στρέφονται αντίθετα. Τα σημεία της επαφής έχουν την ίδια γραμμική ταχύτητα.</li>
+<li><b>Ιμάντας:</b> δύο τροχοί με ιμάντα που δεν ολισθαίνει. Ο ανοιχτός ιμάντας δίνει ίδια φορά, ο σταυρωτός αντίθετη.</li>
+<li><b>Όχημα:</b> δύο τροχοί που κυλίονται χωρίς ολίσθηση. Διάλεξε παρατηρητή στο έδαφος ή μέσα στο όχημα.</li>
+</ul>
+<h3>Πώς τη χρησιμοποιείς</h3>
+<ul>
+<li>Ορίζεις τις ακτίνες και τη συχνότητα f₁ του τροχού 1. Για επιταχυνόμενη κίνηση δώσε γωνιακή επιτάχυνση α<sub>γων,1</sub> ≠ 0 (το κουμπί «= 0» τη μηδενίζει).</li>
+<li>Στην καρτέλα «Σημεία» προσθέτεις σημεία στην περιφέρεια (ρ/R = 1) ή στο εσωτερικό (ρ/R &lt; 1) κάθε τροχού.</li>
+<li>Στην «Προβολή μεγεθών» ανοίγεις τα διανύσματα υ, ω, α<sub>κ</sub>, α<sub>επ</sub>, α<sub>ολ</sub>. Το μήκος τους έχει σταθερή κλίμακα. Αν ένα διάνυσμα βγαίνει εκτός σχήματος, κόβεται και σημειώνεται με «//».</li>
+<li>Η «Παύση σε κάθε περιστροφή» σταματά την κίνηση κάθε φορά που ο τροχός 1 συμπληρώνει μία στροφή.</li>
+</ul>
+<h3>Σχέσεις</h3>
+<ul>
+<li>υ = ω·ρ, ω = 2πf, α<sub>κ</sub> = ω²·ρ, α<sub>επ</sub> = α<sub>γων</sub>·ρ, α<sub>ολ</sub> = √(α<sub>κ</sub>² + α<sub>επ</sub>²).</li>
+<li>Για τα δύο σώματα: ω₁R₁ = ω₂R₂, δηλαδή f₁R₁ = f₂R₂.</li>
+</ul>
+</div></div></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const FONT="'Inter',system-ui,sans-serif";
+const TMAX=10;
+const TABS=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Σημεία','Τιμές μεγεθών','Ανάλυση','Οδηγίες'];
+const UP=s=>s.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const num=(v,d)=>(+v).toFixed(d==null?2:d).replace('.',',');
+const TAU=2*Math.PI;
+const NAMES=['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ'];
+
+/* ---------- ΚΑΤΑΣΤΑΣΗ ---------- */
+const MD={
+  gear:{R1:10,R2:15,d:40,L:150,f:0.5,eps:0,
+    pts:[{name:'Α',w:0,r:1,b:90,on:true},{name:'Β',w:1,r:1,b:270,on:true},{name:'Γ',w:0,r:0.5,b:0,on:true}]},
+  belt:{R1:8,R2:16,d:40,L:150,f:0.5,eps:0,
+    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:0,on:true},{name:'Γ',w:1,r:0.5,b:90,on:true}]},
+  car:{R1:40,R2:30,d:40,L:150,f:0.5,eps:0,
+    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:180,on:true},{name:'Γ',w:0,r:0.5,b:90,on:true}]}
+};
+function freshState(mode,keep){
+  const m=MD[mode], s=Object.assign({
+    belt:'open', frame:'ground', speed:1, zoom:1, vs:100, vw:100,
+    tg:{v:true,w:true,ac:true,at:false,atot:false},
+    labels:true, rdv:true, trail:false, loop:true, stopRev:false
+  },keep||{});
+  s.mode=mode; s.R1=m.R1; s.R2=m.R2; s.d=m.d; s.L=m.L; s.f=m.f; s.eps=m.eps;
+  s.pts=clone(m.pts); s.sel=0; s.t=0; s.playing=false;
+  return s;
+}
+let S=freshState('gear');
+
+/* ---------- ΦΥΣΙΚΗ (SI: m, s, rad) ---------- */
+/* στα γρανάζια η ακτίνα προκύπτει από τον αριθμό οδόντων (4 οδόντες ανά cm ακτίνας) */
+function gearN(i){ return Math.max(6,Math.round(4*(i?S.R2:S.R1))); }
+function RM(i){ const r=i?S.R2:S.R1; return (S.mode==='gear'?gearN(i)/4:Math.max(0.5,r))/100; }
+function ratio(){
+  const k=S.mode==='gear'?gearN(0)/gearN(1):RM(0)/RM(1);
+  return (S.mode==='gear'||(S.mode==='belt'&&S.belt==='cross'))?-k:k;
+}
+function dEff(){ return Math.max(S.d/100,RM(0)+RM(1)+0.01); }
+function centers(){
+  const R1=RM(0), R2=RM(1);
+  if(S.mode==='gear') return [[0,0],[R1+R2,0]];
+  if(S.mode==='belt') return [[0,0],[dEff(),0]];
+  const L=Math.max(S.L,10)/100; return [[-L/2,R1],[L/2,R2]];
+}
+function sceneBox(){
+  const R1=RM(0), R2=RM(1), m=Math.max(R1,R2), c=centers();
+  if(S.mode==='car') return {x0:c[0][0]-R1,x1:c[1][0]+R2,y0:0,y1:2.2*m};
+  return {x0:c[0][0]-R1,x1:c[1][0]+R2,y0:-m,y1:m};
+}
+function wheels(t){
+  const f0=TAU*S.f, th1=f0*t+0.5*S.eps*t*t, om1=f0+S.eps*t, k=ratio(), c=centers(), R=[RM(0),RM(1)];
+  const ws=[{th:th1,om:om1,eps:S.eps},{th:k*th1,om:k*om1,eps:k*S.eps}];
+  ws.forEach((w,i)=>{ w.R=R[i]; w.cx=c[i][0]; w.cy=c[i][1]; w.i=i; });
+  const car=S.mode==='car';
+  const v=car?om1*R[0]:0, a=car?S.eps*R[0]:0, s=car?th1*R[0]:0;
+  ws.forEach(w=>{ w.vcm=v; w.acm=a; });
+  return {ws,v,a,s,th1};
+}
+function pointKin(p,W){
+  const w=W.ws[p.w], rho=p.r*w.R, phi=p.b*Math.PI/180+w.th, sn=Math.sin(phi), cs=Math.cos(phi);
+  const gr=S.mode==='car'&&S.frame==='ground';
+  const pos=[rho*sn,rho*cs];
+  const vrot=[w.om*rho*cs,-w.om*rho*sn];
+  const at=[w.eps*rho*cs,-w.eps*rho*sn];
+  const ac=[-w.om*w.om*rho*sn,-w.om*w.om*rho*cs];
+  const v=[vrot[0]+(gr?w.vcm:0),vrot[1]];
+  const atot=[at[0]+ac[0]+(gr?w.acm:0),at[1]+ac[1]];
+  return {w,rho,phi,pos,vrot,at,ac,v,atot,gr};
+}
+const mag=v=>Math.hypot(v[0],v[1]);
+/* αριθμός περιστροφών του τροχού 1: για την «Παύση σε κάθε περιστροφή» */
+const periodDone=t=>Math.abs(wheels(t).th1)/TAU;
+
+/* ---------- ΠΕΔΙΑ ΡΥΘΜΙΣΕΩΝ (slider + πληκτρολόγηση + «= 0») ---------- */
+const FIELDS={
+  R1:{key:'R1',name:'Ακτίνα τροχού 1',sym:'R<sub>1</sub>',min:3,max:40,step:0.5,unit:'cm',free:true,hmin:0.5},
+  R2:{key:'R2',name:'Ακτίνα τροχού 2',sym:'R<sub>2</sub>',min:3,max:40,step:0.5,unit:'cm',free:true,hmin:0.5},
+  d:{key:'d',name:'Απόσταση κέντρων',sym:'d',min:12,max:120,step:1,unit:'cm',free:true,hmin:1},
+  L:{key:'L',name:'Απόσταση αξόνων',sym:'L',min:60,max:300,step:5,unit:'cm',free:true,hmin:10},
+  f:{key:'f',name:'Συχνότητα τροχού 1 (t = 0)',sym:'f<sub>1</sub>',min:-4,max:4,step:0.05,unit:'Hz',free:true,zero:true},
+  eps:{key:'eps',name:'Γωνιακή επιτάχυνση τροχού 1',sym:'α<sub>γων,1</sub>',min:-10,max:10,step:0.1,unit:'rad/s²',free:true,zero:true},
+  zoom:{key:'zoom',name:'Μέγεθος σχήματος',sym:'×',min:0.5,max:1.8,step:0.05,unit:'',hmin:0.2,hmax:4},
+  vs:{key:'vs',name:'Μήκος διανυσμάτων',sym:'%',min:30,max:250,step:5,unit:'',hmin:5,hmax:1000},
+  vw:{key:'vw',name:'Πάχος διανυσμάτων',sym:'%',min:40,max:300,step:10,unit:'',hmin:10,hmax:1000},
+  pr:{key:'r',name:'Απόσταση από τον άξονα',sym:'ρ / R',min:0,max:1,step:0.05,unit:'',hmin:0,hmax:1,pt:true},
+  pb:{key:'b',name:'Αρχική γωνία',sym:'β',min:0,max:359,step:1,unit:'°',free:true,pt:true,wrap:true}
+};
+Object.keys(FIELDS).forEach(id=>{
+  const f=FIELDS[id];
+  $('fld_'+id).innerHTML='<div class="field"><label><span class="name">'+f.name+' <span class="fsym">'+f.sym+'</span></span></label><div class="inputs">'+
+    '<input type="range" id="sl_'+id+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" aria-label="'+f.name+'">'+
+    '<input type="number" id="nm_'+id+'" step="any" aria-label="'+f.name+' (τιμή)">'+
+    '<span class="unit">'+f.unit+'</span>'+(f.zero?'<button class="btn secondary small zero" type="button" id="z_'+id+'" title="Μηδενισμός">= 0</button>':'')+'</div></div>';
+  const target=()=>f.pt?S.pts[S.sel]:S;
+  const store=v=>{ const o=target(); if(!o) return; if(f.wrap) v=((v%360)+360)%360; o[f.key]=v; };
+  const on=e=>{
+    let v=parseFloat(String(e.target.value).replace(',','.')); if(!isFinite(v)) return;
+    if(e.target.type==='number'){ if(!f.free||f.hmin!=null||f.hmax!=null) v=clamp(v,f.hmin!=null?f.hmin:-Infinity,f.hmax!=null?f.hmax:Infinity); }
+    else v=clamp(v,f.min,f.max);
+    store(v);
+    const o=target(); const sv=o?o[f.key]:v;
+    $('sl_'+id).value=sv; if(document.activeElement!==$('nm_'+id)) $('nm_'+id).value=String(+(+sv).toFixed(2));
+  };
+  $('sl_'+id).addEventListener('input',on); $('nm_'+id).addEventListener('input',on);
+  if(f.zero) $('z_'+id).addEventListener('click',()=>{ store(0); $('sl_'+id).value=0; $('nm_'+id).value='0'; });
+});
+function setField(id,v){ $('sl_'+id).value=v; if(document.activeElement!==$('nm_'+id)) $('nm_'+id).value=String(+(+v).toFixed(2)); }
+function setSeg(el,v){ el.querySelectorAll('button').forEach(b=>{const on=b.dataset.v===String(v); b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));}); }
+
+$('modeSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b||b.dataset.v===S.mode) return;
+  const keep={belt:S.belt,frame:S.frame,speed:S.speed,zoom:S.zoom,vs:S.vs,vw:S.vw,tg:S.tg,labels:S.labels,rdv:S.rdv,trail:S.trail,loop:S.loop,stopRev:S.stopRev};
+  const pl=S.playing; S=freshState(b.dataset.v,keep); S.playing=pl; sync();
+});
+$('beltSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.belt=b.dataset.v; sync();}});
+$('frameSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.frame=b.dataset.v; sync();}});
+document.querySelectorAll('input[data-tg]').forEach(el=>el.addEventListener('change',()=>{ S.tg[el.dataset.tg]=el.checked; }));
+document.querySelectorAll('input[data-opt]').forEach(el=>el.addEventListener('change',()=>{ S[el.dataset.opt]=el.checked; }));
+
+/* ---------- ΣΗΜΕΙΑ: ένα επιλεγμένο κάθε φορά ---------- */
+function buildPtSel(){
+  $('ptSel').innerHTML=S.pts.length?S.pts.map((p,i)=>'<option value="'+i+'">Σημείο '+p.name+' (τροχός '+(p.w+1)+')</option>').join(''):'<option value="">Κανένα σημείο</option>';
+  S.sel=clamp(S.sel,0,Math.max(0,S.pts.length-1)); if(S.pts.length) $('ptSel').value=String(S.sel);
+  $('ptEdit').hidden=!S.pts.length; $('ptDel').disabled=!S.pts.length; $('ptAdd').disabled=S.pts.length>=8;
+  syncPt();
+}
+function syncPt(){
+  const p=S.pts[S.sel]; if(!p) return;
+  $('ptOn').checked=!!p.on; $('ptW').value=String(p.w);
+  setField('pr',p.r); setField('pb',Math.round(p.b));
+}
+$('ptSel').addEventListener('change',e=>{ S.sel=+e.target.value||0; syncPt(); });
+$('ptOn').addEventListener('change',e=>{ const p=S.pts[S.sel]; if(p) p.on=e.target.checked; });
+$('ptW').addEventListener('change',e=>{ const p=S.pts[S.sel]; if(p){ p.w=+e.target.value; buildPtSel(); } });
+$('ptAdd').addEventListener('click',()=>{
+  if(S.pts.length>=8) return;
+  const used=S.pts.map(p=>p.name), name=NAMES.find(n=>!used.includes(n));
+  S.pts.push({name,w:0,r:1,b:(S.pts.length*55+20)%360,on:true}); S.sel=S.pts.length-1; buildPtSel();
+});
+$('ptDel').addEventListener('click',()=>{ if(!S.pts.length) return; S.pts.splice(S.sel,1); S.sel=Math.max(0,S.sel-1); buildPtSel(); });
+
+/* ---------- καμβάς και βοηθητικά ---------- */
+const cv=$('cv'), ctx=cv.getContext('2d');
+let W=0,H=0,dpr=1,C={};
+const G={ppm:1,OX:0,OY:0};
+const scr=(x,y)=>[G.OX+x*G.ppm, G.OY-y*G.ppm];
+function colors(){
+  const cs=getComputedStyle(document.documentElement), g=n=>cs.getPropertyValue(n).trim();
+  return {bg:g('--st-track'),grid:g('--st-grid'),axis:g('--st-gridS'),ink:g('--st-text'),muted:g('--st-dim'),acc:g('--car'),
+    e1:g('--e1'),e2:g('--e2'),et:g('--et'),blue:g('--blue'),acc2:g('--c-th'),panel:g('--st-track')};
+}
+function resize(){
+  const r=cv.getBoundingClientRect();
+  dpr=window.devicePixelRatio||1; W=r.width; H=r.height;
+  if(W<2||H<2) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+}
+function line(x0,y0,x1,y1,color,w,dash){
+  ctx.beginPath(); ctx.setLineDash(dash||[]); ctx.lineWidth=w||1; ctx.strokeStyle=color;
+  ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]);
+}
+function text(t,x,y,color,align,base,font){
+  ctx.font=font||('600 13px '+FONT); ctx.textAlign=align||'center'; ctx.textBaseline=base||'middle';
+  ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle=C.bg; ctx.strokeText(t,x,y);
+  ctx.fillStyle=color; ctx.fillText(t,x,y);
+}
+function sym(main,sub,extra,x,y,color,align){
+  ctx.textBaseline='middle'; ctx.textAlign='left'; ctx.lineJoin='round'; ctx.lineWidth=4;
+  const f1='italic 600 15px '+FONT, f2='600 10px '+FONT, f3='600 12px '+FONT;
+  ctx.font=f1; const w1=ctx.measureText(main).width;
+  ctx.font=f2; const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3; const w3=extra?ctx.measureText(extra).width:0;
+  const tw=w1+w2+w3, x0=align==='left'?x:align==='right'?x-tw:x-tw/2;
+  const piece=(t,f,xx,yy)=>{ctx.font=f; ctx.strokeStyle=C.bg; ctx.strokeText(t,xx,yy); ctx.fillStyle=color; ctx.fillText(t,xx,yy);};
+  piece(main,f1,x0,y); if(sub) piece(sub,f2,x0+w1,y+4); if(extra) piece(extra,f3,x0+w1+w2,y);
+}
+function arrowHead(x1,y1,ux,uy,color,h){
+  ctx.beginPath(); ctx.fillStyle=color;
+  ctx.moveTo(x1,y1); ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45); ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);
+  ctx.closePath(); ctx.fill();
+}
+function arrow(x0,y0,x1,y1,color,w){
+  const L=Math.hypot(x1-x0,y1-y0); if(L<2) return;
+  const ux=(x1-x0)/L, uy=(y1-y0)/L, h=Math.min(8+w*1.1,L*0.5);
+  line(x0,y0,x1-ux*h*0.6,y1-uy*h*0.6,color,w);
+  arrowHead(x1,y1,ux,uy,color,h);
+}
+
+/* ---------- σώματα ---------- */
+function drawGear(w,N,phase,Rpx){
+  const pa=TAU/N, dT=Math.min(0.4*TAU*Rpx/N,0.25*Rpx), ri=Rpx-dT/2, ro=Rpx+dT/2;
+  const P=(r,a)=>[r*Math.sin(a),-r*Math.cos(a)];
+  ctx.save(); ctx.translate(...scr(w.cx,w.cy)); ctx.rotate(w.th);
+  ctx.beginPath();
+  for(let j=0;j<N;j++){
+    const c=phase+j*pa, pts=[P(ri,c-0.30*pa),P(ro,c-0.17*pa),P(ro,c+0.17*pa),P(ri,c+0.30*pa)];
+    if(j===0) ctx.moveTo(pts[0][0],pts[0][1]); else ctx.lineTo(pts[0][0],pts[0][1]);
+    ctx.lineTo(pts[1][0],pts[1][1]); ctx.lineTo(pts[2][0],pts[2][1]); ctx.lineTo(pts[3][0],pts[3][1]);
+    const n=Math.max(2,Math.ceil(0.4*pa/0.08)), a0=c+0.30*pa, a1=c+pa-0.30*pa;
+    for(let q=1;q<=n;q++){ const pp=P(ri,a0+(a1-a0)*q/n); ctx.lineTo(pp[0],pp[1]); }
+  }
+  ctx.closePath();
+  ctx.fillStyle=w.i===0?C.blue:C.e2; ctx.globalAlpha=0.16; ctx.fill(); ctx.globalAlpha=1;
+  ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.lineJoin='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,Rpx,0,7); ctx.lineWidth=1; ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4; line(0,0,ri*0.8*Math.sin(a),-ri*0.8*Math.cos(a),C.muted,2); }
+  ctx.beginPath(); ctx.arc(0,0,ri*0.82,0,7); ctx.lineWidth=1.2; ctx.strokeStyle=C.muted; ctx.stroke();
+  line(0,0,0,-ri*0.82,C.acc,2.5);
+  ctx.beginPath(); ctx.arc(0,0,Math.max(4,Rpx*0.07),0,7); ctx.fillStyle=C.bg; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.restore();
+}
+function drawPulley(w,Rpx){
+  ctx.save(); ctx.translate(...scr(w.cx,w.cy)); ctx.rotate(w.th);
+  ctx.beginPath(); ctx.arc(0,0,Rpx,0,7); ctx.fillStyle=w.i===0?C.blue:C.e2; ctx.globalAlpha=0.16; ctx.fill(); ctx.globalAlpha=1;
+  ctx.lineWidth=3; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,Rpx*0.8,0,7); ctx.lineWidth=1.2; ctx.strokeStyle=C.muted; ctx.stroke();
+  for(let i=0;i<6;i++){ const a=i*Math.PI/3+Math.PI/6; line(0,0,Rpx*0.8*Math.sin(a),-Rpx*0.8*Math.cos(a),C.muted,2.5); }
+  line(0,0,0,-Rpx*0.8,C.acc,2.5);
+  ctx.beginPath(); ctx.arc(0,0,Math.max(4,Rpx*0.1),0,7); ctx.fillStyle=C.bg; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.restore();
+}
+function drawTire(w,Rpx){
+  ctx.save(); ctx.translate(...scr(w.cx,w.cy)); ctx.rotate(w.th);
+  const tw=Math.max(4,Rpx*0.12);
+  ctx.beginPath(); ctx.arc(0,0,Rpx,0,7); ctx.fillStyle=C.bg; ctx.fill();
+  ctx.beginPath(); ctx.arc(0,0,Rpx-tw/2,0,7); ctx.lineWidth=tw; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.beginPath(); ctx.arc(0,0,Rpx-tw,0,7); ctx.fillStyle=w.i===0?C.blue:C.e2; ctx.globalAlpha=0.14; ctx.fill(); ctx.globalAlpha=1;
+  ctx.lineWidth=1.5; ctx.strokeStyle=C.muted; ctx.stroke();
+  for(let i=0;i<5;i++){ const a=i*TAU/5+Math.PI/5; line(0,0,(Rpx-tw)*Math.sin(a),-(Rpx-tw)*Math.cos(a),C.muted,3); }
+  line(0,0,0,-(Rpx-tw),C.acc,2.5);
+  ctx.beginPath(); ctx.arc(0,0,Math.max(4,Rpx*0.1),0,7); ctx.fillStyle=C.bg; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.restore();
+}
+
+/* ιμάντας: πολύγωνο σε m */
+function arcPts(cx,cy,R,a0,a1,dir){
+  if(dir<0){ while(a1>a0) a1-=TAU; } else { while(a1<a0) a1+=TAU; }
+  const n=Math.max(8,Math.ceil(Math.abs(a1-a0)/0.08)), out=[];
+  for(let i=0;i<=n;i++){ const a=a0+(a1-a0)*i/n; out.push([cx+R*Math.cos(a),cy+R*Math.sin(a)]); }
+  return out;
+}
+function beltPath(){
+  const c=centers(), R1=RM(0), R2=RM(1), d=dEff(), P=[];
+  const pt=(cx,cy,R,a)=>[cx+R*Math.cos(a),cy+R*Math.sin(a)];
+  if(S.belt==='open'){
+    const al=Math.asin(clamp((R1-R2)/d,-0.999,0.999)), an=Math.PI/2-al;
+    P.push(pt(c[0][0],c[0][1],R1,an));
+    P.push(...arcPts(c[1][0],c[1][1],R2,an,-an,-1));
+    P.push(...arcPts(c[0][0],c[0][1],R1,-an,an,-1));
+  } else {
+    const ga=Math.asin(clamp((R1+R2)/d,-0.999,0.999)), an=Math.PI/2-ga;
+    P.push(pt(c[0][0],c[0][1],R1,an));
+    P.push(...arcPts(c[1][0],c[1][1],R2,an+Math.PI,Math.PI-an,1));
+    P.push(...arcPts(c[0][0],c[0][1],R1,-an,an,-1));
+  }
+  return P;
+}
+function drawBelt(Wd){
+  const P=beltPath().map(q=>scr(q[0],q[1]));
+  ctx.beginPath(); P.forEach((q,i)=>{ if(i===0) ctx.moveTo(q[0],q[1]); else ctx.lineTo(q[0],q[1]); }); ctx.closePath();
+  ctx.lineWidth=7; ctx.strokeStyle=C.axis; ctx.lineJoin='round'; ctx.stroke();
+  const cum=[0]; for(let i=1;i<=P.length;i++){ const a=P[i-1], b=P[i%P.length]; cum.push(cum[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1])); }
+  const Lt=cum[P.length], off=Wd.ws[0].th*Wd.ws[0].R*G.ppm, n=Math.max(12,Math.round(Lt/38));
+  for(let i=0;i<n;i++){
+    let s=((i*Lt/n+off)%Lt+Lt)%Lt, k=1; while(k<cum.length-1&&cum[k]<s) k++;
+    const a=P[(k-1)%P.length], b=P[k%P.length], seg=cum[k]-cum[k-1]||1, u=(s-cum[k-1])/seg;
+    const x=a[0]+(b[0]-a[0])*u, y=a[1]+(b[1]-a[1])*u, dx=(b[0]-a[0])/seg, dy=(b[1]-a[1])/seg;
+    line(x-dy*6,y+dx*6,x+dy*6,y-dx*6,C.ink,2.5);
+  }
+}
+
+/* ---------- όχημα: έδαφος και αμάξωμα ---------- */
+function drawCarScene(Wd){
+  const R1=RM(0), R2=RM(1), c=centers(), y0=scr(0,0)[1];
+  ctx.globalAlpha=0.14; ctx.fillStyle=C.axis; ctx.fillRect(0,y0,W,Math.max(0,H-y0)); ctx.globalAlpha=1;
+  const steps=[0.1,0.25,0.5,1,2,5,10,20,50,100,200,500,1000];
+  const step=steps.find(x=>x*G.ppm>=90)||1000, s=Wd.s;
+  const gMin=s+(0-G.OX)/G.ppm, gMax=s+(W-G.OX)/G.ppm;
+  for(let i=Math.floor(gMin/step);i<=Math.ceil(gMax/step);i++){
+    const gx=i*step, px=scr(gx-s,0)[0];
+    for(let j=1;j<5;j++){ const q=scr(gx+j*step/5-s,0)[0]; line(q,y0,q-5,y0+9,C.axis,1); }
+    line(px,y0,px,y0+15,C.axis,2);
+    const lab=(step>=1?String(Math.round(gx)):num(gx,1))+' m';
+    text(lab,px,y0+30,C.muted,'center','middle','500 11px '+FONT);
+  }
+  line(0,y0,W,y0,C.axis,2.5);
+  const hy=Math.max(R1,R2), P=(x,y)=>scr(x,y);
+  const bx0=c[0][0]-R1*0.85, bx1=c[1][0]+R2*0.85, by0=hy*0.85, by1=hy*1.65;
+  const a=P(bx0,by0), b=P(bx1,by1);
+  ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.lineTo(a[0],b[1]); ctx.closePath();
+  ctx.fillStyle=C.acc; ctx.globalAlpha=0.2; ctx.fill(); ctx.globalAlpha=1; ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.stroke();
+  const m=(c[0][0]+c[1][0])/2, cw=(bx1-bx0)*0.28;
+  const q=[P(m-cw*1.3,by1),P(m-cw*0.8,hy*2.1),P(m+cw*0.8,hy*2.1),P(m+cw*1.3,by1)];
+  ctx.beginPath(); ctx.moveTo(q[0][0],q[0][1]); q.slice(1).forEach(t=>ctx.lineTo(t[0],t[1]));
+  ctx.fillStyle=C.blue; ctx.globalAlpha=0.16; ctx.fill(); ctx.globalAlpha=1; ctx.stroke();
+  const h1=P(c[0][0],c[0][1]), h2=P(c[1][0],c[1][1]);
+  line(h1[0],h1[1],h2[0],h2[1],C.ink,3);
+}
+
+/* ---------- διανύσματα: σταθερή κλίμακα, κόβονται αν βγαίνουν εκτός σχήματος ---------- */
+const VD={
+  v:[{key:'v',tg:'v',n:'υ',sub:'',col:'e1'}],
+  a:[{key:'ac',tg:'ac',n:'α',sub:'κ',col:'blue'},{key:'at',tg:'at',n:'α',sub:'επ',col:'e2'},{key:'atot',tg:'atot',n:'α',sub:'ολ',col:'et'}]
+};
+function kindScale(kind){
+  const Rm=Math.max(RM(0),RM(1)), Rpx=Rm*G.ppm;
+  const wr=Math.abs(TAU*S.f)+Math.abs(S.eps), car=S.mode==='car'&&S.frame==='ground';
+  const ref=kind==='v'?Math.max(wr*Rm*(car?1.6:1),0.3):Math.max(wr*wr*Rm,Math.abs(S.eps)*Rm*2,0.5);
+  return 1.1*Rpx/ref*S.vs/100;
+}
+function drawVec(O,vv,sc,d,name){
+  let sv=[vv[0]*sc,-vv[1]*sc], Lf=Math.hypot(sv[0],sv[1]); if(Lf<3) return;
+  const cap=Math.min(W,H)*0.5, cut=Lf>cap;
+  if(cut){ sv=[sv[0]*cap/Lf,sv[1]*cap/Lf]; Lf=cap; }
+  const w=3.2*S.vw/100, col=C[d.col];
+  arrow(O[0],O[1],O[0]+sv[0],O[1]+sv[1],col,w);
+  const ux=sv[0]/Lf, uy=sv[1]/Lf;
+  if(cut){
+    const mx=O[0]+sv[0]*0.55, my=O[1]+sv[1]*0.55;
+    for(const o of [-4,4]) line(mx+ux*o-uy*8,my+uy*o+ux*8,mx+ux*o+uy*8,my+uy*o-ux*8,C.bg,w+3), line(mx+ux*o-uy*7,my+uy*o+ux*7,mx+ux*o+uy*7,my+uy*o-ux*7,col,2);
+  }
+  if(S.labels&&Lf>=8) sym(d.n,(d.sub?d.sub+',':'')+name,'',O[0]+sv[0]+ux*11,O[1]+sv[1]+uy*11,col,ux>0.35?'left':ux<-0.35?'right':'center');
+}
+function drawOmega(w,Rpx){
+  const o=scr(w.cx,w.cy), rr=Math.max(0.32*Rpx,14), sg=w.om>=0?1:-1, a0=-0.3*Math.PI*sg;
+  if(Math.abs(w.om)<1e-6) return;
+  const lw=3.2*S.vw/100, a1=a0+sg*1.5*Math.PI;
+  ctx.beginPath(); ctx.arc(o[0],o[1],rr,a0,a1,sg<0); ctx.lineWidth=lw; ctx.strokeStyle=C.acc2; ctx.stroke();
+  const ex=o[0]+rr*Math.cos(a1), ey=o[1]+rr*Math.sin(a1), tx=-Math.sin(a1)*sg, ty=Math.cos(a1)*sg;
+  arrowHead(ex+tx*5,ey+ty*5,tx,ty,C.acc2,10+lw);
+  if(S.labels){
+    const am=(a0+a1)/2, lx=o[0]+(rr+17)*Math.cos(am), ly=o[1]+(rr+17)*Math.sin(am);
+    sym('ω',String(w.i+1),'',lx,ly,C.acc2,'center');
+  }
+}
+
+/* ---------- κύρια σχεδίαση ---------- */
+const MODE_NAME={gear:'Γρανάζια σε επαφή',belt:'Τροχοί με ιμάντα',car:'Τροχοί οχήματος'};
+function draw(){
+  if(W<2||H<2) return;
+  C=colors();
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+  const bx=sceneBox(), bw=bx.x1-bx.x0, bh=bx.y1-bx.y0;
+  G.ppm=Math.min(W*0.8/bw,H*0.62/bh)*S.zoom;
+  G.OX=W/2-(bx.x0+bx.x1)/2*G.ppm; G.OY=H/2+(bx.y0+bx.y1)/2*G.ppm;
+  const Wd=wheels(S.t), car=S.mode==='car';
+  const Rpx=[Wd.ws[0].R*G.ppm,Wd.ws[1].R*G.ppm];
+
+  if(S.mode==='belt') drawBelt(Wd);
+  if(car) drawCarScene(Wd);
+  if(S.mode==='gear'){
+    const N1=gearN(0), N2=gearN(1);
+    drawGear(Wd.ws[0],N1,0,Rpx[0]);
+    drawGear(Wd.ws[1],N2,1.5*Math.PI+(N1/N2)*Math.PI/2-Math.PI/N2,Rpx[1]);
+    const cp=scr(Wd.ws[0].R,0); ctx.beginPath(); ctx.arc(cp[0],cp[1],3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
+  } else if(S.mode==='belt'){ drawPulley(Wd.ws[0],Rpx[0]); drawPulley(Wd.ws[1],Rpx[1]); }
+  else { drawTire(Wd.ws[0],Rpx[0]); drawTire(Wd.ws[1],Rpx[1]); }
+
+  const pks=S.pts.map(p=>pointKin(p,Wd));
+
+  if(S.trail){
+    S.pts.forEach(p=>{
+      if(!p.on) return;
+      const om=Math.abs(Wd.ws[p.w].om), Tp=om>1e-3?clamp(TAU/om,0.3,TMAX):4, Tw=Math.min(S.t,Tp);
+      if(Tw<0.01) return;
+      ctx.beginPath();
+      for(let n=0;n<=160;n++){
+        const tau=S.t-Tw+Tw*n/160, Wt=wheels(tau), q=pointKin(p,Wt), w0=Wt.ws[p.w];
+        const dx=(car&&S.frame==='ground')?Wt.s-Wd.s:0;
+        const P=scr(w0.cx+dx+q.pos[0],w0.cy+q.pos[1]);
+        if(n===0) ctx.moveTo(P[0],P[1]); else ctx.lineTo(P[0],P[1]);
+      }
+      ctx.lineWidth=2; ctx.strokeStyle=C.acc; ctx.globalAlpha=0.75; ctx.stroke(); ctx.globalAlpha=1;
+    });
+  }
+  if(S.tg.w) Wd.ws.forEach((w,i)=>drawOmega(w,Rpx[i]));
+  const sc={v:kindScale('v'),a:kindScale('a')};
+  S.pts.forEach((p,i)=>{
+    if(!p.on) return;
+    const w=Wd.ws[p.w], O=scr(w.cx+pks[i].pos[0],w.cy+pks[i].pos[1]);
+    ['v','a'].forEach(kind=>VD[kind].forEach(d=>{ if(S.tg[d.tg]) drawVec(O,pks[i][d.key],sc[kind],d,p.name); }));
+  });
+  S.pts.forEach((p,i)=>{
+    if(!p.on) return;
+    const w=Wd.ws[p.w], o=scr(w.cx,w.cy), q=scr(w.cx+pks[i].pos[0],w.cy+pks[i].pos[1]);
+    const dx=q[0]-o[0], dy=q[1]-o[1], L=Math.hypot(dx,dy);
+    ctx.beginPath(); ctx.arc(q[0],q[1],i===S.sel?8:6.5,0,7); ctx.fillStyle=C.acc; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=i===S.sel?C.ink:C.bg; ctx.stroke();
+    const ox=L>2?dx/L:0, oy=L>2?dy/L:-1;
+    text(p.name,q[0]+ox*17,q[1]+oy*17,C.ink,'center','middle','700 14px '+FONT);
+  });
+  Wd.ws.forEach((w,i)=>{
+    const o=scr(w.cx,w.cy); ctx.beginPath(); ctx.arc(o[0],o[1],3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
+    text(String(i+1),o[0]-13,o[1]-12,C.muted,'center','middle','700 12px '+FONT);
+  });
+  text(MODE_NAME[S.mode]+(car?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):''),46,20,C.muted,'left','middle','600 12px '+FONT);
+
+  /* τιμές πάνω δεξιά */
+  if(S.rdv){
+    const w1=Wd.ws[0], w2=Wd.ws[1], rows=[];
+    rows.push([C.acc2,'ω','1',' = '+num(w1.om,2)+' rad/s,  f₁ = '+num(w1.om/TAU,2)+' Hz']);
+    rows.push([C.acc2,'ω','2',' = '+num(w2.om,2)+' rad/s,  f₂ = '+num(w2.om/TAU,2)+' Hz']);
+    rows.push([C.acc2,'α','γων,1',' = '+num(w1.eps,2)+' rad/s²']);
+    rows.push([C.acc2,'α','γων,2',' = '+num(w2.eps,2)+' rad/s²']);
+    rows.push([C.e1,(car?'υ οχήματος = '+num(Wd.v,2):S.mode==='gear'?'υ επαφής = '+num(Math.abs(w1.om)*w1.R,2):'υ ιμάντα = '+num(Math.abs(w1.om)*w1.R,2))+' m/s']);
+    const k=pks[S.sel], p=S.pts[S.sel];
+    if(k&&p){
+      rows.push([C.ink,'Σημείο '+p.name+' (τροχός '+(p.w+1)+', ρ/R = '+num(p.r,2)+')']);
+      rows.push([C.e1,'υ','',' = '+num(mag(k.v),2)+' m/s']);
+      rows.push([C.blue,'α','κ',' = '+num(mag(k.ac),2)+' m/s²']);
+      rows.push([C.e2,'α','επ',' = '+num(mag(k.at),2)+' m/s²']);
+      rows.push([C.et,'α','ολ',' = '+num(mag(k.atot),2)+' m/s²']);
+    }
+    rows.forEach((r,i)=>{ const y=20+i*17; if(r.length===2) text(r[1],W-12,y,r[0],'right','middle','600 12px '+FONT); else sym(r[1],r[2],r[3],W-12,y,r[0],'right'); });
+  }
+  readouts(Wd,pks);
+}
+
+/* ---------- μετρήσεις ---------- */
+function tile(sym,name,val,col){
+  return '<div class="readout"><div class="lbl">'+name+' <span class="lbl-sym">'+sym+'</span></div><div class="val mono"'+(col?' style="color:'+col+'"':'')+'>'+val+'</div></div>';
+}
+let lastRO='', lastDer='';
+function readouts(Wd,pks){
+  const w1=Wd.ws[0], w2=Wd.ws[1], car=S.mode==='car';
+  let h=tile('t','Χρόνος',num(S.t,3)+' s');
+  h+=tile('f₁','Συχνότητα',num(w1.om/TAU,3)+' Hz')+tile('ω₁','Γωνιακή ταχύτητα',num(w1.om,3)+' rad/s','var(--accent2)')+tile('α<sub>γων,1</sub>','Γωνιακή επιτάχυνση',num(w1.eps,3)+' rad/s²');
+  h+=tile('f₂','Συχνότητα',num(w2.om/TAU,3)+' Hz')+tile('ω₂','Γωνιακή ταχύτητα',num(w2.om,3)+' rad/s','var(--accent2)')+tile('α<sub>γων,2</sub>','Γωνιακή επιτάχυνση',num(w2.eps,3)+' rad/s²');
+  if(car) h+=tile('υ','Ταχύτητα οχήματος',num(Wd.v,3)+' m/s','var(--e1)')+tile('α','Επιτάχυνση οχήματος',num(Wd.a,3)+' m/s²','var(--e1)');
+  else h+=tile('υ','Ταχύτητα περιφέρειας',num(Math.abs(w1.om)*w1.R,3)+' m/s','var(--e1)');
+  S.pts.forEach(p=>{ if(!p.on) return; const k=pks[S.pts.indexOf(p)];
+    h+=tile('υ'+p.name,'Ταχύτητα',num(mag(k.v),3)+' m/s','var(--e1)');
+    h+=tile('ακ,'+p.name,'Κεντρομόλος',num(mag(k.ac),3)+' m/s²','var(--blue)');
+    h+=tile('αεπ,'+p.name,'Επιτρόχια',num(mag(k.at),3)+' m/s²','var(--e2)');
+    h+=tile('αολ,'+p.name,'Συνολική',num(mag(k.atot),3)+' m/s²','var(--et)');
+  });
+  if(h!==lastRO){ $('readouts').innerHTML=h; lastRO=h; }
+  let d='';
+  const f=n=>num(n,3), r12=RM(0)/RM(1);
+  if(S.mode==='gear') d='N₁ = '+gearN(0)+' οδόντες, N₂ = '+gearN(1)+' οδόντες<br>ω₂/ω₁ = −R₁/R₂ = <b>'+f(-r12)+'</b><br>υ επαφής = ω₁R₁ = |ω₂|R₂ = <b>'+f(Math.abs(w1.om)*w1.R)+' m/s</b>';
+  else if(S.mode==='belt') d='ω₂/ω₁ = '+(S.belt==='cross'?'−':'+')+'R₁/R₂ = <b>'+f(ratio())+'</b><br>υ ιμάντα = ω₁R₁ = |ω₂|R₂ = <b>'+f(Math.abs(w1.om)*w1.R)+' m/s</b>';
+  else d='ω₂/ω₁ = R₁/R₂ = <b>'+f(r12)+'</b><br>υ οχήματος = ω₁R₁ = ω₂R₂ = <b>'+f(Wd.v)+' m/s</b><br>α οχήματος = α<sub>γων,1</sub>R₁ = α<sub>γων,2</sub>R₂ = <b>'+f(Wd.a)+' m/s²</b>';
+  d+='<br>T₁ = <b>'+(Math.abs(w1.om)>1e-6?f(TAU/Math.abs(w1.om))+' s':'—')+'</b>, T₂ = <b>'+(Math.abs(w2.om)>1e-6?f(TAU/Math.abs(w2.om))+' s':'—')+'</b>';
+  if(d!==lastDer){ $('derived').innerHTML=d; lastDer=d; }
+}
+
+/* ---------- υπολογισμός ---------- */
+function gi(k,v){ return '<div class="gi"><span class="k">'+k+'</span>'+v+'</div>'; }
+function block(t,b){ return '<div class="sol-block"><h4>'+t+'</h4>'+b+'</div>'; }
+function ln(t){ return '<div class="line">'+t+'</div>'; }
+function solution(){
+  const p=S.pts[S.sel]||S.pts[0];
+  if(!p) return '<div class="sol-note">Πρόσθεσε ένα σημείο σε κάποιον τροχό.</div>';
+  const Wd=wheels(S.t), k=pointKin(p,Wd), w=k.w, f=n=>num(n,3), R=(x,u)=>'<span class="res">'+f(x)+' '+u+'</span>', i=w.i+1;
+  let h=block('Δεδομένα τη στιγμή t = '+f(S.t)+' s','<div class="givens-grid">'+
+    gi('R<sub>'+i+'</sub>',f(w.R*100)+' cm')+gi('ρ = '+f(p.r)+'·R<sub>'+i+'</sub>',f(k.rho*100)+' cm')+
+    gi('f<sub>'+i+'</sub>',f(w.om/TAU)+' Hz')+gi('ω<sub>'+i+'</sub>',f(w.om)+' rad/s')+gi('α<sub>γων,'+i+'</sub>',f(w.eps)+' rad/s²')+'</div>'+
+    '<div class="sol-note">Θετική φορά περιστροφής: δεξιόστροφη. Η ταχύτητα είναι εφαπτομενική, η κεντρομόλος δείχνει προς τον άξονα και η επιτρόχια είναι εφαπτομενική.</div>');
+  let rel;
+  if(S.mode==='gear') rel=ln('Στο σημείο επαφής: υ<sub>1</sub> = υ<sub>2</sub> ⇒ |ω<sub>1</sub>|R<sub>1</sub> = |ω<sub>2</sub>|R<sub>2</sub>')+ln('f<sub>2</sub> = f<sub>1</sub>·R<sub>1</sub>/R<sub>2</sub> = '+R(Math.abs(Wd.ws[1].om)/TAU,'Hz')+' (αντίθετη φορά)')+ln('Εφαπτομενική επιτάχυνση επαφής: |α<sub>γων,1</sub>|R<sub>1</sub> = |α<sub>γων,2</sub>|R<sub>2</sub> = '+R(Math.abs(S.eps)*Wd.ws[0].R,'m/s²'));
+  else if(S.mode==='belt') rel=ln('Ο ιμάντας δεν ολισθαίνει: υ<sub>ιμ</sub> = ω<sub>1</sub>R<sub>1</sub> = '+R(Math.abs(Wd.ws[0].om)*Wd.ws[0].R,'m/s')+' = |ω<sub>2</sub>|R<sub>2</sub>')+ln('f<sub>2</sub> = f<sub>1</sub>·R<sub>1</sub>/R<sub>2</sub> = '+R(Math.abs(Wd.ws[1].om)/TAU,'Hz')+(S.belt==='cross'?' (αντίθετη φορά)':' (ίδια φορά)'));
+  else rel=ln('Κύλιση χωρίς ολίσθηση: υ<sub>οχ</sub> = ω<sub>1</sub>R<sub>1</sub> = ω<sub>2</sub>R<sub>2</sub> = '+R(Wd.v,'m/s'))+ln('f<sub>2</sub> = f<sub>1</sub>·R<sub>1</sub>/R<sub>2</sub> = '+R(Wd.ws[1].om/TAU,'Hz'))+ln('α<sub>οχ</sub> = α<sub>γων,1</sub>R<sub>1</sub> = '+R(Wd.a,'m/s²'));
+  h+=block('Σχέση των δύο τροχών',rel);
+  let vb=ln('υ = ω·ρ = '+f(w.om)+' · '+f(k.rho)+' = '+R(Math.abs(w.om)*k.rho,'m/s')+' (εφαπτομενική)');
+  if(k.gr) vb+=ln('Ως προς το έδαφος: υ<sub>ολ</sub> = υ<sub>οχ</sub> + υ<sub>γρ</sub>')+ln('υ<sub>ολ,x</sub> = '+f(k.v[0])+' m/s, υ<sub>ολ,y</sub> = '+f(k.v[1])+' m/s ⇒ υ<sub>ολ</sub> = '+R(mag(k.v),'m/s'));
+  h+=block('Ταχύτητα του σημείου '+p.name,vb);
+  let ab=ln('α<sub>κ</sub> = ω²·ρ = '+f(w.om)+'² · '+f(k.rho)+' = '+R(w.om*w.om*k.rho,'m/s²'))+
+    ln('α<sub>επ</sub> = α<sub>γων</sub>·ρ = '+f(w.eps)+' · '+f(k.rho)+' = '+R(Math.abs(w.eps*k.rho),'m/s²'))+
+    ln('α<sub>ολ</sub> = √(α<sub>κ</sub>² + α<sub>επ</sub>²) = '+R(Math.hypot(w.om*w.om*k.rho,w.eps*k.rho),'m/s²'));
+  if(k.gr) ab+=ln('Ως προς το έδαφος προστίθεται και η α<sub>οχ</sub> = '+f(Wd.a)+' m/s²: α<sub>ολ,x</sub> = '+f(k.atot[0])+', α<sub>ολ,y</sub> = '+f(k.atot[1])+' ⇒ α<sub>ολ</sub> = '+R(mag(k.atot),'m/s²'));
+  const sub=k.gr?'':'';
+  h+=block('Επιτάχυνση του σημείου '+p.name,ab+sub);
+  if(k.rho<1e-9) h+='<div class="sol-note">Στον άξονα (ρ = 0) οι γραμμικές ταχύτητες και επιταχύνσεις λόγω περιστροφής είναι μηδέν.</div>';
+  return h;
+}
+
+/* ---------- ΠΑΡΑΔΕΙΓΜΑΤΑ ΑΠΟ ΤΗΝ ΚΑΘΗΜΕΡΙΝΗ ΖΩΗ ---------- */
+const EX={
+  gear:['<b>Κιβώτιο ταχυτήτων αυτοκινήτου:</b> στην επαφή των οδοντωτών τροχών η γραμμική ταχύτητα είναι ίδια, άρα ω₁R₁ = ω₂R₂. Ο μεγαλύτερος τροχός στρέφεται πιο αργά.',
+    '<b>Ρολόι:</b> το γρανάζι του λεπτοδείκτη κάνει 12 στροφές για κάθε στροφή του ωροδείκτη, γιατί οι συχνότητες είναι ανάλογες με τους αριθμούς οδόντων N₁/N₂.',
+    '<b>Μίξερ χειρός:</b> μεγάλο γρανάζι με χειρολαβή κινεί μικρό γρανάζι, και το χτυπητήρι γυρίζει πολύ πιο γρήγορα από το χέρι σου.'],
+  belt:['<b>Ποδήλατο:</b> η αλυσίδα έχει ίδια γραμμική ταχύτητα στο γρανάζι του πετάλιου και στο πίσω γρανάζι. Με μικρό πίσω γρανάζι ο τροχός κάνει περισσότερες στροφές ανά πεταλιά.',
+    '<b>Κινητήρας αυτοκινήτου:</b> ο ιμάντας συνδέει τον στρόφαλο με τον εναλλάκτη και την αντλία νερού. Ο μικρότερος τροχαλίας περιστρέφεται ταχύτερα.',
+    '<b>Μεταφορική ταινία:</b> η ταχύτητα της ταινίας είναι υ = ωR του κυλίνδρου που την κινεί, και είναι ίδια σε όλα τα σημεία της.'],
+  car:['<b>Ταχύμετρο:</b> μετράει στροφές του τροχού και υπολογίζει υ = ωR. Αν βάλεις ελαστικά με μεγαλύτερη ακτίνα, η πραγματική ταχύτητα είναι μεγαλύτερη από την ένδειξη.',
+    '<b>Τρακτέρ:</b> οι μικροί μπροστινοί και οι μεγάλοι πίσω τροχοί έχουν την ίδια ταχύτητα κύλισης, άρα διαφορετική συχνότητα: f₁R₁ = f₂R₂.',
+    '<b>Λάσπη και νερό:</b> το σημείο επαφής ακινητεί στιγμιαία ως προς το έδαφος, ενώ η κορυφή του τροχού κινείται με 2υ. Γι\' αυτό οι σταγόνες εκτοξεύονται από τα πάνω μέρη του τροχού.',
+    '<b>Βαλβίδα ποδηλάτου:</b> ένα σημείο της περιφέρειας διαγράφει κυκλοειδή ως προς το έδαφος. Δοκίμασε το «Ίχνος τροχιάς».']
+};
+const EXT={gear:'Γρανάζια',belt:'Ιμάντες',car:'Τροχοί οχήματος'};
+function examples(){
+  return '<h3>Στην καθημερινή ζωή: '+EXT[S.mode].toLowerCase()+'</h3><ul>'+EX[S.mode].map(t=>'<li>'+t+'</li>').join('')+'</ul>';
+}
+
+/* ---------- ΕΛΕΓΧΟΣ ΚΙΝΗΣΗΣ ---------- */
+function setPlaying(v){ S.playing=v; $('playBtn').textContent=v?'❚❚ Παύση':'▶ Εκκίνηση'; }
+$('playBtn').addEventListener('click',()=>{ if(!S.playing&&S.t>=TMAX) S.t=0; setPlaying(!S.playing); });
+$('resetBtn').addEventListener('click',()=>{ S.t=0; setPlaying(false); });
+$('loopChk').addEventListener('change',e=>{S.loop=e.target.checked;});
+$('stopRev').addEventListener('change',e=>{S.stopRev=e.target.checked;});
+$('speedSel').addEventListener('change',e=>{S.speed=+e.target.value;});
+$('sl_time').max=TMAX; $('sl_time').addEventListener('input',e=>{S.t=+e.target.value; setPlaying(false);});
+$('resetAll').addEventListener('click',()=>{ S=freshState(S.mode,{belt:S.belt}); sync(); });
+
+/* ---------- ΣΥΡΣΙΜΟ ΣΗΜΕΙΩΝ ---------- */
+let drag=null;
+function cpos(e){ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+function hitPt(q){
+  const Wd=wheels(S.t); let best=-1,bd=1e9;
+  S.pts.forEach((p,i)=>{
+    if(!p.on) return;
+    const k=pointKin(p,Wd), P=scr(k.w.cx+k.pos[0],k.w.cy+k.pos[1]), d=Math.hypot(q[0]-P[0],q[1]-P[1]);
+    if(d<=16&&d<bd){best=i;bd=d;}
+  });
+  return best;
+}
+cv.addEventListener('pointerdown',e=>{
+  const i=hitPt(cpos(e)); if(i<0) return;
+  drag=i; S.sel=i; $('ptSel').value=String(i); syncPt(); try{cv.setPointerCapture(e.pointerId);}catch(_){}
+});
+cv.addEventListener('pointermove',e=>{
+  const q=cpos(e);
+  if(drag===null){ cv.style.cursor=hitPt(q)>=0?'grab':'default'; return; }
+  cv.style.cursor='grabbing';
+  const p=S.pts[drag], w=wheels(S.t).ws[p.w];
+  const dx=(q[0]-G.OX)/G.ppm-w.cx, dy=-(q[1]-G.OY)/G.ppm-w.cy;
+  let r=Math.min(1,Math.hypot(dx,dy)/w.R); if(r>0.94) r=1;
+  p.r=Math.round(r*100)/100;
+  p.b=((Math.atan2(dx,dy)-w.th)*180/Math.PI%360+360)%360;
+  syncPt();
+});
+const endDrag=()=>{ drag=null; cv.style.cursor='default'; };
+cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
+
+function sync(){
+  setSeg($('modeSeg'),S.mode); setSeg($('beltSeg'),S.belt); setSeg($('frameSeg'),S.frame);
+  $('blkBelt').hidden=S.mode!=='belt'; $('blkFrame').hidden=S.mode!=='car';
+  $('blkD').hidden=S.mode!=='belt'; $('blkL').hidden=S.mode!=='car';
+  ['R1','R2','d','L','f','eps','zoom','vs','vw'].forEach(id=>setField(id,S[FIELDS[id].key]));
+  $('speedSel').value=String(S.speed); $('stopRev').checked=!!S.stopRev; $('loopChk').checked=S.loop;
+  document.querySelectorAll('input[data-tg]').forEach(el=>{ el.checked=!!S.tg[el.dataset.tg]; });
+  document.querySelectorAll('input[data-opt]').forEach(el=>{ el.checked=!!S[el.dataset.opt]; });
+  setPlaying(S.playing); lastRO=''; lastDer='';
+  buildPtSel(); $('exBody').innerHTML=examples();
+}
+
+/* ---------- ΒΡΟΧΟΣ ---------- */
+let last=performance.now(), solTick=0;
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(S.playing){
+    let tNew=S.t+dt*S.speed, stopNow=false;
+    if(S.stopRev){
+      const n0=Math.floor(periodDone(S.t)+1e-6), n1=Math.floor(periodDone(tNew)+1e-6);
+      if(n1!==n0){
+        const target=Math.max(n0,n1); let lo=S.t, hi=tNew;
+        for(let i=0;i<40;i++){ const mid=(lo+hi)/2; if(Math.floor(periodDone(mid)+1e-9)>=target===(n1>n0)) hi=mid; else lo=mid; }
+        tNew=hi; stopNow=true;
+      }
+    }
+    if(!stopNow&&tNew>=TMAX){ if(S.loop) tNew=0; else { tNew=TMAX; setPlaying(false); } }
+    S.t=tNew; if(stopNow) setPlaying(false);
+  }
+  if(document.activeElement!==$('sl_time')) $('sl_time').value=S.t;
+  $('tOut').textContent='t = '+num(S.t)+' s';
+  draw();
+  const sp=$('solBody').closest('.panel');
+  if(sp&&!sp.hidden&&now-solTick>120){ solTick=now; $('solBody').innerHTML=solution(); }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- ΣΥΜΠΤΥΞΗ / ΜΕΓΙΣΤΟΠΟΙΗΣΗ ---------- */
+document.addEventListener('click',e=>{
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    document.body.classList.toggle('hasmax',on);
+    document.querySelectorAll('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';});
+    setTimeout(resize,60);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=document.querySelector('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');setTimeout(resize,60);}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('playBtn').click();}
+});
+
+/* ---------- SKINS (ίδια με την προσομοίωση αυτοκινήτου) ---------- */
+const SKINS=[["blueprint", "DarkBlue", "Βασικά"], ["classic", "DarkBlack", "Βασικά"], ["minimal", "LightOrange", "Βασικά"], ["pw", "Λευκό", "Βασικά"], ["gr", "GreyO", "Βασικά"], ["gr2", "GreyB", "Βασικά"], ["rt3", "Δεξί 3", "Βασικά"], ["n01", "01 · Λευκό · μπλε", "Νέοι συνδυασμοί"], ["n02", "02 · Λευκό · τιρκουάζ", "Νέοι συνδυασμοί"], ["n03", "03 · Λευκό · βιολετί", "Νέοι συνδυασμοί"], ["n04", "04 · Γκρι · πορτοκαλί", "Νέοι συνδυασμοί"], ["n05", "05 · Γκρι · μπλε", "Νέοι συνδυασμοί"], ["n08", "08 · Ουρανός · μπλε", "Νέοι συνδυασμοί"], ["n09", "09 · Ουρανός · τιρκουάζ", "Νέοι συνδυασμοί"], ["n12", "12 · Λευκό + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n13", "13 · Γκρι + σκούρο δεξί σχιστόλιθος", "Νέοι συνδυασμοί"], ["n15", "15 · Ουρανός + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n16", "16 · Μαύρο φόντο · γκρι πανελ", "Νέοι συνδυασμοί"], ["n17", "17 · Ναυτικό · σκούρο", "Νέοι συνδυασμοί"], ["n18", "18 · Σχιστόλιθος · κυανό", "Νέοι συνδυασμοί"], ["n19", "19 · Μαύρο · πορτοκαλί", "Νέοι συνδυασμοί"], ["n23", "23 · Ναυτικό + ανοιχτή σκηνή", "Νέοι συνδυασμοί"], ["n42", "42 · Γκρι · κεχριμπάρι", "Νέοι συνδυασμοί 2"]];
+function setSkin(n){
+  document.documentElement.dataset.skin=n;
+  const sel=$('skinSel');
+  if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}
+  try{localStorage.setItem('sim-skin',n);}catch(_){}
+}
+{const sel=$('skinSel');{const o=document.createElement('option');o.textContent='Skins';o.value='';o.hidden=true;sel.appendChild(o);}
+ let g='',og=null;SKINS.forEach(k=>{if(k[2]!==g){g=k[2];og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});
+ sel.addEventListener('change',()=>setSkin(sel.value));}
+let skin0='blueprint'; try{skin0=localStorage.getItem('sim-skin')||'blueprint';}catch(_){}
+if(!SKINS.some(k=>k[0]===skin0)) skin0='blueprint';
+setSkin(skin0);
+
+/* ---------- ΤΙΤΛΟΣ, ΚΑΡΤΕΛΕΣ, ΔΙΑΤΑΞΗ ---------- */
+$('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return '<span class="tw"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
+{
+  const ps=[...document.querySelectorAll('#tabBody>.panel')];
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});document.querySelectorAll('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});setTimeout(resize,60);};
+  TABS.forEach((n,i)=>{const b=document.createElement('button');b.className='main-tab-btn';b.textContent=n;b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('setTabs').appendChild(b);});
+  show(0);
+}
+const fitGrid=()=>{const g=document.querySelector('.main-grid');if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,innerHeight-top-12))+'px';}else g.style.height='';resize();};
+addEventListener('resize',fitGrid);
+sync(); fitGrid(); setTimeout(fitGrid,300);
+if(window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+requestAnimationFrame(loop);
+</script>
+
+</body></html>
