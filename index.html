@@ -3,33 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Εργαστήριο Φυσικής — Προσομοιώσεις</title>
+<title>Sim Physics — Προσομοιώσεις</title>
+<script>
+/* Εφαρμογή του αποθηκευμένου skin πριν τη ζωγραφική (ίδιο κλειδί με τις προσομοιώσεις) */
+try{var s=localStorage.getItem('sim-skin');if(s)document.documentElement.dataset.skin=s;}catch(e){}
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
 
+:root,:root[data-skin="blueprint"]{ color-scheme:dark; --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D; --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B; --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA; --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18); --danger:#E0685A; --onAccent:#0B1B30; --radius:3px; --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF; --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635; }
+:root[data-skin="minimal"]{ color-scheme:light; --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA; --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B; --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686; --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18); --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px; --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB; --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C; }
+:root[data-skin="classic"]{ --radius:4px; color-scheme:dark; --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37; --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff; --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3; --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25); --danger:#ff6a60; --onAccent:#0b1219; --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff; --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264; }
+:root[data-skin="pw"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9; --grid:rgba(15,23,42,0.06); --gridStrong:#CBD5E1; --line:#0F172A; --accent:#2563EB; --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#64748B; --border:#E2E8F0; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB; --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D; --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#64748B; --st-grid:rgba(15,23,42,0.06); --st-gridS:#CBD5E1; }
+:root[data-skin="gr"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A; --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12); --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px; --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB; --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D; --car:#F0932B; --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF; }
+:root[data-skin="gr2"]{ color-scheme:light; --bg:#0A0A0C; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(255,255,255,0.05); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#111827; --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB; --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D; --car:#F0932B; --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF; }
+:root[data-skin="gr2"] header{--text:#F2F4F8;--textDim:#A8B2C2;color:var(--text);}
+:root[data-skin^="rt"]{ color-scheme:light; --bg:#EEF2F8; --bg2:#E6ECF4; --panel:#FFFFFF; --panel2:#F4F7FB; --grid:rgba(26,42,68,0.06); --gridStrong:#B7C2D3; --line:#1A2A44; --accent:#B5632C; --accent2:#2563EB; --accent3:#15803D; --text:#1A2A44; --textDim:#66748B; --border:#DDE4EE; --track:#F4F7FB; --shadowCol:rgba(26,42,68,0.12); --danger:#C0392B; --onAccent:#FFFFFF; --radius:8px; --e1:#C27A0E; --e2:#C42A6B; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --st-track:#FBFCFE; --st-text:#1A2A44; --st-dim:#66748B; --st-grid:rgba(26,42,68,0.08); --st-gridS:#A9B6CA; }
+:root[data-skin="n01"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB; --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80; --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n02"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#0E9AA7; --accent2:#0E9AA7; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80; --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n03"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#7C3AED; --accent2:#7C3AED; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80; --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#6D28D9; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n04"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A; --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n05"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB; --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n08"]{ color-scheme:light; --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB; --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285; --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n09"]{ color-scheme:light; --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC; --grid:rgba(15,23,42,0.06); --gridStrong:#9DB6D6; --line:#0F2342; --accent:#0E9AA7; --accent2:#0E9AA7; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285; --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80; --st-track:#EAF2FB; --st-text:#0F2342; --st-dim:#4A6285; --st-grid:rgba(15,35,66,0.08); --st-gridS:#9DB6D6; }
+:root[data-skin="n12"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B; --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80; --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n13"]{ color-scheme:light; --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A; --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n15"]{ color-scheme:light; --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB; --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285; --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n16"]{ color-scheme:light; --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1; --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827; --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870; --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n17"]{ color-scheme:dark; --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342; --grid:rgba(255,255,255,0.05); --gridStrong:#6E97BE; --line:#F5F8FC; --accent:#E8B84B; --accent2:#E8B84B; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA; --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B; --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA; --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635; --car:#FBBF24; --htext:#F2F4F8; --hdim:#A8B2C2; --st-track:#0F2342; --st-text:#F5F8FC; --st-dim:#AFC3DA; --st-grid:rgba(143,184,217,0.16); --st-gridS:#6E97BE; }
+:root[data-skin="n18"]{ color-scheme:dark; --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033; --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8; --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8; --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8; --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA; --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635; --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2; --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569; }
+:root[data-skin="n19"]{ color-scheme:dark; --bg:#0A0A0C; --bg2:#111113; --panel:#17171A; --panel2:#111113; --grid:rgba(255,255,255,0.05); --gridStrong:#5A5A66; --line:#F1F1F3; --accent:#F0932B; --accent2:#F0932B; --accent3:#4ADE80; --text:#F1F1F3; --textDim:#A0A0A8; --border:#2B2B30; --track:#0C0C0E; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#F0932B; --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA; --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635; --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2; --st-track:#0B0B0D; --st-text:#F1F1F3; --st-dim:#A0A0A8; --st-grid:rgba(255,255,255,0.08); --st-gridS:#5A5A66; }
+:root[data-skin="n23"]{ color-scheme:dark; --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342; --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B; --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA; --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root[data-skin="n42"]{ color-scheme:light; --bg:#E9EBEF; --bg2:#DFE2E8; --panel:#F3F4F6; --panel2:#E5E7EB; --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F59E0B; --accent2:#F59E0B; --accent3:#15803D; --text:#1F2937; --textDim:#6B7280; --border:#C4C9D1; --track:#D9DCE1; --shadowCol:rgba(0,0,0,0.14); --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A5A00; --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB; --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F; --car:#F59E0B; --htext:#1F2937; --hdim:#6B7280; --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6; }
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);}
+:root[data-skin="gr2"]{--htext:#F2F4F8;--hdim:#A8B2C2;}
+:root[data-skin="classic"],:root[data-skin="blueprint"],:root[data-skin="minimal"],:root[data-skin="pw"],:root[data-skin="gr"],:root[data-skin^="rt"]{--htext:var(--text);--hdim:var(--textDim);}
+:root[data-skin="gr2"] header{--text:inherit;color:var(--htext);}
+:root[data-skin="gr2"],:root[data-skin="n16"]{--hacc:#F0932B;}
+:root[data-skin="gr2"] .tab-btn.active,:root[data-skin="n16"] .tab-btn.active{background:#F0932B;color:#1F1300;border-color:#F0932B;}
+:root[data-skin="n13"] .tile,:root[data-skin="n13"] .card{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--border:#334155;--atext:#F8B47A;}
 :root{
-  --bg-deep:#0B1B30;
-  --bg:#10243D;
-  --bg-panel:#132A47;
-  --line-dim: rgba(143,184,217,0.18);
-  --line: #6E97BE;
-  --line-bright:#DCEEFF;
-  --gold:#E8B84B;
-  --gold-dim: rgba(232,184,75,0.35);
-  --paper:#F5F8FC;
-  --paper-dim:#AFC3DA;
-  --danger:#E0685A;
-  --radius: 3px;
+  --accent-dim: color-mix(in srgb, var(--accent) 35%, transparent);
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  background: var(--bg-deep);
+  background: var(--bg);
   background-image:
-    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
-  color: var(--paper);
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color: var(--htext);
   font-family: 'Inter', sans-serif;
   min-height:100vh;
 }
@@ -39,23 +64,24 @@ body{
 .wrap{max-width: 1180px; margin:0 auto; padding: 22px 18px 60px;}
 
 header{
-  border-bottom: 1px solid var(--line-dim);
+  border-bottom: 1px solid var(--grid);
   padding-bottom: 18px;
   margin-bottom: 20px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;
 }
 h1{
   font-family:'Oswald', sans-serif;
   font-weight:600;
   letter-spacing: 0.02em;
-  font-size: clamp(24px, 4.2vw, 34px);
+  font-size: clamp(26px, 4.6vw, 38px);
   margin: 0 0 4px 0;
 }
-h1 span{color: var(--gold);}
+h1 span{color: var(--hacc, var(--atext));}
 .byline{
   font-family:'IBM Plex Mono', monospace;
   font-size:12px;
   letter-spacing:0.04em;
-  color: var(--paper-dim);
+  color: var(--hdim);
   margin-top:4px;
 }
 .subtitle{
@@ -63,223 +89,208 @@ h1 span{color: var(--gold);}
   font-size:11.5px;
   letter-spacing:0.08em;
   text-transform:uppercase;
-  color: var(--paper-dim);
+  color: var(--hdim);
 }
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;}
+.skin-select{
+  text-align:center;text-align-last:center;
+  background:var(--panel);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;
+  min-width:200px;max-width:100%;cursor:pointer;
+}
+.skin-select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
 /* search */
-.search-row{
-  margin: 20px 0 18px;
-}
-.search-box{
-  position:relative;
-  max-width: 520px;
-}
+.search-row{ margin: 20px 0 18px; }
+.search-box{ position:relative; max-width: 520px; }
 .search-box input{
   width:100%;
-  background: var(--bg-panel);
-  border: 1px solid var(--line-dim);
-  color: var(--paper);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
   font-family:'IBM Plex Mono', monospace;
   font-size:14px;
   padding: 13px 16px 13px 40px;
   border-radius: var(--radius);
   outline:none;
 }
-.search-box input::placeholder{color: var(--paper-dim);}
-.search-box input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
+.search-box input::placeholder{color: var(--textDim);}
+.search-box input:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
 .search-box .icon{
   position:absolute; left:13px; top:50%; transform:translateY(-50%);
-  color: var(--paper-dim);
-  font-size:15px;
-  pointer-events:none;
+  color: var(--textDim); font-size:15px; pointer-events:none;
 }
 .result-count{
   font-family:'IBM Plex Mono', monospace;
-  font-size:11px;
-  color: var(--paper-dim);
-  margin-top:8px;
-  letter-spacing:0.04em;
+  font-size:11px; color: var(--hdim); margin-top:8px; letter-spacing:0.04em;
 }
 
 /* tabs */
 .tab-row{
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  padding-bottom:4px;
-  margin-bottom:10px;
-  -ms-overflow-style:none;
-  scrollbar-width:none;
+  display:flex; gap:16px; overflow-x:auto; padding-bottom:4px; margin-bottom:10px;
+  -ms-overflow-style:none; scrollbar-width:none;
 }
 .tab-row::-webkit-scrollbar{display:none;}
 .tab-btn{
-  flex:none;
-  font-family:'Oswald', sans-serif;
-  font-weight:500;
-  font-size:12.5px;
-  letter-spacing:0.04em;
-  text-transform:uppercase;
-  padding:10px 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--line-dim);
-  background: var(--bg-panel);
-  color: var(--paper-dim);
-  cursor:pointer;
-  white-space:nowrap;
+  flex:1 1 0; min-width:max-content; text-align:center;
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px;
+  letter-spacing:0.04em; text-transform:uppercase;
+  padding:10px 16px; border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel); color: var(--textDim);
+  cursor:pointer; white-space:nowrap;
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
-.tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
-.tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
-.tab-btn:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
+.tab-btn:hover{border-color: var(--accent-dim); color: var(--text);}
+.tab-btn.active{background: var(--accent); color: var(--onAccent); border-color: var(--accent);}
+.tab-btn:focus-visible{outline: 2px solid var(--accent); outline-offset:2px;}
 
 .sub-tab-row{
-  display:none;
-  gap:6px;
-  margin: 4px 0 20px;
-  padding: 12px;
-  background: rgba(232,184,75,0.06);
-  border: 1px dashed var(--gold-dim);
+  display:none; gap:6px; margin: 4px 0 20px; padding: 12px;
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent-dim);
   border-radius: var(--radius);
-  flex-wrap:wrap;
-  align-items:center;
+  flex-wrap:wrap; align-items:center;
 }
 .sub-tab-row.show{display:flex;}
 .sub-tab-row .lbl{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:10.5px;
-  color: var(--paper-dim);
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  margin-right:4px;
+  font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--hdim);
+  letter-spacing:0.06em; text-transform:uppercase; margin-right:4px;
 }
 .sub-btn{
-  font-family:'Oswald', sans-serif;
-  font-weight:500;
-  font-size:11.5px;
-  letter-spacing:0.03em;
-  text-transform:uppercase;
-  padding:7px 13px;
-  border-radius: var(--radius);
-  border: 1px solid var(--line-dim);
-  background: transparent;
-  color: var(--paper-dim);
-  cursor:pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:11.5px;
+  letter-spacing:0.03em; text-transform:uppercase;
+  padding:7px 13px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--panel); color: var(--textDim);
+  cursor:pointer; transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
-.sub-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
-.sub-btn.active{background: var(--gold-dim); color: var(--gold); border-color: var(--gold);}
+.sub-btn:hover{border-color: var(--accent-dim); color: var(--text);}
+.sub-btn.active{background: var(--accent-dim); color: var(--text); border-color: var(--accent);}
 
-/* grid */
-.grid{
+/* section heading */
+.section-title{
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.1em;
+  text-transform:uppercase; color: var(--hdim); margin: 26px 0 12px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title::after{content:''; flex:1; height:1px; background: var(--grid);}
+
+/* category tiles */
+.tiles{
   display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
+@media (max-width:760px){ .tiles{grid-template-columns: repeat(2, 1fr);} }
+@media (max-width:480px){ .tiles{grid-template-columns: 1fr;} }
+.tile{
+  position:relative; text-align:left; cursor:pointer;
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px 18px;
+  min-height: 160px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px;
+  transition: border-color 0.15s, transform 0.15s;
+  font: inherit;
+}
+.tile:hover{border-color: var(--accent); transform: translateY(-3px);}
+.tile:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.tile-icon{display:block; width:44px; height:44px; color:var(--atext);}
+.tile-icon svg{width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round;}
+.tile-text{display:flex; flex-direction:column; align-items:center; gap:4px;}
+.tile-name{
+  font-family:'Oswald', sans-serif; font-weight:600; font-size:20px;
+  letter-spacing:0.02em; line-height:1.2;
+}
+.tile-count{
+  font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.04em;
+  color: var(--textDim);
+}
+.tile.empty-cat .tile-count{opacity:.7;}
+
+/* back bar */
+.back-bar{display:none; align-items:center; gap:14px; margin: 6px 0 16px; flex-wrap:wrap;}
+.back-bar.show{display:flex;}
+.back-btn{
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px;
+  letter-spacing:0.05em; text-transform:uppercase;
+  padding:9px 14px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor:pointer;
+}
+.back-btn:hover{border-color: var(--accent);}
+.back-title{font-family:'Oswald', sans-serif; font-weight:600; font-size:22px;}
+
+/* grid */
+.grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.grid[hidden]{display:none;}
 
 .card{
-  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
-  border: 1px solid var(--line-dim);
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  color: var(--text);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+  display:flex; flex-direction:column; gap:10px;
   transition: border-color 0.15s, transform 0.15s;
 }
-.card:hover{border-color: var(--gold-dim); transform: translateY(-2px);}
-
+.card:hover{border-color: var(--accent); transform: translateY(-2px);}
 .card-title{
-  font-family:'Oswald', sans-serif;
-  font-weight:600;
-  font-size:16.5px;
-  color: var(--paper);
-  margin:0;
-  line-height:1.3;
+  font-family:'Oswald', sans-serif; font-weight:600; font-size:16.5px;
+  color: var(--text); margin:0; line-height:1.3;
 }
-.card-desc{
-  font-size:13px;
-  line-height:1.5;
-  color: var(--paper-dim);
-  flex:1;
-}
+.card-desc{ font-size:13px; line-height:1.5; color: var(--textDim); flex:1; }
 
-.badge-row{
-  display:flex; flex-wrap:wrap; gap:5px;
-}
+.badge-row, .tag-row{ display:flex; flex-wrap:wrap; gap:5px; }
 .badge{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:10px;
-  letter-spacing:0.03em;
-  padding:3px 8px;
-  border-radius:12px;
-  background: rgba(110,151,190,0.18);
-  color: var(--line-bright);
-  border: 1px solid var(--line-dim);
-}
-.tag-row{
-  display:flex; flex-wrap:wrap; gap:5px;
+  font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.03em;
+  padding:3px 8px; border-radius:12px;
+  background: color-mix(in srgb, var(--gridStrong) 22%, transparent);
+  color: var(--text); border: 1px solid var(--border);
 }
 .tag{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:10px;
-  padding:3px 8px;
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--gold-dim);
-  cursor:pointer;
+  font-family:'IBM Plex Mono', monospace; font-size:10px;
+  padding:3px 8px; border-radius: var(--radius);
+  background: transparent; color: var(--atext);
+  border: 1px solid var(--accent-dim); cursor:pointer;
 }
-.tag:hover{background: rgba(232,184,75,0.12);}
+.tag:hover{background: var(--accent-soft);}
 
 .card-open{
-  margin-top:4px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  font-family:'Oswald', sans-serif;
-  font-weight:500;
-  font-size:12.5px;
-  letter-spacing:0.05em;
-  text-transform:uppercase;
-  text-decoration:none;
-  background: var(--gold);
-  color: var(--bg-deep);
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  transition: background 0.15s;
+  margin-top:4px; display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px;
+  letter-spacing:0.05em; text-transform:uppercase; text-decoration:none;
+  background: var(--accent); color: var(--onAccent);
+  padding: 10px 14px; border-radius: var(--radius);
+  transition: filter 0.15s;
 }
-.card-open:hover{background:#f0c665;}
+.card-open:hover{filter:brightness(1.1);}
 
 .empty{
-  grid-column: 1 / -1;
-  text-align:center;
-  padding: 50px 20px;
-  color: var(--paper-dim);
-  font-family:'IBM Plex Mono', monospace;
-  font-size:13px;
-  border: 1px dashed var(--line-dim);
-  border-radius: var(--radius);
+  grid-column: 1 / -1; text-align:center; padding: 50px 20px;
+  color: var(--textDim);
+  font-family:'IBM Plex Mono', monospace; font-size:13px;
+  border: 1px dashed var(--border); border-radius: var(--radius);
 }
 
 footer{
-  margin-top: 40px;
-  padding-top:16px;
-  border-top: 1px solid var(--line-dim);
-  font-family:'IBM Plex Mono', monospace;
-  font-size:10.5px;
-  color: var(--paper-dim);
-  text-align:center;
-  letter-spacing:0.04em;
+  margin-top: 40px; padding-top:16px; border-top: 1px solid var(--grid);
+  font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--hdim);
+  text-align:center; letter-spacing:0.04em;
 }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Εργαστήριο <span>Φυσικής</span></h1>
-    <div class="subtitle">Διαδραστικές προσομοιώσεις · Γυμνάσιο &amp; Λύκειο</div>
-    <div class="byline">Σλάβης Τάσος</div>
+    <div>
+      <h1>Sim <span>Physics</span></h1>
+      <div class="subtitle">Διαδραστικές προσομοιώσεις · Γυμνάσιο &amp; Λύκειο</div>
+      <div class="byline">Σλάβης Τάσος</div>
+    </div>
+    <label class="skin-wrap"><select class="skin-select" id="skinSel" aria-label="Skins"></select></label>
   </header>
 
   <div class="search-row">
@@ -293,7 +304,17 @@ footer{
   <div class="tab-row" id="tabRow"></div>
   <div class="sub-tab-row" id="subTabRow"></div>
 
-  <div class="grid" id="grid"></div>
+  <div id="tilesSection">
+    <div class="section-title">Ενότητες φυσικής</div>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="back-bar" id="backBar">
+    <button type="button" class="back-btn" id="backBtn">← Όλες οι ενότητες</button>
+    <span class="back-title" id="backTitle"></span>
+  </div>
+
+  <div class="grid" id="grid" hidden></div>
 
   <footer>Κάθε προσομοίωση μπορεί να ανήκει σε περισσότερες από μία τάξεις/ενότητες</footer>
 </div>
@@ -308,102 +329,61 @@ footer{
    - description   : σύντομη περιγραφή (1-2 προτάσεις)
    - url           : το όνομα του .html αρχείου της προσομοίωσης
                       (πρέπει να βρίσκεται στον ίδιο φάκελο με αυτό το index.html)
+   - category      : η ενότητα φυσικής. Επίτρεπτες τιμές:
+                      'mechanics'        (Μηχανική)
+                      'electricity'      (Ηλεκτρισμός)
+                      'electromagnetism' (Ηλεκτρομαγνητισμός)
+                      'nuclear'          (Πυρηνική Φυσική)
+                      'optics'           (Οπτική)
+                      'oscillations'     (Ταλαντώσεις)
    - grades        : σε ποιες τάξεις/ενότητες θα εμφανίζεται. Επίτρεπτες τιμές:
                       'a-gym', 'b-gym', 'g-gym',
                       'a-lyk', 'g-lyk',
                       'b-lyk-kat'  (Β Λυκείου - Φυσική Κατεύθυνσης)
                       'b-lyk-gen'  (Β Λυκείου - Φυσική Γενικής Παιδείας)
-                      Μπορείς να βάλεις όσες θέλεις, π.χ. ['a-lyk','b-lyk-kat']
    - tags          : ελεύθερες λέξεις-κλειδιά για την αναζήτηση, όσες θέλεις
+
+   SKINS: ο επιλογέας πάνω δεξιά αποθηκεύει το skin στο localStorage
+   με κλειδί 'sim-skin' — το ίδιο που διαβάζουν οι προσομοιώσεις, άρα
+   η επιλογή εφαρμόζεται και σε αυτές (αρκεί να είναι στο ίδιο domain).
    ============================================================ */
 
   const SIMULATIONS = [
+    {
+      id: 'voli8',
+      title: 'Βολή  — Προσομοίωση',
+      description: '',
+      url: 'proswmoiwsi-volis_8.html',
+      category: 'mechanics',
+      grades: ['b-lyk-kat'],
+      tags: ['βολή']
+    },
+
     {
       id: 'eythigrammi-kinisi9',
       title: 'Ευθύγραμμη Κίνηση σε Οριζόντιο Επίπεδο — Προσομοίωση',
       description: '',
       url: 'eythigrammi-kinisi9.html',
+      category: 'mechanics',
       grades: ['a-lyk'],
       tags: ['κινηματική']
-    },
-
-    {
-      id: 'aeroplano-tank',
-      title: 'Οριζόντια Βολή — Αεροπλάνο - Τανκ',
-      description: 'Βολή από αεροπλάνο',
-      url: 'aeroplano-tank.html',
-      grades: ['b-lyk-kat'],
-      tags: ['βολή', 'αεροπλάνο']
-    },
-
-    {
-      id: 'diathlasi-fotos',
-      title: 'Προσομοίωση Διάθλασης Φωτός',
-      description: '',
-      url: 'diathlasi-fotos.html',
-      grades: ['g-lyk'],
-      tags: ['διάθλαση']
-    },
-
-    {
-      id: 'domi-atomou',
-      title: 'Προσομοίωση δομής ατόμου',
-      description: 'Παρουσιάζει την δομή του ατόμου και των ιόντων',
-      url: 'domi-atomou_2.html',
-      grades: ['g-gym', 'b-lyk-gen'],
-      tags: ['άτομο', 'ηλεκτρόνια', 'πρωτόνια', 'νετρόνια', 'πυρήνας', 'ιόντα', 'κατιόντα', 'ανιόντα']
-    },
-
-    {
-      id: 'ilektriko-ekkremes',
-      title: 'Ηλεκτρικό εκκρεμές',
-      description: 'Λειτουργία ηλεκτρικού εκκρεμούς',
-      url: 'hlektriko-ekkremes.html',
-      grades: ['g-gym'],
-      tags: ['εκκρεμές', 'φορτίο']
-    },
-
-    {
-      id: 'ilektriko-kikloma',
-      title: 'Ηλεκτρικό κύκλωμα',
-      description: 'Λειτουργία ηλεκτρικού κυκλώματος',
-      url: 'prosomoiwsi-kyklomatos.html',
-      grades: ['g-gym', 'b-lyk-gen'],
-      tags: ['kikloma', 'ilektriko']
-    },
-
-    {
-      id: 'sxasi-pirina',
-      title: 'Σχάση πυρήνα',
-      description: 'Περιγραφή πυρηνικής σχάσης',
-      url: 'sxasi-pyrina.html',
-      grades: ['g-lyk'],
-      tags: ['σχάση', 'πυρηνική', 'αλυσιδωτή']
-    },
-
-    {
-      id: 'proswmoiwsi-volis-9',
-      title: 'Προσομοίωση Βολής',
-      description: '',
-      url: 'proswmoiwsi-volis_9.html',
-      grades: ['b-lyk-kat'],
-      tags: ['βολές']
-    },
-
-    {
-      id: 'gryanazia-imantes-trochoi',
-      title: 'Γρανάζια, Ιμάντες και Τροχοί',
-      description: 'Γραναζια και τροχοι',
-      url: 'gryanazia-imantes-trochoi.html',
-      grades: ['b-lyk-kat', 'g-lyk'],
-      tags: ['γραμμικη ταχυτητα', 'τροχοι', 'γραναζια']
     }
 
     // Πρόσθεσε εδώ επόμενες προσομοιώσεις με κόμμα (,) πριν από κάθε νέο { }
   ];
 
+  const ICONS = {"mechanics": "<circle cx=\"12\" cy=\"12\" r=\"6.5\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/><path d=\"M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M16.6 7.4l1.8-1.8M16.6 16.6l1.8 1.8M7.4 16.6l-1.8 1.8M7.4 7.4 5.6 5.6\"/>", "electricity": "<path d=\"M13 2.5 5.5 13.5H11l-1 8 8.500-11.500H13z\"/>", "electromagnetism": "<path d=\"M5 3h4v8a3 3 0 0 0 6 0V3h4v8a7 7 0 0 1-14 0z\"/><path d=\"M5 7h4M15 7h4\"/>", "nuclear": "<ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(60 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(120 12 12)\"/><circle cx=\"12\" cy=\"12\" r=\"1.3\"/>", "optics": "<path d=\"M12 3c-5.500 4-5.500 14 0 18 5.500-4 5.500-14 0-18z\"/><path d=\"M2 12h20\"/>", "oscillations": "<path d=\"M2 12c2.200-8 4.400-8 6.700 0s4.500 8 6.700 0 4.400-8 6.600 0\"/>"};
+  const CATEGORIES = [
+    { id: 'mechanics',        label: 'Μηχανική',          icon: ICONS.mechanics },
+    { id: 'electricity',      label: 'Ηλεκτρισμός',       icon: ICONS.electricity },
+    { id: 'electromagnetism', label: 'Ηλεκτρομαγνητισμός', icon: ICONS.electromagnetism },
+    { id: 'nuclear',          label: 'Πυρηνική Φυσική',   icon: ICONS.nuclear },
+    { id: 'optics',           label: 'Οπτική',            icon: ICONS.optics },
+    { id: 'oscillations',     label: 'Ταλαντώσεις',       icon: ICONS.oscillations }
+  ];
+  const CAT_LABELS = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
+
   const GRADES = [
-    { id: 'all',   label: 'Όλες' },
     { id: 'a-gym', label: 'Α Γυμνασίου' },
     { id: 'b-gym', label: 'Β Γυμνασίου' },
     { id: 'g-gym', label: 'Γ Γυμνασίου' },
@@ -423,13 +403,14 @@ footer{
 
   let activeGrade = 'all';
   let activeSub = 'b-lyk-all';
+  let activeCategory = null;
   let searchQuery = '';
 
-  const tabRow = document.getElementById('tabRow');
-  const subTabRow = document.getElementById('subTabRow');
-  const grid = document.getElementById('grid');
-  const searchInput = document.getElementById('searchInput');
-  const resultCount = document.getElementById('resultCount');
+  const $ = id => document.getElementById(id);
+  const tabRow = $('tabRow'), subTabRow = $('subTabRow'), grid = $('grid');
+  const searchInput = $('searchInput'), resultCount = $('resultCount');
+  const tilesSection = $('tilesSection'), tilesEl = $('tiles');
+  const backBar = $('backBar'), backTitle = $('backTitle');
 
   function renderTabs(){
     tabRow.innerHTML = '';
@@ -439,10 +420,8 @@ footer{
       btn.className = 'tab-btn' + (activeGrade === g.id ? ' active' : '');
       btn.textContent = g.label;
       btn.addEventListener('click', () => {
-        activeGrade = g.id;
-        renderTabs();
-        renderSubTabs();
-        renderGrid();
+        activeGrade = (activeGrade === g.id) ? 'all' : g.id;   /* δεύτερο κλικ = όλες οι τάξεις */
+        renderTabs(); renderSubTabs(); render();
       });
       tabRow.appendChild(btn);
     });
@@ -450,95 +429,99 @@ footer{
 
   function renderSubTabs(){
     subTabRow.innerHTML = '';
-    if (activeGrade !== 'b-lyk'){
-      subTabRow.classList.remove('show');
-      return;
-    }
+    if (activeGrade !== 'b-lyk'){ subTabRow.classList.remove('show'); return; }
     subTabRow.classList.add('show');
     const lbl = document.createElement('span');
-    lbl.className = 'lbl';
-    lbl.textContent = 'Ενότητα:';
+    lbl.className = 'lbl'; lbl.textContent = 'Ενότητα:';
     subTabRow.appendChild(lbl);
     B_LYK_SUB.forEach(s => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'sub-btn' + (activeSub === s.id ? ' active' : '');
       btn.textContent = s.label;
-      btn.addEventListener('click', () => {
-        activeSub = s.id;
-        renderSubTabs();
-        renderGrid();
-      });
+      btn.addEventListener('click', () => { activeSub = s.id; renderSubTabs(); render(); });
       subTabRow.appendChild(btn);
     });
   }
 
-  function getFiltered(){
+  /* φίλτρο τάξης (χωρίς κατηγορία/αναζήτηση) */
+  function byGrade(){
     let list = SIMULATIONS.slice();
-
-    if (activeGrade !== 'all'){
-      if (activeGrade === 'b-lyk'){
-        if (activeSub === 'b-lyk-all'){
-          list = list.filter(s => s.grades.includes('b-lyk-kat') || s.grades.includes('b-lyk-gen'));
-        } else {
-          list = list.filter(s => s.grades.includes(activeSub));
-        }
-      } else {
-        list = list.filter(s => s.grades.includes(activeGrade));
-      }
+    if (activeGrade === 'all') return list;
+    if (activeGrade === 'b-lyk'){
+      if (activeSub === 'b-lyk-all')
+        return list.filter(s => s.grades.includes('b-lyk-kat') || s.grades.includes('b-lyk-gen'));
+      return list.filter(s => s.grades.includes(activeSub));
     }
+    return list.filter(s => s.grades.includes(activeGrade));
+  }
 
+  function getFiltered(){
+    let list = byGrade();
+    if (activeCategory) list = list.filter(s => s.category === activeCategory);
     const q = searchQuery.trim().toLowerCase();
     if (q){
       list = list.filter(s =>
         s.title.toLowerCase().includes(q) ||
         s.description.toLowerCase().includes(q) ||
+        (CAT_LABELS[s.category] || '').toLowerCase().includes(q) ||
         s.tags.some(t => t.toLowerCase().includes(q))
       );
     }
-
     list.sort((a,b) => a.title.localeCompare(b.title, 'el'));
     return list;
   }
 
   function setTagSearch(tag){
-    searchInput.value = tag;
-    searchQuery = tag;
-    renderGrid();
-    searchInput.focus();
+    searchInput.value = tag; searchQuery = tag;
+    render(); searchInput.focus();
   }
 
-  function renderGrid(){
-    const list = getFiltered();
-    grid.innerHTML = '';
-    resultCount.textContent = list.length + (list.length === 1 ? ' αποτέλεσμα' : ' αποτελέσματα');
+  function renderTiles(){
+    const pool = byGrade();
+    tilesEl.innerHTML = '';
+    CATEGORIES.forEach(c => {
+      const n = pool.filter(s => s.category === c.id).length;
+      const t = document.createElement('button');
+      t.type = 'button';
+      t.className = 'tile' + (n === 0 ? ' empty-cat' : '');
+      t.innerHTML = '<span class="tile-icon"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></span><span class="tile-text"><span class="tile-name"></span><span class="tile-count"></span></span>';
+      t.querySelector('svg').innerHTML = c.icon;
+      t.querySelector('.tile-name').textContent = c.label;
+      t.querySelector('.tile-count').textContent =
+        n === 0 ? 'Σύντομα' : n + (n === 1 ? ' προσομοίωση' : ' προσομοιώσεις');
+      t.addEventListener('click', () => { activeCategory = c.id; render(); window.scrollTo({top:0, behavior:'smooth'}); });
+      tilesEl.appendChild(t);
+    });
+  }
 
+  function renderGrid(list){
+    grid.innerHTML = '';
     if (list.length === 0){
       const empty = document.createElement('div');
       empty.className = 'empty';
-      empty.textContent = 'Δεν βρέθηκαν προσομοιώσεις για αυτή την επιλογή. Δοκίμασε άλλη λέξη-κλειδί ή τάξη.';
+      empty.textContent = 'Δεν βρέθηκαν προσομοιώσεις για αυτή την επιλογή. Δοκίμασε άλλη λέξη-κλειδί, τάξη ή ενότητα.';
       grid.appendChild(empty);
       return;
     }
-
     list.forEach(s => {
       const card = document.createElement('div');
       card.className = 'card';
 
       const title = document.createElement('h3');
-      title.className = 'card-title';
-      title.textContent = s.title;
+      title.className = 'card-title'; title.textContent = s.title;
 
       const desc = document.createElement('div');
-      desc.className = 'card-desc';
-      desc.textContent = s.description;
+      desc.className = 'card-desc'; desc.textContent = s.description;
 
       const badgeRow = document.createElement('div');
       badgeRow.className = 'badge-row';
+      const cb = document.createElement('span');
+      cb.className = 'badge'; cb.textContent = CAT_LABELS[s.category] || '';
+      if (cb.textContent) badgeRow.appendChild(cb);
       s.grades.forEach(gid => {
         const b = document.createElement('span');
-        b.className = 'badge';
-        b.textContent = GRADE_LABELS[gid] || gid;
+        b.className = 'badge'; b.textContent = GRADE_LABELS[gid] || gid;
         badgeRow.appendChild(b);
       });
 
@@ -546,34 +529,80 @@ footer{
       tagRow.className = 'tag-row';
       s.tags.forEach(tag => {
         const t = document.createElement('span');
-        t.className = 'tag';
-        t.textContent = '#' + tag;
+        t.className = 'tag'; t.textContent = '#' + tag;
         t.addEventListener('click', () => setTagSearch(tag));
         tagRow.appendChild(t);
       });
 
       const open = document.createElement('a');
-      open.className = 'card-open';
-      open.href = s.url;
-      open.textContent = '▶ Άνοιγμα';
+      open.className = 'card-open'; open.href = s.url; open.textContent = '▶ Άνοιγμα';
 
-      card.appendChild(title);
-      card.appendChild(desc);
-      card.appendChild(badgeRow);
-      card.appendChild(tagRow);
-      card.appendChild(open);
+      card.append(title, desc, badgeRow, tagRow, open);
       grid.appendChild(card);
     });
   }
 
-  searchInput.addEventListener('input', () => {
-    searchQuery = searchInput.value;
-    renderGrid();
+  function render(){
+    const searching = searchQuery.trim() !== '';
+    const showList = searching || activeCategory !== null;
+
+    tilesSection.hidden = showList;
+    grid.hidden = !showList;
+    backBar.classList.toggle('show', showList);
+    $('backBtn').textContent = activeCategory ? '← Όλες οι ενότητες' : '← Αρχική';
+    backTitle.textContent = activeCategory ? CAT_LABELS[activeCategory] : (searching ? 'Αποτελέσματα αναζήτησης' : '');
+
+    if (showList){
+      const list = getFiltered();
+      resultCount.textContent = list.length + (list.length === 1 ? ' αποτέλεσμα' : ' αποτελέσματα');
+      renderGrid(list);
+    } else {
+      resultCount.textContent = '';
+      renderTiles();
+    }
+  }
+
+  $('backBtn').addEventListener('click', () => {
+    activeCategory = null; searchQuery = ''; searchInput.value = '';
+    render();
   });
+
+  searchInput.addEventListener('input', () => { searchQuery = searchInput.value; render(); });
+
+  /* ---------- SKINS (ίδια με το πρότυπο των προσομοιώσεων) ---------- */
+  const SKINS = [["blueprint", "DarkBlue", "Βασικά"], ["classic", "DarkBlack", "Βασικά"], ["minimal", "LightOrange", "Βασικά"], ["pw", "Λευκό", "Βασικά"], ["gr", "GreyO", "Βασικά"], ["gr2", "GreyB", "Βασικά"], ["rt3", "Δεξί 3", "Βασικά"], ["n01", "01 · Λευκό · μπλε", "Νέοι συνδυασμοί"], ["n02", "02 · Λευκό · τιρκουάζ", "Νέοι συνδυασμοί"], ["n03", "03 · Λευκό · βιολετί", "Νέοι συνδυασμοί"], ["n04", "04 · Γκρι · πορτοκαλί", "Νέοι συνδυασμοί"], ["n05", "05 · Γκρι · μπλε", "Νέοι συνδυασμοί"], ["n08", "08 · Ουρανός · μπλε", "Νέοι συνδυασμοί"], ["n09", "09 · Ουρανός · τιρκουάζ", "Νέοι συνδυασμοί"], ["n12", "12 · Λευκό + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n13", "13 · Γκρι + σκούρο δεξί σχιστόλιθος", "Νέοι συνδυασμοί"], ["n15", "15 · Ουρανός + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n16", "16 · Μαύρο φόντο · γκρι πανελ", "Νέοι συνδυασμοί"], ["n17", "17 · Ναυτικό · σκούρο", "Νέοι συνδυασμοί"], ["n18", "18 · Σχιστόλιθος · κυανό", "Νέοι συνδυασμοί"], ["n19", "19 · Μαύρο · πορτοκαλί", "Νέοι συνδυασμοί"], ["n23", "23 · Ναυτικό + ανοιχτή σκηνή", "Νέοι συνδυασμοί"], ["n42", "42 · Γκρι · κεχριμπάρι", "Νέοι συνδυασμοί 2"]];
+  function setSkin(n){
+    document.documentElement.dataset.skin = n;
+    const sel = $('skinSel');
+    if (sel){
+      [].forEach.call(sel.options, o => {
+        if (o.value) o.textContent = (o.value === n ? '✓ ' : '') + (o.dataset.l || o.textContent.replace(/^✓ /,''));
+      });
+      sel.selectedIndex = 0;
+    }
+    try{ localStorage.setItem('sim-skin', n); }catch(_){}
+  }
+  (function(){
+    const sel = $('skinSel');
+    const o0 = document.createElement('option');
+    o0.textContent = 'Skins'; o0.value = ''; o0.hidden = true; sel.appendChild(o0);
+    let g = '', og = null;
+    SKINS.forEach(k => {
+      if (k[2] !== g){ g = k[2]; og = document.createElement('optgroup'); og.label = g; sel.appendChild(og); }
+      const o = document.createElement('option');
+      o.value = k[0]; o.textContent = k[1]; o.dataset.l = k[1];
+      og.appendChild(o);
+    });
+    sel.addEventListener('change', () => { if (sel.value) setSkin(sel.value); });
+  })();
+  let skin0 = 'blueprint';
+  try{ skin0 = localStorage.getItem('sim-skin') || 'blueprint'; }catch(_){}
+  if (!SKINS.some(k => k[0] === skin0)) skin0 = 'blueprint';
+  setSkin(skin0);
 
   renderTabs();
   renderSubTabs();
-  renderGrid();
+  render();
 </script>
 </body>
 </html>
