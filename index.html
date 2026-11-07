@@ -329,7 +329,8 @@ footer{
    - description   : σύντομη περιγραφή (1-2 προτάσεις)
    - url           : το όνομα του .html αρχείου της προσομοίωσης
                       (πρέπει να βρίσκεται στον ίδιο φάκελο με αυτό το index.html)
-   - category      : η ενότητα φυσικής. Επίτρεπτες τιμές:
+   - category      : η ενότητα φυσικής (το id μιας κατηγορίας του πίνακα CATEGORIES παρακάτω).
+                      Νέες κατηγορίες προστίθενται από το εργαλείο διαχείρισης. Αρχικές τιμές:
                       'mechanics'        (Μηχανική)
                       'electricity'      (Ηλεκτρισμός)
                       'electromagnetism' (Ηλεκτρομαγνητισμός)
@@ -349,17 +350,37 @@ footer{
    ============================================================ */
 
   const SIMULATIONS = [
+    {
+      id: 'voli8',
+      title: 'Βολή  — Προσομοίωση',
+      description: '',
+      url: 'proswmoiwsi-volis_8.html',
+      category: 'mechanics',
+      grades: ['b-lyk-kat'],
+      tags: ['βολή']
+    },
+
+    {
+      id: 'eythigrammi-kinisi9',
+      title: 'Ευθύγραμμη Κίνηση σε Οριζόντιο Επίπεδο — Προσομοίωση',
+      description: '',
+      url: 'eythigrammi-kinisi9.html',
+      category: 'mechanics',
+      grades: ['a-lyk'],
+      tags: ['κινηματική']
+    }
+
     // Πρόσθεσε εδώ επόμενες προσομοιώσεις με κόμμα (,) πριν από κάθε νέο { }
   ];
 
-  const ICONS = {"mechanics": "<circle cx=\"12\" cy=\"12\" r=\"6.5\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/><path d=\"M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M16.6 7.4l1.8-1.8M16.6 16.6l1.8 1.8M7.4 16.6l-1.8 1.8M7.4 7.4 5.6 5.6\"/>", "electricity": "<path d=\"M13 2.5 5.5 13.5H11l-1 8 8.500-11.500H13z\"/>", "electromagnetism": "<path d=\"M5 3h4v8a3 3 0 0 0 6 0V3h4v8a7 7 0 0 1-14 0z\"/><path d=\"M5 7h4M15 7h4\"/>", "nuclear": "<ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(60 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(120 12 12)\"/><circle cx=\"12\" cy=\"12\" r=\"1.3\"/>", "optics": "<path d=\"M12 3c-5.500 4-5.500 14 0 18 5.500-4 5.500-14 0-18z\"/><path d=\"M2 12h20\"/>", "oscillations": "<path d=\"M2 12c2.200-8 4.400-8 6.700 0s4.500 8 6.700 0 4.400-8 6.600 0\"/>"};
+  const ICONS = {"mechanics": "<circle cx=\"12\" cy=\"12\" r=\"6.5\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/><path d=\"M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M16.6 7.4l1.8-1.8M16.6 16.6l1.8 1.8M7.4 16.6l-1.8 1.8M7.4 7.4 5.6 5.6\"/>", "electricity": "<path d=\"M13 2.5 5.5 13.5H11l-1 8 8.500-11.500H13z\"/>", "electromagnetism": "<path d=\"M5 3h4v8a3 3 0 0 0 6 0V3h4v8a7 7 0 0 1-14 0z\"/><path d=\"M5 7h4M15 7h4\"/>", "nuclear": "<ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(60 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(120 12 12)\"/><circle cx=\"12\" cy=\"12\" r=\"1.3\"/>", "optics": "<path d=\"M12 3c-5.500 4-5.500 14 0 18 5.500-4 5.500-14 0-18z\"/><path d=\"M2 12h20\"/>", "thermo": "<path d=\"M10 4a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0z\"/><path d=\"M12 8v7\"/>", "sound": "<path d=\"M4 9h3l5-4v14l-5-4H4z\"/><path d=\"M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11\"/>", "generic": "<path d=\"M12 3l8 4.5v9L12 21l-8-4.5v-9z\"/><path d=\"M12 12l8-4.5M12 12v9M12 12 4 7.5\"/>", "oscillations": "<path d=\"M2 12c2.200-8 4.400-8 6.700 0s4.500 8 6.700 0 4.400-8 6.600 0\"/>"};
   const CATEGORIES = [
-    { id: 'mechanics',        label: 'Μηχανική',          icon: ICONS.mechanics },
-    { id: 'electricity',      label: 'Ηλεκτρισμός',       icon: ICONS.electricity },
-    { id: 'electromagnetism', label: 'Ηλεκτρομαγνητισμός', icon: ICONS.electromagnetism },
-    { id: 'nuclear',          label: 'Πυρηνική Φυσική',   icon: ICONS.nuclear },
-    { id: 'optics',           label: 'Οπτική',            icon: ICONS.optics },
-    { id: 'oscillations',     label: 'Ταλαντώσεις',       icon: ICONS.oscillations }
+    { id: 'mechanics',        label: 'Μηχανική',          icon: 'mechanics' },
+    { id: 'electricity',      label: 'Ηλεκτρισμός',       icon: 'electricity' },
+    { id: 'electromagnetism', label: 'Ηλεκτρομαγνητισμός', icon: 'electromagnetism' },
+    { id: 'nuclear',          label: 'Πυρηνική Φυσική',   icon: 'nuclear' },
+    { id: 'optics',           label: 'Οπτική',            icon: 'optics' },
+    { id: 'oscillations',     label: 'Ταλαντώσεις',       icon: 'oscillations' }
   ];
   const CAT_LABELS = Object.fromEntries(CATEGORIES.map(c => [c.id, c.label]));
 
@@ -466,7 +487,7 @@ footer{
       t.type = 'button';
       t.className = 'tile' + (n === 0 ? ' empty-cat' : '');
       t.innerHTML = '<span class="tile-icon"><svg viewBox="0 0 24 24" aria-hidden="true"></svg></span><span class="tile-text"><span class="tile-name"></span><span class="tile-count"></span></span>';
-      t.querySelector('svg').innerHTML = c.icon;
+      t.querySelector('svg').innerHTML = ICONS[c.icon] || ICONS.generic;
       t.querySelector('.tile-name').textContent = c.label;
       t.querySelector('.tile-count').textContent =
         n === 0 ? 'Σύντομα' : n + (n === 1 ? ' προσομοίωση' : ' προσομοιώσεις');
