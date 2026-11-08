@@ -1,6 +1,7 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Γρανάζια, Ιμάντες και Τροχοί</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Γρανάζια, ιμάντες και τροχοί</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -40,17 +41,6 @@
 
 /* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
 :root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
-:root[data-skin="pw"]{
-  color-scheme:light;
-  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#CBD5E1; --line:#0F172A; --accent:#2563EB;
-  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#64748B;
-  --border:#E2E8F0; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
-  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
-  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
-  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#64748B; --st-grid:rgba(15,23,42,0.06); --st-gridS:#CBD5E1;
-}
 :root[data-skin="gr"]{
   color-scheme:light;
   --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
@@ -63,43 +53,14 @@
   --car:#F0932B;
   --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
 }
-:root[data-skin="gr2"]{
-  color-scheme:light;
-  --bg:#0A0A0C; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
-  --grid:rgba(255,255,255,0.05); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#111827;
-  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
-  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
-  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
-  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
-  --car:#F0932B;
-  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
-}
-:root[data-skin="gr2"] header{--text:#F2F4F8;--textDim:#A8B2C2;color:var(--text);}
-:root[data-skin="gr2"] .theme-toggle{--text:#0F172A;--textDim:#4A5870;}
-:root[data-skin="gr2"] .right-col,:root[data-skin="gr2"] #simPanel{--grid:rgba(15,23,42,0.06);}
 :root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
 :root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
-:root[data-skin^="rt"]{
-  color-scheme:light;
-  --bg:#EEF2F8; --bg2:#E6ECF4; --panel:#FFFFFF; --panel2:#F4F7FB;
-  --grid:rgba(26,42,68,0.06); --gridStrong:#B7C2D3; --line:#1A2A44; --accent:#B5632C;
-  --accent2:#2563EB; --accent3:#15803D; --text:#1A2A44; --textDim:#66748B;
-  --border:#DDE4EE; --track:#F4F7FB; --shadowCol:rgba(26,42,68,0.12);
-  --danger:#C0392B; --onAccent:#FFFFFF; --radius:8px;
-  --e1:#C27A0E; --e2:#C42A6B; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --st-track:#FBFCFE; --st-text:#1A2A44; --st-dim:#66748B; --st-grid:rgba(26,42,68,0.08); --st-gridS:#A9B6CA;
-}
-:root[data-skin="rt3"] .right-col{
   color-scheme:dark;
   --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
   --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
   --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
   --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
 }
-:root[data-skin^="rt"] .tout{color:#8A4F00;font-weight:600;}
-:root[data-skin^="ls"] .tout{color:#8A4F00;font-weight:600;}
 .right-col{color:var(--text);}
 .stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
 #legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
@@ -107,6 +68,12 @@
 :root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
 header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
 .skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.hdr-tools{display:flex;gap:8px;align-items:center;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
+.home-btn:hover{border-color:var(--accent);}
+.zoom-select{min-width:140px!important;}
+@media(max-width:980px){#zoomSel{display:none;}}
 .skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
 .app .field input[type=number]{background:var(--track);color:var(--atext);}
 .app .tout{color:var(--atext);}
@@ -124,58 +91,6 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n02"]{
-  color-scheme:light;
-  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#0E9AA7;
-  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
-  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
-  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
-}
-:root[data-skin="n02"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n03"]{
-  color-scheme:light;
-  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#7C3AED;
-  --accent2:#7C3AED; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
-  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#6D28D9;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
-  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
-}
-:root[data-skin="n03"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#6D28D9;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n04"]{
-  color-scheme:light;
-  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
-  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
-  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
-  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
-}
-:root[data-skin="n04"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#8A4F00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n05"]{
-  color-scheme:light;
-  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
-  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
-  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
-  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
-}
-:root[data-skin="n05"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
 :root[data-skin="n08"]{
   color-scheme:light;
   --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
@@ -189,19 +104,6 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n09"]{
-  color-scheme:light;
-  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9DB6D6; --line:#0F2342; --accent:#0E9AA7;
-  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
-  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
-  --st-track:#EAF2FB; --st-text:#0F2342; --st-dim:#4A6285; --st-grid:rgba(15,35,66,0.08); --st-gridS:#9DB6D6;
-}
-:root[data-skin="n09"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
 :root[data-skin="n12"]{
   color-scheme:light;
   --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
@@ -228,6 +130,19 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="g16"]{
+  color-scheme:light;
+  --bg:#4B5058; --bg2:#41464E; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F1F5F9; --hdim:#CBD5E1;
+  --st-track:#D3D7DE; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="g16"] .right-col,:root[data-skin="g16"] .left-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
 :root[data-skin="n15"]{
   color-scheme:light;
   --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
@@ -254,19 +169,6 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
-:root[data-skin="n17"]{
-  color-scheme:dark;
-  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
-  --grid:rgba(255,255,255,0.05); --gridStrong:#6E97BE; --line:#F5F8FC; --accent:#E8B84B;
-  --accent2:#E8B84B; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
-  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
-  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
-  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
-  --car:#FBBF24; --htext:#F2F4F8; --hdim:#A8B2C2;
-  --st-track:#0F2342; --st-text:#F5F8FC; --st-dim:#AFC3DA; --st-grid:rgba(143,184,217,0.16); --st-gridS:#6E97BE;
-}
-:root[data-skin="n17"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
 :root[data-skin="n18"]{
   color-scheme:dark;
   --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
@@ -280,19 +182,6 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
 }
 :root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
-:root[data-skin="n19"]{
-  color-scheme:dark;
-  --bg:#0A0A0C; --bg2:#111113; --panel:#17171A; --panel2:#111113;
-  --grid:rgba(255,255,255,0.05); --gridStrong:#5A5A66; --line:#F1F1F3; --accent:#F0932B;
-  --accent2:#F0932B; --accent3:#4ADE80; --text:#F1F1F3; --textDim:#A0A0A8;
-  --border:#2B2B30; --track:#0C0C0E; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#F0932B;
-  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
-  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
-  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
-  --st-track:#0B0B0D; --st-text:#F1F1F3; --st-dim:#A0A0A8; --st-grid:rgba(255,255,255,0.08); --st-gridS:#5A5A66;
-}
-:root[data-skin="n19"] .right-col{--text:#F1F1F3;--textDim:#A0A0A8;--panel:#17171A;--panel2:#111113;--track:#0C0C0E;--border:#2B2B30;--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
 :root[data-skin="n23"]{
   color-scheme:dark;
   --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
@@ -306,19 +195,6 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
-:root[data-skin="n42"]{
-  color-scheme:light;
-  --bg:#E9EBEF; --bg2:#DFE2E8; --panel:#F3F4F6; --panel2:#E5E7EB;
-  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F59E0B;
-  --accent2:#F59E0B; --accent3:#15803D; --text:#1F2937; --textDim:#6B7280;
-  --border:#C4C9D1; --track:#D9DCE1; --shadowCol:rgba(0,0,0,0.14);
-  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A5A00;
-  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
-  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#F59E0B; --htext:#1F2937; --hdim:#6B7280;
-  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
-}
-:root[data-skin="n42"] .right-col{--text:#1F2937;--textDim:#6B7280;--panel:#F3F4F6;--panel2:#E5E7EB;--track:#D9DCE1;--border:#C4C9D1;--atext:#8A5A00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
 
 [hidden]{display:none!important;}
 *{box-sizing:border-box;}
@@ -374,8 +250,6 @@ header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IB
 .right-col h2{font-size:.85rem;}
 .panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
 .panel-tools{display:flex;gap:6px;}
-.stage-max{position:absolute;top:8px;left:8px;z-index:5;opacity:.85;}
-.stage-max:hover{opacity:1;}
 #simPanel>.panel-head-row{align-items:center;gap:8px;}
 .vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
 .vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
@@ -426,14 +300,6 @@ header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IB
 }
 
 .transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
-.transport.one{flex-wrap:nowrap;gap:6px;}
-.transport.one>*{flex:1 1 auto;min-width:0;white-space:nowrap;}
-.transport.one .btn,.transport.one .tbox{height:38px;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;margin:0;padding:0 8px;border-radius:var(--radius);font-size:.82rem;}
-.transport.one .tbox{background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;}
-.transport.one .tbox:hover{border-color:var(--accent2);}
-.transport.one .tbox:has(input:checked){border-color:var(--accent);}
-.transport.one .tbox select{flex:1;min-width:0;width:auto;height:100%;border:0;background:transparent;color:var(--text);padding:0 2px;}
-@media(max-width:760px){.transport.one{flex-wrap:wrap;}.transport.one>*{flex:1 1 45%;}}
 .transport input[type=range]{flex:1;min-width:120px;}
 .transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
 .transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
@@ -516,8 +382,16 @@ select{background:var(--panel2);border:1px solid var(--border);color:var(--text)
 #tabBody>.panel>.panel-body{display:block;}
 footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
-
-/* ---- ειδικά για τον τροχό ---- */
+.stage-max{position:absolute;top:8px;left:8px;z-index:5;opacity:.85;}
+.stage-max:hover{opacity:1;}
+.transport.one{flex-wrap:nowrap;gap:6px;}
+.transport.one>*{flex:1 1 auto;min-width:0;white-space:nowrap;}
+.transport.one .btn,.transport.one .tbox{height:38px;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;margin:0;padding:0 8px;border-radius:var(--radius);font-size:.82rem;}
+.transport.one .tbox{background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;}
+.transport.one .tbox:hover{border-color:var(--accent2);}
+.transport.one .tbox:has(input:checked){border-color:var(--accent);}
+.transport.one .tbox select{flex:1;min-width:0;width:auto;height:100%;border:0;background:transparent;color:var(--text);padding:0 2px;}
+@media(max-width:760px){.transport.one{flex-wrap:wrap;}.transport.one>*{flex:1 1 45%;}}
 :root{--p1:var(--c-ae);--p2:var(--c-th);--p3:var(--c-s);--p4:var(--c-ag);--p5:var(--e2);--p6:var(--car);}
 .frames{display:flex;gap:10px;flex-wrap:wrap;margin-top:0;}
 .frames .vframe{flex:1 1 340px;min-width:0;margin-top:0;}
@@ -547,37 +421,39 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 .ptbar select{flex:1 1 150px;min-width:0;}
 .ptbar .btn:disabled{opacity:.45;cursor:default;}
 .field .zero{flex-shrink:0;}
-</style>
-
+#status{top:46px;}
+.chips{margin-bottom:10px;}
+#charts{grid-template-columns:1fr;grid-auto-rows:190px;}
+#tabBody .guide h3:not(:first-child){margin-top:14px;}
+</style></head>
+<body>
 <div class="app">
   <header>
-    <div>
-      <h1 id="mainTitle">Γρανάζια, Ιμάντες και Τροχοί</h1>
-      <div class="sub">Σλάβης Τάσος</div>
+    <div class="hdr-left">
+      <div>
+        <h1 id="mainTitle">Γρανάζια, ιμάντες και τροχοί</h1>
+        <div class="sub">Σλάβης Τάσος</div>
+      </div>
     </div>
-    <select class="skin-select" id="skinSel" aria-label="Skins"></select>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8" selected>Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
   </header>
-
   <div class="main-grid">
     <div class="left-col">
       <div class="panel" id="simPanel">
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap">
-            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση"></canvas></div>
+            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση"></canvas><div id="status" class="ok"></div></div>
           </div>
           <div class="transport one">
             <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
             <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
-            <label class="checkline tbox"><input type="checkbox" id="loopChk"> Επανάληψη</label>
-            <label class="checkline tbox"><input type="checkbox" id="stopRev"> Παύση σε κάθε περιστροφή</label>
-            <label class="spd tbox">Ταχύτητα
+            <label class="checkline tbox"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="tbox" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="checkline tbox"><input type="checkbox" id="stopRev"> Παύση ανά στροφή</label>
+            <label class="spd tbox">Ταχύτητα αναπαραγωγής
               <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
-                <option value="0.1">×0,1</option>
-                <option value="0.25">×0,25</option>
-                <option value="0.5">×0,5</option>
-                <option value="1">×1</option>
-                <option value="2">×2</option>
-                <option value="5">×5</option>
+                <option value="0.1">×0,1</option><option value="0.25">×0,25</option><option value="0.5">×0,5</option>
+                <option value="1" selected>×1</option><option value="2">×2</option><option value="5">×5</option>
               </select>
             </label>
           </div>
@@ -587,12 +463,20 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
           </div>
         </div>
       </div>
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row"><h2>Διαγράμματα</h2><div class="panel-tools"><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button></div></div>
+        <div class="panel-body">
+          <div class="chips" id="gchips"></div>
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Κάνε κλικ ή σύρε πάνω σε ένα διάγραμμα για να μετακινήσεις τη χρονική στιγμή. Τα διαγράμματα υ και α αφορούν το επιλεγμένο σημείο.</div>
+        </div>
+      </div>
     </div>
-
     <div class="right-col" id="rightCol">
       <div class="panel tabs-panel" id="tabsPanel">
         <div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div>
         <div id="tabBody">
+
           <div class="panel"><div class="panel-body">
             <div class="solver-toggle" id="modeSeg"><button data-v="gear" type="button">Γρανάζια</button><button data-v="belt" type="button">Ιμάντας</button><button data-v="car" type="button">Όχημα</button></div>
             <div id="blkBelt"><div class="solver-toggle" id="beltSeg"><button data-v="open" type="button">Ανοιχτός ιμάντας</button><button data-v="cross" type="button">Σταυρωτός</button></div></div>
@@ -701,7 +585,7 @@ function freshState(mode,keep){
   const m=MD[mode], s=Object.assign({
     belt:'open', frame:'ground', speed:1, zoom:1, vs:100, vw:100,
     tg:{v:true,w:true,ac:true,at:false,atot:false},
-    labels:true, rdv:true, trail:false, loop:true, stopRev:false
+    charts:{w:1,th:0,v:1,a:1}, labels:true, rdv:true, trail:false, loop:true, stopRev:false
   },keep||{});
   s.mode=mode; s.R1=m.R1; s.R2=m.R2; s.d=m.d; s.L=m.L; s.f=m.f; s.eps=m.eps;
   s.pts=clone(m.pts); s.sel=0; s.t=0; s.playing=false;
@@ -791,7 +675,7 @@ function setSeg(el,v){ el.querySelectorAll('button').forEach(b=>{const on=b.data
 
 $('modeSeg').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||b.dataset.v===S.mode) return;
-  const keep={belt:S.belt,frame:S.frame,speed:S.speed,zoom:S.zoom,vs:S.vs,vw:S.vw,tg:S.tg,labels:S.labels,rdv:S.rdv,trail:S.trail,loop:S.loop,stopRev:S.stopRev};
+  const keep={belt:S.belt,frame:S.frame,speed:S.speed,zoom:S.zoom,vs:S.vs,vw:S.vw,tg:S.tg,labels:S.labels,rdv:S.rdv,trail:S.trail,loop:S.loop,stopRev:S.stopRev,charts:S.charts};
   const pl=S.playing; S=freshState(b.dataset.v,keep); S.playing=pl; sync();
 });
 $('beltSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.belt=b.dataset.v; sync();}});
@@ -1075,10 +959,10 @@ function draw(){
     const o=scr(w.cx,w.cy); ctx.beginPath(); ctx.arc(o[0],o[1],3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
     text(String(i+1),o[0]-13,o[1]-12,C.muted,'center','middle','700 12px '+FONT);
   });
-  text(MODE_NAME[S.mode]+(car?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):''),46,20,C.muted,'left','middle','600 12px '+FONT);
+  if(W>=560) text(MODE_NAME[S.mode]+(car?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):''),46,20,C.muted,'left','middle','600 12px '+FONT);
 
   /* τιμές πάνω δεξιά */
-  if(S.rdv){
+  if(S.rdv&&W>=560){
     const w1=Wd.ws[0], w2=Wd.ws[1], rows=[];
     rows.push([C.acc2,'ω','1',' = '+num(w1.om,2)+' rad/s,  f₁ = '+num(w1.om/TAU,2)+' Hz']);
     rows.push([C.acc2,'ω','2',' = '+num(w2.om,2)+' rad/s,  f₂ = '+num(w2.om/TAU,2)+' Hz']);
@@ -1245,55 +1129,193 @@ function loop(now){
   }
   if(document.activeElement!==$('sl_time')) $('sl_time').value=S.t;
   $('tOut').textContent='t = '+num(S.t)+' s';
-  draw();
+  draw(); drawCharts(); updateStatus(); audioUpdate();
   const sp=$('solBody').closest('.panel');
   if(sp&&!sp.hidden&&now-solTick>120){ solTick=now; $('solBody').innerHTML=solution(); }
   requestAnimationFrame(loop);
 }
 
-/* ---------- ΣΥΜΠΤΥΞΗ / ΜΕΓΙΣΤΟΠΟΙΗΣΗ ---------- */
-document.addEventListener('click',e=>{
-  const mb=e.target.closest('[data-max]');
-  if(mb){
-    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
-    document.body.classList.toggle('hasmax',on);
-    document.querySelectorAll('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';});
-    setTimeout(resize,60);
-  }
+/* ---------- ΗΧΟΣ (συνθετικός, Web Audio): βούισμα που ανεβαίνει με τη συχνότητα ---------- */
+const AU={ctx:null,on:true,gain:null,osc:null,flt:null};
+function audioInit(){
+  if(AU.ctx){try{AU.ctx.resume();}catch(e){}return;}
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext; if(!Ctx) return;
+    const ctx=new Ctx(), osc=ctx.createOscillator(), flt=ctx.createBiquadFilter(), g=ctx.createGain();
+    osc.type='sawtooth'; osc.frequency.value=90; flt.type='lowpass'; flt.frequency.value=700; g.gain.value=0;
+    osc.connect(flt); flt.connect(g); g.connect(ctx.destination); osc.start();
+    Object.assign(AU,{ctx,osc,flt,gain:g}); ctx.resume();
+  }catch(e){AU.ctx=null;}
+}
+function audioUpdate(){
+  if(!AU.ctx) return;
+  const w=wheels(S.t), f=Math.abs(w.ws[0].om)/TAU, t=AU.ctx.currentTime;
+  const want=AU.on&&S.playing&&f>0.02&&document.visibilityState!=='hidden';
+  AU.gain.gain.setTargetAtTime(want?0.045:0,t,0.06);
+  AU.osc.frequency.setTargetAtTime(60+clamp(f,0,12)*16,t,0.1);
+  AU.flt.frequency.setTargetAtTime(500+clamp(f,0,12)*90,t,0.1);
+}
+$('sndBtn').addEventListener('click',e=>{
+  AU.on=!AU.on; if(AU.on) audioInit();
+  e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι'); e.currentTarget.setAttribute('aria-pressed',AU.on);
 });
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){const m=document.querySelector('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');setTimeout(resize,60);}}
-  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('playBtn').click();}
-});
+$('playBtn').addEventListener('click',audioInit);
 
-/* ---------- SKINS (ίδια με την προσομοίωση αυτοκινήτου) ---------- */
-const SKINS=[["blueprint", "DarkBlue", "Βασικά"], ["classic", "DarkBlack", "Βασικά"], ["minimal", "LightOrange", "Βασικά"], ["pw", "Λευκό", "Βασικά"], ["gr", "GreyO", "Βασικά"], ["gr2", "GreyB", "Βασικά"], ["rt3", "Δεξί 3", "Βασικά"], ["n01", "01 · Λευκό · μπλε", "Νέοι συνδυασμοί"], ["n02", "02 · Λευκό · τιρκουάζ", "Νέοι συνδυασμοί"], ["n03", "03 · Λευκό · βιολετί", "Νέοι συνδυασμοί"], ["n04", "04 · Γκρι · πορτοκαλί", "Νέοι συνδυασμοί"], ["n05", "05 · Γκρι · μπλε", "Νέοι συνδυασμοί"], ["n08", "08 · Ουρανός · μπλε", "Νέοι συνδυασμοί"], ["n09", "09 · Ουρανός · τιρκουάζ", "Νέοι συνδυασμοί"], ["n12", "12 · Λευκό + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n13", "13 · Γκρι + σκούρο δεξί σχιστόλιθος", "Νέοι συνδυασμοί"], ["n15", "15 · Ουρανός + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n16", "16 · Μαύρο φόντο · γκρι πανελ", "Νέοι συνδυασμοί"], ["n17", "17 · Ναυτικό · σκούρο", "Νέοι συνδυασμοί"], ["n18", "18 · Σχιστόλιθος · κυανό", "Νέοι συνδυασμοί"], ["n19", "19 · Μαύρο · πορτοκαλί", "Νέοι συνδυασμοί"], ["n23", "23 · Ναυτικό + ανοιχτή σκηνή", "Νέοι συνδυασμοί"], ["n42", "42 · Γκρι · κεχριμπάρι", "Νέοι συνδυασμοί 2"]];
+/* ---------- ΔΙΑΓΡΑΜΜΑΤΑ ---------- */
+const CHN={w:'ω₁, ω₂',th:'θ₁, θ₂',v:'υ σημείου',a:'α σημείου'};
+const CHSEL=()=>S.pts[S.sel]||null;
+function chSeries(k){
+  const N=160, xs=[], ys=[[],[],[]], p=CHSEL();
+  for(let i=0;i<=N;i++){
+    const t=TMAX*i/N, Wd=wheels(t); xs.push(t);
+    if(k==='w'){ ys[0].push(Wd.ws[0].om); ys[1].push(Wd.ws[1].om); }
+    else if(k==='th'){ ys[0].push(Wd.ws[0].th); ys[1].push(Wd.ws[1].th); }
+    else if(p){
+      const q=pointKin(p,Wd);
+      if(k==='v') ys[0].push(mag(q.v));
+      else { ys[0].push(mag(q.ac)); ys[1].push(mag(q.at)); ys[2].push(mag(q.atot)); }
+    }
+  }
+  return {xs,ys};
+}
+const CHDEF={
+  w:{short:'Γωνιακή ταχύτητα',title:'Γωνιακή ταχύτητα',unit:'rad/s',names:[['ω','1'],['ω','2']],cols:['--c-th','--blue']},
+  th:{short:'Γωνία στροφής',title:'Γωνία στροφής',unit:'rad',names:[['θ','1'],['θ','2']],cols:['--c-th','--blue']},
+  v:{short:'Γραμμική ταχύτητα',title:'Γραμμική ταχύτητα σημείου',unit:'m/s',names:[['υ','']],cols:['--e1']},
+  a:{short:'Επιταχύνσεις',title:'Επιταχύνσεις σημείου',unit:'m/s²',names:[['α','κ'],['α','επ'],['α','ολ']],cols:['--blue','--e2','--et']}
+};
+function buildChartChips(){
+  const box=$('gchips'); box.innerHTML='';
+  Object.keys(CHDEF).forEach(k=>{
+    const b=document.createElement('button'); b.type='button'; b.className='chip'+(S.charts[k]?' on':'');
+    b.style.setProperty('--cc','var('+CHDEF[k].cols[0]+')');
+    b.innerHTML='<i class="d"></i><span>'+CHDEF[k].title+'</span>';
+    b.addEventListener('click',()=>{ S.charts[k]=S.charts[k]?0:1; b.classList.toggle('on',!!S.charts[k]); buildChartCells(); });
+    box.appendChild(b);
+  });
+}
+function buildChartCells(){
+  const box=$('charts'); box.innerHTML='';
+  Object.keys(CHDEF).filter(k=>S.charts[k]).forEach(k=>{
+    const c=document.createElement('canvas'); c.dataset.k=k; c.style.cssText='width:100%;height:100%;display:block;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);cursor:crosshair;touch-action:none;';
+    const set=e=>{ const r=c.getBoundingClientRect(); const x=(e.clientX-r.left-46)/(r.width-46-10); S.t=clamp(x,0,1)*TMAX; setPlaying(false); };
+    let dn=false; c.addEventListener('pointerdown',e=>{dn=true; try{c.setPointerCapture(e.pointerId);}catch(_){} set(e);});
+    c.addEventListener('pointermove',e=>{ if(dn) set(e); }); c.addEventListener('pointerup',()=>dn=false); c.addEventListener('pointercancel',()=>dn=false);
+    box.appendChild(c);
+  });
+}
+function drawChart(c,k){
+  const d=CHDEF[k], r=c.getBoundingClientRect(), dp=Math.min(2,window.devicePixelRatio||1), w=Math.round(r.width), h=Math.round(r.height);
+  if(w<20||h<20) return;
+  if(c.width!==w*dp||c.height!==h*dp){ c.width=w*dp; c.height=h*dp; }
+  const g=c.getContext('2d'); g.setTransform(dp,0,0,dp,0,0); g.clearRect(0,0,w,h);
+  const cs=getComputedStyle($('charts')), V=n=>cs.getPropertyValue(n).trim();
+  const {xs,ys}=chSeries(k), L=46, Rm=10, T=26, B=22, pw=w-L-Rm, ph=h-T-B;
+  g.font='600 12px '+FONT; g.fillStyle=V('--text'); g.textAlign='left'; g.textBaseline='middle';
+  g.fillText(d.short+' ('+d.unit+')',8,12);
+  if(!ys[0].length){ g.fillStyle=V('--textDim'); g.textAlign='center'; g.fillText('Πρόσθεσε ένα σημείο',w/2,h/2); return; }
+  let lo=0,hi=0; ys.forEach(a=>a.forEach(v=>{lo=Math.min(lo,v);hi=Math.max(hi,v);}));
+  if(hi-lo<1e-9){hi=lo+1;}
+  const pad=(hi-lo)*0.08; if(hi>0) hi+=pad; if(lo<0) lo-=pad;
+  const X=t=>L+t/TMAX*pw, Y=v=>T+(hi-v)/(hi-lo)*ph;
+  g.strokeStyle=V('--grid'); g.lineWidth=1; g.fillStyle=V('--textDim'); g.font='500 10.5px '+MONO_F; g.textAlign='right';
+  for(let i=0;i<=4;i++){ const v=lo+(hi-lo)*i/4, y=Y(v); g.beginPath(); g.moveTo(L,y); g.lineTo(L+pw,y); g.stroke(); g.fillText(num(v,Math.abs(v)<10?1:0),L-4,y); }
+  g.textAlign='center'; for(let i=0;i<=5;i++){ const t=TMAX*i/5; g.fillText(num(t,0),X(t),h-9); }
+  if(lo<0&&hi>0){ g.strokeStyle=V('--gridStrong'); g.beginPath(); g.moveTo(L,Y(0)); g.lineTo(L+pw,Y(0)); g.stroke(); }
+  d.names.forEach((nm,i)=>{
+    if(!ys[i].length) return; g.strokeStyle=V(d.cols[i]); g.lineWidth=2; g.beginPath();
+    ys[i].forEach((v,j)=>{ const x=X(xs[j]), y=Y(v); j?g.lineTo(x,y):g.moveTo(x,y); }); g.stroke();
+  });
+  /* υπόμνημα (δεξιά, στη γραμμή του τίτλου) */
+  { let tot=0; g.font='italic 600 12px '+FONT;
+    d.names.forEach((nm,i)=>{ if(!ys[i].length) return; g.font='italic 600 12px '+FONT; tot+=g.measureText(nm[0]).width; if(nm[1]){ g.font='600 9px '+FONT; tot+=g.measureText(nm[1]).width+3; } tot+=10; });
+    let lx=w-Rm-tot+6; g.textAlign='left';
+    d.names.forEach((nm,i)=>{ if(!ys[i].length) return; g.fillStyle=V(d.cols[i]); g.font='italic 600 12px '+FONT; g.fillText(nm[0],lx,12); lx+=g.measureText(nm[0]).width; if(nm[1]){ g.font='600 9px '+FONT; g.fillText(nm[1],lx+1,16); lx+=g.measureText(nm[1]).width+3; } lx+=10; }); }
+  const tx=X(clamp(S.t,0,TMAX)); g.strokeStyle=V('--accent'); g.lineWidth=1.5; g.setLineDash([4,3]); g.beginPath(); g.moveTo(tx,T); g.lineTo(tx,T+ph); g.stroke(); g.setLineDash([]);
+  d.names.forEach((nm,i)=>{ if(!ys[i].length) return; const Wd=wheels(S.t); let v;
+    if(k==='w') v=Wd.ws[i].om; else if(k==='th') v=Wd.ws[i].th; else { const q=pointKin(CHSEL(),Wd); v=k==='v'?mag(q.v):[mag(q.ac),mag(q.at),mag(q.atot)][i]; }
+    g.fillStyle=V(d.cols[i]); g.beginPath(); g.arc(tx,Y(v),3.5,0,7); g.fill(); });
+}
+const MONO_F='"IBM Plex Mono",monospace';
+function drawCharts(){ document.querySelectorAll('#charts canvas').forEach(c=>drawChart(c,c.dataset.k)); }
+
+/* ---------- ΚΑΤΑΣΤΑΣΗ (badge) ---------- */
+let lastSt='';
+function updateStatus(){
+  const st=$('status'), acc=Math.abs(S.eps)>1e-9;
+  const txt=(acc?'ΕΠΙΤΑΧΥΝΟΜΕΝΗ ΠΕΡΙΣΤΡΟΦΗ':'ΟΜΑΛΗ ΠΕΡΙΣΤΡΟΦΗ')+(S.mode==='car'?' · ΚΥΛΙΣΗ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ':S.mode==='gear'?' · ΕΠΑΦΗ ΟΔΟΝΤΩΝ':' · ΙΜΑΝΤΑΣ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ');
+  if(txt!==lastSt){ lastSt=txt; st.textContent=txt; st.className='ok'; }
+}
+
+/* ---------- SKINS ---------- */
+const SKINS=[["blueprint","DarkBlue",""],["classic","DarkBlack",""],["minimal","LightOrange",""],["gr","Grey",""],["n01","WhiteBlue",""],["n08","SkyBlue",""],["n12","WhiteDBlue",""],["n16","GreyDarkB",""],["n13","WhiteBGrey",""],["g16","GreyDBlue",""],["n15","SkyDBlue",""],["n18","DarkGrey",""],["n23","NavyLight",""]];
 function setSkin(n){
   document.documentElement.dataset.skin=n;
   const sel=$('skinSel');
-  if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}
+  if(sel){ [].forEach.call(sel.options,o=>{ if(o.value) o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,'')); }); sel.selectedIndex=0; }
   try{localStorage.setItem('sim-skin',n);}catch(_){}
 }
-{const sel=$('skinSel');{const o=document.createElement('option');o.textContent='Skins';o.value='';o.hidden=true;sel.appendChild(o);}
- let g='',og=null;SKINS.forEach(k=>{if(k[2]!==g){g=k[2];og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});
- sel.addEventListener('change',()=>setSkin(sel.value));}
+{
+  const sel=$('skinSel'); const h=document.createElement('option'); h.textContent='Skins'; h.value=''; h.hidden=true; sel.appendChild(h);
+  let g='',og=null;
+  SKINS.forEach(k=>{
+    if(k[2]!==g){ g=k[2]; og=g?document.createElement('optgroup'):null; if(og){og.label=g; sel.appendChild(og);} }
+    const o=document.createElement('option'); o.value=k[0]; o.textContent=k[1]; o.dataset.l=k[1]; (og||sel).appendChild(o);
+  });
+  sel.addEventListener('change',()=>setSkin(sel.value));
+}
 let skin0='blueprint'; try{skin0=localStorage.getItem('sim-skin')||'blueprint';}catch(_){}
 if(!SKINS.some(k=>k[0]===skin0)) skin0='blueprint';
 setSkin(skin0);
 
-/* ---------- ΤΙΤΛΟΣ, ΚΑΡΤΕΛΕΣ, ΔΙΑΤΑΞΗ ---------- */
+/* ---------- ΜΕΓΙΣΤΟΠΟΙΗΣΗ ---------- */
+document.addEventListener('click',e=>{
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'), on=p.classList.toggle('maxed');
+    document.querySelectorAll('.panel.maxed').forEach(x=>{ if(x!==p) x.classList.remove('maxed'); });
+    document.body.classList.toggle('hasmax',on);
+    document.querySelectorAll('[data-max]').forEach(x=>{ const m=x.closest('.panel').classList.contains('maxed'); x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση'; x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ'); });
+    setTimeout(resize,60);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ const m=document.querySelector('.panel.maxed'); if(m){ m.classList.remove('maxed'); document.body.classList.remove('hasmax'); setTimeout(resize,60); } }
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){ e.preventDefault(); $('playBtn').click(); }
+});
+
+
+/* ---------- ΤΙΤΛΟΣ, ΚΑΡΤΕΛΕΣ, ΖΟΥΜ ---------- */
 $('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return '<span class="tw"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
 {
-  const ps=[...document.querySelectorAll('#tabBody>.panel')];
-  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});document.querySelectorAll('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});setTimeout(resize,60);};
-  TABS.forEach((n,i)=>{const b=document.createElement('button');b.className='main-tab-btn';b.textContent=n;b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('setTabs').appendChild(b);});
+  const raw=[...document.querySelectorAll('#tabBody>.panel')];   /* 0 Ρυθμίσεις,1 Προβολή,2 Σημεία,3 Τιμές,4 Ανάλυση,5 Οδηγίες */
+  const gp=$('graphPanel'); gp.classList.remove('collapsed'); $('tabBody').appendChild(gp);
+  /* τα σημεία μπαίνουν στις ρυθμίσεις */
+  const sp=document.createElement('div'); sp.style.marginTop='18px'; while(raw[2].firstElementChild.firstChild) sp.appendChild(raw[2].firstElementChild.firstChild);
+  raw[0].firstElementChild.appendChild(sp); raw[2].remove();
+  const ps=[raw[0],raw[1],raw[4],raw[3],gp,raw[5]];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  const show=i=>{ ps.forEach((p,j)=>{p.hidden=j!==i;}); document.querySelectorAll('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);}); setTimeout(resize,60); };
+  names.forEach((n,i)=>{ const b=document.createElement('button'); b.className='main-tab-btn'; b.textContent=n; b.type='button'; b.setAttribute('role','tab'); b.addEventListener('click',()=>show(i)); $('setTabs').appendChild(b); });
   show(0);
 }
-const fitGrid=()=>{const g=document.querySelector('.main-grid');if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,innerHeight-top-12))+'px';}else g.style.height='';resize();};
+let uiZ=0.8; try{uiZ=+localStorage.getItem('ui-zoom80')||0.8;}catch(e){}
+const fitGrid=()=>{
+  const g=document.querySelector('.main-grid'), app=document.querySelector('.app'), z=innerWidth>980?uiZ:1;
+  app.style.zoom=z===1?'':z;
+  if(innerWidth>980){ const top=g.getBoundingClientRect().top+scrollY; g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px'; } else g.style.height='';
+  resize();
+};
+{
+  const zs=$('zoomSel'); zs.value=String(uiZ); if(zs.value!==String(uiZ)){ uiZ=1; zs.value='1'; }
+  zs.addEventListener('change',()=>{ uiZ=+zs.value; try{localStorage.setItem('ui-zoom80',uiZ);}catch(e){} fitGrid(); setTimeout(()=>{fitGrid(); window.dispatchEvent(new Event('resize'));},60); });
+}
 addEventListener('resize',fitGrid);
+buildChartChips(); buildChartCells();
 sync(); fitGrid(); setTimeout(fitGrid,300);
 if(window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(resize);
 requestAnimationFrame(loop);
-</script>
 
+</script>
 </body></html>
