@@ -587,7 +587,7 @@ const MD={
 function freshState(mode,keep){
   const m=MD[mode], s=Object.assign({
     belt:'open', frame:'ground', speed:1, zoom:1, vs:100, vw:100,
-    tg:{v:true,w:true,ac:true,at:false,atot:false},
+    tg:{v:true,w:true,ac:false,at:false,atot:false},
     charts:{w:1,th:0,v:1,a:1}, labels:true, rdv:false, trail:false, loop:true, stopRev:false
   },keep||{});
   s.mode=mode; s.R1=m.R1; s.R2=m.R2; s.d=m.d; s.L=m.L; s.f=m.f; s.eps=m.eps;
@@ -891,16 +891,13 @@ function drawVec(O,vv,sc,d,name){
   if(S.labels&&Lf>=8) sym(d.n,(d.sub?d.sub+',':'')+name,'',O[0]+sv[0]+ux*11,O[1]+sv[1]+uy*11,col,ux>0.35?'left':ux<-0.35?'right':'center');
 }
 function drawOmega(w,Rpx){
-  const o=scr(w.cx,w.cy), rr=Math.max(0.32*Rpx,14), sg=w.om>=0?1:-1, a0=-0.3*Math.PI*sg;
+  /* το ω είναι άξονικό διάνυσμα: δεξιόστροφη περιστροφή → προς το επίπεδο (×), αριστερόστροφη → προς τον θεατή (•) */
   if(Math.abs(w.om)<1e-6) return;
-  const lw=3.2*S.vw/100, a1=a0+sg*1.5*Math.PI;
-  ctx.beginPath(); ctx.arc(o[0],o[1],rr,a0,a1,sg<0); ctx.lineWidth=lw; ctx.strokeStyle=C.acc2; ctx.stroke();
-  const ex=o[0]+rr*Math.cos(a1), ey=o[1]+rr*Math.sin(a1), tx=-Math.sin(a1)*sg, ty=Math.cos(a1)*sg;
-  arrowHead(ex+tx*5,ey+ty*5,tx,ty,C.acc2,10+lw);
-  if(S.labels){
-    const am=(a0+a1)/2, lx=o[0]+(rr+17)*Math.cos(am), ly=o[1]+(rr+17)*Math.sin(am);
-    sym('ω',String(w.i+1),'',lx,ly,C.acc2,'center');
-  }
+  const o=scr(w.cx,w.cy), r=Math.max(11,Math.min(0.2*Rpx,20))*Math.max(0.7,S.vw/100), lw=2.6*S.vw/100;
+  ctx.beginPath(); ctx.arc(o[0],o[1],r,0,7); ctx.fillStyle=C.bg; ctx.fill(); ctx.lineWidth=lw; ctx.strokeStyle=C.acc2; ctx.stroke();
+  if(w.om>0){ const d=r*0.62; ctx.beginPath(); ctx.moveTo(o[0]-d*0.7,o[1]-d*0.7); ctx.lineTo(o[0]+d*0.7,o[1]+d*0.7); ctx.moveTo(o[0]+d*0.7,o[1]-d*0.7); ctx.lineTo(o[0]-d*0.7,o[1]+d*0.7); ctx.stroke(); }
+  else { ctx.beginPath(); ctx.arc(o[0],o[1],r*0.3,0,7); ctx.fillStyle=C.acc2; ctx.fill(); }
+  if(S.labels) sym('ω',String(w.i+1),'',o[0]+r+12,o[1]-r*0.6,C.acc2,'left');
 }
 
 /* ---------- κύρια σχεδίαση ---------- */
