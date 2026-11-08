@@ -421,7 +421,9 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 .ptbar select{flex:1 1 150px;min-width:0;}
 .ptbar .btn:disabled{opacity:.45;cursor:default;}
 .field .zero{flex-shrink:0;}
-#status{top:46px;}
+#simPanel.collapsed>.panel-body{display:none;}
+#simPanel.collapsed{flex:0 0 auto;}
+#status{top:10px;}
 .chips{margin-bottom:10px;}
 #charts{grid-template-columns:1fr;grid-auto-rows:190px;}
 #tabBody .guide h3:not(:first-child){margin-top:14px;}
@@ -440,9 +442,10 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
   <div class="main-grid">
     <div class="left-col">
       <div class="panel" id="simPanel">
+        <div class="panel-head-row"><h2 id="simTitle">Γρανάζια σε επαφή</h2><div class="panel-tools"><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button></div></div>
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap">
-            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση"></canvas><div id="status" class="ok"></div></div>
+            <div class="stage"><canvas id="cv" aria-label="Προσομοίωση"></canvas><div id="status" class="ok"></div></div>
           </div>
           <div class="transport one">
             <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
@@ -575,17 +578,17 @@ const NAMES=['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ'];
 /* ---------- ΚΑΤΑΣΤΑΣΗ ---------- */
 const MD={
   gear:{R1:10,R2:15,d:40,L:150,f:0.5,eps:0,
-    pts:[{name:'Α',w:0,r:1,b:90,on:true},{name:'Β',w:1,r:1,b:270,on:true},{name:'Γ',w:0,r:0.5,b:0,on:true}]},
+    pts:[{name:'Α',w:0,r:1,b:90,on:true},{name:'Β',w:1,r:1,b:270,on:true}]},
   belt:{R1:8,R2:16,d:40,L:150,f:0.5,eps:0,
-    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:0,on:true},{name:'Γ',w:1,r:0.5,b:90,on:true}]},
+    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:0,on:true}]},
   car:{R1:40,R2:30,d:40,L:150,f:0.5,eps:0,
-    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:180,on:true},{name:'Γ',w:0,r:0.5,b:90,on:true}]}
+    pts:[{name:'Α',w:0,r:1,b:0,on:true},{name:'Β',w:1,r:1,b:180,on:true}]}
 };
 function freshState(mode,keep){
   const m=MD[mode], s=Object.assign({
     belt:'open', frame:'ground', speed:1, zoom:1, vs:100, vw:100,
     tg:{v:true,w:true,ac:true,at:false,atot:false},
-    charts:{w:1,th:0,v:1,a:1}, labels:true, rdv:true, trail:false, loop:true, stopRev:false
+    charts:{w:1,th:0,v:1,a:1}, labels:true, rdv:false, trail:false, loop:true, stopRev:false
   },keep||{});
   s.mode=mode; s.R1=m.R1; s.R2=m.R2; s.d=m.d; s.L=m.L; s.f=m.f; s.eps=m.eps;
   s.pts=clone(m.pts); s.sel=0; s.t=0; s.playing=false;
@@ -959,7 +962,6 @@ function draw(){
     const o=scr(w.cx,w.cy); ctx.beginPath(); ctx.arc(o[0],o[1],3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
     text(String(i+1),o[0]-13,o[1]-12,C.muted,'center','middle','700 12px '+FONT);
   });
-  if(W>=560) text(MODE_NAME[S.mode]+(car?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):''),46,20,C.muted,'left','middle','600 12px '+FONT);
 
   /* τιμές πάνω δεξιά */
   if(S.rdv&&W>=560){
@@ -1242,6 +1244,8 @@ function drawCharts(){ document.querySelectorAll('#charts canvas').forEach(c=>dr
 /* ---------- ΚΑΤΑΣΤΑΣΗ (badge) ---------- */
 let lastSt='';
 function updateStatus(){
+  const tt=MODE_NAME[S.mode]+(S.mode==='car'?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):'');
+  if($('simTitle').textContent!==tt) $('simTitle').textContent=tt;
   const st=$('status'), acc=Math.abs(S.eps)>1e-9;
   const txt=(acc?'ΕΠΙΤΑΧΥΝΟΜΕΝΗ ΠΕΡΙΣΤΡΟΦΗ':'ΟΜΑΛΗ ΠΕΡΙΣΤΡΟΦΗ')+(S.mode==='car'?' · ΚΥΛΙΣΗ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ':S.mode==='gear'?' · ΕΠΑΦΗ ΟΔΟΝΤΩΝ':' · ΙΜΑΝΤΑΣ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ');
   if(txt!==lastSt){ lastSt=txt; st.textContent=txt; st.className='ok'; }
@@ -1270,6 +1274,8 @@ setSkin(skin0);
 
 /* ---------- ΜΕΓΙΣΤΟΠΟΙΗΣΗ ---------- */
 document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){ const p=cb.closest('.panel'), c=p.classList.toggle('collapsed'); cb.classList.toggle('collapsed',c); setTimeout(resize,60); return; }
   const mb=e.target.closest('[data-max]');
   if(mb){
     const p=mb.closest('.panel'), on=p.classList.toggle('maxed');
