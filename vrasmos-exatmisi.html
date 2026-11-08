@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Βρασμός και εξάτμιση</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.hdr-tools{display:flex;gap:8px;align-items:center;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
+.home-btn:hover{border-color:var(--accent);}
+.zoom-select{min-width:140px!important;}
+@media(max-width:980px){#zoomSel{display:none;}}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="g16"]{
+  color-scheme:light;
+  --bg:#4B5058; --bg2:#41464E; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F1F5F9; --hdim:#CBD5E1;
+  --st-track:#D3D7DE; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="g16"] .right-col,:root[data-skin="g16"] .left-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:1.1fr 1fr;grid-template-rows:1fr;}
+.stageWrap[data-view="box"] #st-mol,
+.stageWrap[data-view="mol"] #st-box{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-box,#st-mol{touch-action:none;cursor:grab;}
+#st-box:active,#st-mol:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.476 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(2,300px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+/* --- Βρασμός και εξάτμιση: προσθήκες --- */
+#status{top:10px!important;left:10px!important;}
+.stageWrap .mini{bottom:auto;top:8px;right:8px;left:auto;}
+.field .hintline b,.hintline b{color:var(--text);}
+#liqInfo{line-height:1.5;}
+#liqSel{width:100%;}
+.field select{max-width:100%;}
+.right-col .field .note{padding-right:0;}
+.guide.phys-in{margin:0;}
+</style></head>
+<body>
+<div class="app">
+  <header>
+    <div class="hdr-left">
+      <div>
+        <h1 id="mainTitle">Βρασμός και εξάτμιση</h1>
+        <div class="sub">Σλάβης Τάσος</div>
+      </div>
+    </div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1" selected>Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8">Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+  </header>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-head-row">
+          <div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή">
+            <button data-v="box" type="button" role="tab" class="main-tab-btn">Δοχείο</button>
+            <button data-v="mol" type="button" role="tab" class="main-tab-btn">Μόρια</button>
+            <button data-v="all" type="button" role="tab" class="main-tab-btn">Όλες μαζί</button>
+          </div>
+          <div class="panel-tools"><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button></div>
+        </div>
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap" data-view="all">
+            <div class="stage" id="st-box"><canvas id="cv-box"></canvas></div>
+            <div class="stage" id="st-mol"><canvas id="cv-mol"></canvas></div>
+            <div id="legend" hidden></div>
+            <div id="status" class="ok"></div>
+            <button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button>
+          </div>
+          <div class="transport">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="spd">Ταχύτητα αναπαραγωγής
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.1">×0,1 πολύ αργά</option>
+                <option value="0.25">×0,25 αργά</option>
+                <option value="0.5">×0,5</option>
+                <option value="1" selected>×1 κανονική</option>
+                <option value="2">×2 γρήγορα</option>
+                <option value="5">×5 πολύ γρήγορα</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="3600" step="0.1" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,0 s</span>
+          </div>
+          <div class="panel subpanel collapsed" id="rolePanel">
+            <div class="panel-head-row"><h2>Ανάλυση</h2><div class="panel-tools"><button class="collapse-btn collapsed" type="button" title="Σύμπτυξη" aria-label="Σύμπτυξη">▾</button></div></div>
+            <div class="panel-body">
+              <div class="role" id="roleBox"></div>
+              <div class="hintline" id="roleHint"></div>
+              <div class="guide phys" style="margin-top:0;padding-top:0;border-top:0"></div>
+            </div>
+          </div>
+          <label class="checkline" id="allWrap" style="margin:0 0 4px"><input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα</label>
+          <div class="readouts" id="readouts" hidden></div>
+          <div class="hintline" id="navHint">Δοχείο και Μόρια: ροδέλα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, σύρσιμο για μετατόπιση, διπλό κλικ για επαναφορά. Στη μοριακή όψη ο αριθμός και το μέγεθος των μορίων δεν είναι υπό κλίμακα: δείχνει μόνο πώς κινούνται και πότε διαφεύγουν. Οι ροές ενέργειας στο δοχείο σχεδιάζονται με το ίδιο μήκος ανά W για όλες.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row">
+          <h2 data-up>Διαγράμματα</h2>
+          <div class="panel-tools">
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chips" id="gchips"></div>
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Στα διαγράμματα του χρόνου κάνε κλικ ή σύρε για να πας σε άλλη στιγμή. Στο ṁ(άνεμος) αλλάζεις την ταχύτητα του ανέμου και στο T<sub>b</sub>(p) την πίεση. Η μωβ σκίαση στο T(t) δείχνει πότε το υγρό βράζει.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col" id="rightCol"></div>
+  </div>
+
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=(x,d=2)=>{if(!isFinite(x))return '∞';let s=(+x).toFixed(d);if(/^-0(\.0+)?$/.test(s))s=s.slice(1);return s.replace('.',',');};
+const fN=x=>fmt(x,Math.abs(x)<10?2:Math.abs(x)<100?1:0);
+/* σημαντικά ψηφία για μεγέθη που αλλάζουν τάξη μεγέθους */
+const fS=(x,u)=>{const a=Math.abs(x);if(a===0)return '0';return fmt(x,a>=1000?0:a>=100?0:a>=10?1:a>=1?2:a>=0.1?3:a>=0.01?4:5)+(u?' '+u:'');};
+const TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const FONT="'Inter',system-ui,sans-serif", MONO='"IBM Plex Mono",monospace';
+const fmtTime=t=>{
+  if(t<120)return fmt(t,1)+' s';
+  if(t<7200){const m=Math.floor(t/60),s=Math.round(t-m*60);return (s===60?m+1:m)+' min '+(s===60?0:s)+' s';}
+  const h=Math.floor(t/3600),m=Math.round((t-h*3600)/60);return h+' h '+(m===60?0:m)+' min';
+};
+
+/* ---------- υγρά και ιδιότητες ----------
+   Τάση κορεσμένων ατμών με την εξίσωση Antoine: log10(P/mmHg) = A − B/(T/°C + C).
+   Lv: λανθάνουσα θερμότητα εξαέρωσης στο κανονικό σημείο βρασμού, c: ειδική θερμότητα υγρού,
+   hm: σχετικός συντελεστής μεταφοράς μάζας (διαχυτότητα στον αέρα) ως προς το νερό. */
+const LIQ={
+  water:{id:'water',name:'Νερό',A:8.07131,B:1730.63,C:233.426,M:0.018015,rho:998,c:4186,Lv:2.26e6,hm:1,hasAmb:true,Tmin:0,tok:'--blue',mol:'water',sf:1,
+         note:'Το νερό έχει πολύ μεγάλη λανθάνουσα θερμότητα και μέτρια τάση ατμών: εξατμίζεται σχετικά αργά.'},
+  sea:{id:'sea',name:'Θαλασσινό νερό',A:8.07131,B:1730.63,C:233.426,M:0.018015,rho:1025,c:3990,Lv:2.26e6,hm:1,hasAmb:true,Tmin:0,tok:'--c-s',mol:'water',sf:1,salt:0.035,
+         note:'Τα διαλυμένα άλατα (35 g/kg) μειώνουν λίγο την τάση ατμών· καθώς το νερό εξατμίζεται, η συγκέντρωση αυξάνεται και το σημείο βρασμού ανεβαίνει.'},
+  eth:{id:'eth',name:'Αιθανόλη (οινόπνευμα)',A:8.20417,B:1642.89,C:230.300,M:0.04607,rho:789,c:2440,Lv:0.846e6,hm:0.60,hasAmb:false,Tmin:-40,tok:'--e1',mol:'eth',sf:0.8,
+         note:'Μικρότερη λανθάνουσα θερμότητα και μεγαλύτερη τάση ατμών από το νερό: εξατμίζεται πιο γρήγορα και δροσίζει το δέρμα.'},
+  ace:{id:'ace',name:'Ακετόνη',A:7.02447,B:1161.0,C:224.0,M:0.05808,rho:791,c:2170,Lv:0.518e6,hm:0.55,hasAmb:false,Tmin:-40,tok:'--c-ag',mol:'ace',sf:0.85,
+         note:'Πτητικό υγρό (διαλύτης): βράζει στους 56 °C και εξατμίζεται πολύ γρήγορα σε θερμοκρασία δωματίου.'},
+  eth2:{id:'eth2',name:'Αιθέρας (διαιθυλαιθέρας)',A:6.92032,B:1064.07,C:228.80,M:0.07412,rho:713,c:2370,Lv:0.351e6,hm:0.50,hasAmb:false,Tmin:-40,tok:'--c-th',mol:'eth2',sf:0.6,
+         note:'Πολύ πτητικός (βράζει στους 35 °C): σε δωμάτιο σχεδόν «βράζει» από μόνος του και ψύχεται έντονα. Εύφλεκτος, μόνο για προσομοίωση.'}
+};
+const LIQ_ORDER=['water','sea','eth','ace','eth2'];
+const R_GAS=8.314, NA=6.022e23, KB=1.380649e-23;
+const psat=(L,T)=>133.322*Math.pow(10,L.A-L.B/(T+L.C));                 /* Pa */
+const Tsat=(L,P)=>L.B/(L.A-Math.log10(Math.max(P,1)/133.322))-L.C;        /* °C */
+/* ο παράγοντας Raoult για το αλατούχο διάλυμα */
+const facR=(L,m,ms)=>{if(!(ms>0))return 1;m=Math.max(m,ms/0.26);/* κορεσμός NaCl ≈ 26% */const nw=Math.max(1e-6,m-ms)/0.018015,ni=1.8*ms/0.05844;return nw/(nw+ni);};
+const baro=h=>101.325*Math.pow(1-2.25577e-5*h,5.25588);                  /* kPa, ατμόσφαιρα ISA */
+
+/* ---------- κατάσταση ---------- */
+const S={
+  liq:'water',V0:1000,T0:20,A:150,Ta:20,RH:50,wind:0,P:1500,p:101.325,lid:false,
+  tmax:3600,ts:30,m0:1,ms:0,
+  t:0,playing:false,speed:1,view:'all',loop:true,rdv:false,tblAll:false,table:true,
+  vs:1,lw:1,fs:13,
+  show:{bub:true,steam:true,flows:false,wind:true,therm:true,dims:false,vel:false,trail:true,hl:true,labels:true,values:false},
+  charts:{T:1,R:1,PS:1,E:0,M:0,W:0,B:0,D:0}
+};
+let dirty=true;
+const touchD=()=>{dirty=true;};
+const HC=0.30;                       /* ύψος δοχείου (m) */
+const HMAXL=0.27;                    /* μέγιστο ύψος υγρού (m) */
+
+/* ---------- ιστορικό της προσομοίωσης (ολοκλήρωση με σταθερό βήμα DT) ---------- */
+let DT=0.25, NM=14420;
+const KEYS=['T','m','e','Tb','mev','mb','Qh','Qc','Qev','Ql','ps','Eh'];
+const H={n:1,dry:-1};KEYS.forEach(k=>H[k]=new Float64Array(NM+8));
+const eAmb=()=>LIQ[S.liq].hasAmb?S.RH/100*psat(LIQ.water,S.Ta):0;
+
+/* ροές ισχύος και ρυθμός εξάτμισης για δεδομένη κατάσταση (T, m, e) */
+function calc(T,m,e,vwOver){
+  const L=LIQ[S.liq],A=S.A*1e-4,p=S.p*1e3;
+  const vw=vwOver!=null?vwOver:(S.lid?0:S.wind);
+  const f=facR(L,m,S.ms);
+  const ps=psat(L,T)*f, Tb=Tsat(L,p/f);
+  const eAir=S.lid?e:eAmb();
+  const Tf=(T+S.Ta)/2+273.15;
+  const hm=0.0049*L.hm*(1+0.88*vw);                       /* m/s: μεταφορά μάζας (ASHRAE/Carrier) */
+  const mev=hm*(ps-eAir)*L.M/(R_GAS*Tf)*A;                /* kg/s, με πρόσημο (αρνητικό = συμπύκνωση) */
+  const hc=5.7+3.8*vw;                                    /* W/(m² K): συναγωγή αέρα-επιφάνειας */
+  const Qc=hc*A*(S.Ta-T);
+  const h=m/(L.rho*A), per=2*Math.sqrt(Math.PI*A);
+  const Ql=6*(A+per*h)*(T-S.Ta);                          /* απώλειες από τα τοιχώματα */
+  const Qh=m>1e-5?S.P:0;
+  return {ps,Tb,mev,Qc,Ql,Qh,hm,hc,h,eAir,vw,f};
+}
+function stepOnce(){
+  const i=H.n-1,T=H.T[i],m=H.m[i],e=H.e[i];
+  const L=LIQ[S.liq],A=S.A*1e-4,p=S.p*1e3;
+  const F=calc(T,m,e);
+  let mev=F.mev;if(mev*DT>m*0.9)mev=m*0.9/DT;
+  const Qev=mev*L.Lv;
+  const Qnet=F.Qh+F.Qc-Qev-F.Ql;
+  const C=m*L.c;
+  let Tn=T,mb=0;
+  if(T>F.Tb){                                   /* υπερθερμασμένο υγρό (π.χ. πτώση πίεσης): ακαριαίος βρασμός */
+    mb=C*(T-F.Tb)/L.Lv/DT+Math.max(0,Qnet)/L.Lv;Tn=F.Tb;
+    if(Qnet<0)Tn=F.Tb+Qnet*DT/C;
+  }else{
+    const dT=Qnet*DT/C;
+    if(T+dT>F.Tb){const Q1=C*(F.Tb-T);mb=Math.max(0,Qnet*DT-Q1)/L.Lv/DT;Tn=F.Tb;}
+    else Tn=T+dT;
+  }
+  Tn=Math.max(L.Tmin,Tn);
+  let mn=m-(mev+mb)*DT;let dry=false;
+  if(mn<=2e-5){const tot=(mev+mb)*DT;if(tot>0){const k=m/tot;mev*=k;mb*=k;}mn=0;dry=true;}
+  let en=e;
+  if(S.lid){
+    const Vair=Math.max(1e-5,A*Math.max(0.03,HC-F.h));
+    en=Math.min(p*0.98,Math.max(0,e+((mev+mb)*DT/L.M)*R_GAS*(S.Ta+273.15)/Vair));
+  }else en=eAmb();
+  H.mev[i]=mev;H.mb[i]=mb;H.Qh[i]=F.Qh;H.Qc[i]=F.Qc;H.Qev[i]=mev*L.Lv;H.Ql[i]=F.Ql;H.Tb[i]=F.Tb;H.ps[i]=F.ps;
+  const j=i+1;
+  H.T[j]=Tn;H.m[j]=mn;H.e[j]=en;H.Eh[j]=H.Eh[i]+F.Qh*DT;
+  H.n=j+1;
+  if(dry){H.dry=j;H.mev[j]=H.mb[j]=H.Qh[j]=H.Qc[j]=H.Qev[j]=H.Ql[j]=0;H.Tb[j]=F.Tb;H.ps[j]=F.ps;}
+}
+const tEnd=()=>H.dry>=0?H.dry*DT:S.tmax;
+function ensure(t){
+  const need=Math.min(NM-3,Math.ceil(t/DT)+2);
+  while(H.n-1<need&&H.dry<0)stepOnce();
+}
+/* τιμή μεγέθους από το ιστορικό τη στιγμή t (γραμμική παρεμβολή) */
+function histAt(k,t){
+  const a=H[k],q=t/DT,i=Math.floor(q);
+  if(i<0)return a[0];
+  if(i>=H.n)return NaN;
+  if(i===H.n-1)return a[i];
+  return lerp(a[i],a[i+1],q-i);
+}
+function histFlow(k,t){      /* μεγέθη-ροές: ορίζονται στο διάστημα [i, i+1) */
+  const a=H[k],i=Math.floor(t/DT);
+  if(i<0)return a[0];
+  if(i>=H.n-1)return NaN;
+  return a[i];
+}
+function sampleAt(t){
+  ensure(t);
+  const te=(H.n-1)*DT;if(t>te)t=te;
+  let i=Math.floor(t/DT);const L=LIQ[S.liq];
+  const last=i>=H.n-1;
+  if(last)i=H.n-1;
+  const fr=last?0:(t-i*DT)/DT;
+  const T=last?H.T[i]:lerp(H.T[i],H.T[i+1],fr),m=last?H.m[i]:lerp(H.m[i],H.m[i+1],fr),e=last?H.e[i]:lerp(H.e[i],H.e[i+1],fr);
+  const F=calc(T,m,e);
+  const fi=Math.min(i,H.n-2<0?0:H.n-2);
+  let mb=H.n>=2?H.mb[fi]:0,mev=H.n>=2?H.mev[fi]:F.mev;
+  if(H.dry>=0&&i>=H.dry){mb=0;mev=0;}
+  const A=S.A*1e-4;
+  const Qh=(H.dry>=0&&i>=H.dry)?0:F.Qh;
+  const Qb=mb*L.Lv,Qev=mev*L.Lv;
+  const Qnet=Qh+F.Qc-Qev-F.Ql;
+  const boiling=mb>1e-9;
+  const dTdt=boiling||m<=0?0:Qnet/(m*L.c);
+  const flash=boiling&&mb>5e-5&&Qb>Qh*1.6+60;
+  return {t,T,m,e,Tb:F.Tb,ps:F.ps,mev,mb,Qh,Qc:F.Qc,Ql:F.Ql,Qev,Qb,Qnet,dTdt,h:m/(L.rho*A),eAir:F.eAir,hm:F.hm,hc:F.hc,boiling,flash,
+    Eh:last?H.Eh[i]:lerp(H.Eh[i],H.Eh[i+1],fr),dry:H.dry>=0&&i>=H.dry,sub:F.Tb-T};
+}
+function clampGeom(){
+  const L=LIQ[S.liq];
+  S.A=clamp(S.A,30,400);
+  S.V0=clamp(S.V0,50,5000);
+  S.V0=Math.min(S.V0,S.A*HMAXL*100);
+  const mNow=H.n>0?H.m[H.n-1]:S.V0*1e-6*L.rho;
+  const minA=Math.max(30,mNow/(L.rho*HMAXL)*1e4);
+  if(S.A<minA)S.A=Math.ceil(minA);
+}
+/* πλήρης επανεκκίνηση (αλλαγή αρχικών συνθηκών) */
+let onReset=()=>{};
+function simReset(){
+  const L=LIQ[S.liq];
+  DT=Math.max(0.25,S.tmax/14400);NM=Math.ceil(S.tmax/DT)+8;
+  H.n=1;H.dry=-1;
+  const m0=clamp(S.V0,50,5000)*1e-6*L.rho;
+  S.m0=m0;S.ms=L.salt?L.salt*m0:0;
+  if(S.A*HMAXL*100<S.V0)S.V0=Math.floor(S.A*HMAXL*100);
+  H.T[0]=Math.max(L.Tmin,S.T0);H.m[0]=m0;H.e[0]=eAmb();H.Eh[0]=0;
+  S.t=0;dirty=true;onReset();
+}
+/* αλλαγή παραμέτρων «εν ώρα λειτουργίας»: το μέλλον ξαναυπολογίζεται από τη στιγμή t */
+function live(){
+  const i=Math.min(H.n-1,Math.floor(S.t/DT));
+  H.n=i+1;if(H.dry>i)H.dry=-1;
+  if(!S.lid)H.e[i]=eAmb();
+  dirty=true;if(!S.playing)needWarm=true;
+}
+
+/* ---------- χρώματα (από τα tokens του θέματος) ---------- */
+const CSSV={tl:'--e2',ta:'--c-s',tb:'--e1',ev:'--blue',bo:'--c-th',ph:'--c-ae',cv:'--et',lo:'--c-ag',
+  lq_water:'--blue',lq_sea:'--c-s',lq_eth:'--e1',lq_ace:'--c-ag',lq_eth2:'--c-th'};
+const C={};
+const TOK=Object.assign({stage:'--st-track',dim:'--st-dim',fg:'--st-text',accent:'--accent',grid:'--st-grid',gridS:'--st-gridS',danger:'--danger',ok:'--accent3'},CSSV);
+const CP={},TOKP={stage:'--track',dim:'--textDim',fg:'--text',grid:'--grid',gridS:'--gridStrong'};
+function readColors(){
+  const cs=getComputedStyle(document.documentElement);
+  for(const k in TOK)C[k]=cs.getPropertyValue(TOK[k]).trim();
+  const rc=$('#rightCol'),rs=rc?getComputedStyle(rc):cs;
+  for(const k in TOKP)CP[k]=rs.getPropertyValue(TOKP[k]).trim();
+  for(const k in CSSV)CP[k]=rs.getPropertyValue(CSSV[k]).trim();
+  PC.clear();
+}
+const PC=new Map();
+function parseCol(s){
+  s=String(s).trim();let r=PC.get(s);if(r)return r;let m;
+  if((m=/^#([0-9a-f]{3})$/i.exec(s)))r=[...m[1]].map(x=>parseInt(x+x,16));
+  else if((m=/^#([0-9a-f]{6})/i.exec(s)))r=[0,2,4].map(i=>parseInt(m[1].slice(i,i+2),16));
+  else if((m=/^rgba?\(([^)]+)\)/i.exec(s))){const a=m[1].split(/[ ,\/]+/).map(parseFloat);r=[a[0],a[1],a[2]];}
+  else r=[128,128,128];
+  PC.set(s,r);return r;
+}
+const rgba=(s,a)=>{const c=parseCol(s);return `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;};
+const lum=s=>{const c=parseCol(s);return (0.299*c[0]+0.587*c[1]+0.114*c[2])/255;};
+const isDark=()=>lum(C.stage)<0.5;
+const liqCol=()=>C['lq_'+S.liq]||C.accent;
+
+const SKINS=[["blueprint","DarkBlue",""],["classic","DarkBlack",""],["minimal","LightOrange",""],["gr","Grey",""],["n01","WhiteBlue",""],["n08","SkyBlue",""],["n12","WhiteDBlue",""],["n16","GreyDarkB",""],["n13","WhiteBGrey",""],["g16","GreyDBlue",""],["n15","SkyDBlue",""],["n18","DarkGrey",""],["n23","NavyLight",""]];
+let curSkin='blueprint';
+function setSkin(n){
+  curSkin=n;document.documentElement.dataset.skin=n;readColors();dirty=true;
+  {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
+  try{localStorage.setItem('boil-skin',n)}catch(e){}
+}
+
+/* ---------- σχεδίαση 2D: βοηθητικά ---------- */
+function fit(cv){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w,h,dpr,ctx};
+}
+function arrow(ctx,x0,y0,x1,y1,col,lw,dash){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return L;
+  const ux=dx/L,uy=dy/L,h=Math.min(8+lw*1.1,L*0.55);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw||2;ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1-ux*h*0.7,y1-uy*h*0.7);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45);ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);ctx.closePath();ctx.fill();
+  return L;
+}
+let LBF=0;const LBS=new WeakMap();
+function lab(ctx,x,y,main,sub,val,col,align,fs,noAvoid){
+  fs=fs||S.fs;ctx.save();ctx.textBaseline='middle';ctx.textAlign='left';
+  const f1=`italic 600 ${fs+1}px ${FONT}`,f2=`600 ${fs-4}px ${FONT}`,f3=`600 ${fs-2}px ${FONT}`;
+  ctx.font=f1;const w1=ctx.measureText(main).width;
+  ctx.font=f2;const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3;const w3=val?ctx.measureText(val).width:0;
+  const tot=w1+w2+w3,x0=align==='left'?x:align==='right'?x-tot:x-tot/2;
+  if(!noAvoid){let st=LBS.get(ctx);if(!st||st.f!==LBF){st={f:LBF,r:[]};LBS.set(ctx,st);}
+   const hh=fs*1.25,hit=(yy)=>st.r.some(q=>x0<q[2]&&x0+tot>q[0]&&yy-hh/2<q[3]&&yy+hh/2>q[1]);
+   let dy=0;for(const c of [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6]){if(!hit(y+c*hh)){dy=c*hh;break;}}
+   y+=dy;st.r.push([x0-2,y-hh/2,x0+tot+2,y+hh/2]);}
+  const run=fn=>{let xx=x0;ctx.font=f1;fn(main,xx,y);xx+=w1;if(sub){ctx.font=f2;fn(sub,xx+1,y+fs*0.3);xx+=w2;}if(val){ctx.font=f3;fn(val,xx+2,y);}};
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;run((t,a,b)=>ctx.strokeText(t,a,b));
+  ctx.fillStyle=col;run((t,a,b)=>ctx.fillText(t,a,b));ctx.restore();
+}
+function tipLabel(ctx,x0,y0,x1,y1,main,sub,val,col){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+  lab(ctx,x1+ux*13,y1+uy*13,main,sub,val,col,ux>0.35?'left':ux<-0.35?'right':'center');
+}
+function txt(ctx,s,x,y,col,fs,align,wt){
+  ctx.save();ctx.font=`${wt||600} ${fs||S.fs-1}px ${FONT}`;ctx.textAlign=align||'left';ctx.textBaseline='middle';
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;ctx.strokeText(s,x,y);ctx.fillStyle=col;ctx.fillText(s,x,y);ctx.restore();
+}
+function poly(ctx,pts,col,lw,dash){
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';ctx.setLineDash(dash||[]);
+  ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([]);
+}
+
+/* ---------- κατάσταση προβολής ---------- */
+const V={box:{z:1,px:0,py:0},mol:{z:1,px:0,py:0}};
+let cur=null;               /* τρέχουσα κατάσταση (δείγμα από το ιστορικό) */
+
+/* ---------- οπτικά σωματίδια του δοχείου ---------- */
+const VIS={bub:[],steam:[],streak:[],drops:[],rip:[],tt:0,accB:0,accS:0,pops:0,boilI:0};
+const WW=54,WH=58;           /* κόσμος σε cm */
+const UW=2.4;                /* οπτική ταχύτητα ανέμου: cm/s ανά m/s */
+const CX=25, YB=6.5, TW=0.35, YI=YB+TW;
+
+function geomBox(c){
+  const d=2*Math.sqrt(S.A/Math.PI);
+  const hcm=c?clamp(c.h*100,0,28):S.V0/S.A;
+  return {d,hcm,ysurf:YI+hcm,xl:CX-d/2,xr:CX+d/2,rim:YB+HC*100};
+}
+function animateBox(dtv){
+  const c=cur;if(!c)return;
+  VIS.tt+=dtv;
+  const L=LIQ[S.liq],G=geomBox(c),A=S.A;
+  if(c.flash)VIS.flashT=1.2;
+  VIS.flashT=Math.max(0,(VIS.flashT||0)-dtv);
+  const fl=c.flash||VIS.flashT>0;
+  const bi=Math.max(clamp(c.mb/4e-4,0,2.2),fl?clamp(VIS.flashT/1.2,0.3,1)*1.8:0);
+  VIS.boilI=lerp(VIS.boilI,bi,Math.min(1,dtv*6));
+  const sub=c.Tb-c.T,ar=Math.sqrt(A/150);
+  /* φυσαλίδες */
+  if(S.show.bub&&c.m>0){
+    let rate=0,kind=0;
+    if(c.mb>1e-9||fl){kind=2;rate=(5+60*bi)*ar;}
+    else if(sub<12&&c.Qnet>1){kind=1;rate=(1+13*Math.pow(1-sub/12,1.5))*ar;}
+    else if(sub<40&&c.Qnet>1){kind=0;rate=(0.6+4*(1-clamp((sub-12)/28,0,1)))*ar;}
+    VIS.accB=Math.min(VIS.accB+rate*dtv,4);
+    const flash=fl;
+    while(VIS.accB>=1&&VIS.bub.length<320){
+      VIS.accB-=1;
+      const x=rnd(G.xl+0.5,G.xr-0.5),y=flash?rnd(YI+0.2,Math.max(YI+0.3,G.ysurf-0.4)):YI+0.12;
+      const r0=kind===2?rnd(0.12,0.26):kind===1?rnd(0.1,0.22):rnd(0.04,0.1);
+      const rm=kind===2?r0+rnd(0.15,0.35)+0.15*bi:kind===1?rnd(0.25,0.5):r0*1.4;
+      VIS.bub.push({x,y,y0:y,r:r0,r0,rm,kind,cf:kind===1?0.12+0.88*(1-clamp(sub/12,0,1)):1,ph:rnd(0,TAU),w:rnd(2,5)});
+    }
+  }
+  for(const b of VIS.bub){
+    const Hh=Math.max(0.3,G.ysurf-b.y0);
+    b.y+=(4+22*b.r)*(b.kind===0?0.7:1)*dtv;
+    b.x+=Math.sin(VIS.tt*b.w+b.ph)*0.6*dtv;
+    b.x=clamp(b.x,G.xl+b.r+0.05,G.xr-b.r-0.05);
+    const s2=(b.y-b.y0)/Hh;
+    if(b.kind===2)b.r=b.r0+(b.rm-b.r0)*Math.pow(clamp(s2,0,1),0.8);
+    else if(b.kind===1){
+      if(s2>=b.cf){b.dead=true;continue;}
+      const u=clamp(s2/b.cf,0,1);b.r=b.r0+(b.rm-b.r0)*Math.sin(Math.PI*u)*(1-0.5*u);
+    }else b.r=b.r0*(1+0.4*s2);
+    if(b.y+b.r>=G.ysurf-0.02){
+      b.dead=true;
+      if(b.kind>=1){
+        VIS.rip.push({x:b.x,age:0,amp:0.05+b.r*0.7});
+        if(b.r>0.12&&VIS.drops.length<120){const n=1+((Math.random()*3)|0);for(let k=0;k<n;k++)VIS.drops.push({x:b.x,y:G.ysurf,vx:rnd(-3,3),vy:rnd(6,16)*(0.5+b.r*2),r:rnd(0.05,0.12)});}
+        if(b.r>0.1)VIS.pops++;
+      }
+    }
+  }
+  VIS.bub=VIS.bub.filter(b=>!b.dead);
+  for(const r of VIS.rip)r.age+=dtv;
+  VIS.rip=VIS.rip.filter(r=>r.age<1.6);
+  for(const p of VIS.drops){p.vy-=70*dtv;p.x+=p.vx*dtv;p.y+=p.vy*dtv;}
+  VIS.drops=VIS.drops.filter(p=>p.y>G.ysurf-0.05);
+  /* ατμός */
+  const vf=Math.max(0,c.mev)+c.mb;
+  const lam=S.show.steam&&c.m>0?clamp(1.2+13*Math.log10(1+vf/1e-6),0,160):0;
+  VIS.accS=Math.min(VIS.accS+lam*dtv,6);
+  const waterish=!!L.hasAmb;
+  while(VIS.accS>=1&&VIS.steam.length<380){
+    VIS.accS-=1;
+    const mist=waterish&&(c.T>42||c.mb>1e-9);
+    VIS.steam.push({x:CX+rnd(-0.45,0.45)*G.d,y:G.ysurf+0.2,vx:rnd(-1.5,1.5),vy:rnd(5,10)+clamp((c.T-S.Ta)*0.08,0,6),
+      r:rnd(0.25,0.5),age:0,life:rnd(3,5.5),mist,sd:rnd(0,TAU)});
+  }
+  const u=S.lid?0:S.wind*UW;
+  for(const p of VIS.steam){
+    p.age+=dtv;
+    p.vx+=(u-p.vx)*Math.min(1,2.2*dtv)+Math.sin(VIS.tt*1.7+p.sd)*2.5*dtv;
+    p.vy+=(-p.vy*0.35+Math.cos(VIS.tt*1.3+p.sd)*1.2)*dtv;
+    p.x+=p.vx*dtv;p.y+=p.vy*dtv;
+    p.r+=(p.mist?0.5:0.05)*dtv;
+    if(S.lid){
+      const top=G.rim-0.5;
+      if(p.y>top){p.y=top;p.vy=-Math.abs(p.vy)*0.2;p.vx+=rnd(-2,2);}
+      if(p.x<G.xl+0.4){p.x=G.xl+0.4;p.vx=Math.abs(p.vx);}
+      if(p.x>G.xr-0.4){p.x=G.xr-0.4;p.vx=-Math.abs(p.vx);}
+    }
+  }
+  VIS.steam=VIS.steam.filter(p=>p.age<p.life&&p.x<WW+14&&p.x>-14);
+  /* γραμμές ανέμου */
+  const want=S.show.wind&&!S.lid&&S.wind>0?Math.round(clamp(8+S.wind*3.5,8,70)):0;
+  while(VIS.streak.length<want)VIS.streak.push({x:rnd(-10,82),y:rnd(7,56),len:rnd(4,9),ph:rnd(0,TAU)});
+  while(VIS.streak.length>want)VIS.streak.pop();
+  for(const s of VIS.streak){
+    s.x+=(S.wind*UW)*dtv;
+    if(s.x>84){s.x=-10-s.len;s.y=rnd(7,56);}
+    s.len=clamp(3+S.wind*0.7,3,12)*(0.7+0.3*Math.sin(s.ph));
+  }
+}
+const tmpl=(a,b,t)=>a+(b-a)*t;
+
+/* επιφάνεια υγρού: κύματα + κυκλικοί κυματισμοί από τις φυσαλίδες που σκάνε */
+function surfY(x,G,c){
+  const amp=0.01+0.22*Math.min(VIS.boilI,1.4);
+  let y=G.ysurf+amp*(Math.sin(x*2.3+VIS.tt*7)+0.6*Math.sin(x*4.1-VIS.tt*9.3));
+  for(const r of VIS.rip){const dx=Math.abs(x-r.x);y+=r.amp*Math.exp(-r.age*2.6-dx*0.5)*Math.cos(20*r.age-5*dx);}
+  return y;
+}
+
+function thermo(ctx,X,Y,sc,x,yb,len,T,col,tmin,tmax,label,sub,dark){
+  const bw=0.38*sc,br=0.8*sc;
+  const x0=X(x),yB=Y(yb),yT=Y(yb+len);
+  ctx.save();
+  ctx.fillStyle=dark?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.7)';ctx.strokeStyle=rgba(C.fg,0.65);ctx.lineWidth=Math.max(1,0.07*sc);
+  ctx.beginPath();ctx.rect(x0-bw,yT,2*bw,yB-yT);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.arc(x0,yB,br,0,TAU);ctx.fill();ctx.stroke();
+  const f=clamp((T-tmin)/(tmax-tmin),0,1),yM=yB-f*(yB-yT);
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x0,yB,br*0.78,0,TAU);ctx.fill();
+  ctx.fillRect(x0-bw*0.42,yM,bw*0.84,yB-yM);
+  ctx.strokeStyle=rgba(C.fg,0.55);ctx.lineWidth=1;
+  for(let v=Math.ceil(tmin/20)*20;v<=tmax;v+=20){const yy=yB-clamp((v-tmin)/(tmax-tmin),0,1)*(yB-yT);ctx.beginPath();ctx.moveTo(x0+bw,yy);ctx.lineTo(x0+bw+0.5*sc,yy);ctx.stroke();
+    if(v%40===0){ctx.font=`500 ${Math.max(8,0.62*sc)}px ${MONO}`;ctx.fillStyle=C.dim;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(v,x0+bw+0.6*sc,yy);}}
+  ctx.restore();
+  lab(ctx,x0,yT-0.9*sc,label,sub,'= '+fmt(T,1)+' °C',col,'center');
+}
+
+function drawBox(){
+  const cv=$('#cv-box');const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  LBF++;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const c=cur,L=LIQ[S.liq],G=geomBox(c),dark=isDark();
+  const sc0=Math.min(w/WW,h/WH),ox=(w-WW*sc0)/2,oy=Math.max((h-WH*sc0)/2,h-WH*sc0-0.01*h);
+  const X=x=>ox+x*sc0,Y=y=>oy+(WH-y)*sc0,sc=sc0;
+  ctx.save();
+  ctx.translate(w/2+V.box.px,h/2+V.box.py);ctx.scale(V.box.z,V.box.z);ctx.translate(-w/2,-h/2);
+  const lc=liqCol();
+  /* χρώμα αέρα ανάλογα με τη θερμοκρασία (πολύ διακριτικό) */
+  {const f=clamp((S.Ta+10)/55,0,1),r=lerp(90,255,f),g=lerp(150,150,f),b=lerp(255,60,f);
+   ctx.fillStyle=`rgba(${r|0},${g|0},${b|0},${dark?0.07:0.08})`;ctx.fillRect(-w,-h,3*w,3*h);}
+  /* γραμμές ανέμου */
+  if(S.show.wind&&VIS.streak.length){
+    ctx.lineCap='round';
+    for(const s of VIS.streak){
+      const a=0.28+0.12*Math.sin(s.ph);
+      ctx.strokeStyle=rgba(C.dim,a);ctx.lineWidth=Math.max(1,0.14*sc);
+      ctx.beginPath();const y0=Y(s.y);
+      ctx.moveTo(X(s.x-s.len),y0+Math.sin(s.x*0.3+s.ph)*0.3*sc);
+      ctx.quadraticCurveTo(X(s.x-s.len/2),y0-Math.sin(s.x*0.3+s.ph)*0.6*sc,X(s.x),y0+Math.sin(s.x*0.3+s.ph)*0.3*sc);ctx.stroke();
+    }
+  }
+  /* τραπέζι και εστία */
+  ctx.fillStyle=rgba(C.gridS,0.55);ctx.fillRect(X(-80),Y(4),X(160)-X(-80),oy+WH*sc-Y(4)+h);
+  ctx.strokeStyle=rgba(C.fg,0.55);ctx.lineWidth=Math.max(1.5,0.12*sc);ctx.beginPath();ctx.moveTo(X(-80),Y(4));ctx.lineTo(X(160),Y(4));ctx.stroke();
+  const wp=Math.max(G.d+5,13),gp=c&&c.Qh>0?clamp(c.Qh/3000,0.08,1):0;
+  {
+    ctx.fillStyle=dark?'#2a303a':'#59606c';ctx.fillRect(X(CX-wp/2),Y(6.2),wp*sc,2.2*sc);
+    if(gp>0){
+      const gr=ctx.createLinearGradient(0,Y(6.5),0,Y(6.5)-5*sc);gr.addColorStop(0,`rgba(255,${(150-70*gp)|0},40,${0.35+0.35*gp})`);gr.addColorStop(1,'rgba(255,120,40,0)');
+      ctx.fillStyle=gr;ctx.fillRect(X(CX-wp/2),Y(6.5),wp*sc,-1);  /* (δεν εμφανίζεται κάτω από το δοχείο) */
+      ctx.fillStyle=`rgba(255,${(140-70*gp)|0},35,${0.55+0.4*gp})`;ctx.fillRect(X(CX-wp/2)+0.3*sc,Y(6.2),(wp-0.6)*sc,0.55*sc);
+      ctx.strokeStyle=`rgba(255,${(200-90*gp)|0},90,${0.7+0.3*gp})`;ctx.lineWidth=Math.max(1,0.15*sc);ctx.beginPath();
+      const nz=9;for(let i=0;i<=nz;i++){const xx=X(CX-wp/2+0.6+(wp-1.2)*i/nz),yy=Y(5.3+(i%2?0.6:-0.2));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();
+    }else{
+      ctx.strokeStyle=rgba(C.fg,0.25);ctx.lineWidth=Math.max(1,0.12*sc);ctx.beginPath();
+      const nz=9;for(let i=0;i<=nz;i++){const xx=X(CX-wp/2+0.6+(wp-1.2)*i/nz),yy=Y(5.3+(i%2?0.6:-0.2));i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();
+    }
+    txt(ctx,'Εστία',X(CX),Y(4.6)+0.1*sc,rgba(C.dim,0.9),Math.max(9,0.9*sc),'center');
+  }
+  /* υγρό */
+  if(c&&c.m>0){
+    const nx=Math.max(24,Math.round(G.d*sc/5));
+    const gr=ctx.createLinearGradient(0,Y(G.ysurf),0,Y(YI));
+    gr.addColorStop(0,rgba(lc,dark?0.40:0.40));gr.addColorStop(1,rgba(lc,dark?0.62:0.62));
+    ctx.beginPath();ctx.moveTo(X(G.xl),Y(YI));
+    for(let i=0;i<=nx;i++){const x=G.xl+G.d*i/nx;ctx.lineTo(X(x),Y(surfY(x,G,c)));}
+    ctx.lineTo(X(G.xr),Y(YI));ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+    /* επιφάνεια: φωτεινή γραμμή */
+    ctx.beginPath();for(let i=0;i<=nx;i++){const x=G.xl+G.d*i/nx;const yy=Y(surfY(x,G,c));i?ctx.lineTo(X(x),yy):ctx.moveTo(X(x),yy);}
+    ctx.strokeStyle=rgba(dark?'#ffffff':lc,dark?0.65:0.9);ctx.lineWidth=Math.max(1.5,0.16*sc*(1+VIS.boilI*0.5));ctx.stroke();
+    /* φυσαλίδες */
+    if(S.show.bub){
+      ctx.lineWidth=Math.max(1,0.07*sc);
+      for(const b of VIS.bub){
+        const rr=Math.max(1,b.r*sc),bx=X(b.x),by=Y(b.y);
+        ctx.fillStyle=b.kind===0?'rgba(255,255,255,0.28)':'rgba(255,255,255,0.20)';
+        ctx.strokeStyle='rgba(255,255,255,0.85)';
+        ctx.beginPath();ctx.arc(bx,by,rr,0,TAU);ctx.fill();ctx.stroke();
+        if(rr>3){ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.beginPath();ctx.arc(bx,by,rr*0.62,Math.PI*1.1,Math.PI*1.6);ctx.stroke();}
+      }
+    }
+    /* σταγονίδια */
+    ctx.fillStyle=rgba(lc,0.8);
+    for(const p of VIS.drops){ctx.beginPath();ctx.arc(X(p.x),Y(p.y),Math.max(1,p.r*sc),0,TAU);ctx.fill();}
+  }
+  /* γυάλινο δοχείο */
+  {
+    const t=TW*sc;
+    ctx.fillStyle=rgba(C.fg,0.05);ctx.fillRect(X(G.xl),Y(G.rim),G.d*sc,(G.rim-YI)*sc);
+    ctx.fillStyle=rgba(C.fg,0.55);
+    ctx.fillRect(X(G.xl)-t,Y(G.rim),t,(G.rim-YB)*sc);
+    ctx.fillRect(X(G.xr),Y(G.rim),t,(G.rim-YB)*sc);
+    ctx.fillRect(X(G.xl)-t,Y(YB),G.d*sc+2*t,t);
+    ctx.fillStyle=rgba('#ffffff',0.20);ctx.fillRect(X(G.xl)+0.25*sc,Y(G.rim)+0.6*sc,0.22*sc,(G.rim-YI)*sc*0.55);
+    ctx.fillStyle=rgba(C.fg,0.28);ctx.fillRect(X(G.xl)-t*1.7,Y(G.rim),t*0.7,t*0.9);ctx.fillRect(X(G.xr)+t,Y(G.rim),t*0.7,t*0.9);
+  }
+  /* ατμός */
+  {
+    const mistCol=dark?'235,242,252':'110,126,150';
+    for(const p of VIS.steam){
+      const f=1-p.age/p.life,px=X(p.x),py=Y(p.y);
+      if(p.mist){
+        const vis=clamp((c.T-38)/45,0,1)*0.55+(c.mb>1e-9?0.35:0);
+        const a=0.22*Math.min(1,vis+0.1)*Math.pow(f,1.2)*Math.min(1,p.age*3);
+        const rr=p.r*sc;
+        const gr=ctx.createRadialGradient(px,py,0,px,py,rr);
+        gr.addColorStop(0,`rgba(${mistCol},${a})`);gr.addColorStop(1,`rgba(${mistCol},0)`);
+        ctx.fillStyle=gr;ctx.beginPath();ctx.arc(px,py,rr,0,TAU);ctx.fill();
+      }else{
+        ctx.fillStyle=rgba(lc,0.55*f*Math.min(1,p.age*3));
+        ctx.beginPath();ctx.arc(px,py,Math.max(1.2,(0.12+p.r*0.2)*sc),0,TAU);ctx.fill();
+      }
+    }
+  }
+  /* καπάκι */
+  if(S.lid){
+    const lw=G.d+1.8;
+    ctx.fillStyle=dark?'#aab3c0':'#6c7686';
+    ctx.fillRect(X(CX-lw/2),Y(G.rim+0.5),lw*sc,0.55*sc);
+    ctx.fillRect(X(CX-0.45),Y(G.rim+1.5),0.9*sc,1.0*sc);
+    ctx.fillStyle=rgba(dark?'#aab3c0':'#6c7686',0.7);ctx.beginPath();ctx.arc(X(CX),Y(G.rim+1.8),0.55*sc,0,TAU);ctx.fill();
+    if(c&&c.e>0&&c.m>0){      /* σταγόνες συμπύκνωσης κάτω από το καπάκι */
+      const n=Math.round(clamp(c.e/(c.ps+1)*14,0,14));ctx.fillStyle=rgba(lc,0.7);
+      for(let i=0;i<n;i++){const xx=G.xl+0.6+((i*0.6180339*G.d)%(G.d-1.2));ctx.beginPath();ctx.arc(X(xx),Y(G.rim)+0.5*sc+((i*7)%3)*0.2*sc,0.17*sc,0,TAU);ctx.fill();}
+    }
+  }
+  /* θερμόμετρα */
+  if(S.show.therm&&c){
+    const xt=Math.min(G.xr-0.9,CX+G.d/2-1.2);
+    thermo(ctx,X,Y,sc,xt,YI+Math.min(Math.max(G.hcm*0.35,1.2),3.2),G.rim-YI+2.5,c.T,C.tl,-20,130,'T','υγρού',dark);
+    thermo(ctx,X,Y,sc,47,9,27,S.Ta,C.ta,-20,130,'T','αέρα',dark);
+  }
+  /* ροές ενέργειας */
+  if(S.show.flows&&c){
+    const k=7/1500*S.vs,cm=v=>clamp(Math.abs(v)*k,0.9,13);
+    const lw=2.6*S.lw*Math.max(0.8,Math.min(1.4,sc/11));
+    const val=(v)=>S.show.values?'= '+fS(Math.abs(v),'W'):'';
+    if(c.Qh>0){const L1=Math.min(cm(c.Qh),Math.max(1.2,G.hcm-0.6)),x=CX-G.d*0.22;
+      const a=[X(x),Y(YI+0.15)],b=[X(x),Y(YI+0.15+L1)];arrow(ctx,a[0],a[1],b[0],b[1],C.ph,lw);if(S.show.labels)lab(ctx,b[0],b[1]-10,'P','',val(c.Qh),C.ph,'center');}
+    const Qv=c.Qev+c.Qb;
+    if(Math.abs(Qv)>1){const L2=cm(Qv),x=CX+G.d*0.2,up=Qv>0;
+      const a=[X(x),Y(G.ysurf+(up?0.4:0.4+L2))],b=[X(x),Y(G.ysurf+(up?0.4+L2:0.4))];arrow(ctx,a[0],a[1],b[0],b[1],C.ev,lw);if(S.show.labels)lab(ctx,b[0]+8,b[1]-4,'Φ','εξ',val(Qv),C.ev,'left');}
+    if(Math.abs(c.Qc)>1){const L3=cm(c.Qc),x=CX-G.d*0.1,into=c.Qc>0;
+      const a=[X(x),Y(G.ysurf+(into?0.4+L3:0.4))],b=[X(x),Y(G.ysurf+(into?0.4:0.4+L3))];arrow(ctx,a[0],a[1],b[0],b[1],C.cv,lw);if(S.show.labels)lab(ctx,a[0]-8,a[1]+4,'Φ','συν',val(c.Qc),C.cv,'right');}
+    if(c.Ql>1){const L4=cm(c.Ql),y=YI+Math.max(0.6,G.hcm*0.5);
+      const a=[X(G.xr)+0.5*sc,Y(y)],b=[a[0]+L4*sc,a[1]];arrow(ctx,a[0],a[1],b[0],b[1],C.lo,lw);if(S.show.labels)lab(ctx,b[0]+8,b[1],'Φ','απ',val(c.Ql),C.lo,'left');}
+  }
+  /* διαστάσεις */
+  if(S.show.dims&&c){
+    const xa=G.xl-2.2;
+    arrow(ctx,X(xa),Y(YI+G.hcm),X(xa),Y(YI),C.dim,1.3);arrow(ctx,X(xa),Y(YI),X(xa),Y(YI+G.hcm),C.dim,1.3);
+    lab(ctx,X(xa)-6,Y(YI+G.hcm/2),'h','','= '+fmt(G.hcm,1)+' cm',C.dim,'right');
+    const yd=G.ysurf+(S.lid?0:1.8);
+    ctx.setLineDash([5,4]);ctx.strokeStyle=C.accent;ctx.lineWidth=Math.max(1.2,0.1*sc);ctx.beginPath();ctx.moveTo(X(G.xl),Y(G.ysurf)-1);ctx.lineTo(X(G.xr),Y(G.ysurf)-1);ctx.stroke();ctx.setLineDash([]);
+    lab(ctx,X(CX),Y(yd)-4,'A','ελ. επιφάνειας','= '+fmt(S.A,0)+' cm²   (d = '+fmt(G.d,1)+' cm)',C.accent,'center');
+  }
+  /* ένδειξη ανέμου */
+  {
+    const wy=Y(46);
+    if(S.lid){txt(ctx,'Κλειστό καπάκι: χωρίς άνεμο',X(6),wy,C.dim,S.fs,'left');}
+    else if(S.wind>0){
+      const Lw=clamp(2+S.wind*0.55,2,11)*sc;
+      arrow(ctx,X(5),wy,X(5)+Lw,wy,C.ta,3*S.lw);
+      lab(ctx,X(5),wy-14,'v','άνεμος','= '+fmt(S.wind,1)+' m/s = '+fmt(S.wind*3.6,0)+' km/h',C.ta,'left');
+    }else txt(ctx,'Άπνοια (v = 0)',X(5),wy,C.dim,S.fs-1,'left');
+  }
+  /* πληροφορίες υγρού */
+  if(S.show.labels&&c){
+    const nm=L.name+'  ·  '+fmt(c.m*1000,0)+' g';
+    txt(ctx,nm,X(CX),Y(2.2),C.fg,S.fs,'center');
+  }
+  ctx.restore();
+}
+
+/* ---------- μοριακή όψη ----------
+   Μεγεθυμένο τμήμα της επιφάνειας του υγρού. Διδακτική απεικόνιση (όχι υπό κλίμακα):
+   - τα μόρια του υγρού ταλαντώνονται γύρω από θέσεις ισορροπίας· το πλάτος μεγαλώνει με τη θερμοκρασία,
+   - από την επιφάνεια διαφεύγουν μόρια με ρυθμό ανάλογο της p_s(T) (Hertz–Knudsen),
+   - τα μόρια ατμού που χτυπούν την επιφάνεια συμπυκνώνονται με πιθανότητα α,
+   - ο άνεμος παρασύρει τον αέρα (και τον ατμό) προς τα δεξιά και φέρνει καθαρό αέρα από αριστερά. */
+const MW=420,MH=330,YS=168,YBOT=MH-16;
+const mol={liq:[],gas:[],bub:[],rip:[],fx:[],tt:0,accE:0,accMix:0,accAir:0,Nair:70,tags:0};
+const MOLS={
+  water:[[0,0,4.6,2],[-4.4,3.5,2.5,1],[4.4,3.5,2.5,1]],
+  eth:[[-6,2.5,3.3,0],[0,-1.5,3.3,0],[6,2,3.8,2],[8.6,5.4,2.1,1]],
+  ace:[[0,0,3.5,0],[-6,3,3.2,0],[6,3,3.2,0],[0,-5.6,3.7,2]],
+  eth2:[[-10,2,3,0],[-5,-1,3,0],[0,2,3.9,2],[5,-1,3,0],[10,2,3,0]]
+};
+function molInit(){
+  mol.liq.length=0;mol.gas.length=0;mol.bub.length=0;mol.rip.length=0;mol.fx.length=0;
+  const sx=14,sy=12.2;
+  for(let r=0;;r++){
+    const y=YS+10+r*sy;if(y>YBOT)break;
+    for(let c=0;;c++){
+      const x=9+c*sx+(r%2?sx/2:0);if(x>MW-8)break;
+      mol.liq.push({hx:x,hy:y,row:r,p1:rnd(0,TAU),p2:rnd(0,TAU),p3:rnd(0,TAU),p4:rnd(0,TAU),w1:rnd(0.8,1.3),w2:rnd(0.8,1.3),rot:rnd(0,TAU),wr:rnd(-1.2,1.2),gap:0,fade:1,ion:Math.random()<0.07?1+((Math.random()*2)|0):0,glow:0});
+    }
+  }
+  /* αρχικός αέρας */
+  const n=molAirTarget();
+  for(let i=0;i<n;i++)spawnGas(rnd(6,MW-6),rnd(6,YS-10),false);
+  mol.tt=0;
+}
+const molTk=()=>(cur?cur.T:S.T0)+273.15;
+const airTk=()=>S.Ta+273.15;
+function molAirTarget(){return clamp(Math.round(70*(S.p/101.325)*(293.15/airTk())),30,130);}
+const sigAir=()=>62*Math.sqrt(airTk()/293.15);
+const sigVap=(Tk)=>62*Math.sqrt((Tk/293.15)*(28/(1000*LIQ[S.liq].M)));
+function qAmb(){const L=LIQ[S.liq];if(!L.hasAmb)return 0;return clamp(eAmb()/(S.p*1e3)*6+0.01,0,0.35);}
+function spawnGas(x,y,vapor,vx,vy,hl){
+  const L=LIQ[S.liq],sg=vapor?sigVap(airTk()):sigAir();
+  const sp=sg*Math.sqrt(-2*Math.log(1-Math.random()))*0.8,a=rnd(0,TAU);
+  mol.gas.push({x,y,vx:vx!=null?vx:Math.cos(a)*sp,vy:vy!=null?vy:Math.sin(a)*sp,t:vapor?1:0,m:vapor?1000*L.M:28,r:vapor?4:3.4,rot:rnd(0,TAU),wr:rnd(-3,3),hl:hl||0,trail:[]});
+}
+function emitVapor(){
+  const tops=mol.liq.filter(m=>m.row===0&&m.gap<=0);if(!tops.length)return;
+  const m=tops[(Math.random()*tops.length)|0];
+  m.gap=rnd(0.6,1.2);m.fade=0;
+  const sg=sigVap(molTk()),a=-Math.PI/2+rnd(-1,1)*0.95,sp=sg*rnd(1.9,2.8);
+  spawnGas(m.hx,YS-4,true,Math.cos(a)*sp,Math.sin(a)*sp,1);
+  mol.tags++;
+}
+function burstBubble(b){
+  const n=b.mols.length,vap=b.kind>=1;
+  for(const q of b.mols){
+    const a=-Math.PI/2+rnd(-1,1)*1.1,sp=sigVap(molTk())*rnd(1.2,2.2);
+    spawnGas(b.x+q.x,YS-4,vap,Math.cos(a)*sp,Math.sin(a)*sp,vap?0.6:0);
+    if(!vap)mol.gas[mol.gas.length-1].t=0;
+  }
+  mol.rip.push({x:b.x,age:0});
+}
+function animateMol(dtv){
+  const c=cur;if(!c)return;
+  const L=LIQ[S.liq];
+  const n=Math.max(1,Math.ceil(dtv/0.02)),dt=dtv/n;
+  for(let s=0;s<n;s++)molStep(dt,c,L);
+}
+function molStep(dt,c,L){
+  mol.tt+=dt;
+  const Tk=molTk(),lid=S.lid,wind=lid?0:S.wind,u=wind*16;
+  const open=!lid;
+  const bi=clamp(c.mb/4e-4,0,2.2),sub=c.Tb-c.T;
+  /* εκπομπή ατμού από την επιφάνεια */
+  if(c.m>0){
+    const rOut=55*c.ps/(c.ps+25000);
+    mol.accE=Math.min(mol.accE+rOut*dt,3);
+    while(mol.accE>=1){mol.accE-=1;if(mol.gas.length<260)emitVapor();}
+  }
+  for(const m of mol.liq){if(m.gap>0){m.gap-=dt;if(m.gap<=0){m.gap=0;m.fade=0;}}else if(m.fade<1)m.fade=Math.min(1,m.fade+dt*2.2);if(m.glow>0)m.glow=Math.max(0,m.glow-dt*1.5);}
+  /* ανάμιξη με το περιβάλλον (ανοιχτό δοχείο) και διατήρηση του αριθμού του αέρα */
+  if(open){
+    mol.accMix+=(1.4+0.15*wind)*dt;
+    while(mol.accMix>=1){
+      mol.accMix-=1;
+      const top=mol.gas.filter(g=>g.y<YS*0.3);
+      if(top.length){const k=top[(Math.random()*top.length)|0];const ix=mol.gas.indexOf(k);if(ix>=0)mol.gas.splice(ix,1);}
+      spawnGas(rnd(6,MW-6),3,Math.random()<qAmb(),null,Math.abs(rnd(10,60)));
+    }
+  }
+  const nAirT=molAirTarget();
+  let nAir=0;for(const g of mol.gas)if(g.t===0)nAir++;
+  mol.accAir+=6*dt;
+  while(mol.accAir>=1){
+    mol.accAir-=1;
+    if(nAir<nAirT-1){spawnGas(rnd(6,MW-6),rnd(6,YS*0.5),false);nAir++;}
+    else if(nAir>nAirT+1){const ix=mol.gas.findIndex(g=>g.t===0&&g.y<YS*0.6);if(ix>=0){mol.gas.splice(ix,1);nAir--;}}
+  }
+  /* φυσαλίδες ατμού μέσα στο υγρό */
+  if(c.m>0){
+    let rate=0,kind=0;
+    if(c.flash)mol.flashT=1.2;
+    mol.flashT=Math.max(0,(mol.flashT||0)-dt);
+    const fl=c.flash||mol.flashT>0;
+    if(c.mb>1e-9||fl){kind=2;rate=0.6+3.2*bi;if(fl)rate+=8;}
+    else if(sub<12&&c.Qnet>1){kind=1;rate=0.35+1.4*(1-sub/12);}
+    else if(sub<40&&c.Qnet>1){kind=0;rate=0.2;}
+    if(rate>0&&mol.bub.length<14&&Math.random()<rate*dt){
+      const flash=fl;
+      const x=rnd(36,MW-36),y=flash?rnd(YS+40,YBOT-10):YBOT-10;
+      mol.bub.push({x,y,y0:y,r:5,kind,cf:kind===1?0.15+0.85*(1-clamp(sub/12,0,1)):1,mols:[],vy:-(30+12*bi)*(kind===0?0.7:1),dead:false});
+    }
+  }
+  for(const b of mol.bub){
+    b.y+=b.vy*dt;
+    const sp=Math.max(30,b.y0-YS),s=clamp((b.y0-b.y)/sp,0,1);
+    if(b.kind===2)b.r=5+16*Math.pow(s,0.85);
+    else if(b.kind===1){if(s>=b.cf){b.dead=true;continue;}const u2=s/b.cf;b.r=5+8*Math.sin(Math.PI*u2)*(1-0.4*u2);}
+    else b.r=3.5+2*s;
+    const want=Math.round(2+b.r*0.38);
+    while(b.mols.length<want){const a=rnd(0,TAU),sg=sigVap(Tk)*rnd(0.6,1.4);b.mols.push({x:rnd(-1,1)*b.r*0.5,y:rnd(-1,1)*b.r*0.5,vx:Math.cos(a)*sg*1.2,vy:Math.sin(a)*sg*1.2});}
+    while(b.mols.length>want)b.mols.pop();
+    for(const q of b.mols){
+      q.x+=q.vx*dt;q.y+=q.vy*dt;
+      const d=Math.hypot(q.x,q.y),lim=b.r-2.6;
+      if(d>lim&&d>0){const nx=q.x/d,ny=q.y/d,dp=q.vx*nx+q.vy*ny;if(dp>0){q.vx-=2*dp*nx;q.vy-=2*dp*ny;}q.x=nx*lim;q.y=ny*lim;}
+    }
+    if(b.y-b.r<=YS+1){b.dead=true;burstBubble(b);}
+  }
+  mol.bub=mol.bub.filter(b=>!b.dead);
+  for(const r of mol.rip)r.age+=dt;
+  mol.rip=mol.rip.filter(r=>r.age<0.8);
+  for(const f of mol.fx)f.age+=dt;
+  mol.fx=mol.fx.filter(f=>f.age<0.5);
+  /* κίνηση αερίων */
+  const G=mol.gas;
+  for(let i=G.length-1;i>=0;i--){
+    const g=G[i];
+    g.x+=(g.vx+u)*dt;g.y+=g.vy*dt;g.rot+=g.wr*dt;
+    if(g.hl>0)g.hl=Math.max(0,g.hl-dt*0.35);
+    if(S.show.trail&&g.hl>0.05){g.trail.push(g.x,g.y);if(g.trail.length>20)g.trail.splice(0,2);}else if(g.trail.length)g.trail.length=0;
+    /* πλευρικά τοιχώματα / άνεμος */
+    if(wind>0&&open){
+      if(g.x>MW+6){G.splice(i,1);spawnGas(2,rnd(4,YS-8),Math.random()<qAmb(),Math.abs(rnd(20,70)),null);continue;}
+      if(g.x<-6){g.x=-6;g.vx=Math.abs(g.vx);}
+    }else{
+      if(g.x<g.r){g.x=g.r;g.vx=Math.abs(g.vx);wallTherm(g);}
+      else if(g.x>MW-g.r){g.x=MW-g.r;g.vx=-Math.abs(g.vx);wallTherm(g);}
+    }
+    /* οροφή */
+    if(g.y<g.r){
+      if(open){G.splice(i,1);continue;}
+      g.y=g.r;g.vy=Math.abs(g.vy);wallTherm(g);
+    }
+    /* επιφάνεια υγρού */
+    if(g.y>YS-g.r&&g.vy>0){
+      if(g.t===1&&Math.random()<0.65){
+        mol.rip.push({x:g.x,age:0});
+        const nearest=mol.liq.reduce((a,m)=>(m.row===0&&Math.abs(m.hx-g.x)<Math.abs(a.hx-g.x))?m:a,mol.liq[0]);
+        if(nearest)nearest.glow=1;
+        mol.fx.push({x:g.x,y:YS,age:0});
+        G.splice(i,1);continue;
+      }
+      g.y=YS-g.r;g.vy=-Math.abs(g.vy);
+    }
+  }
+  /* ελαστικές κρούσεις αερίων */
+  for(let i=0;i<G.length;i++){
+    const a=G[i];
+    for(let j=i+1;j<G.length;j++){
+      const b=G[j],dx=b.x-a.x,dy=b.y-a.y,rr=a.r+b.r;
+      if(dx>rr||dx<-rr||dy>rr||dy<-rr)continue;
+      const d2=dx*dx+dy*dy;if(d2>=rr*rr||d2<1e-6)continue;
+      const d=Math.sqrt(d2),nx=dx/d,ny=dy/d;
+      const dvx=a.vx-b.vx,dvy=a.vy-b.vy,dp=dvx*nx+dvy*ny;
+      if(dp<=0)continue;
+      const k=2*dp/(a.m+b.m);
+      a.vx-=k*b.m*nx;a.vy-=k*b.m*ny;b.vx+=k*a.m*nx;b.vy+=k*a.m*ny;
+      const ov=(rr-d)/2;a.x-=nx*ov;a.y-=ny*ov;b.x+=nx*ov;b.y+=ny*ov;
+      if(a.hl>0||b.hl>0){a.hl=Math.max(a.hl,0.0);}
+    }
+  }
+}
+function wallTherm(g){      /* τα τοιχώματα έχουν τη θερμοκρασία του αέρα */
+  const sg=(g.t===1?sigVap(airTk()):sigAir())*1.25,v=Math.hypot(g.vx,g.vy)||1,vn=lerp(v,sg*Math.sqrt(-Math.log(1-Math.random())*1.0)*1.1,0.35);
+  g.vx*=vn/v;g.vy*=vn/v;
+}
+
+function drawMolAtoms(ctx,x,y,rot,type,k,cols,fade){
+  const at=MOLS[type],cs=Math.cos(rot),sn=Math.sin(rot);
+  for(const a of at){
+    const ax=x+(a[0]*cs-a[1]*sn)*k,ay=y+(a[0]*sn+a[1]*cs)*k;
+    ctx.fillStyle=cols[a[3]];if(fade<1)ctx.globalAlpha=fade;
+    ctx.beginPath();ctx.arc(ax,ay,a[2]*k,0,TAU);ctx.fill();
+  }
+  if(fade<1)ctx.globalAlpha=1;
+}
+
+function drawMol(){
+  const cv=$('#cv-mol');const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  LBF++;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const c=cur,L=LIQ[S.liq],dark=isDark();
+  const sc=Math.min(w/MW,h/MH);
+  ctx.save();
+  ctx.translate(w/2+V.mol.px,h/2+V.mol.py);ctx.scale(V.mol.z,V.mol.z);
+  ctx.translate(-MW*sc/2,-MH*sc/2);ctx.scale(sc,sc);
+  const lc=liqCol();
+  /* χώρος αερίου και υγρού */
+  ctx.fillStyle=rgba(C.gridS,0.10);ctx.fillRect(0,0,MW,YS);
+  ctx.fillStyle=rgba(lc,dark?0.16:0.16);ctx.fillRect(0,YS,MW,MH-YS);
+  /* εστία */
+  {
+    const gp=c&&c.Qh>0?clamp(c.Qh/3000,0.08,1):0;
+    ctx.fillStyle=dark?'#2a303a':'#59606c';ctx.fillRect(0,YBOT+4,MW,MH-YBOT-4);
+    if(gp>0){
+      const gr=ctx.createLinearGradient(0,YBOT+4,0,YBOT-26);gr.addColorStop(0,`rgba(255,${(150-70*gp)|0},40,${0.45+0.4*gp})`);gr.addColorStop(1,'rgba(255,120,40,0)');
+      ctx.fillStyle=gr;ctx.fillRect(0,YBOT-26,MW,30);
+      ctx.fillStyle=`rgba(255,${(150-70*gp)|0},40,${0.7+0.3*gp})`;ctx.fillRect(0,YBOT+4,MW,5);
+    }
+  }
+  /* τοιχώματα δοχείου (και οροφή, αν υπάρχει καπάκι) */
+  ctx.strokeStyle=rgba(C.fg,0.6);ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(1.5,0);ctx.lineTo(1.5,MH);ctx.moveTo(MW-1.5,0);ctx.lineTo(MW-1.5,MH);ctx.stroke();
+  if(S.lid){ctx.lineWidth=5;ctx.strokeStyle=dark?'#aab3c0':'#6c7686';ctx.beginPath();ctx.moveTo(0,2);ctx.lineTo(MW,2);ctx.stroke();}
+  /* ανέμος */
+  if(!S.lid&&S.wind>0&&S.show.wind){
+    ctx.strokeStyle=rgba(C.ta,0.5);ctx.lineWidth=2;
+    for(let k=0;k<5;k++){const yy=20+k*(YS-40)/4,off=((mol.tt*S.wind*16+k*70)%(MW+80))-60;
+      ctx.beginPath();ctx.moveTo(off,yy);ctx.lineTo(off+34,yy);ctx.stroke();}
+    arrow(ctx,10,12,10+clamp(14+S.wind*4,18,70),12,C.ta,2.4);
+  }
+  /* επιφάνεια */
+  ctx.strokeStyle=rgba(dark?'#ffffff':lc,dark?0.5:0.8);ctx.lineWidth=1.6;ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(0,YS);ctx.lineTo(MW,YS);ctx.stroke();ctx.setLineDash([]);
+  /* μόρια υγρού */
+  if(c&&c.m>0){
+    const Tk=molTk();
+    const amp=0.5+3.2*Math.pow(Tk/373.15,2),T0=mol.tt;
+    const cols=['#8aa0ba','#e6ecf5','#e0685a'];
+    const base={water:[C.danger,'#ffffff'],eth:[lc,'#ffffff'],ace:[lc,'#ffffff'],eth2:[lc,'#ffffff']}[L.mol];
+    const cl=[lc,dark?'#e6ecf5':'#ffffff',C.danger];
+    const k=L.sf;
+    const pos=[];
+    for(const m of mol.liq){
+      let x=m.hx+amp*(Math.sin(T0*6*m.w1+m.p1)+0.5*Math.sin(T0*9.7*m.w2+m.p2)),y=m.hy+amp*(Math.sin(T0*6.4*m.w2+m.p3)+0.5*Math.sin(T0*10.3*m.w1+m.p4));
+      for(const b of mol.bub){const dx=x-b.x,dy=y-b.y,rr=b.r+5.5,d2=dx*dx+dy*dy;if(d2<rr*rr){const d=Math.sqrt(d2)||0.01,f=rr/d;x=b.x+dx*f;y=b.y+dy*f;}}
+      pos.push(x,y);
+    }
+    let i=0;
+    for(const m of mol.liq){
+      const x=pos[i++],y=pos[i++];
+      if(m.gap>0)continue;
+      const fade=m.fade;
+      if(m.ion){
+        ctx.fillStyle=m.ion===1?'#f2c14e':'#4ade80';ctx.globalAlpha=fade;ctx.beginPath();ctx.arc(x,y,m.ion===1?3.4:4.4,0,TAU);ctx.fill();ctx.globalAlpha=1;
+        if(S.liq!=='sea'){/* μόνο στο θαλασσινό νερό */}
+        continue;
+      }
+      drawMolAtoms(ctx,x,y,m.rot+T0*m.wr*0.5,L.mol,k,cl,fade);
+      if(m.glow>0){ctx.strokeStyle=`rgba(255,200,80,${m.glow*0.8})`;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,8,0,TAU);ctx.stroke();}
+    }
+  }
+  /* φυσαλίδες */
+  for(const b of mol.bub){
+    ctx.fillStyle=dark?'rgba(10,18,32,0.65)':'rgba(255,255,255,0.8)';ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,TAU);ctx.fill();
+    ctx.strokeStyle=rgba(dark?'#ffffff':C.fg,0.7);ctx.lineWidth=1.4;ctx.stroke();
+    for(const q of b.mols){
+      if(b.kind===0){ctx.fillStyle=rgba(C.dim,0.95);ctx.beginPath();ctx.arc(b.x+q.x,b.y+q.y,2.6,0,TAU);ctx.fill();}
+      else drawMolAtoms(ctx,b.x+q.x,b.y+q.y,0,L.mol,L.sf*0.82,[lc,dark?'#e6ecf5':'#ffffff',C.danger],1);
+    }
+  }
+  /* αέρια */
+  for(const g of mol.gas){
+    if(g.t===0){
+      ctx.fillStyle=rgba(C.dim,0.95);const cs=Math.cos(g.rot)*1.9,sn=Math.sin(g.rot)*1.9;
+      ctx.beginPath();ctx.arc(g.x+cs,g.y+sn,2.7,0,TAU);ctx.arc(g.x-cs,g.y-sn,2.7,0,TAU);ctx.fill();
+    }else{
+      if(S.show.hl&&g.hl>0.05){ctx.fillStyle=`rgba(255,200,80,${0.18+0.3*g.hl})`;ctx.beginPath();ctx.arc(g.x,g.y,11,0,TAU);ctx.fill();}
+      if(S.show.trail&&g.trail.length>=4){ctx.strokeStyle=`rgba(255,200,80,${0.55*g.hl})`;ctx.lineWidth=1.6;ctx.beginPath();for(let q=0;q<g.trail.length;q+=2){q?ctx.lineTo(g.trail[q],g.trail[q+1]):ctx.moveTo(g.trail[q],g.trail[q+1]);}ctx.stroke();}
+      drawMolAtoms(ctx,g.x,g.y,g.rot,L.mol,L.sf*0.95,[lc,dark?'#e6ecf5':'#ffffff',C.danger],1);
+    }
+    if(S.show.vel){
+      const v=Math.hypot(g.vx,g.vy),kk=0.32;
+      arrow(ctx,g.x,g.y,g.x+g.vx*kk,g.y+g.vy*kk,g.t===1?C.ev:C.dim,1.5*S.lw);
+    }
+  }
+  /* κυματισμοί και εκρήξεις στην επιφάνεια */
+  for(const r of mol.rip){ctx.strokeStyle=rgba(dark?'#ffffff':lc,0.55*(1-r.age/0.8));ctx.lineWidth=1.4;ctx.beginPath();ctx.ellipse(r.x,YS,6+r.age*28,2+r.age*5,0,0,TAU);ctx.stroke();}
+  for(const f of mol.fx){ctx.fillStyle=`rgba(255,200,80,${0.6*(1-f.age/0.5)})`;ctx.beginPath();ctx.arc(f.x,f.y,3+f.age*14,0,TAU);ctx.fill();}
+  ctx.restore();
+  /* υπόμνημα και ενδείξεις (συντεταγμένες οθόνης) */
+  {
+    const fs=Math.max(10,S.fs-2),x0=10,y0=h-12;
+    ctx.save();ctx.font=`600 ${fs}px ${FONT}`;ctx.textBaseline='middle';
+    const items=[[L.name.split(' (')[0],'liq'],['αέρας (N₂, O₂)','air']];
+    let yy=y0-(items.length-1)*(fs+6);
+    const sx=Math.min(1,w/330);
+    for(const it of items){
+      if(it[1]==='liq'){drawMolAtoms(ctx,x0+10,yy,0,L.mol,0.9,[liqCol(),isDark()?'#e6ecf5':'#ffffff',C.danger],1);}
+      else{ctx.fillStyle=rgba(C.dim,0.95);ctx.beginPath();ctx.arc(x0+6,yy,2.7,0,TAU);ctx.arc(x0+13,yy,2.7,0,TAU);ctx.fill();}
+      txt(ctx,it[0],x0+26,yy,C.fg,fs,'left');yy+=fs+6;
+    }
+    ctx.restore();
+    if(c){
+      const Tk=molTk();
+      const vr=Math.sqrt(3*R_GAS*Tk/L.M);
+      txt(ctx,`Υγρό: ${fmt(c.T,1)} °C  ·  v_rms ≈ ${fmt(vr,0)} m/s`,w-10,h-28,C.tl,fs,'right');
+      txt(ctx,`Αέρας: ${fmt(S.Ta,1)} °C  ·  RH ${fmt(S.RH,0)} %`,w-10,h-12,C.ta,fs,'right');
+    }
+  }
+}
+
+/* ---------- ζουμ / μετατόπιση στους καμβάδες ---------- */
+(()=>{
+  const setup=(sel,v)=>{
+    const st=$(sel),ptr=new Map();let d0=0,cen=null;
+    st.style.touchAction='none';
+    const dist=()=>{const a=[...ptr.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);};
+    const zoomAt=(f,cx,cy)=>{
+      const r=st.getBoundingClientRect(),x=cx-r.left-r.width/2,y=cy-r.top-r.height/2;
+      const nz=clamp(v.z*f,0.6,6),k=nz/v.z;v.px=x-(x-v.px)*k;v.py=y-(y-v.py)*k;v.z=nz;
+    };
+    st.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});st.setPointerCapture(e.pointerId);if(ptr.size===2){d0=dist();cen=null;}});
+    st.addEventListener('pointermove',e=>{
+      if(!ptr.has(e.pointerId))return;
+      const p=ptr.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+      if(ptr.size>=2){
+        const a=[...ptr.values()],mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,d=dist();
+        if(d0>0&&d>0){zoomAt(d/d0,mx,my);d0=d;}
+        if(cen){v.px+=mx-cen.x;v.py+=my-cen.y;}
+        cen={x:mx,y:my};dirty=true;
+      }else if(ptr.size===1){v.px+=dx;v.py+=dy;dirty=true;}
+    });
+    const end=e=>{ptr.delete(e.pointerId);cen=null;if(ptr.size===2)d0=dist();};
+    st.addEventListener('pointerup',end);st.addEventListener('pointercancel',end);
+    st.addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(-e.deltaY*0.0015),e.clientX,e.clientY);dirty=true;},{passive:false});
+    st.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;v.z=1;v.px=v.py=0;dirty=true;});
+    st.addEventListener('contextmenu',e=>e.preventDefault());
+  };
+  setup('#st-box',V.box);setup('#st-mol',V.mol);
+  $('#camreset').addEventListener('click',()=>{V.box.z=V.mol.z=1;V.box.px=V.box.py=V.mol.px=V.mol.py=0;dirty=true;});
+})();
+
+/* ---------- διαγράμματα ---------- */
+const tU=()=>{const te=Math.max((H.n-1)*DT,S.t);return te>4*3600?{k:3600,u:'h'}:{k:60,u:'min'};};
+function niceX(U){
+  const te=Math.max((H.n-1)*DT,S.t,30),x=te/U.k*1.12;
+  const steps=[0.5,1,2,3,5,10,15,20,30,45,60,90,120,180,240,360,480,720,1440];
+  for(const s of steps)if(x<=s)return s;
+  return Math.ceil(x/60)*60;
+}
+const timeCfg=(sers,extra)=>{const U=tU();return Object.assign({x0:0,x1:niceX(U),mark:S.t/U.k,xl:'t ('+U.u+')',ser:sers(U),time:U},extra||{});};
+const shortName={water:'Νερό',sea:'Θαλ. νερό',eth:'Αιθανόλη',ace:'Ακετόνη',eth2:'Αιθέρας'};
+const CH={
+  T:{main:'T',sub:'',par:'(t)',unit:'°C',col:'tl',cfg(){return timeCfg(U=>[
+      {f:x=>histAt('T',x*U.k),col:'tl',lw:2.8,nm:['T','υγρού']},
+      {f:x=>histFlow('Tb',x*U.k),col:'tb',lw:1.6,dash:[6,4],nm:['T','b'],nomark:true},
+      {f:()=>S.Ta,col:'ta',lw:1.4,dash:[3,3],nm:['T','α'],nomark:true}],
+      {shade:x=>histFlow('mb',x*(tU().k))>1e-9,shadeCol:'bo',ymin:Math.min(0,S.T0-5,S.Ta-5)});}},
+  R:{main:'ṁ',sub:'',par:'(t)',unit:'g/min',col:'ev',cfg(){return timeCfg(U=>[
+      {f:x=>{const v=histFlow('mev',x*U.k);return isFinite(v)?Math.max(0,v)*6e4:NaN;},col:'ev',lw:2.4,nm:['ṁ','εξάτμισης']},
+      {f:x=>{const v=histFlow('mb',x*U.k);return isFinite(v)?v*6e4:NaN;},col:'bo',lw:2.4,nm:['ṁ','βρασμού']}]);}},
+  E:{main:'Φ',sub:'',par:'(t)',unit:'W',col:'ph',cfg(){const L=LIQ[S.liq];return timeCfg(U=>[
+      {f:x=>histFlow('Qh',x*U.k),col:'ph',lw:2.4,nm:['P','']},
+      {f:x=>{const v=histFlow('mev',x*U.k);return isFinite(v)?-v*L.Lv:NaN;},col:'ev',lw:2,nm:['−Φ','εξ']},
+      {f:x=>{const v=histFlow('mb',x*U.k);return isFinite(v)?-v*L.Lv:NaN;},col:'bo',lw:2,nm:['−Φ','βρ']},
+      {f:x=>histFlow('Qc',x*U.k),col:'cv',lw:1.6,nm:['Φ','συν']},
+      {f:x=>{const v=histFlow('Ql',x*U.k);return isFinite(v)?-v:NaN;},col:'lo',lw:1.6,nm:['−Φ','απ']}]);}},
+  M:{main:'m',sub:'',par:'(t)',unit:'g',col:'ev',cfg(){return timeCfg(U=>[
+      {f:x=>{const v=histAt('m',x*U.k);return isFinite(v)?v*1000:NaN;},col:'ev',lw:2.6,nm:['m','υγρού']}]);}},
+  PS:{main:'p',sub:'s',par:'(T)',unit:'kPa',col:'tb',cfg(){
+    const sers=LIQ_ORDER.map(id=>({f:x=>psat(LIQ[id],x)*1e-3*(id==='sea'?0.98:1),col:'lq_'+id,lw:id===S.liq?2.8:1.3,dash:id==='sea'?[4,3]:null,nm:[shortName[id],''],nomark:id!==S.liq}));
+    sers.push({f:()=>S.p,col:'tb',lw:1.5,dash:[6,4],nm:['p','εξ'],nomark:true});
+    return {x0:-20,x1:130,mark:cur?cur.T:S.T0,xl:'T (°C)',ser:sers,ymin:0,ymax:Math.max(200,S.p*1.7),
+      extra(g){if(!cur)return;const x=g.X(cur.Tb),y=g.Y(S.p);g.ctx.fillStyle=g.C.tb;g.ctx.strokeStyle=g.C.stage;g.ctx.lineWidth=2;g.ctx.beginPath();g.ctx.arc(x,y,5,0,TAU);g.ctx.fill();g.ctx.stroke();
+        lab(g.ctx,x+8,y-12,'T','b','= '+fmt(cur.Tb,1)+' °C',g.C.tb,'left',11);}};}},
+  W:{main:'ṁ',sub:'εξ',par:'(v ανέμου)',unit:'g/h',col:'ev',click:true,cfg(){
+    return {x0:0,x1:20,mark:S.wind,xl:'v (m/s)',ser:[{f:x=>cur?calc(cur.T,cur.m,cur.e,x).mev*3.6e6:NaN,col:'ev',lw:2.6,nm:['ṁ','εξ']}]};}},
+  B:{main:'T',sub:'b',par:'(p)',unit:'°C',col:'tb',click:true,cfg(){
+    const L=LIQ[S.liq],f=cur?facR(L,cur.m,S.ms):1;
+    return {x0:5,x1:250,mark:S.p,xl:'p (kPa)',ymin:Math.min(0,Tsat(L,5e3/f)-5),ser:[
+      {f:x=>Tsat(L,x*1e3/f),col:'tb',lw:2.6,nm:['T','b']},
+      {f:()=>cur?cur.T:S.T0,col:'tl',lw:1.4,dash:[4,3],nm:['T','υγρού'],nomark:true}],
+      extra(g){const items=[['Έβερεστ',31.4],['Όλυμπος',70.8],['Θάλασσα',101.3],['Χύτρα',200]];
+        g.ctx.save();g.ctx.setLineDash([2,3]);g.ctx.strokeStyle=g.C.dim;g.ctx.lineWidth=1;g.ctx.fillStyle=g.C.dim;g.ctx.font=`500 9px ${MONO}`;g.ctx.textAlign='center';g.ctx.textBaseline='top';
+        items.forEach((q,i)=>{const x=g.X(q[1]);g.ctx.beginPath();g.ctx.moveTo(x,g.T);g.ctx.lineTo(x,g.T+g.ph);g.ctx.stroke();g.ctx.fillText(q[0],clamp(x,g.L+22,g.w-26),g.T+4+(i%2)*11);});
+        g.ctx.restore();}};}},
+  D:{main:'f',sub:'E',par:'κατανομή ενεργειών',unit:'σχηματικά',col:'tl',cfg(){
+    const T=cur?cur.T:S.T0,th=(T+273.15)/293.15,Es=7;
+    const mb=(x,t)=>2/Math.sqrt(Math.PI)*Math.pow(t,-1.5)*Math.sqrt(x)*Math.exp(-x/t);
+    return {x0:0,x1:14,mark:Es,xl:'E / (k·293 K)',ymin:0,ser:[
+      {f:x=>mb(x,1),col:'ta',lw:1.6,dash:[5,4],nm:['20 °C','']},
+      {f:x=>mb(x,th),col:'tl',lw:2.8,nm:[fmt(T,0)+' °C','']}],
+      extra(g){const ctx=g.ctx,xs=g.X(Es);
+        ctx.save();ctx.fillStyle=rgba(g.C.tl,0.28);ctx.beginPath();ctx.moveTo(xs,g.Y(0));
+        for(let x=Es;x<=14.001;x+=0.2)ctx.lineTo(g.X(x),g.Y(mb(x,th)));ctx.lineTo(g.X(14),g.Y(0));ctx.closePath();ctx.fill();ctx.restore();
+        const L=LIQ[S.liq],ratio=psat(L,T)/psat(L,20);
+        lab(ctx,xs+6,g.T+24,'E','απ',' (όριο διαφυγής)',g.C.dim,'left',11);
+        lab(ctx,g.w-8,g.T+g.ph*0.42,'μόρια ',' ','με Ε > Ε_απ: ×'+(ratio>=10?fmt(ratio,0):fmt(ratio,2)),g.C.tl,'right',11);}};}}
+};
+const CHIP_NAMES={T:'<em>T</em>(t)',R:'<em>ṁ</em>(t)',E:'Ισχύς Φ(t)',M:'<em>m</em>(t)',PS:'<em>p</em><sub>s</sub>(<em>T</em>)',W:'<em>ṁ</em>(άνεμος)',B:'<em>T</em><sub>b</sub>(<em>p</em>)',D:'κατανομή ενεργειών'};
+function ticks(a,b,n){
+  const span=(b-a)||1,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),nm=raw/mag,st=(nm<1.5?1:nm<3?2:nm<7?5:10)*mag,out=[];
+  for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)out.push(Math.abs(v)<1e-12?0:v);
+  return {out,dec:Math.max(0,-Math.floor(Math.log10(st)))};
+}
+function drawChart(cv,def){const sv={};for(const k in CP){sv[k]=C[k];C[k]=CP[k];}try{drawChart0(cv,def);}finally{Object.assign(C,sv);}}
+function drawChart0(cv,def){
+  const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  LBF++;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const cfg=def.cfg(),L=50,Rr=10,T=40,B=36,pw=w-L-Rr,ph=h-T-B,N=140;
+  cv._m={L,Rr,x0:cfg.x0,x1:cfg.x1,time:cfg.time};
+  const xs=Array.from({length:N+1},(_,i)=>cfg.x0+(cfg.x1-cfg.x0)*i/N);
+  const ser=cfg.ser.map(s=>({s,vals:xs.map(x=>s.f(x))}));
+  let mn=cfg.ymin!=null?cfg.ymin:0,mx=cfg.ymax!=null?cfg.ymax:0;
+  if(cfg.ymax==null||cfg.ymin==null)ser.forEach(q=>q.vals.forEach(v=>{if(isFinite(v)){if(cfg.ymin==null)mn=Math.min(mn,v);if(cfg.ymax==null)mx=Math.max(mx,v);}}));
+  if(mx-mn<1e-12)mx=mn+1;const pad=(mx-mn)*0.07;if(cfg.ymax==null&&mx>0)mx+=pad;if(cfg.ymin==null&&mn<0)mn-=pad;
+  const X=x=>L+(x-cfg.x0)/(cfg.x1-cfg.x0)*pw,Y=v=>T+ph-(v-mn)/(mx-mn)*ph;
+  ctx.save();ctx.beginPath();ctx.rect(L,T-2,pw,ph+4);ctx.clip();
+  if(cfg.shade){const hx=pw/N/2+0.5;ctx.fillStyle=C[cfg.shadeCol||'danger'];ctx.globalAlpha=.16;xs.forEach(x=>{if(cfg.shade(x))ctx.fillRect(X(x)-hx,T,2*hx,ph);});ctx.globalAlpha=1;}
+  ctx.restore();
+  const ty=ticks(mn,mx,3);
+  ctx.font=`500 10px ${MONO}`;ctx.textBaseline='middle';ctx.textAlign='right';
+  ty.out.forEach(v=>{const y=Y(v);ctx.strokeStyle=v===0?C.gridS:C.grid;ctx.lineWidth=v===0?1.2:1;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,ty.dec),L-5,y);});
+  const tx=ticks(cfg.x0,cfg.x1,4);ctx.textAlign='center';ctx.textBaseline='top';
+  tx.out.forEach(v=>{const x=X(v);ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,tx.dec),x,T+ph+4);});
+  ctx.save();ctx.beginPath();ctx.rect(L,T-2,pw,ph+4);ctx.clip();
+  ser.forEach(q=>{
+    ctx.beginPath();let pen=false;
+    q.vals.forEach((v,j)=>{if(!isFinite(v)){pen=false;return;}const x=X(xs[j]),y=Y(v);if(pen)ctx.lineTo(x,y);else{ctx.moveTo(x,y);pen=true;}});
+    ctx.strokeStyle=C[q.s.col];ctx.lineWidth=q.s.lw;ctx.setLineDash(q.s.dash||[]);ctx.lineJoin='round';ctx.stroke();ctx.setLineDash([]);
+  });
+  ctx.restore();
+  if(cfg.extra)cfg.extra({ctx,X,Y,L,T,pw,ph,w,h,mn,mx,C});
+  const mxp=X(clamp(cfg.mark,cfg.x0,cfg.x1));
+  ctx.strokeStyle=C.accent;ctx.lineWidth=1.3;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(mxp,T);ctx.lineTo(mxp,T+ph);ctx.stroke();ctx.setLineDash([]);
+  ser.forEach(q=>{if(q.s.nomark)return;const v=q.s.f(clamp(cfg.mark,cfg.x0,cfg.x1));if(!isFinite(v)||v<mn-1e-9||v>mx+1e-9)return;ctx.fillStyle=C[q.s.col];ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mxp,Y(v),q.s.dash?3:4,0,TAU);ctx.fill();ctx.stroke();});
+  lab(ctx,8,12,def.main,def.sub,def.par+'  ['+def.unit+']',C[def.col],'left',12);
+  let lx=8;
+  cfg.ser.forEach(s=>{lab(ctx,lx,28,s.nm[0],s.nm[1],'',C[s.col],'left',11);ctx.font=`italic 600 12px ${FONT}`;const w1=ctx.measureText(s.nm[0]).width;ctx.font=`600 8px ${FONT}`;lx+=w1+(s.nm[1]?ctx.measureText(s.nm[1]).width+4:0)+14;});
+  ctx.font=`500 10px ${MONO}`;ctx.fillStyle=C.dim;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(cfg.xl,w-4,h-3);
+}
+function buildChartCells(){
+  const box=$('#charts');box.innerHTML='';
+  Object.keys(CH).filter(k=>S.charts[k]).forEach(k=>{
+    const def=CH[k],c=el('div','cell'),cv=el('canvas');cv.dataset.k=k;cv.setAttribute('aria-label','Διάγραμμα '+def.main+def.sub+' '+def.par);
+    const act=def.click||k==='T'||k==='R'||k==='E'||k==='M';
+    if(!act)cv.style.cursor='default';
+    c.appendChild(cv);box.appendChild(c);
+    let down=false;
+    const seek=e=>{
+      const m=cv._m;if(!m||!act)return;const r=cv.getBoundingClientRect(),f=clamp((e.clientX-r.left-m.L)/(r.width-m.L-m.Rr),0,1),x=m.x0+f*(m.x1-m.x0);
+      if(m.time){S.t=clamp(x*m.time.k,0,tEnd());S.playing=false;updatePlay();}
+      else if(k==='W'){S.wind=clamp(Math.round(x*2)/2,0,25);live();refreshAll();}
+      else if(k==='B'){S.p=clamp(Math.round(x*2)/2,5,400);live();refreshAll();}
+      dirty=true;
+    };
+    cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);seek(e);});
+    cv.addEventListener('pointermove',e=>{if(down)seek(e);});
+    cv.addEventListener('pointerup',()=>down=false);cv.addEventListener('pointercancel',()=>down=false);
+  });
+  dirty=true;
+}
+function buildChartChips(){
+  const box=$('#gchips');box.innerHTML='';
+  Object.keys(CH).forEach(k=>{
+    const b=el('button','chip'+(S.charts[k]?' on':''),`<i class="d"></i><span>${CHIP_NAMES[k]}</span>`);
+    b.type='button';b.style.setProperty('--cc',`var(${CSSV[CH[k].col]})`);
+    b.addEventListener('click',()=>{S.charts[k]=S.charts[k]?0:1;b.classList.toggle('on',!!S.charts[k]);buildChartCells();});
+    box.appendChild(b);
+  });
+}
+
+/* ---------- ρόλοι ισχύος, κατάσταση, πίνακας ---------- */
+let lastRole='',lastLG='',lastRO='',lastST='',lastLI='';
+const cvar=k=>`var(${CSSV[k]})`;
+function roleHTML(){
+  const c=cur,L=LIQ[S.liq];if(!c)return '';
+  const row=(k,sym,sub,desc,badge,cls,tot)=>`<div class="rrow${tot?' tot':''}"><span class="rsym" style="color:${cvar(k)}"><i>${sym}</i>${sub?'<sub>'+sub+'</sub>':''}</span><span class="rdesc">${desc}</span><span class="badge ${cls}">${badge}</span></div>`;
+  const W=v=>fS(Math.abs(v),'W'),rows=[];
+  rows.push(c.Qh>0?row('ph','P','',`<b>${W(c.Qh)}</b> · η εστία δίνει θερμότητα στον πυθμένα του δοχείου.`,'ΘΕΡΜΑΙΝΕΙ','yes')
+                  :row('ph','P','',`<b>0</b> · η εστία είναι σβηστή.`,'ΣΒΗΣΤΗ','no'));
+  rows.push(Math.abs(c.Qc)<0.05?row('cv','Φ','συν',`<b>0</b> · ο αέρας και το υγρό έχουν την ίδια θερμοκρασία.`,'ΙΣΟΡΡΟΠΙΑ','no')
+    :c.Qc>0?row('cv','Φ','συν',`<b>${W(c.Qc)}</b> · θερμότητα από τον αέρα προς το υγρό (<i>T</i><sub>α</sub> > <i>T</i>).`,'ΘΕΡΜΑΙΝΕΙ','part')
+    :row('cv','Φ','συν',`<b>${W(c.Qc)}</b> · το υγρό χάνει θερμότητα προς τον αέρα (<i>T</i> > <i>T</i><sub>α</sub>).`,'ΨΥΧΕΙ','neg'));
+  rows.push(c.Qev>=0?row('ev','Φ','εξ',`<b>${W(c.Qev)}</b> · εξάτμιση από την επιφάνεια: κάθε kg ατμού παίρνει <i>L</i><sub>v</sub> = ${fmt(L.Lv/1e6,3)} MJ/kg από το υγρό (${fS(c.mev*6e4,'g/min')}).`,'ΨΥΧΕΙ','neg')
+                    :row('ev','Φ','εξ',`<b>${W(c.Qev)}</b> · συμπύκνωση ατμού πάνω στο υγρό: αποδίδει θερμότητα.`,'ΘΕΡΜΑΙΝΕΙ','part'));
+  rows.push(c.mb>1e-9?row('bo','Φ','βρ',`<b>${W(c.Qb)}</b> · βρασμός: ${fS(c.mb*1000,'g/s')} ατμού σε όλη τη μάζα του υγρού.`,'ΒΡΑΣΜΟΣ','part')
+                    :row('bo','Φ','βρ',`<b>0</b> · <i>T</i> < <i>T</i><sub>b</sub> = ${fmt(c.Tb,1)} °C: δεν υπάρχει βρασμός.`,'ΟΧΙ ΒΡΑΣΜΟΣ','no'));
+  rows.push(c.Ql>=0?row('lo','Φ','απ',`<b>${W(c.Ql)}</b> · απώλειες από τα τοιχώματα του δοχείου προς το περιβάλλον.`,'ΨΥΧΕΙ','neg')
+                    :row('lo','Φ','απ',`<b>${W(c.Ql)}</b> · το δοχείο δίνει θερμότητα στο ψυχρό υγρό.`,'ΘΕΡΜΑΙΝΕΙ','part'));
+  const sg=c.Qnet>=0?'+':'−';
+  if(c.dry)rows.push(row('et','ΣΦ','',`Το υγρό εξατμίστηκε πλήρως.`,'ΤΕΛΟΣ','neg',true));
+  else if(c.mb>1e-9)rows.push(row('et','ΣΦ','',`<b>${sg}${W(c.Qnet)}</b> · <i>T</i> = <i>T</i><sub>b</sub> = ${fmt(c.Tb,1)} °C σταθερή: η καθαρή ισχύς γίνεται λανθάνουσα θερμότητα, <i>P</i><sub>net</sub> = <i>ṁ</i><i>L</i><sub>v</sub>.`,'Τ ΣΤΑΘΕΡΗ','yes',true));
+  else{
+    const r=c.dTdt*60;
+    rows.push(row('et','ΣΦ','',`<b>${sg}${W(c.Qnet)}</b> · <i>m</i><i>c</i> d<i>T</i>/d<i>t</i>: ${r>=0?'+':'−'}${fmt(Math.abs(r),2)} K/min.`,
+      r>0.003?'ΘΕΡΜΑΙΝΕΤΑΙ':r<-0.003?'ΨΥΧΕΤΑΙ':'ΙΣΟΡΡΟΠΙΑ',r>0.003?'yes':r<-0.003?'neg':'part',true));
+  }
+  return rows.join('');
+}
+function roleHintText(){
+  const c=cur;if(!c)return '';
+  if(c.dry)return 'Όλο το υγρό έγινε ατμός: η εστία ανάβει «στεγνή». Πάτησε Επαναφορά για νέα δοκιμή.';
+  if(c.mb>1e-9)return 'Στον βρασμό η θερμοκρασία δεν ανεβαίνει, όσο κι αν αυξήσεις την ισχύ: μεγαλώνει μόνο ο ρυθμός παραγωγής ατμού. Άλλαξε την πίεση και δες πώς αλλάζει το σημείο βρασμού.';
+  if(S.lid&&c.e>0.9*c.ps)return 'Με καπάκι ο αέρας πάνω από το υγρό κορένεται (e → p_s): η εξάτμιση και η συμπύκνωση εξισορροπούν και το υγρό σχεδόν δεν λιγοστεύει.';
+  if(c.Qev>c.Qh+c.Qc&&c.dTdt<-1e-4)return 'Η εξάτμιση παίρνει περισσότερη θερμότητα απ’ όση το υγρό δέχεται: γι’ αυτό το υγρό ψύχεται, ακόμη και κάτω από τη θερμοκρασία του αέρα.';
+  return 'Κάθε ροή θερμότητας σε W: οι θετικές ζεσταίνουν το υγρό, οι αρνητικές το ψύχουν. Το άθροισμα καθορίζει πόσο γρήγορα αλλάζει η θερμοκρασία του.';
+}
+function updateRole(){
+  const h=roleHTML();if(h!==lastRole){$('#roleBox').innerHTML=h;lastRole=h;}
+  const t=roleHintText();if($('#roleHint').textContent!==t)$('#roleHint').textContent=t;
+}
+function updateStatus(){
+  const c=cur,st=$('#status'),L=LIQ[S.liq];if(!c)return;let txt,cls='ok';
+  if(c.dry){txt='ΤΟ ΥΓΡΟ ΕΞΑΤΜΙΣΤΗΚΕ ΠΛΗΡΩΣ';cls='bad';}
+  else if(c.mb>1e-9){txt=c.mb*L.Lv>c.Qh*1.6+60?'ΒΡΑΣΜΟΣ ΛΟΓΩ ΠΤΩΣΗΣ ΠΙΕΣΗΣ · T → T_b':'ΒΡΑΣΜΟΣ · T = T_b = '+fmt(c.Tb,1)+' °C';}
+  else if(S.lid&&c.e>0.97*c.ps)txt='ΔΥΝΑΜΙΚΗ ΙΣΟΡΡΟΠΙΑ · ΚΟΡΕΣΜΕΝΟΣ ΑΕΡΑΣ (e ≈ p_s)';
+  else if(c.mev<-1e-10)txt='ΣΥΜΠΥΚΝΩΣΗ ΑΤΜΟΥ ΣΤΟ ΥΓΡΟ';
+  else if(c.sub<12&&c.Qnet>1)txt='ΥΠΟΒΡΑΣΜΟΣ · ΦΥΣΑΛΙΔΕΣ ΑΤΜΟΥ ΣΧΗΜΑΤΙΖΟΝΤΑΙ ΚΑΙ ΣΥΜΠΥΚΝΩΝΟΝΤΑΙ';
+  else if(c.sub<40&&c.Qnet>1)txt='ΘΕΡΜΑΝΣΗ · ΕΛΕΥΘΕΡΩΝΕΤΑΙ ΔΙΑΛΥΜΕΝΟΣ ΑΕΡΑΣ + ΕΞΑΤΜΙΣΗ';
+  else if(c.dTdt<-1e-4)txt='ΨΥΧΕΤΑΙ ΜΕ ΤΗΝ ΕΞΑΤΜΙΣΗ';
+  else if(c.Qnet>1)txt='ΘΕΡΜΑΝΣΗ + ΕΞΑΤΜΙΣΗ ΑΠΟ ΤΗΝ ΕΠΙΦΑΝΕΙΑ';
+  else txt='ΕΞΑΤΜΙΣΗ ΑΠΟ ΤΗΝ ΕΠΙΦΑΝΕΙΑ';
+  const k=cls+txt;if(k!==lastST){st.textContent=txt;st.className=cls;lastST=k;}
+}
+function updateLegend(){
+  const lg=$('#legend');
+  if(!S.rdv||!cur){if(!lg.hidden)lg.hidden=true;return;}
+  const c=cur,L=LIQ[S.liq];
+  const row=(k,s,sub,v)=>`<div style="color:${cvar(k)}"><i>${s}</i>${sub?'<sub>'+sub+'</sub>':''} = ${v}</div>`;
+  const html=`<div class="lgh">${L.name} · m = ${fmt(c.m*1000,0)} g · A = ${fmt(S.A,0)} cm²</div>`+
+    row('tl','T','υγρού',fmt(c.T,1)+' °C')+row('tb','T','b',fmt(c.Tb,1)+' °C')+row('ta','T','α',fmt(S.Ta,1)+' °C')+
+    row('ev','ṁ','εξ',fS(Math.max(0,c.mev)*6e4,'g/min'))+(c.mb>1e-9?row('bo','ṁ','βρ',fS(c.mb*6e4,'g/min')):'')+row('ph','P','',fS(c.Qh,'W'));
+  if(html!==lastLG){lg.innerHTML=html;lastLG=html;}
+  if(lg.hidden)lg.hidden=false;
+}
+function tile(sym,name,val,col,ess){
+  if(!S.tblAll&&!ess)return '';
+  return `<div class="readout"><div class="lbl">${UP(name)} <span class="lbl-sym">${sym}</span></div><div class="val mono"${col?` style="color:${cvar(col)}"`:''}>${val}</div></div>`;
+}
+function updateTable(){
+  const box=$('#readouts');box.hidden=!S.table;if(!S.table||!cur)return;
+  const c=cur,L=LIQ[S.liq],Tk=c.T+273.15,Tak=S.Ta+273.15;
+  const vr=Math.sqrt(3*R_GAS*Tk/L.M);
+  const Jout=c.ps/Math.sqrt(2*Math.PI*L.M*R_GAS*Tk)*NA,Jin=c.eAir/Math.sqrt(2*Math.PI*L.M*R_GAS*Tak)*NA;
+  const Jnet=c.mev/(S.A*1e-4)/L.M*NA;
+  const t=tile;
+  const h=t('t','Χρόνος',fmtTime(S.t),null,1)+t('T','Θερμοκρασία υγρού',fmt(c.T,1)+' °C','tl',1)+
+    t('T<sub>b</sub>','Σημείο βρασμού',fmt(c.Tb,1)+' °C','tb',1)+t('ΔΤ','Υποψύξη T<sub>b</sub> − T',fmt(c.sub,1)+' K','tb')+
+    t('T<sub>α</sub>','Θερμοκρασία αέρα',fmt(S.Ta,1)+' °C','ta',1)+
+    t('p','Πίεση περιβάλλοντος',fmt(S.p,1)+' kPa',null,1)+
+    t('p<sub>s</sub>','Τάση κορεσμένων ατμών',fmt(c.ps/1000,2)+' kPa','tb')+
+    t('e','Μερική πίεση ατμού στον αέρα',fmt(c.eAir/1000,2)+' kPa','ta')+
+    t('m','Μάζα υγρού',fmt(c.m*1000,1)+' g','ev',1)+t('h','Ύψος υγρού',fmt(c.h*100,2)+' cm')+
+    t('Δm','Μάζα που έγινε ατμός',fmt((S.m0-c.m)*1000,2)+' g ('+fmt((S.m0-c.m)/S.m0*100,1)+' %)','bo')+
+    t('ṁ<sub>εξ</sub>','Εξάτμιση από την επιφάνεια',fS(Math.max(0,c.mev)*6e4,'g/min'),'ev',1)+
+    t('ṁ<sub>βρ</sub>','Βρασμός',fS(c.mb*6e4,'g/min'),'bo',1)+
+    t('P','Ισχύς εστίας',fS(c.Qh,'W'),'ph',1)+
+    t('dT/dt','Ρυθμός μεταβολής T',fmt(c.dTdt*60,2)+' K/min','tl')+
+    t('Q','Ενέργεια που δόθηκε από την εστία',fmt(c.Eh/1000,0)+' kJ','ph')+
+    t('L<sub>v</sub>','Λανθάνουσα θερμότητα εξαέρωσης',fmt(L.Lv/1e6,3)+' MJ/kg')+
+    t('v<sub>rms</sub>','Μέση τετραγωνική ταχύτητα μορίων',fmt(vr,0)+' m/s')+
+    t('E<sub>κ</sub>','Μέση κινητική ενέργεια μορίου (3kT/2)',fmt(1.5*KB*Tk*1e21,2)+'·10⁻²¹ J')+
+    t('J<sub>εξ</sub>','Ροή μορίων που φεύγουν',fmt(Jout/1e25,2)+'·10²⁵ /(m²s)')+
+    t('J<sub>εισ</sub>','Ροή μορίων που επιστρέφουν',fmt(Jin/1e25,2)+'·10²⁵ /(m²s)')+
+    t('J<sub>net</sub>','Καθαρή ροή / ροή εξόδου',fmt(Jout>0?Jnet/Jout*100:0,3)+' %');
+  if(h!==lastRO){box.innerHTML=h;lastRO=h;}
+}
+function updateTime(){
+  const te=tEnd();
+  $('#tOut').textContent='t = '+fmtTime(S.t);
+  const sc=$('#sl_time');
+  if(+sc.max!==te){sc.max=te;sc.step=te/3000;}
+  if(document.activeElement!==sc)sc.value=S.t;
+}
+function updateLiqInfo(){
+  const L=LIQ[S.liq],c=cur;if(!c)return;
+  const html=`<b>${L.name}</b> · <i>M</i> = ${fmt(L.M*1000,1)} g/mol · <i>ρ</i> = ${fmt(L.rho,0)} kg/m³ · <i>c</i> = ${fmt(L.c,0)} J/(kg·K) · <i>L</i><sub>v</sub> = ${fmt(L.Lv/1e6,3)} MJ/kg · <i>T</i><sub>b</sub>(${fmt(S.p,1)} kPa) = <b>${fmt(c.Tb,1)} °C</b><br>${L.note}`;
+  if(html!==lastLI){const e=$('#liqInfo');if(e)e.innerHTML=html;lastLI=html;}
+}
+let needWarm=true;
+function warmVis(){
+  VIS.bub.length=0;VIS.steam.length=0;VIS.drops.length=0;VIS.rip.length=0;VIS.accB=VIS.accS=0;
+  mol.bub.length=0;
+  if(!cur)return;
+  VIS.boilI=clamp(cur.mb/4e-4,0,2.2);
+  for(let i=0;i<60;i++){animateBox(0.05);animateMol(0.05);}
+  VIS.pops=0;
+}
+
+/* ---------- render ---------- */
+function render(){
+  if(!cur)cur=sampleAt(S.t);
+  updateTime();updateStatus();updateRole();updateLegend();updateTable();updateLiqInfo();
+  const v=S.view;
+  if(v==='all'||v==='box')drawBox();
+  if(v==='all'||v==='mol')drawMol();
+  $$('#charts canvas').forEach(cv=>{const d=CH[cv.dataset.k];if(d)drawChart(cv,d);});
+}
+
+/* ---------- ήχος: βρασμός ---------- */
+const AU={ctx:null,on:true,g:null,hg:null,bp:null};
+function audioInit(){
+  if(AU.ctx){try{AU.ctx.resume();}catch(e){}return;}
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+    const ctx=new Ctx(),len=ctx.sampleRate*2,buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=650;bp.Q.value=0.8;
+    const g=ctx.createGain();g.gain.value=0;
+    const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=3500;
+    const hg=ctx.createGain();hg.gain.value=0;
+    src.connect(bp);bp.connect(g);g.connect(ctx.destination);
+    src.connect(hp);hp.connect(hg);hg.connect(ctx.destination);
+    src.start();Object.assign(AU,{ctx,g,hg,bp});ctx.resume();
+  }catch(e){AU.ctx=null;}
+}
+function audioPop(){
+  if(!AU.ctx||!AU.on)return;
+  try{
+    const ctx=AU.ctx,t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(rnd(260,620),t);o.frequency.exponentialRampToValueAtTime(rnd(120,200),t+0.05);
+    g.gain.setValueAtTime(0.05,t);g.gain.exponentialRampToValueAtTime(0.0005,t+0.06);
+    o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+0.07);
+  }catch(e){}
+}
+function audioUpdate(){
+  if(!AU.ctx)return;
+  const c=cur;let lvl=0,hiss=0;
+  if(AU.on&&S.playing&&c&&c.m>0&&document.visibilityState!=='hidden'){
+    const bi=clamp(c.mb/4e-4,0,2);
+    if(c.mb>1e-9){lvl=0.03+0.10*Math.sqrt(Math.min(bi,1.5));hiss=0.01+0.025*bi;}
+    else if(c.sub<12&&c.Qnet>1){const f=1-c.sub/12;hiss=0.02*f;lvl=0.015*f;}
+    else if(c.mev>2e-5){hiss=0.004;}
+  }
+  const t=AU.ctx.currentTime;
+  AU.g.gain.setTargetAtTime(lvl,t,0.08);AU.hg.gain.setTargetAtTime(hiss,t,0.08);
+  AU.bp.frequency.setTargetAtTime(450+(c?clamp(c.mb/4e-4,0,2)*300:0),t,0.1);
+}
+let lastF=performance.now();
+function frame(now){
+  const dtr=Math.min(0.05,(now-lastF)/1000);lastF=now;
+  if(S.playing){
+    S.t+=dtr*S.speed*S.ts;
+    ensure(S.t);
+    if(S.t>=tEnd()){
+      if(S.loop){simReset();}
+      else{S.t=tEnd();S.playing=false;updatePlay();}
+    }
+    dirty=true;
+  }
+  if(dirty||S.playing)cur=sampleAt(S.t);
+  if(!S.playing&&needWarm&&cur){needWarm=false;warmVis();dirty=true;}
+  if(S.playing){
+    const dv=dtr*S.speed;animateBox(dv);animateMol(dv);
+    if(VIS.pops>0){const n=Math.min(VIS.pops,3);for(let i=0;i<n;i++)audioPop();VIS.pops=0;}
+  }
+  if(dirty){dirty=false;render();}
+  audioUpdate();
+  requestAnimationFrame(frame);
+}
+function updatePlay(){
+  const b=$('#playBtn');b.textContent=S.playing?'⏸ Παύση':'▶ Εκκίνηση';
+  b.setAttribute('aria-label',S.playing?'Παύση':'Εκκίνηση');
+}
+
+/* ---------- πεδία ρυθμίσεων (ελεύθερη πληκτρολόγηση τιμών) ---------- */
+const syncs=[];
+const r3=v=>Number((+v).toFixed(3));
+function field(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}-n"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label>`+
+    `<div class="inputs"><input type="range" id="${c.id}-r" min="${c.min}" max="${c.max}" step="${c.step}" aria-label="${c.name}">`+
+    `<input type="number" id="${c.id}-n" step="any" aria-label="${c.name} (τιμή)"><span class="unit">${c.unit||''}</span></div>`+(c.note?`<div class="note"></div>`:'');
+  const r=$('input[type=range]',f),n=$('input[type=number]',f),nt=$('.note',f);
+  const sync=()=>{r.value=c.get();if(document.activeElement!==n)n.value=r3(c.get());if(nt)nt.textContent=c.note();};
+  r.addEventListener('input',()=>{c.set(+r.value);n.value=r3(c.get());if(nt)nt.textContent=c.note();dirty=true;needWarm=!S.playing;});
+  n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)){c.set(v);r.value=c.get();if(nt)nt.textContent=c.note();dirty=true;needWarm=!S.playing;}});
+  n.addEventListener('blur',sync);
+  parent.appendChild(f);sync();syncs.push(sync);return sync;
+}
+const refreshAll=()=>syncs.forEach(f=>f());
+function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
+const beaufort=v=>{const th=[0.3,1.6,3.4,5.5,8,10.8,13.9,17.2,20.8,24.5,28.5,32.7];let n=0;while(n<th.length&&v>=th[n])n++;return n;};
+const SCEN=[
+  {n:'Βρασμός νερού',set:{liq:'water',V0:1000,T0:20,A:150,Ta:20,RH:50,wind:0,P:1500,p:101.325,lid:false,tmax:3600,ts:30}},
+  {n:'Εξάτμιση χωρίς θέρμανση',set:{liq:'water',V0:500,T0:25,A:200,Ta:25,RH:40,wind:0,P:0,p:101.325,lid:false,tmax:86400,ts:1000}},
+  {n:'Εξάτμιση με άνεμο',set:{liq:'water',V0:500,T0:25,A:200,Ta:25,RH:40,wind:8,P:0,p:101.325,lid:false,tmax:86400,ts:1000}},
+  {n:'Αιθέρας: ψύξη',set:{liq:'eth2',V0:100,T0:20,A:60,Ta:20,RH:50,wind:0,P:0,p:101.325,lid:false,tmax:1800,ts:15}},
+  {n:'Βρασμός στον Όλυμπο',set:{liq:'water',V0:1000,T0:20,A:150,Ta:10,RH:50,wind:0,P:1500,p:70.8,lid:false,tmax:3600,ts:30}},
+  {n:'Βρασμός στο Έβερεστ',set:{liq:'water',V0:1000,T0:5,A:150,Ta:-5,RH:30,wind:0,P:1500,p:31.4,lid:false,tmax:3600,ts:30}},
+  {n:'Χύτρα ταχύτητας',set:{liq:'water',V0:1000,T0:20,A:150,Ta:20,RH:50,wind:0,P:1500,p:200,lid:true,tmax:3600,ts:30}},
+  {n:'Χαμηλή πίεση (κενό)',set:{liq:'water',V0:1000,T0:70,A:150,Ta:20,RH:50,wind:0,P:0,p:15,lid:false,tmax:1200,ts:10}},
+  {n:'Θαλασσινό νερό',set:{liq:'sea',V0:1000,T0:20,A:150,Ta:20,RH:50,wind:0,P:1500,p:101.325,lid:false,tmax:3600,ts:30}},
+  {n:'Καπάκι: ισορροπία',set:{liq:'water',V0:500,T0:25,A:100,Ta:25,RH:30,wind:0,P:0,p:101.325,lid:true,tmax:7200,ts:60}}
+];
+function applyScen(sc){
+  Object.assign(S,sc.set);clampGeom();simReset();S.playing=true;updatePlay();syncAll();
+}
+let syncAll=()=>{};
+function buildSettings(b){
+  /* σενάρια */
+  const sw=el('div','field');sw.innerHTML='<label><span class="name">Έτοιμα σενάρια</span></label>';
+  const sr=el('div','inputs');
+  sr.innerHTML='<select id="scenSel" style="flex:1;min-width:0"><option value="-1">— Επιλογή σεναρίου —</option>'+SCEN.map((sc,i)=>`<option value="${i}">${sc.n}</option>`).join('')+'</select>';
+  $('select',sr).addEventListener('change',e=>{const i=+e.target.value;if(i>=0)applyScen(SCEN[i]);});
+  sw.appendChild(sr);b.appendChild(sw);
+  /* υγρό */
+  const lf=el('div','field');
+  lf.innerHTML='<label for="liqSel"><span class="name">Είδος υγρού</span></label><div class="inputs"><select id="liqSel" style="flex:1;min-width:0">'+LIQ_ORDER.map(id=>`<option value="${id}">${LIQ[id].name}</option>`).join('')+'</select></div><div class="hintline" id="liqInfo" style="margin-top:6px"></div>';
+  b.appendChild(lf);
+  $('#liqSel',lf).addEventListener('change',e=>{S.liq=e.target.value;clampGeom();simReset();needWarm=true;lastLI='';refreshAll();});
+  field(b,{id:'c-V',name:'Όγκος υγρού (αρχικός)',sym:'<i>V</i>',unit:'mL',min:50,max:3000,step:10,get:()=>S.V0,set:v=>{S.V0=clamp(v,50,5000);S.V0=Math.min(S.V0,S.A*HMAXL*100);simReset();},
+    note:()=>'m = '+fmt(S.V0*1e-3*LIQ[S.liq].rho/1000,3)+' kg'});
+  field(b,{id:'c-T0',name:'Θερμοκρασία υγρού (αρχική)',sym:'<i>T</i><sub>0</sub>',unit:'°C',min:-20,max:120,step:1,get:()=>S.T0,set:v=>{S.T0=clamp(v,-40,150);simReset();},
+    note:()=>'Η αλλαγή επανεκκινεί την προσομοίωση'});
+  field(b,{id:'c-A',name:'Εμβαδόν ελεύθερης επιφάνειας',sym:'<i>A</i>',unit:'cm²',min:30,max:400,step:5,get:()=>S.A,set:v=>{S.A=v;clampGeom();S.V0=Math.min(S.V0,S.A*HMAXL*100);live();},
+    note:()=>'διάμετρος δοχείου d = '+fmt(2*Math.sqrt(S.A/Math.PI),1)+' cm'});
+  field(b,{id:'c-Ta',name:'Θερμοκρασία αέρα',sym:'<i>T</i><sub>α</sub>',unit:'°C',min:-20,max:60,step:0.5,get:()=>S.Ta,set:v=>{S.Ta=clamp(v,-40,80);live();}});
+  field(b,{id:'c-RH',name:'Σχετική υγρασία αέρα',sym:'<i>RH</i>',unit:'%',min:0,max:100,step:1,get:()=>S.RH,set:v=>{S.RH=clamp(v,0,100);live();},
+    note:()=>LIQ[S.liq].hasAmb?'p(ατμού νερού) e = '+fmt(S.RH/100*psat(LIQ.water,S.Ta)/1000,2)+' kPa':'ισχύει μόνο για νερό'});
+  field(b,{id:'c-w',name:'Ταχύτητα ανέμου',sym:'<i>v</i>',unit:'m/s',min:0,max:25,step:0.5,get:()=>S.wind,set:v=>{S.wind=clamp(v,0,60);live();},
+    note:()=>S.lid?'το καπάκι εμποδίζει τον άνεμο':'= '+fmt(S.wind*3.6,0)+' km/h · '+beaufort(S.wind)+' Bf'});
+  const wp=el('div','addrow');wp.style.margin='-4px 0 12px';
+  [['Άπνοια',0],['Αύρα',2],['Φρέσκος άνεμος',8],['Θύελλα',20]].forEach(([n,v])=>{const x=el('button','btn secondary small',`${n} (${fmt(v,0)} m/s)`);x.type='button';x.addEventListener('click',()=>{S.wind=v;live();refreshAll();needWarm=!S.playing;});wp.appendChild(x);});
+  b.appendChild(wp);
+  field(b,{id:'c-P',name:'Ισχύς εστίας',sym:'<i>P</i>',unit:'W',min:0,max:3000,step:50,get:()=>S.P,set:v=>{S.P=clamp(v,0,10000);live();},
+    note:()=>S.P>0?'ρυθμός θέρμανσης νερού 1 kg ≈ '+fmt(S.P/4186*60,1)+' K/min':'σβηστή'});
+  const pp=el('div','addrow');pp.style.margin='-4px 0 12px';
+  [['Σβηστή',0],['500 W',500],['1500 W',1500],['3000 W',3000]].forEach(([n,v])=>{const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{S.P=v;live();refreshAll();needWarm=!S.playing;});pp.appendChild(x);});
+  b.appendChild(pp);
+  field(b,{id:'c-p',name:'Πίεση περιβάλλοντος',sym:'<i>p</i>',unit:'kPa',min:5,max:300,step:0.5,get:()=>S.p,set:v=>{S.p=clamp(v,1,1000);live();},
+    note:()=>cur?'T_b = '+fmt(cur.Tb,1)+' °C · υψόμετρο ≈ '+(S.p<=101.325?fmt(Math.max(0,(1-Math.pow(S.p/101.325,1/5.25588))/2.25577e-5),0)+' m':'κάτω από τη στάθμη της θάλασσας / χύτρα'):''});
+  const pr=el('div','addrow');pr.style.margin='-4px 0 12px';
+  [['Θάλασσα 101,3',101.325],['Όλυμπος 70,8',70.8],['Έβερεστ 31,4',31.4],['Χύτρα 200',200],['Κενό 15',15]].forEach(([n,v])=>{const x=el('button','btn secondary small',n+' kPa');x.type='button';x.addEventListener('click',()=>{S.p=v;live();refreshAll();needWarm=!S.playing;});pr.appendChild(x);});
+  b.appendChild(pr);
+  const lidRow=el('label','checkline','<input type="checkbox" id="lidChk"> Καπάκι στο δοχείο (κλειστός χώρος, χωρίς άνεμο)');
+  b.appendChild(lidRow);
+  $('#lidChk',lidRow).addEventListener('change',e=>{S.lid=e.target.checked;live();if(S.lid)H.e[H.n-1]=eAmb();lastRO='';refreshAll();needWarm=!S.playing;});
+  /* χρόνος */
+  const tf=el('div','field');tf.style.marginTop='14px';
+  tf.innerHTML='<label for="tsSel"><span class="name">Χρονική κλίμακα</span></label><div class="inputs"><select id="tsSel" style="flex:1;min-width:0">'+[1,5,10,30,100,300,1000,3000].map(v=>`<option value="${v}">1 s ↔ ${fmt(v,0)} s προσομοίωσης (×${fmt(v,0)})</option>`).join('')+'</select></div>';
+  b.appendChild(tf);
+  $('#tsSel',tf).addEventListener('change',e=>{S.ts=+e.target.value;});
+  const df=el('div','field');
+  df.innerHTML='<label for="durSel"><span class="name">Διάρκεια προσομοίωσης</span></label><div class="inputs"><select id="durSel" style="flex:1;min-width:0">'+[[600,'10 λεπτά'],[1800,'30 λεπτά'],[3600,'1 ώρα'],[7200,'2 ώρες'],[21600,'6 ώρες'],[86400,'24 ώρες']].map(([v,n])=>`<option value="${v}">${n}</option>`).join('')+'</select></div><div class="note" style="text-align:left;padding:0">Η αλλαγή επανεκκινεί την προσομοίωση</div>';
+  b.appendChild(df);
+  $('#durSel',df).addEventListener('change',e=>{S.tmax=+e.target.value;simReset();needWarm=true;});
+  syncAll=()=>{
+    refreshAll();
+    $('#liqSel').value=S.liq;$('#lidChk').checked=S.lid;
+    const ts=$('#tsSel');ts.value=String(S.ts);if(ts.value!==String(S.ts)){const o=el('option','',`1 s ↔ ${fmt(S.ts,0)} s (×${fmt(S.ts,0)})`);o.value=S.ts;ts.appendChild(o);ts.value=String(S.ts);}
+    $('#durSel').value=String(S.tmax);
+    lastLI='';lastRO='';needWarm=true;dirty=true;
+  };
+  b.appendChild(el('div','hintline','Οι ρυθμίσεις «Θερμοκρασία αέρα», «Υγρασία», «Άνεμος», «Ισχύς», «Πίεση», «Επιφάνεια» και «Καπάκι» ισχύουν από τη στιγμή που τις αλλάζεις (το μέλλον ξαναυπολογίζεται). Ο όγκος, η αρχική θερμοκρασία, το υγρό και η διάρκεια επανεκκινούν την προσομοίωση.'));
+}
+function buildToggles(b){
+  const vt=el('div','vector-toggles');b.appendChild(vt);
+  const mk=(row,k,t,cv,obj)=>{
+    const o=obj||S.show;
+    const l=el('label','',`<input type="checkbox" id="sh-${k}"${o[k]?' checked':''}><span class="swatch" style="background:${cv?cvar(cv):'var(--textDim)'}"></span>${t}`);
+    $('input',l).addEventListener('change',e=>{o[k]=e.target.checked;dirty=true;needWarm=!S.playing;});row.appendChild(l);
+  };
+  const R1=el('div','row',`<span class="grp">${UP('Δοχείο')}</span>`);vt.appendChild(R1);
+  mk(R1,'bub','Φυσαλίδες ατμού','bo');mk(R1,'steam','Ατμός / υδρατμοί','ev');mk(R1,'wind','Ροή ανέμου','ta');mk(R1,'therm','Θερμόμετρα','tl');
+  mk(R1,'flows','Ροές ενέργειας (<i>P</i>, Φ<sub>εξ</sub>, Φ<sub>συν</sub>, Φ<sub>απ</sub>)','ph');mk(R1,'dims','Διαστάσεις (<i>h</i>, <i>A</i>)',null);
+  vt.appendChild(el('div','sep'));
+  const R2=el('div','row',`<span class="grp">${UP('Μόρια')}</span>`);vt.appendChild(R2);
+  mk(R2,'vel','Διανύσματα ταχύτητας των μορίων αερίου','ev');mk(R2,'trail','Ίχνος μορίου που διαφεύγει','tb');mk(R2,'hl','Φωτισμός μορίων που διαφεύγουν','tb');
+  vt.appendChild(el('div','sep'));
+  const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
+  mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'values','Τιμές στο σχήμα',null);
+  mk(R3,'rdv','Τιμές μεγεθών πάνω δεξιά στον καμβά',null,S);
+}
+function buildView(b){
+  field(b,{id:'c-vs',name:'Μήκος βελών',sym:'×',unit:'',min:0.3,max:2.5,step:0.05,get:()=>S.vs,set:v=>{S.vs=clamp(v,0.05,50);}});
+  field(b,{id:'c-lw',name:'Πάχος βελών',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
+  field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+}
+
+/* ---------- χειριστήρια ---------- */
+$('#playBtn').addEventListener('click',()=>{audioInit();if(!S.playing&&S.t>=tEnd()-1e-6)simReset();S.playing=!S.playing;updatePlay();dirty=true;});
+$('#sndBtn').addEventListener('click',e=>{AU.on=!AU.on;if(AU.on)audioInit();e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι');e.currentTarget.classList.toggle('on',AU.on);e.currentTarget.setAttribute('aria-pressed',AU.on);});
+$('#resetBtn').addEventListener('click',()=>{S.playing=false;updatePlay();simReset();needWarm=true;dirty=true;});
+$('#speedSel').addEventListener('change',e=>S.speed=+e.target.value);
+$('#sl_time').addEventListener('input',e=>{S.t=+e.target.value;S.playing=false;updatePlay();needWarm=true;dirty=true;});
+$('#loopChk').addEventListener('change',e=>S.loop=e.target.checked);
+$('#allChk').addEventListener('change',e=>{S.tblAll=e.target.checked;lastRO='';dirty=true;});
+function setView(v){
+  S.view=v;$('#stageWrap').dataset.view=v;
+  $$('#viewSeg button').forEach(b=>{b.classList.toggle('active',b.dataset.v===v);b.setAttribute('aria-selected',b.dataset.v===v);});dirty=true;setTimeout(()=>dirty=true,50);
+}
+$$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
+{const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(!og||k[2]!==g){g=k[2];if(g){og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}else og=sel;}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel'),c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);dirty=true;setTimeout(()=>dirty=true,50);return;}
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    dirty=true;setTimeout(()=>dirty=true,50);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=$('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');dirty=true;}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('#playBtn').click();}
+});
+const ro=new ResizeObserver(()=>{dirty=true;});
+['#stageWrap','#charts'].forEach(s=>ro.observe($(s)));
+window.addEventListener('resize',()=>dirty=true);
+
+/* ---------- κείμενα ---------- */
+const ANALYSIS_HTML=`<div class="guide phys-in">
+<h3>Εξάτμιση και βρασμός: τι έχουν κοινό</h3>
+<p>Και στα δύο φαινόμενα το υγρό γίνεται ατμός: τα μόρια ξεφεύγουν από τις έλξεις των γειτόνων τους και περνούν στην αέρια φάση. Γι' αυτό χρειάζεται ενέργεια. Για να εξατμιστεί μάζα <i>m</i> στη σταθερή θερμοκρασία απαιτείται θερμότητα <b><i>Q</i> = <i>m</i><i>L</i><sub>v</sub></b>, όπου <i>L</i><sub>v</sub> η ειδική λανθάνουσα θερμότητα εξαέρωσης (νερό: 2,26 MJ/kg).</p>
+<h3>Εξάτμιση</h3>
+<ul>
+<li>Γίνεται <b>σε κάθε θερμοκρασία</b> και μόνο από την <b>ελεύθερη επιφάνεια</b> του υγρού.</li>
+<li>Διαφεύγουν τα μόρια με την πιο μεγάλη κινητική ενέργεια (η «ουρά» της κατανομής Maxwell–Boltzmann). Η μέση κινητική ενέργεια των μορίων που μένουν μικραίνει, άρα <b>το υγρό ψύχεται</b>.</li>
+<li>Ταυτόχρονα μόρια ατμού που χτυπούν την επιφάνεια επιστρέφουν στο υγρό (συμπύκνωση). Ο καθαρός ρυθμός εξάτμισης είναι η διαφορά των δύο ροών και είναι ανάλογος της διαφοράς <b><i>p</i><sub>s</sub>(<i>T</i>) − <i>e</i></b>, όπου <i>p</i><sub>s</sub> η τάση κορεσμένων ατμών του υγρού και <i>e</i> η μερική πίεση του ατμού του στον αέρα.</li>
+<li>Όταν <i>e</i> = <i>p</i><sub>s</sub> (κορεσμένος αέρας, π.χ. κλειστό δοχείο) υπάρχει <b>δυναμική ισορροπία</b>: εξάτμιση και συμπύκνωση με τον ίδιο ρυθμό, χωρίς καθαρή μεταβολή της μάζας.</li>
+</ul>
+<h3>Από τι εξαρτάται η ταχύτητα εξάτμισης</h3>
+<ul>
+<li><b>Θερμοκρασία του υγρού:</b> η <i>p</i><sub>s</sub> αυξάνεται σχεδόν εκθετικά με τη θερμοκρασία (δες το διάγραμμα <i>p</i><sub>s</sub>(<i>T</i>)).</li>
+<li><b>Εμβαδόν επιφάνειας <i>A</i>:</b> ο ρυθμός είναι ανάλογος του <i>A</i> (μεγάλο ρηχό πιάτο εξατμίζεται πιο γρήγορα από στενό ποτήρι).</li>
+<li><b>Άνεμος:</b> παρασύρει τον υγρό αέρα κοντά στην επιφάνεια, μειώνει το <i>e</i> εκεί και μεγαλώνει τη διαφορά <i>p</i><sub>s</sub> − <i>e</i>.</li>
+<li><b>Υγρασία του αέρα:</b> όσο μεγαλύτερη η σχετική υγρασία, τόσο μεγαλύτερο το <i>e</i> και τόσο μικρότερη η διαφορά.</li>
+<li><b>Είδος υγρού:</b> τα πτητικά υγρά (αιθέρας, ακετόνη, οινόπνευμα) έχουν μεγάλη <i>p</i><sub>s</sub> και μικρή <i>L</i><sub>v</sub>, γι' αυτό εξατμίζονται πολύ γρήγορα.</li>
+</ul>
+<h3>Βρασμός</h3>
+<ul>
+<li>Γίνεται σε ορισμένη θερμοκρασία, το <b>σημείο βρασμού <i>T</i><sub>b</sub></b>, και σε <b>ολόκληρη τη μάζα</b> του υγρού, με σχηματισμό φυσαλίδων ατμού που ανεβαίνουν στην επιφάνεια.</li>
+<li>Μια φυσαλίδα μπορεί να μεγαλώσει μόνο όταν η πίεση του ατμού μέσα της φτάσει την εξωτερική πίεση: <b><i>p</i><sub>s</sub>(<i>T</i><sub>b</sub>) = <i>p</i><sub>εξ</sub></b>. Πριν από αυτό οι φυσαλίδες καταρρέουν καθώς ανεβαίνουν στο πιο ψυχρό υγρό («υποβρασμός»).</li>
+<li>Άρα το σημείο βρασμού εξαρτάται από την πίεση: μικρή πίεση (μεγάλο υψόμετρο, κενό) → χαμηλότερο <i>T</i><sub>b</sub>· μεγάλη πίεση (χύτρα) → υψηλότερο.</li>
+<li>Κατά τον βρασμό η θερμοκρασία μένει σταθερή, παρόλο που δίνεται θερμότητα: όλη η καθαρή ισχύς γίνεται λανθάνουσα θερμότητα, <b><i>P</i><sub>net</sub> = <i>ṁ</i><i>L</i><sub>v</sub></b>.</li>
+</ul>
+<h3>Ενεργειακό ισοζύγιο (το μοντέλο της προσομοίωσης)</h3>
+<p>Για υγρό μάζας <i>m</i> και ειδικής θερμότητας <i>c</i> ισχύει <b><i>m</i><i>c</i> d<i>T</i>/d<i>t</i> = <i>P</i> + Φ<sub>συν</sub> − Φ<sub>εξ</sub> − Φ<sub>απ</sub></b>, όπου <i>P</i> η ισχύς της εστίας, Φ<sub>συν</sub> = <i>h</i><sub>c</sub><i>A</i>(<i>T</i><sub>α</sub> − <i>T</i>) η θερμότητα από τον αέρα, Φ<sub>εξ</sub> = <i>ṁ</i><sub>εξ</sub><i>L</i><sub>v</sub> η ισχύς που παίρνει η εξάτμιση από την επιφάνεια και Φ<sub>απ</sub> οι απώλειες από τα τοιχώματα. Όταν το υγρό φτάσει στο <i>T</i><sub>b</sub>, η θερμοκρασία μένει σταθερή και το περίσσευμα ισχύος γίνεται βρασμός.</p>
+<p>Ο ρυθμός εξάτμισης από την επιφάνεια δίνεται από τον εμπειρικό τύπο <b><i>ṁ</i><sub>εξ</sub> = <i>h</i><sub>m</sub>(<i>p</i><sub>s</sub> − <i>e</i>)·<i>M</i>/(<i>R</i><i>T</i>)·<i>A</i></b>, με συντελεστή μεταφοράς μάζας <i>h</i><sub>m</sub> που μεγαλώνει με την ταχύτητα του ανέμου (≈ 5 mm/s χωρίς άνεμο για το νερό).</p>
+<h3>Αριθμητικό παράδειγμα</h3>
+<p>1 kg νερό από 20 °C σε 100 °C χρειάζεται <i>Q</i><sub>1</sub> = <i>m</i><i>c</i>Δ<i>T</i> = 1·4186·80 ≈ 335 kJ. Για να εξατμιστεί ύστερα το ίδιο 1 kg στους 100 °C χρειάζονται <i>Q</i><sub>2</sub> = <i>m</i><i>L</i><sub>v</sub> = 1·2,26·10<sup>6</sup> ≈ 2260 kJ, δηλαδή <b>περίπου 6,7 φορές περισσότερη ενέργεια</b>. Με εστία 1500 W (χωρίς απώλειες): <i>t</i><sub>1</sub> ≈ 223 s (3,7 min) και <i>t</i><sub>2</sub> ≈ 1507 s (25 min).</p>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Ρούχα που στεγνώνουν:</b> απλωμένα (μεγάλη επιφάνεια), με αέρα και χαμηλή υγρασία στεγνώνουν γρήγορα· διπλωμένα, σε υγρό χώρο, πολύ αργά.</li>
+<li><b>Ιδρώτας και δροσιά:</b> ο ιδρώτας παίρνει θερμότητα από το δέρμα καθώς εξατμίζεται. Με ανεμιστήρα δροσιζόμαστε περισσότερο, ενώ με υψηλή υγρασία ιδρώνουμε χωρίς να δροσιζόμαστε.</li>
+<li><b>Κολόνια, οινόπνευμα, αιθέρας στο δέρμα:</b> έχουν μικρή <i>L</i><sub>v</sub> και μεγάλη <i>p</i><sub>s</sub>, εξατμίζονται αμέσως και νιώθουμε κρύο.</li>
+<li><b>Ψυγείο και κλιματιστικό:</b> το ψυκτικό υγρό εξατμίζεται σε χαμηλή πίεση μέσα στον εξατμιστή και παίρνει θερμότητα από το εσωτερικό.</li>
+<li><b>Χύτρα ταχύτητας:</b> κλείνει ερμητικά, η πίεση ανεβαίνει (~200 kPa) και το νερό βράζει στους ≈ 120 °C· τα φαγητά βράζουν πολύ γρηγορότερα.</li>
+<li><b>Ορειβασία:</b> στον Μύτικα του Ολύμπου (2918 m) το νερό βράζει στους ≈ 90 °C και στην κορυφή του Έβερεστ (8849 m) στους ≈ 70 °C· τα όσπρια και τα ζυμαρικά χρειάζονται πολύ περισσότερη ώρα.</li>
+<li><b>Αλυκές:</b> το θαλασσινό νερό σε ρηχές λεκάνες (μεγάλη επιφάνεια, ήλιος, άνεμος) εξατμίζεται και μένει το αλάτι. Τα διαλυμένα άλατα μειώνουν λίγο την <i>p</i><sub>s</sub>, γι' αυτό το αλμυρό νερό βράζει ελάχιστα πάνω από τους 100 °C.</li>
+<li><b>Ξήρανση τροφίμων:</b> σύκα, σταφίδες και ντομάτες στεγνώνουν σε λεπτό στρώμα, με ζέστη και κίνηση του αέρα.</li>
+<li><b>Καπάκι στην κατσαρόλα:</b> εμποδίζει την εξάτμιση, άρα το νερό χάνει λιγότερη θερμότητα και ζεσταίνεται ή βράζει γρηγορότερα και με μικρότερη ισχύ.</li>
+<li><b>Κάλυμμα πισίνας:</b> η εξάτμιση είναι η μεγαλύτερη πηγή απωλειών θερμότητας μιας πισίνας· με κάλυμμα μειώνεται σημαντικά.</li>
+<li><b>Σύννεφα και βροχή:</b> εξάτμιση από θάλασσες και λίμνες, ύστερα ανάβαση και συμπύκνωση του ατμού.</li>
+<li><b>Ο «ατμός» που βλέπουμε:</b> ο υδρατμός είναι αόρατος. Το άσπρο «σύννεφο» πάνω από την κατσαρόλα είναι μικροσκοπικές σταγόνες νερού που σχηματίζονται όταν ο ατμός συμπυκνώνεται στον πιο ψυχρό αέρα.</li>
+</ul>
+</div>`;
+const GUIDE_HTML=`<div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<p>Ένα δοχείο με υγρό πάνω σε εστία. Βλέπεις τη θερμοκρασία, τις φυσαλίδες, τον ατμό και το πώς κινούνται τα μόρια, καθώς το υγρό εξατμίζεται και βράζει.</p>
+<h3>1. Ρυθμίσεις προσομοίωσης</h3>
+<ul>
+<li>Διάλεξε <b>έτοιμο σενάριο</b> ή ρύθμισε μόνος σου: <b>είδος υγρού</b>, <b>όγκο</b>, <b>εμβαδόν επιφάνειας</b>, <b>θερμοκρασία υγρού</b> και <b>αέρα</b>, <b>υγρασία</b>, <b>άνεμο</b>, <b>ισχύ εστίας</b>, <b>πίεση</b> (ή υψόμετρο) και <b>καπάκι</b>.</li>
+<li>Οι τιμές αλλάζουν με το ρυθμιστικό ή πληκτρολογώντας. Οι αλλαγές σε αέρα, άνεμο, εστία, πίεση, επιφάνεια και καπάκι ισχύουν από την τρέχουσα στιγμή. Οι αλλαγές σε υγρό, όγκο, αρχική θερμοκρασία και διάρκεια ξεκινούν από την αρχή.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Άνοιξε ή κλείσε φυσαλίδες, ατμό, γραμμές ανέμου, θερμόμετρα και <b>ροές ενέργειας</b> (βέλη για την ισχύ της εστίας, της εξάτμισης, του αέρα και των απωλειών).</li>
+<li>Στα μόρια: διανύσματα ταχύτητας και ίχνος του μορίου που διαφεύγει.</li>
+<li>Ρύθμισε μήκος και πάχος βελών και μέγεθος γραμμάτων.</li>
+</ul>
+<h3>3. Ανάλυση</h3>
+<p>Η φυσική του φαινομένου με τύπους και παραδείγματα από την καθημερινή ζωή.</p>
+<h3>4. Τιμές μεγεθών</h3>
+<p>Πάνω: οι ροές θερμότητας (θερμαίνουν ή ψύχουν το υγρό). Κάτω: πίνακας τιμών. Με το «Όλα τα μεγέθη» βλέπεις και ενδιάμεσα μεγέθη, όπως την ταχύτητα των μορίων και τις ροές μορίων που φεύγουν και επιστρέφουν.</p>
+<h3>5. Διαγράμματα</h3>
+<ul>
+<li><b>T(t)</b>: καμπύλη θέρμανσης. Δες το οριζόντιο τμήμα στον βρασμό.</li>
+<li><b>ṁ(t), Φ(t), m(t)</b>: ρυθμός παραγωγής ατμού, ισχύς και μάζα του υγρού.</li>
+<li><b>p<sub>s</sub>(T)</b>: τάση κορεσμένων ατμών· ο βρασμός ξεκινά εκεί που τέμνει την εξωτερική πίεση.</li>
+<li><b>ṁ(άνεμος)</b> και <b>T<sub>b</sub>(p)</b>: κάνε κλικ για να αλλάξεις τον άνεμο ή την πίεση.</li>
+<li><b>Κατανομή ενεργειών</b>: το γραμμοσκιασμένο τμήμα είναι τα μόρια που μπορούν να διαφύγουν.</li>
+<li>Στα διαγράμματα του χρόνου, κλικ ή σύρσιμο μετακινεί τη στιγμή της προσομοίωσης.</li>
+</ul>
+<h3>Προβολές</h3>
+<ul>
+<li><b>Δοχείο</b>: το δοχείο, η εστία, ο ατμός, ο άνεμος και τα θερμόμετρα.</li>
+<li><b>Μόρια</b>: μεγέθυνση της επιφάνειας του υγρού. Τα μόρια ταλαντώνονται πιο έντονα όσο ανεβαίνει η θερμοκρασία· τα γρήγορα μόρια της επιφάνειας φεύγουν (με φωτεινό κύκλο).</li>
+<li><b>Όλες μαζί</b>: και οι δύο ταυτόχρονα. Ροδέλα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση· σύρσιμο για μετατόπιση· διπλό κλικ για επαναφορά.</li>
+</ul>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση / Επαναφορά</b>, <b>Επανάληψη</b> (ξαναρχίζει όταν τελειώσει), <b>Ήχος</b> (βρασμός), <b>Ταχύτητα αναπαραγωγής</b> από ×0,1 ως ×5.</li>
+<li>Η <b>χρονική κλίμακα</b> (στις Ρυθμίσεις) λέει πόσα δευτερόλεπτα προσομοίωσης αντιστοιχούν σε 1 s πραγματικό. Η εξάτμιση νερού σε δωμάτιο θέλει ώρες, ο βρασμός λίγα λεπτά.</li>
+<li>Το ρυθμιστικό χρόνου σε πηγαίνει σε οποιαδήποτε στιγμή.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση. Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>`;
+
+/* ---------- εκκίνηση ---------- */
+onReset=()=>{needWarm=true;lastRO='';lastRole='';lastLG='';lastST='';VIS.flashT=0;mol.flashT=0;};
+$$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+let skin='blueprint';try{skin=localStorage.getItem('boil-skin')||skin;}catch(e){}
+if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
+{
+  $('.guide.phys').innerHTML=ANALYSIS_HTML;
+  const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
+  tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
+  rc.appendChild(tp);
+  const t1=mkTab(),t2=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
+  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);t2.b.appendChild($('#navHint'));
+  {const rh=el('div','');rh.style.marginBottom='16px';rh.appendChild($('#roleBox'));rh.appendChild($('#roleHint'));t4.b.appendChild(rh);}
+  t4.b.appendChild($('#allWrap'));t4.b.appendChild($('#readouts'));
+  const gp=$('#graphPanel');
+  const ps=[t1.p,t2.p,$('#rolePanel'),t4.p,gp,t6.p];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  ps.forEach(p=>{p.classList.remove('collapsed');$('#tabBody').appendChild(p);});
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});$$('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});dirty=true;setTimeout(()=>{dirty=true;},60);};
+  names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
+  show(0);
+}
+let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom100')||1;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom100',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
+buildChartChips();buildChartCells();updatePlay();
+simReset();molInit();
+cur=sampleAt(0);
+setSkin(skin);setView('all');
+syncAll();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
+window.__boil={S,H,LIQ,calc,sampleAt,simReset,live,get cur(){return cur;},mol,VIS,render,ensure,Tsat,psat,stepOnce,applyScen,SCEN};
+requestAnimationFrame(frame);
+
+})();
+</script>
+</body></html>
