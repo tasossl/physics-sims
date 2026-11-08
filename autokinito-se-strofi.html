@@ -1451,7 +1451,7 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   show(0);
 }
 let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom')||1;}catch(e){}
-const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;app.style.maxWidth=z===1?'':(1360/z)+'px';if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800/z,Math.max(420/z,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
 {const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
 addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
 buildChartChips();buildChartCells();updatePlay();
