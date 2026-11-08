@@ -108,10 +108,7 @@
 :root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
 header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
 .skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
-.hdr-tools{display:flex;gap:8px;align-items:center;}
-.zoom-select{min-width:140px!important;}
-@media(max-width:980px){#zoomSel{display:none;}}
-.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.skin-select{background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
 .app .field input[type=number]{background:var(--track);color:var(--atext);}
 .app .tout{color:var(--atext);}
 #status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
@@ -228,7 +225,7 @@ header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
   --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
   --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
   --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
-  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
   --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
 }
 :root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
@@ -518,7 +515,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
       <h1 id="mainTitle">Κίνηση αυτοκινήτου σε στροφή</h1>
       <div class="sub">Σλάβης Τάσος</div>
     </div>
-    <div class="hdr-tools"><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8">Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+    <select class="skin-select" id="skinSel" aria-label="Skins"></select>
   </header>
 
   <div class="solver-toggle" id="modeTabs" role="group" aria-label="Δρόμος" hidden>
@@ -1450,9 +1447,7 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
   show(0);
 }
-let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom')||1;}catch(e){}
-const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;app.style.maxWidth=z===1?'':(1360/z)+'px';if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800/z,Math.max(420/z,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
-{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+const fitGrid=()=>{const g=$('.main-grid');if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,innerHeight-top-12))+'px';}else g.style.height='';dirty=true;};
 addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
 buildChartChips();buildChartCells();updatePlay();
 init3d();setSkin(skin);setView('side');
