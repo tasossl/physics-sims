@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Κίνηση αεροπλάνου σε στροφή</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="pw"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#CBD5E1; --line:#0F172A; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#64748B;
+  --border:#E2E8F0; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#64748B; --st-grid:rgba(15,23,42,0.06); --st-gridS:#CBD5E1;
+}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#111827;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"] header{--text:#F2F4F8;--textDim:#A8B2C2;color:var(--text);}
+:root[data-skin="gr2"] .theme-toggle{--text:#0F172A;--textDim:#4A5870;}
+:root[data-skin="gr2"] .right-col,:root[data-skin="gr2"] #simPanel{--grid:rgba(15,23,42,0.06);}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+:root[data-skin^="rt"]{
+  color-scheme:light;
+  --bg:#EEF2F8; --bg2:#E6ECF4; --panel:#FFFFFF; --panel2:#F4F7FB;
+  --grid:rgba(26,42,68,0.06); --gridStrong:#B7C2D3; --line:#1A2A44; --accent:#B5632C;
+  --accent2:#2563EB; --accent3:#15803D; --text:#1A2A44; --textDim:#66748B;
+  --border:#DDE4EE; --track:#F4F7FB; --shadowCol:rgba(26,42,68,0.12);
+  --danger:#C0392B; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#C27A0E; --e2:#C42A6B; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --st-track:#FBFCFE; --st-text:#1A2A44; --st-dim:#66748B; --st-grid:rgba(26,42,68,0.08); --st-gridS:#A9B6CA;
+}
+:root[data-skin="rt3"] .right-col{
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+:root[data-skin^="rt"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin^="ls"] .tout{color:#8A4F00;font-weight:600;}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n02"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n02"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n03"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#7C3AED;
+  --accent2:#7C3AED; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#6D28D9;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n03"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#6D28D9;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n04"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n04"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#8A4F00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n05"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n05"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n09"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9DB6D6; --line:#0F2342; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#EAF2FB; --st-text:#0F2342; --st-dim:#4A6285; --st-grid:rgba(15,35,66,0.08); --st-gridS:#9DB6D6;
+}
+:root[data-skin="n09"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n17"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#6E97BE; --line:#F5F8FC; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#FBBF24; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F2342; --st-text:#F5F8FC; --st-dim:#AFC3DA; --st-grid:rgba(143,184,217,0.16); --st-gridS:#6E97BE;
+}
+:root[data-skin="n17"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n19"]{
+  color-scheme:dark;
+  --bg:#0A0A0C; --bg2:#111113; --panel:#17171A; --panel2:#111113;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#5A5A66; --line:#F1F1F3; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#4ADE80; --text:#F1F1F3; --textDim:#A0A0A8;
+  --border:#2B2B30; --track:#0C0C0E; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#F0932B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0B0B0D; --st-text:#F1F1F3; --st-dim:#A0A0A8; --st-grid:rgba(255,255,255,0.08); --st-gridS:#5A5A66;
+}
+:root[data-skin="n19"] .right-col{--text:#F1F1F3;--textDim:#A0A0A8;--panel:#17171A;--panel2:#111113;--track:#0C0C0E;--border:#2B2B30;--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n42"]{
+  color-scheme:light;
+  --bg:#E9EBEF; --bg2:#DFE2E8; --panel:#F3F4F6; --panel2:#E5E7EB;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F59E0B;
+  --accent2:#F59E0B; --accent3:#15803D; --text:#1F2937; --textDim:#6B7280;
+  --border:#C4C9D1; --track:#D9DCE1; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A5A00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F59E0B; --htext:#1F2937; --hdim:#6B7280;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n42"] .right-col{--text:#1F2937;--textDim:#6B7280;--panel:#F3F4F6;--panel2:#E5E7EB;--track:#D9DCE1;--border:#C4C9D1;--atext:#8A5A00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style></head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1 id="mainTitle">Κίνηση αεροπλάνου σε στροφή</h1>
+      <div class="sub">Σλάβης Τάσος</div>
+    </div>
+    <select class="skin-select" id="skinSel" aria-label="Skins"></select>
+  </header>
+
+  <div class="solver-toggle" id="modeTabs" role="group" aria-label="Δεδομένα στροφής" hidden>
+    <button type="button" class="active" data-mode="bank" aria-pressed="true">Δίνεται η κλίση φ</button>
+    <button type="button" data-mode="flat" aria-pressed="false">Δίνεται η ακτίνα R</button>
+  </div>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-head-row">
+          <div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή">
+            <button data-v="d3" type="button" role="tab" class="main-tab-btn">3D</button>
+            <button data-v="top" type="button" role="tab" class="main-tab-btn">Κάτοψη</button>
+            <button data-v="side" type="button" role="tab" class="main-tab-btn">Από πίσω</button>
+            <button data-v="all" type="button" role="tab" class="main-tab-btn">Όλες μαζί</button>
+          </div>
+          <div class="panel-tools">
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+          </div>
+        </div>
+        <div class="panel-body">
+                    <div class="stageWrap" id="stageWrap" data-view="side">
+            <div class="stage" id="st-3d"><canvas id="gl"></canvas><canvas id="ov3" style="pointer-events:none"></canvas><span class="tag">3D</span><button class="btn secondary small mini" id="camreset" type="button">↺ Κάμερα</button><div id="gl-fallback" hidden>Το 3D δεν είναι διαθέσιμο σε αυτόν τον browser. Οι προβολές κάτοψης και «από πίσω» λειτουργούν κανονικά.</div></div>
+            <div class="stage" id="st-top"><canvas id="cv-top"></canvas><span class="tag">Κάτοψη</span></div>
+            <div class="stage" id="st-side"><canvas id="cv-side"></canvas><span class="tag">Από πίσω</span></div>
+            <div id="legend" hidden></div>
+            <div id="status" class="ok"></div>
+          </div>
+          <div class="transport">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="spd">Ταχύτητα αναπαραγωγής
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.1">×0,1 πολύ αργά</option>
+                <option value="0.25">×0,25 αργά</option>
+                <option value="0.5">×0,5</option>
+                <option value="1" selected>×1 κανονική</option>
+                <option value="2">×2 γρήγορα</option>
+                <option value="5">×5 πολύ γρήγορα</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="12" step="0.01" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
+          </div>
+          <div class="panel subpanel collapsed" id="rolePanel">
+            <div class="panel-head-row"><h2>Ανάλυση</h2><div class="panel-tools"><button class="collapse-btn collapsed" type="button" title="Σύμπτυξη" aria-label="Σύμπτυξη">▾</button></div></div>
+            <div class="panel-body">
+              <div class="role" id="roleBox"></div>
+              <div class="hintline" id="roleHint"></div>
+<div class="guide phys">
+<h3>Η φυσική της στροφής</h3>
+<p>Για να στρίψει, το αεροπλάνο χρειάζεται κεντρομόλο δύναμη <b><i>F</i><sub>κ</sub> = <i>m</i><i>v</i><sup>2</sup>/<i>R</i></b> προς το κέντρο της στροφής. Στον αέρα δεν υπάρχει τριβή που να την παρέχει. Την παρέχει η άνωση <i>L</i>, που είναι κάθετη στα φτερά: όταν το αεροπλάνο γέρνει τα φτερά του κατά <i>φ</i>, η άνωση αποκτά οριζόντια συνιστώσα.</p>
+<h3>Οριζόντια πτήση σε σταθερό ύψος</h3>
+<ul>
+<li>Κατακόρυφα: <b><i>L</i> cos<i>φ</i> = <i>m</i><i>g</i></b> (η άνωση εξισορροπεί το βάρος).</li>
+<li>Προς το κέντρο: <b><i>L</i> sin<i>φ</i> = <i>m</i><i>v</i><sup>2</sup>/<i>R</i></b>.</li>
+<li>Διαιρώντας: <b>tan<i>φ</i> = <i>v</i><sup>2</sup>/(<i>g</i><i>R</i>)</b>, άρα <b><i>R</i> = <i>v</i><sup>2</sup>/(<i>g</i> tan<i>φ</i>)</b>. Μεγαλύτερη κλίση σημαίνει στενότερη στροφή.</li>
+<li>Συντελεστής φορτίου: <b><i>n</i> = <i>L</i>/<i>w</i> = 1/cos<i>φ</i></b>. Ο επιβάτης «ζυγίζει» <i>n</i> φορές περισσότερο.</li>
+<li>Η ώθηση του κινητήρα εξισορροπεί την αντίσταση του αέρα και δεν επηρεάζει τη στροφή.</li>
+</ul>
+<h3>Απώλεια στήριξης</h3>
+<ul>
+<li>Στη στροφή η άνωση πρέπει να είναι <i>n</i> φορές μεγαλύτερη, οπότε αυξάνεται η ελάχιστη ταχύτητα στήριξης: <b><i>v</i><sub>στ</sub> = <i>v</i><sub>στ0</sub>·√<i>n</i></b>.</li>
+<li>Αν <i>v</i> < <i>v</i><sub>στ</sub>, το αεροπλάνο χάνει τη στήριξη και πέφτει.</li>
+<li>Υπάρχει και όριο αντοχής της κατασκευής, <i>n</i><sub>max</sub>. Η μέγιστη κλίση που επιτρέπεται είναι cos<i>φ</i> = 1/<i>n</i><sub>max</sub>.</li>
+</ul>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Ελαφρύ αεροπλάνο:</b> με <i>v</i> = 55 m/s και <i>φ</i> = 30°: <i>R</i> = 55<sup>2</sup>/(10·0,577) ≈ 520 m, <i>n</i> ≈ 1,15 και <i>v</i><sub>στ</sub> = 26·√1,15 ≈ 28 m/s.</li>
+<li><b>Επιβατικό αεροσκάφος:</b> οι κλίσεις είναι μικρές, γύρω στις 25°, ώστε <i>n</i> ≈ 1,1 και οι επιβάτες σχεδόν δεν νιώθουν διαφορά στο βάρος τους. Η στροφή όμως είναι πολύ μεγάλη: με 230 m/s η ακτίνα είναι πάνω από 11 km.</li>
+<li><b>Μαχητικό:</b> με <i>φ</i> = 60° είναι <i>n</i> = 2, δηλαδή ο πιλότος νιώθει διπλάσιο βάρος. Στο όριο των 9 g η κλίση είναι περίπου 84°.</li>
+<li><b>Πουλιά:</b> γέρνουν τα φτερά τους για να στρίψουν, με την ίδια αρχή.</li>
+<li><b>Αυτοκίνητο και αεροπλάνο:</b> το αυτοκίνητο στη στροφή στηρίζεται στην τριβή, ενώ το αεροπλάνο στην κλίση της άνωσης, όπως ένα αυτοκίνητο σε πίστα με πολύ μεγάλη κλίση.</li>
+</ul>
+</div>
+            </div>
+          </div>
+          <label class="checkline" id="allWrap" style="margin:0 0 4px"><input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα</label>
+          <div class="readouts" id="readouts" hidden></div>
+          <div class="hintline" id="navHint">3D: σύρε για περιστροφή της κάμερας, ρόδα του ποντικιού ή δύο δάχτυλα για μεγέθυνση, δύο δάχτυλα (ή δεξί κλικ / Shift + σύρσιμο) για μετατόπιση. «Από πίσω»: βλέπουμε το αεροπλάνο από πίσω· το κέντρο της στροφής είναι αριστερά (εκτός εικόνας) και η ταχύτητα κατευθύνεται προς το εσωτερικό της οθόνης (⊗). Η απόσταση R δεν είναι υπό κλίμακα. Οι δυνάμεις σχεδιάζονται στο κέντρο μάζας. Στην κάτοψη φαίνονται μόνο οι οριζόντιες συνιστώσες. Η ώθηση του κινητήρα και η αντίσταση του αέρα εξισορροπούνται και δεν σχεδιάζονται.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row">
+          <h2>Διαγράμματα</h2>
+          <div class="panel-tools">
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chips" id="gchips"></div>
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Κάνε κλικ ή σύρε πάνω σε ένα διάγραμμα για να αλλάξεις τη γωνία κλίσης φ. Η κόκκινη σκίαση δείχνει πού το φορτίο n ξεπερνά το όριο n max (ή πού η ταχύτητα v είναι μικρότερη από την ταχύτητα απώλειας στήριξης). Οι τιμές αφορούν τις τρέχουσες ρυθμίσεις m, v, g.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col" id="rightCol"></div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=(x,d=2)=>{if(!isFinite(x))return '∞';let s=(+x).toFixed(d);if(/^-0(\.0+)?$/.test(s))s=s.slice(1);return s.replace('.',',');};
+const fN=x=>fmt(x,Math.abs(x)<10?2:Math.abs(x)<100?1:0);
+const TAU=Math.PI*2, DEG=180/Math.PI;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+/* ΚΕΦΑΛΑΙΑ ΧΩΡΙΣ ΤΟΝΟΥΣ στους τίτλους */
+const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const FONT="'Inter',system-ui,sans-serif", MONO='"IBM Plex Mono",monospace';
+
+/* ---------- κατάσταση ---------- */
+const S={
+  m:1200,v:60,R:600,mu:0,thd:30,g:10,mode:'bank',type:'light',v0s:28,nmax:3.8,
+  t:0,tmax:10,offT:null,playing:false,speed:1,view:'side',loop:true,rdv:false,tblAll:false,table:true,
+  vs:1,lw:1,fs:13,compSet:true,
+  show:{w:true,L:true,F:true,comp:true,v:true,ak:false,R:true,traj:false,labels:true,values:false},
+  charts:{fl:1,n:1,vs:1,rr:0}
+};
+const thE=()=>S.thd/DEG;
+const ROADW=11, HCM=0;
+const HG=()=>clamp(3*S.R,1500,5000);   /* ύψος πτήσης πάνω από τη βάση του εδάφους (m) */
+function terrainH(x,y){   /* ανάγλυφο: λόφοι και κορυφές, ύψος 0 έως 0,2·HG */
+  const a=0.8*S.R+300;
+  const f=0.5*Math.sin(x/a*1.7+0.8)*Math.cos(y/a*1.3-0.4)+0.3*Math.sin((x+y)/a*2.9+2.1)+0.2*Math.sin((x-1.7*y)/a*5.3+0.3)+0.1*Math.cos(x/a*9+y/a*7);
+  const t=clamp((f+0.8)/1.6,0,1);return 0;   /* επίπεδο έδαφος */
+}                         /* πλάτος δρόμου (m), ύψος κέντρου μάζας (m) */
+const kVis=()=>clamp(S.R/26,2.5,2000);                /* οπτική μεγέθυνση αυτοκινήτου/δρόμου σε 3D και κάτοψη */
+let dirty=true, scaleDirty=true, geomDirty=true, texDirty=true;
+
+/* ---------- φυσική ----------
+   Αεροπλάνο σε οριζόντια κυκλική πτήση (σταθερό ύψος και ταχύτητα), κλίση φτερών φ. Η άνωση L είναι κάθετη στα φτερά.
+   Κατακόρυφα:  L·συνφ = m·g          Οριζόντια (προς το κέντρο):  L·ημφ = m·v²/R
+   ⇒ L = m·g/συνφ,  εφφ = v²/(g·R),  n = L/w = 1/συνφ.  Η ώθηση εξισορροπεί την αντίσταση. */
+function derive(){
+  if(S.mode==='bank')S.R=clamp(S.v*S.v/(S.g*Math.tan(Math.max(S.thd,0.0005)/DEG)),1,1e8);
+  else S.thd=clamp(Math.atan(S.v*S.v/(S.g*S.R))*DEG,0.01,89);
+}
+function phys(v,th,R){
+  v=v==null?S.v:v; th=th==null?thE():th; R=R==null?S.R:R;
+  const m=S.m,g=S.g,sn=Math.sin(th),cs=Math.cos(th),tn=Math.tan(th);
+  const areq=v*v/R,W=m*g,L=W/cs,Fk=L*sn,n=1/cs,vst=S.v0s*Math.sqrt(n);
+  return {th,sn,cs,tn,v,areq,amax:Infinity,amin:0,state:'grip',ac:areq,N:L,T:0,Nreq:L,Treq:0,Tmax:0,W,Nx:L*sn,Ny:L*cs,Tx:0,Ty:0,Fk,R2:R,vmax:Infinity,vmin:0,v0:0,n,vst,stall:v<vst,over:n>S.nmax};
+}
+let P=phys();
+
+/* θέση και προσανατολισμός του αυτοκινήτου τη στιγμή t.
+   Πρόσφυση: κύκλος ακτίνας R. Ολίσθηση: κύκλος ακτίνας R2 = v²/α_max (ή v²/α_min), εφαπτόμενος στην αρχική τροχιά. */
+function carAt(t){
+  if(P.stall)t=Math.min(t,S.fallT);
+  if(P.state!=='grip'&&S.offT!=null)t=Math.min(t,S.offT);
+  let b,Rc,x,y,cx0=0;
+  if(P.state==='grip'){Rc=S.R;b=t*S.v/Rc;x=Rc*Math.cos(b);y=Rc*Math.sin(b);}
+  else{Rc=P.R2;cx0=S.R-Rc;b=t*S.v/Rc;x=cx0+Rc*Math.cos(b);y=Rc*Math.sin(b);}
+  const rho=Math.hypot(x,y);
+  return {x,y,z:-(P.stall?0.3*S.g*t*t:0),b,Rc,cx:cx0,cy:0,rho,
+    lx:-Math.cos(b),ly:-Math.sin(b),hx:-Math.sin(b),hy:Math.cos(b)};
+}
+function recompute(){
+  derive();P=phys();S.offT=null;
+  S.tmax=Math.max(0.5,Math.min(S.R>2e4?60:1e9,TAU*S.R/Math.max(S.v,0.01)));
+  S.fallT=300;
+  if(P.stall){const H=HG();for(let i=1;i<=6000;i++){const t=i*0.05,b=t*S.v/S.R;if(-0.3*S.g*t*t<=-H+terrainH(S.R*Math.cos(b),S.R*Math.sin(b))){S.fallT=t;break;}}}if(P.stall)S.tmax=S.fallT+1.3;
+  S.t=Math.min(S.t,S.tmax);scaleDirty=false;
+}
+
+/* ---------- χρώματα (από τα tokens του θέματος) ---------- */
+const CSSV={w:'--c-ae',L:'--blue',N:'--blue',T:'--e2',F:'--et',v:'--e1',ak:'--c-th'};
+const C={};
+const TOK=Object.assign({car:'--car',stage:'--st-track',dim:'--st-dim',fg:'--st-text',accent:'--accent',grid:'--st-grid',gridS:'--st-gridS',danger:'--danger',ok:'--accent3'},CSSV);
+const CP={},TOKP={stage:'--track',dim:'--textDim',fg:'--text',grid:'--grid',gridS:'--gridStrong'};
+function readColors(){const cs=getComputedStyle(document.documentElement);for(const k in TOK)C[k]=cs.getPropertyValue(TOK[k]).trim();const rc=$('#rightCol'),rs=rc?getComputedStyle(rc):cs;for(const k in TOKP)CP[k]=rs.getPropertyValue(TOKP[k]).trim();for(const k in CSSV)CP[k]=rs.getPropertyValue(CSSV[k]).trim();}
+const SKINS=[["blueprint", "DarkBlue", "Βασικά"], ["classic", "DarkBlack", "Βασικά"], ["minimal", "LightOrange", "Βασικά"], ["pw", "Λευκό", "Βασικά"], ["gr", "GreyO", "Βασικά"], ["gr2", "GreyB", "Βασικά"], ["rt3", "Δεξί 3", "Βασικά"], ["n01", "01 · Λευκό · μπλε", "Νέοι συνδυασμοί"], ["n02", "02 · Λευκό · τιρκουάζ", "Νέοι συνδυασμοί"], ["n03", "03 · Λευκό · βιολετί", "Νέοι συνδυασμοί"], ["n04", "04 · Γκρι · πορτοκαλί", "Νέοι συνδυασμοί"], ["n05", "05 · Γκρι · μπλε", "Νέοι συνδυασμοί"], ["n08", "08 · Ουρανός · μπλε", "Νέοι συνδυασμοί"], ["n09", "09 · Ουρανός · τιρκουάζ", "Νέοι συνδυασμοί"], ["n12", "12 · Λευκό + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n13", "13 · Γκρι + σκούρο δεξί σχιστόλιθος", "Νέοι συνδυασμοί"], ["n15", "15 · Ουρανός + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n16", "16 · Μαύρο φόντο · γκρι πανελ", "Νέοι συνδυασμοί"], ["n17", "17 · Ναυτικό · σκούρο", "Νέοι συνδυασμοί"], ["n18", "18 · Σχιστόλιθος · κυανό", "Νέοι συνδυασμοί"], ["n19", "19 · Μαύρο · πορτοκαλί", "Νέοι συνδυασμοί"], ["n23", "23 · Ναυτικό + ανοιχτή σκηνή", "Νέοι συνδυασμοί"], ["n42", "42 · Γκρι · κεχριμπάρι", "Νέοι συνδυασμοί 2"]];
+let curSkin='blueprint';
+function setSkin(n){
+  curSkin=n;document.documentElement.dataset.skin=n;readColors();texDirty=true;dirty=true;
+  {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
+  try{localStorage.setItem('plane-skin',n)}catch(e){}
+}
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setSkin(curSkin));}catch(e){}
+
+/* ---------- σχεδίαση 2D: βοηθητικά ---------- */
+function fit(cv){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w,h,dpr,ctx};
+}
+function arrow(ctx,x0,y0,x1,y1,col,lw,dash){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return L;
+  const ux=dx/L,uy=dy/L,h=Math.min(8+lw*1.1,L*0.55);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw||2;ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1-ux*h*0.7,y1-uy*h*0.7);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45);ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);ctx.closePath();ctx.fill();
+  return L;
+}
+let LBF=0;const LBS=new WeakMap();
+function lab(ctx,x,y,main,sub,val,col,align,fs){
+  fs=fs||S.fs;ctx.save();ctx.textBaseline='middle';ctx.textAlign='left';
+  const f1=`italic 600 ${fs+1}px ${FONT}`,f2=`600 ${fs-4}px ${FONT}`,f3=`600 ${fs-2}px ${FONT}`;
+  ctx.font=f1;const w1=ctx.measureText(main).width;
+  ctx.font=f2;const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3;const w3=val?ctx.measureText(val).width:0;
+  const tot=w1+w2+w3,x0=align==='left'?x:align==='right'?x-tot:x-tot/2;
+  {let st=LBS.get(ctx);if(!st||st.f!==LBF){st={f:LBF,r:[]};LBS.set(ctx,st);}
+   const hh=fs*1.25,hit=(yy)=>st.r.some(q=>x0<q[2]&&x0+tot>q[0]&&yy-hh/2<q[3]&&yy+hh/2>q[1]);
+   let dy=0;for(const c of [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6]){if(!hit(y+c*hh)){dy=c*hh;break;}}
+   y+=dy;st.r.push([x0-2,y-hh/2,x0+tot+2,y+hh/2]);}
+  const run=fn=>{let xx=x0;ctx.font=f1;fn(main,xx,y);xx+=w1;if(sub){ctx.font=f2;fn(sub,xx+1,y+fs*0.3);xx+=w2;}if(val){ctx.font=f3;fn(val,xx+2,y);}};
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;run((t,a,b)=>ctx.strokeText(t,a,b));
+  ctx.fillStyle=col;run((t,a,b)=>ctx.fillText(t,a,b));ctx.restore();
+}
+function tipLabel(ctx,x0,y0,x1,y1,main,sub,val,col){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+  lab(ctx,x1+ux*13,y1+uy*13,main,sub,val,col,ux>0.35?'left':ux<-0.35?'right':'center');
+}
+function poly(ctx,pts,col,lw,dash){
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';ctx.setLineDash(dash||[]);
+  ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([]);
+}
+function rrect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+/* ---------- διανύσματα ----------
+   Συνιστώσες στο σύστημα του αυτοκινήτου: l = προς το κέντρο καμπυλότητας (οριζόντια), h = κατεύθυνση κίνησης, z = κατακόρυφα προς τα πάνω. */
+function items(mode){
+  const p=P,sh=S.show,out=[];
+  if(sh.w)out.push({k:'w',col:'w',l:0,h:0,z:-p.W,main:'w',sub:'',val:p.W,unit:'N',sc:'F'});
+  if(sh.L)out.push({k:'L',col:'L',l:p.Nx,h:0,z:p.Ny,main:'L',sub:'',val:p.N,unit:'N',sc:'F',xl:'x'});
+  if(sh.F&&p.Fk>1e-6)out.push({k:'F',col:'F',l:p.Fk,h:0,z:0,main:'F',sub:'κ',val:p.Fk,unit:'N',sc:'F',thick:true});
+  if(sh.comp&&mode!=='top'){
+    out.push({k:'Lx',col:'L',comp:true,l:p.Nx,h:0,z:0,main:'L',sub:'x',val:p.Nx,unit:'N',sc:'F'});
+    out.push({k:'Ly',col:'L',comp:true,l:0,h:0,z:p.Ny,main:'L',sub:'y',val:p.Ny,unit:'N',sc:'F'});
+  }
+  if(sh.v)out.push({k:'v',col:'v',l:0,h:S.v,z:0,main:'v',sub:'',val:S.v,unit:'m/s',sc:'v'});
+  if(sh.ak&&p.ac>1e-6)out.push({k:'ak',col:'ak',l:p.ac,h:0,z:0,main:'α',sub:'κ',val:p.ac,unit:'m/s²',sc:'a'});
+  return out;
+}
+const unitStr=it=>S.show.values?'= '+fN(it.val)+' '+it.unit:'';
+
+/* διανύσματα σε χώρο 3D/κάτοψης (παγκόσμιες συντεταγμένες x,y,z με z προς τα πάνω) */
+function drawVecsWorld(ctx,proj,mode){
+  const car=carAt(S.t),k=kVis(),p=P,sh=S.show,LW=S.lw;
+  const com=[car.x+HCM*k*p.sn*car.lx,car.y+HCM*k*p.sn*car.ly,car.z+HCM*k*p.cs];
+  const E=S.R+ROADW*k/2,Fmax=Math.max(p.W,p.N,Math.abs(p.T),p.Fk,1e-9);
+  const Fh=Math.max(p.Fk,Math.abs(p.Nx),Math.abs(p.Tx),0.03*p.W);
+  const kF=(mode==='top'?0.26*E/Fh:Math.min(0.17*E/p.W,0.36*E/Fmax))*S.vs;
+  const kV=0.2*E*clamp(S.v/20,0.25,1.2)/Math.max(S.v,1e-9)*S.vs;
+  const kA=0.2*E*clamp(p.ac/10,0.25,1.2)/Math.max(p.ac,1e-9)*S.vs;
+  const a0=proj(com[0],com[1],com[2]);
+  /* ακτίνα καμπυλότητας από το κέντρο στο αυτοκίνητο */
+  if(sh.R){
+    const c0=proj(car.cx,car.cy,Math.tan(thE())*(Math.hypot(car.cx,car.cy)-S.R)*0);
+    const q=proj(car.x,car.y,car.z);
+    poly(ctx,[c0,q],C.dim,1.4,[5,5]);
+    lab(ctx,(c0[0]+q[0])/2,(c0[1]+q[1])/2-11,P.state==='grip'?'R':'R′','',sh.values?'= '+fmt(car.Rc,1)+' m':'',C.dim,'center');
+  }
+  const hs=[car.hx,-car.hy],hn=Math.hypot(hs[0],hs[1])||1;
+  const OFF={L:-9,F:0,ak:20};
+  items(mode).forEach(it=>{
+    const kk=it.sc==='F'?kF:it.sc==='v'?kV:kA;
+    const d=[(it.l*car.lx+it.h*car.hx)*kk,(it.l*car.ly+it.h*car.hy)*kk,it.z*kk];
+    const a=proj(com[0],com[1],com[2]).slice(),b=proj(com[0]+d[0],com[1]+d[1],com[2]+d[2]).slice();
+    if(mode==='top'&&OFF[it.k]){const o=OFF[it.k];a[0]+=hs[0]/hn*o;a[1]+=hs[1]/hn*o;b[0]+=hs[0]/hn*o;b[1]+=hs[1]/hn*o;}
+    const L=arrow(ctx,a[0],a[1],b[0],b[1],C[it.col],(it.thick?3.6:2.8)*LW);
+    if(sh.labels&&L>3)tipLabel(ctx,a[0],a[1],b[0],b[1],it.main,(mode==='top'&&it.xl)?it.xl:it.sub,unitStr(it),C[it.col]);
+  });
+  ctx.fillStyle=C.fg;ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(a0[0],a0[1],4,0,TAU);ctx.fill();ctx.stroke();
+}
+
+/* ---------- κάτοψη ---------- */
+function drawTop(){
+  const {w,h,ctx}=fit($('#cv-top'));if(!w||!h)return;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const k=kVis(),hw=ROADW*k/2,E=S.R+hw,sc=ZV.top*Math.min(w,h)/(2*E*1.16),cx=w/2,cy=h/2;
+  ctx.beginPath();ctx.arc(cx,cy,E*sc*1.08,0,TAU);ctx.globalAlpha=.12;ctx.fillStyle=C.gridS;ctx.fill();ctx.globalAlpha=1;
+  ctx.setLineDash([9,8]);ctx.strokeStyle=C.accent;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(cx,cy,S.R*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  /* κέντρο στροφής */
+  ctx.strokeStyle=C.dim;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx-6,cy);ctx.lineTo(cx+6,cy);ctx.moveTo(cx,cy-6);ctx.lineTo(cx,cy+6);ctx.stroke();
+  lab(ctx,cx+9,cy-9,'κέντρο','','',C.dim,'left',11);
+  /* τροχιά */
+  if(S.show.traj&&P.state!=='grip'){
+    const tp=[],N=160;for(let i=0;i<=N;i++){const c=carAt(S.tmax*i/N);tp.push([cx+c.x*sc,cy-c.y*sc]);}
+    poly(ctx,tp,C.danger,1.8,[6,5]);
+  }
+  const car=carAt(S.t),sx=cx+car.x*sc,sy=cy-car.y*sc;
+  /* αεροπλάνο (σε κλίμακα k), τα φτερά φαίνονται συντομευμένα κατά συνφ */
+  const u=k*sc,cf=Math.max(0.08,Math.cos(P.th));
+  ctx.save();ctx.translate(sx,sy);ctx.rotate(-Math.atan2(car.hy,car.hx));
+  ctx.lineWidth=1.6;ctx.strokeStyle=C.fg;ctx.lineJoin='round';ctx.fillStyle=C.car;
+  const sym=pts=>{[1,-1].forEach(sg=>{ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0]*u,q[1]*sg*cf*u):ctx.moveTo(q[0]*u,q[1]*sg*cf*u));ctx.closePath();ctx.fill();ctx.stroke();});};
+  const fus=(L,W)=>{ctx.beginPath();ctx.ellipse(0,0,L/2*u,W/2*u,0,0,TAU);ctx.fillStyle=C.car;ctx.fill();ctx.fillStyle='rgba(0,0,0,0.3)';ctx.fill();ctx.stroke();ctx.fillStyle=C.car;};
+  if(S.type==='airliner'){
+    sym([[1.4,0.4],[-0.9,5.4],[-1.9,5.4],[-1.0,0.4]]);sym([[-4.1,0.3],[-5.2,2.3],[-5.7,2.3],[-5.1,0.3]]);
+    sym([[1.9,2.2],[1.9,2.7],[1.0,2.7],[1.0,2.2]]);fus(10.8,1.0);
+  }else if(S.type==='fighter'){
+    sym([[1.2,0.4],[-2.6,4.6],[-3.5,4.6],[-3.5,0.4]]);sym([[-3.4,0.4],[-4.3,1.8],[-4.8,1.8],[-4.8,0.4]]);fus(9.2,0.8);
+  }else{
+    const cw=1.7;sym([[0.06*8.4+cw/2,0],[0.06*8.4+cw/2,5.5],[0.06*8.4-cw/2,5.5],[0.06*8.4-cw/2,0]]);
+    sym([[-3.2,0],[-3.2,1.8],[-4.1,1.8],[-4.1,0]]);fus(8.4,1.1);
+    ctx.beginPath();ctx.moveTo(4.2*u,-1.0*u);ctx.lineTo(4.2*u,1.0*u);ctx.lineWidth=2.2;ctx.stroke();
+  }
+  ctx.restore();
+  drawVecsWorld(ctx,(x,y)=>[cx+x*sc,cy-y*sc],'top');
+}
+
+/* ---------- όψη από πίσω (διατομή) ---------- */
+function drawSide(){
+  const {w,h,ctx}=fit($('#cv-side'));if(!w||!h)return;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const p=P,th=p.th,sn=p.sn,cs=p.cs,tn=p.tn,sh=S.show,LW=S.lw;
+  const s=ZV.side*Math.min(w/15.5,h/8.6),dim=Math.min(w,h),cx=w*0.5,cy=h*0.5,x0=cx,y0=cy;
+  poly(ctx,[[x0-6.4*s,y0],[x0+6.4*s,y0]],C.dim,1.3,[6,5]);
+  if(th>0.008){
+    const rr=4.4*s;ctx.strokeStyle=C.dim;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x0,y0,rr,-th,0);ctx.stroke();
+    lab(ctx,x0+rr*Math.cos(th/2)+10,y0-rr*Math.sin(th/2),'φ','',sh.values?'= '+fmt(S.thd,1)+'°':'',C.dim,'left');
+  }
+  /* αεροπλάνο από πίσω, κεκλιμένο κατά φ */
+  ctx.save();ctx.translate(x0,y0);ctx.rotate(-th);
+  const M=v=>v*s;
+  ctx.lineJoin='round';ctx.lineCap='round';ctx.strokeStyle=C.fg;ctx.lineWidth=1.6;
+  const fusE=(rx,ry,cy0)=>{ctx.beginPath();ctx.ellipse(0,M(cy0),M(rx),M(ry),0,0,TAU);ctx.fillStyle=C.car;ctx.fill();ctx.fillStyle='rgba(0,0,0,0.32)';ctx.fill();ctx.stroke();};
+  if(S.type==='airliner'){
+    ctx.fillStyle='#2a3442';rrect(ctx,M(-1.2),M(0.4),M(2.4),M(0.1),M(0.04));ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.car;ctx.beginPath();ctx.moveTo(M(-0.1),M(-0.2));ctx.lineTo(M(-0.06),M(-2.1));ctx.lineTo(M(0.08),M(-2.1));ctx.lineTo(M(0.12),M(-0.2));ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.car;rrect(ctx,M(-5.4),M(0.12),M(10.8),M(0.14),M(0.06));ctx.fill();ctx.stroke();
+    ctx.fillStyle='#2a3442';[-2.2,2.2].forEach(x=>{ctx.beginPath();ctx.arc(M(x),M(0.5),M(0.3),0,TAU);ctx.fill();ctx.stroke();});
+    fusE(0.5,0.52,0);
+    ctx.fillStyle='rgba(160,200,235,0.6)';ctx.beginPath();ctx.ellipse(0,M(-0.12),M(0.26),M(0.14),0,0,TAU);ctx.fill();
+  }else if(S.type==='fighter'){
+    ctx.fillStyle=C.car;ctx.beginPath();ctx.moveTo(M(-0.2),M(-0.1));ctx.lineTo(M(-0.5),M(-1.35));ctx.lineTo(M(-0.35),M(-1.35));ctx.lineTo(M(-0.1),M(-0.1));ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.moveTo(M(0.2),M(-0.1));ctx.lineTo(M(0.5),M(-1.35));ctx.lineTo(M(0.35),M(-1.35));ctx.lineTo(M(0.1),M(-0.1));ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.car;ctx.beginPath();ctx.moveTo(M(-4.6),M(0.05));ctx.lineTo(M(-0.3),M(-0.12));ctx.lineTo(M(0.3),M(-0.12));ctx.lineTo(M(4.6),M(0.05));ctx.lineTo(M(0.3),M(0.12));ctx.lineTo(M(-0.3),M(0.12));ctx.closePath();ctx.fill();ctx.stroke();
+    fusE(0.42,0.38,0);
+    ctx.fillStyle='rgba(160,200,235,0.65)';ctx.beginPath();ctx.ellipse(0,M(-0.3),M(0.2),M(0.2),0,0,TAU);ctx.fill();
+  }else{
+    ctx.fillStyle='#2a3442';rrect(ctx,M(-1.8),M(0.38),M(3.6),M(0.14),M(0.05));ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.car;ctx.beginPath();ctx.moveTo(M(-0.12),M(-0.2));ctx.lineTo(M(-0.07),M(-2.3));ctx.lineTo(M(0.09),M(-2.3));ctx.lineTo(M(0.14),M(-0.2));ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(M(-0.5),M(-0.02));ctx.lineTo(M(-2.3),M(-0.55));ctx.moveTo(M(0.5),M(-0.02));ctx.lineTo(M(2.3),M(-0.55));ctx.stroke();ctx.lineWidth=1.6;
+    ctx.fillStyle=C.car;rrect(ctx,M(-5.5),M(-0.68),M(11),M(0.2),M(0.08));ctx.fill();ctx.stroke();
+    fusE(0.62,0.78,0.1);
+    ctx.fillStyle='rgba(160,200,235,0.6)';ctx.beginPath();ctx.ellipse(0,M(-0.12),M(0.32),M(0.28),0,0,TAU);ctx.fill();
+    ctx.globalAlpha=.45;ctx.lineWidth=M(0.06);ctx.beginPath();ctx.moveTo(M(-1.5),M(0.1));ctx.lineTo(M(1.5),M(0.1));ctx.stroke();ctx.globalAlpha=1;
+  }
+  ctx.restore();
+  /* κέντρο μάζας */
+  ctx.fillStyle=C.stage;ctx.strokeStyle=C.fg;ctx.lineWidth=1.8;ctx.beginPath();ctx.arc(cx,cy,5.5,0,TAU);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-5.5,cy);ctx.lineTo(cx+5.5,cy);ctx.moveTo(cx,cy-5.5);ctx.lineTo(cx,cy+5.5);ctx.stroke();
+  /* ακτίνα στροφής (όχι υπό κλίμακα) */
+  if(sh.R){
+    const yy=h-20,xa=18;
+    ctx.save();ctx.strokeStyle=C.dim;ctx.fillStyle=C.dim;ctx.lineWidth=1.3;
+    ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(xa,yy-30);ctx.lineTo(xa,yy+8);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(xa,yy);ctx.lineTo(cx,yy);ctx.moveTo(cx,yy-7);ctx.lineTo(cx,yy+7);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx*0.5-3,yy+6);ctx.lineTo(cx*0.5+3,yy-6);ctx.moveTo(cx*0.5+3,yy+6);ctx.lineTo(cx*0.5+9,yy-6);ctx.stroke();
+    ctx.restore();
+    lab(ctx,xa+6,yy-34,'άξονας στροφής','','',C.dim,'left',10);
+    lab(ctx,(xa+cx)/2+14,yy-13,'R','','= '+fmt(S.R,1)+' m',C.dim,'center',11);
+  }
+  /* ταχύτητα: προς το εσωτερικό της οθόνης */
+  if(sh.v){
+    const qx=x0+4.6*s,qy=y0-2.7*s,rr=11;
+    ctx.strokeStyle=C.v;ctx.lineWidth=2.4*LW;ctx.beginPath();ctx.arc(qx,qy,rr,0,TAU);ctx.stroke();
+    const k2=rr*0.62;ctx.beginPath();ctx.moveTo(qx-k2,qy-k2);ctx.lineTo(qx+k2,qy+k2);ctx.moveTo(qx+k2,qy-k2);ctx.lineTo(qx-k2,qy+k2);ctx.stroke();
+    if(sh.labels)lab(ctx,qx+rr+6,qy,'v','',sh.values?'= '+fN(S.v)+' m/s':'',C.v,'left');
+  }
+  /* επιτάχυνση α_κ */
+  if(sh.ak&&p.ac>1e-6){
+    const qx=x0,qy=y0+2.4*s,La=clamp(p.ac*0.035*dim*S.vs,0,w*0.45);
+    const L=arrow(ctx,qx,qy,qx-La,qy,C.ak,2.6*LW);
+    if(sh.labels&&L>3)tipLabel(ctx,qx,qy,qx-La,qy,'α','κ',sh.values?'= '+fN(p.ac)+' m/s²':'',C.ak);
+  }
+  /* δυνάμεις */
+  const Fmax=Math.max(p.W,p.N,Math.abs(p.T),p.Fk,1e-9);
+  const kF=Math.min(0.30*dim/p.W,0.42*dim/Fmax)*S.vs;
+  const bank=Math.abs(p.th)>1e-4;
+  const list=items('side').filter(it=>it.sc==='F');
+  const OFFS={Lx:[0,-10],Ly:[11,0]};
+  const guides=[];
+  const main={};
+  list.forEach(it=>{if(!it.comp)main[it.k]=it;});
+  /* συνιστώσες (λεπτά διαστικτά βέλη) */
+  list.filter(it=>it.comp).forEach(it=>{
+    const o=OFFS[it.k]||[0,0],a=[cx+o[0],cy+o[1]],b=[a[0]-it.l*kF,a[1]-it.z*kF];
+    const par=main[it.k[0]];
+    if(par){const tip=[cx-par.l*kF,cy-par.z*kF];poly(ctx,[tip,b],C[it.col],1.1,[3,4]);}
+    ctx.globalAlpha=.9;
+    const L=arrow(ctx,a[0],a[1],b[0],b[1],C[it.col],1.7*LW,[4,3]);ctx.globalAlpha=1;
+    if(sh.labels&&L>3)tipLabel(ctx,a[0],a[1],b[0],b[1],it.main,it.sub,unitStr(it),C[it.col]);
+  });
+  /* κύριες δυνάμεις */
+  list.filter(it=>!it.comp).forEach(it=>{
+    let o=[0,0];if(it.k==='F'&&!bank)o=[0,-15];
+    const a=[cx+o[0],cy+o[1]],b=[a[0]-it.l*kF,a[1]-it.z*kF];
+    const L=arrow(ctx,a[0],a[1],b[0],b[1],C[it.col],(it.thick?3.8:2.8)*LW);
+    if(sh.labels&&L>3)tipLabel(ctx,a[0],a[1],b[0],b[1],it.main,it.sub,unitStr(it),C[it.col]);
+  });
+}
+
+/* ---------- 3D (three.js) ---------- */
+let G=null;const S3={az:0.8,el:0.55,zoom:1,px:0,py:0,pz:0};
+const w2t=(x,y,z)=>new THREE.Vector3(x,z,-y);
+function init3d(){
+  try{
+    if(!window.THREE)throw new Error('no three');
+    const r=new THREE.WebGLRenderer({canvas:$('#gl'),antialias:true});
+    const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(35,1,1,1e7);
+    const po={polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1};
+    const road=new THREE.Mesh(new THREE.BufferGeometry(),new THREE.MeshBasicMaterial(Object.assign({side:THREE.DoubleSide},po)));scene.add(road);
+    const walls=new THREE.Mesh(new THREE.BufferGeometry(),new THREE.MeshBasicMaterial(Object.assign({side:THREE.DoubleSide},po)));scene.add(walls);
+    const ground=new THREE.Mesh(new THREE.CircleGeometry(1,64),new THREE.MeshBasicMaterial({transparent:true,opacity:0.1,side:THREE.DoubleSide,depthWrite:false}));ground.rotation.x=-Math.PI/2;scene.add(ground);
+    const mkLine=(mat)=>{const l=new THREE.LineLoop(new THREE.BufferGeometry(),mat);scene.add(l);return l;};
+    const inner=mkLine(new THREE.LineBasicMaterial({color:0xffffff})),outer=mkLine(new THREE.LineBasicMaterial({color:0xffffff}));
+    const mid=mkLine(new THREE.LineDashedMaterial({color:0xE8B84B,dashSize:2,gapSize:2}));
+    const post=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:0xffffff}));scene.add(post);
+    /* αυτοκίνητο: μονάδες m, +X εμπρός, +Y πάνω, +Z δεξιά */
+    const car=new THREE.Group();car.matrixAutoUpdate=false;scene.add(car);
+    const lineMat=new THREE.LineBasicMaterial({color:0xffffff});
+    const mats={body:new THREE.MeshBasicMaterial(po),cabin:new THREE.MeshBasicMaterial(po),wheel:new THREE.MeshBasicMaterial(Object.assign({color:0x1b2430},po)),
+      hl:new THREE.MeshBasicMaterial(Object.assign({color:0xfff7c2},po)),tl:new THREE.MeshBasicMaterial(Object.assign({color:0xe03a3a},po))};
+    const box=(w,h,d,mat,x,y,z)=>{const g=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(g,mat);m.position.set(x,y,z);m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),lineMat));car.add(m);};
+    const drop=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:0xffffff}));scene.add(drop);
+    G={r,scene,cam,road,walls,ground,inner,outer,mid,post,car,mats,lineMat,drop,w:0,h:0,dpr:0};
+    road.visible=walls.visible=inner.visible=outer.visible=false;
+    buildModel('light');G.type='light';
+  }catch(e){G=null;$('#gl-fallback').hidden=false;}
+}
+function buildModel(type){
+  const car=G.car,mats=G.mats,lineMat=G.lineMat;
+  while(car.children.length){const c=car.children[0];car.remove(c);if(c.geometry)c.geometry.dispose();}
+  const box=(w,h,d,mat,x,y,z,ry)=>{const g=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(g,mat);m.position.set(x,y,z);if(ry)m.rotation.y=ry;m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),lineMat));car.add(m);};
+  if(type==='airliner'){
+    box(10.6,0.95,0.95,mats.body,0,0,0);box(0.8,0.7,0.7,mats.hl,5.4,0,0);
+    box(2.0,0.12,5.4,mats.cabin,0.6,-0.2,3.0,-0.55);box(2.0,0.12,5.4,mats.cabin,0.6,-0.2,-3.0,0.55);
+    box(0.9,0.5,0.5,mats.wheel,1.6,-0.6,2.1);box(0.9,0.5,0.5,mats.wheel,1.6,-0.6,-2.1);
+    box(1.7,1.8,0.1,mats.body,-4.5,1.2,0);
+    box(1.1,0.1,2.2,mats.cabin,-4.8,0.3,1.3,-0.5);box(1.1,0.1,2.2,mats.cabin,-4.8,0.3,-1.3,0.5);
+    box(0.5,0.3,0.5,mats.tl,-5.4,0.2,0);
+  }else if(type==='fighter'){
+    box(8.8,0.7,0.8,mats.body,0,0,0);box(1.8,0.35,0.35,mats.hl,4.9,0,0);
+    box(3.4,0.08,3.6,mats.cabin,-1.2,-0.05,2.3,-0.5);box(3.4,0.08,3.6,mats.cabin,-1.2,-0.05,-2.3,0.5);
+    box(1.5,0.08,1.6,mats.cabin,-3.9,-0.02,1.1,-0.4);box(1.5,0.08,1.6,mats.cabin,-3.9,-0.02,-1.1,0.4);
+    box(1.4,1.3,0.08,mats.body,-3.7,0.9,0.45);box(1.4,1.3,0.08,mats.body,-3.7,0.9,-0.45);
+    box(1.6,0.4,0.5,mats.wheel,1.6,0.5,0);box(0.7,0.55,0.6,mats.tl,-4.7,0,0);
+  }else{
+    box(8.3,1.1,1.1,mats.body,0,0,0);
+    box(1.7,0.14,11,mats.cabin,0.4,0.55,0);
+    box(1.0,1.7,0.14,mats.body,-3.7,1.1,0);
+    box(1.0,0.1,3.6,mats.cabin,-3.7,0.25,0);
+    box(0.9,0.5,0.9,mats.hl,4.0,0.2,0);
+    box(0.08,2.1,0.12,mats.wheel,4.5,0,0);
+    box(1.4,0.45,0.9,mats.tl,1.2,0.6,0);
+  }
+}
+function rebuild3d(){
+  if(!G)return;
+  const R=S.R,N=240,zg=-HG(),pos=[];
+  for(let i=0;i<N;i++){const t=i/N*TAU;pos.push(R*Math.cos(t),0,-R*Math.sin(t));}
+  const mkG=arr=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));return g;};
+  G.mid.geometry.dispose();G.mid.geometry=mkG(pos);G.mid.computeLineDistances();
+  const k=kVis();G.mid.material.dashSize=1.6*k*3;G.mid.material.gapSize=1.4*k*3;
+  {
+    const half=(R+5.5*k)*1.5,n=80,A=0.12*HG(),pp=[],cc=[],ii=[],e=2*half/n;
+    const ramp=t=>{const st=[[0,[0.16,0.26,0.37]],[0.4,[0.16,0.26,0.37]],[0.7,[0.16,0.26,0.37]],[1,[0.16,0.26,0.37]]];
+      for(let q=1;q<st.length;q++)if(t<=st[q][0]){const u=(t-st[q-1][0])/(st[q][0]-st[q-1][0]),a=st[q-1][1],b=st[q][1];return a.map((v,m)=>v+(b[m]-v)*u);}return st[3][1];};
+    for(let i=0;i<=n;i++)for(let j=0;j<=n;j++){
+      const x=-half+e*i,y=-half+e*j,h=terrainH(x,y);
+      const hx=terrainH(x+e,y)-terrainH(x-e,y),hy=terrainH(x,y+e)-terrainH(x,y-e);
+      const lit=clamp(0.8-(hx*0.6+hy*0.4)/(2*e)*2.5,0.4,1.3),c=ramp(h/A);
+      pp.push(x,zg+h,-y);cc.push(c[0]*lit,c[1]*lit,c[2]*lit);}
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){const a=i*(n+1)+j,b=a+1,c2=a+n+1,d=c2+1;ii.push(a,c2,b,b,c2,d);}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pp,3));g.setAttribute('color',new THREE.Float32BufferAttribute(cc,3));g.setIndex(ii);
+    G.ground.geometry.dispose();G.ground.geometry=g;G.ground.rotation.x=0;G.ground.position.y=0;
+    const gm=G.ground.material;gm.vertexColors=true;gm.transparent=false;gm.opacity=1;gm.depthWrite=true;gm.needsUpdate=true;
+  }
+  G.post.geometry.dispose();G.post.geometry=mkG([0,zg+terrainH(0,0),0,0,0,0]);
+  geomDirty=false;
+}
+function retex3d(){
+  if(!G)return;
+  const col=h=>new THREE.Color(h),road=col(C.gridS).lerp(col(C.stage),0.35);
+  G.road.material.color.copy(road);G.walls.material.color.copy(road.clone().lerp(col(C.stage),0.45));
+  G.ground.material.color.set(0xffffff);
+  G.inner.material.color.set(C.fg);G.outer.material.color.set(C.fg);G.mid.material.color.set(C.accent);G.post.material.color.set(C.dim);G.drop.material.color.set(C.dim);
+  G.mats.body.color.set(C.car);G.mats.cabin.color.copy(col(C.car).lerp(col('#000000'),0.38));
+  G.lineMat.color.set(C.fg);
+  G.r.setClearColor(col(C.stage),1);texDirty=false;
+}
+function render3d(){
+  const ov=fit($('#ov3'));if(!ov.w||!ov.h)return;
+  const {w,h,ctx}=ov;ctx.clearRect(0,0,w,h);
+  if(!G)return;
+  if(G.type!==S.type){buildModel(S.type);G.type=S.type;}
+  if(geomDirty)rebuild3d();if(texDirty)retex3d();
+  if(G.w!==w||G.h!==h||G.dpr!==ov.dpr){G.r.setPixelRatio(ov.dpr);G.r.setSize(w,h,false);G.cam.aspect=w/h;G.cam.updateProjectionMatrix();G.w=w;G.h=h;G.dpr=ov.dpr;}
+  const k=kVis(),hw=ROADW*k/2,E=S.R+hw,car=carAt(S.t),p=P;
+  const f=w2t(car.hx,car.hy,0),u=w2t(p.sn*car.lx,p.sn*car.ly,p.cs),rg=new THREE.Vector3().crossVectors(f,u);
+  const M=new THREE.Matrix4().makeBasis(f,u,rg).multiply(new THREE.Matrix4().makeScale(k,k,k));
+  M.setPosition(w2t(car.x,car.y,car.z));
+  G.drop.geometry.setFromPoints([w2t(car.x,car.y,car.z),w2t(car.x,car.y,-HG()+terrainH(car.x,car.y))]);
+  G.car.matrix.copy(M);G.car.matrixWorldNeedsUpdate=true;
+  const asp=w/h,d=E*2.9*S3.zoom*Math.max(1,3.7/(2.9*asp))+HG()*1.5*S3.zoom,cp=Math.cos(S3.el);
+  const ty=-HG()*0.5;G.dist=d;G.cam.position.set(S3.px+d*cp*Math.sin(S3.az),S3.py+ty+d*Math.sin(S3.el),S3.pz+d*cp*Math.cos(S3.az));G.cam.lookAt(S3.px,S3.py+ty,S3.pz);
+  G.r.render(G.scene,G.cam);
+  const vv=new THREE.Vector3();
+  drawVecsWorld(ctx,(x,y,z)=>{vv.set(x,z,-y).project(G.cam);return [(vv.x*0.5+0.5)*w,(-vv.y*0.5+0.5)*h];},'3d');
+}
+const ZV={top:1,side:1};
+(()=>{
+  const clampZ=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+  const setup=(id,drag1,pinch,wheel,reset,pan)=>{
+    const st=$(id),ptr=new Map();let last=null,d0=0,cen=null;
+    st.style.touchAction='none';
+    const dist=()=>{const a=[...ptr.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);};
+    st.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});st.setPointerCapture(e.pointerId);if(ptr.size===2){d0=dist();cen=null;}last={x:e.clientX,y:e.clientY};});
+    st.addEventListener('pointermove',e=>{
+      if(!ptr.has(e.pointerId))return;
+      const p=ptr.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+      if(ptr.size>=2){const d=dist();if(d0>0&&d>0){pinch(d/d0);d0=d;dirty=true;}
+        if(pan){const a=[...ptr.values()],mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2;if(cen)pan(mx-cen.x,my-cen.y);cen={x:mx,y:my};dirty=true;}}
+      else if(ptr.size===1&&pan&&((e.buttons&2)||e.shiftKey)){pan(dx,dy);dirty=true;}
+      else if(drag1&&ptr.size===1){drag1(dx,dy);dirty=true;}
+    });
+    const end=e=>{ptr.delete(e.pointerId);cen=null;if(ptr.size===2)d0=dist();};
+    st.addEventListener('pointerup',end);st.addEventListener('pointercancel',end);
+    st.addEventListener('wheel',e=>{e.preventDefault();wheel(Math.exp(-e.deltaY*0.001));dirty=true;},{passive:false});
+    st.addEventListener('contextmenu',e=>e.preventDefault());
+    if(reset)st.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;reset();dirty=true;});
+  };
+  const pan3=(dx,dy)=>{if(!G||!G.dist)return;const m=G.cam.matrixWorld.elements,h=$('#st-3d').clientHeight||600,k=2*G.dist*Math.tan(G.cam.fov*Math.PI/360)/h;S3.px+=(-dx*m[0]+dy*m[4])*k;S3.py+=(-dx*m[1]+dy*m[5])*k;S3.pz+=(-dx*m[2]+dy*m[6])*k;};
+  setup('#st-3d',(dx,dy)=>{S3.az-=dx*0.008;S3.el=clamp(S3.el+dy*0.008,-1.45,1.45);},r=>{S3.zoom=clamp(S3.zoom/r,0.3,3);},r=>{S3.zoom=clamp(S3.zoom/r,0.3,3);},null,pan3);
+  ['top','side'].forEach(k=>setup('#st-'+k,null,r=>{ZV[k]=clampZ(ZV[k]*r,0.5,5);},r=>{ZV[k]=clampZ(ZV[k]*r,0.5,5);},()=>{ZV[k]=1;}));
+  $('#camreset').addEventListener('click',()=>{S3.az=0.8;S3.el=0.55;S3.zoom=1;S3.px=S3.py=S3.pz=0;ZV.top=1;ZV.side=1;dirty=true;});
+})();
+
+/* ---------- διαγράμματα ---------- */
+const vRange=()=>{const mx=Math.max(S.v*1.25,isFinite(P.vmax)?P.vmax*1.3:0,P.v0*1.3,10);return Math.min(120,Math.ceil(mx/5)*5);};
+const CH={
+  fl:{main:'L',sub:'',par:'(φ)  w, F κ',unit:'N',xl:'φ (°)',col:'L',theta:true,cfg(){
+    return {x0:0,x1:80,mark:S.thd,
+      ser:[{f:x=>S.m*S.g/Math.cos(x/DEG),col:'L',lw:2.8,nm:['L','']},{f:()=>S.m*S.g,col:'w',lw:1.5,dash:[5,4],nm:['w','']},{f:x=>S.m*S.g*Math.tan(x/DEG),col:'F',lw:2,nm:['F','κ']}],
+      safe:x=>1/Math.cos(x/DEG)<=S.nmax};}},
+  n:{main:'n',sub:'',par:'(φ) = L / w',unit:'g',xl:'φ (°)',col:'F',theta:true,cfg(){
+    return {x0:0,x1:80,mark:S.thd,
+      ser:[{f:x=>1/Math.cos(x/DEG),col:'F',lw:2.8,nm:['n','']},{f:()=>S.nmax,col:'T',lw:1.5,dash:[5,4],nm:['n max','']}],
+      safe:x=>1/Math.cos(x/DEG)<=S.nmax};}},
+  vs:{main:'v',sub:'στ',par:'(φ)  ταχύτητα απώλειας στήριξης',unit:'m/s',xl:'φ (°)',col:'T',theta:true,cfg(){
+    return {x0:0,x1:80,mark:S.thd,
+      ser:[{f:x=>S.v0s*Math.sqrt(1/Math.cos(x/DEG)),col:'T',lw:2.6,nm:['v στ','']},{f:()=>S.v,col:'v',lw:1.8,dash:[5,4],nm:['v','']}],
+      safe:x=>S.v>=S.v0s*Math.sqrt(1/Math.cos(x/DEG))};}},
+  rr:{main:'R',sub:'',par:'(φ) για τρέχουσα v',unit:'m',xl:'φ (°)',col:'v',theta:true,cfg(){
+    return {x0:5,x1:80,mark:S.thd,
+      ser:[{f:x=>S.v*S.v/(S.g*Math.tan(x/DEG)),col:'v',lw:2.6,nm:['R','']}],
+      safe:()=>true};}}
+};
+function ticks(a,b,n){
+  const span=(b-a)||1,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),nm=raw/mag,st=(nm<1.5?1:nm<3?2:nm<7?5:10)*mag,out=[];
+  for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)out.push(Math.abs(v)<1e-12?0:v);
+  return {out,dec:Math.max(0,-Math.floor(Math.log10(st)))};
+}
+function drawChart(cv,def){const sv={};for(const k in CP){sv[k]=C[k];C[k]=CP[k];}try{drawChart0(cv,def);}finally{Object.assign(C,sv);}}
+function drawChart0(cv,def){
+  const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const cfg=def.cfg(),L=50,Rr=10,T=40,B=36,pw=w-L-Rr,ph=h-T-B,N=120;
+  cv._m={L,Rr,x0:cfg.x0,x1:cfg.x1};
+  const xs=Array.from({length:N+1},(_,i)=>cfg.x0+(cfg.x1-cfg.x0)*i/N);
+  const ser=cfg.ser.map(s=>({s,vals:xs.map(x=>s.f(x))}));
+  let mn=0,mx=0;ser.forEach(q=>q.vals.forEach(v=>{if(isFinite(v)){mn=Math.min(mn,v);mx=Math.max(mx,v);}}));
+  if(mx-mn<1e-9)mx=mn+1;const pad=(mx-mn)*0.07;if(mx>0)mx+=pad;if(mn<0)mn-=pad;
+  const X=x=>L+(x-cfg.x0)/(cfg.x1-cfg.x0)*pw,Y=v=>T+ph-(v-mn)/(mx-mn)*ph;
+  /* περιοχή ολίσθησης */
+  const hx=pw/N/2+0.5;ctx.fillStyle=C.danger;ctx.globalAlpha=.16;
+  xs.forEach(x=>{if(!cfg.safe(x))ctx.fillRect(X(x)-hx,T,2*hx,ph);});ctx.globalAlpha=1;
+  const ty=ticks(mn,mx,3);
+  ctx.font=`500 10px ${MONO}`;ctx.textBaseline='middle';ctx.textAlign='right';
+  ty.out.forEach(v=>{const y=Y(v);ctx.strokeStyle=v===0?C.gridS:C.grid;ctx.lineWidth=v===0?1.2:1;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,ty.dec),L-5,y);});
+  const tx=ticks(cfg.x0,cfg.x1,4);ctx.textAlign='center';ctx.textBaseline='top';
+  tx.out.forEach(v=>{const x=X(v);ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,tx.dec),x,T+ph+4);});
+  ser.forEach(q=>{
+    ctx.beginPath();let pen=false;
+    q.vals.forEach((v,j)=>{if(!isFinite(v)){pen=false;return;}const x=X(xs[j]),y=Y(v);if(pen)ctx.lineTo(x,y);else{ctx.moveTo(x,y);pen=true;}});
+    ctx.strokeStyle=C[q.s.col];ctx.lineWidth=q.s.lw;ctx.setLineDash(q.s.dash||[]);ctx.lineJoin='round';ctx.stroke();ctx.setLineDash([]);
+  });
+  const mxp=X(clamp(cfg.mark,cfg.x0,cfg.x1));
+  ctx.strokeStyle=C.accent;ctx.lineWidth=1.3;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(mxp,T);ctx.lineTo(mxp,T+ph);ctx.stroke();ctx.setLineDash([]);
+  ser.forEach(q=>{const v=q.s.f(clamp(cfg.mark,cfg.x0,cfg.x1));if(!isFinite(v))return;ctx.fillStyle=C[q.s.col];ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mxp,Y(v),q.s.dash?3:4,0,TAU);ctx.fill();ctx.stroke();});
+  lab(ctx,8,12,def.main,def.sub,def.par+'  ['+def.unit+']',C[def.col],'left',12);
+  /* υπόμνημα γραμμών */
+  let lx=8;
+  cfg.ser.forEach(s=>{lab(ctx,lx,28,s.nm[0],s.nm[1],'',C[s.col],'left',11);ctx.font=`italic 600 12px ${FONT}`;lx+=ctx.measureText(s.nm[0]).width+(s.nm[1]?12:0)+16;});
+  ctx.font=`500 10px ${MONO}`;ctx.fillStyle=C.dim;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(def.xl,w-4,h-3);
+}
+function buildChartCells(){
+  const box=$('#charts');box.innerHTML='';
+  Object.keys(CH).filter(k=>S.charts[k]).forEach(k=>{
+    const c=el('div','cell'),cv=el('canvas');cv.dataset.k=k;cv.setAttribute('aria-label','Διάγραμμα '+CH[k].main+' '+CH[k].par);c.appendChild(cv);box.appendChild(c);
+    let down=false;
+    const seek=e=>{
+      const m=cv._m;if(!m)return;const r=cv.getBoundingClientRect(),f=clamp((e.clientX-r.left-m.L)/(r.width-m.L-m.Rr),0,1),x=m.x0+f*(m.x1-m.x0);
+      if(CH[k].theta){if(S.mode!=='bank')setMode('bank');S.thd=clamp(Math.round(x*2)/2,0,80);}
+      else{const ph=S.t*S.v/S.R;S.v=clamp(Math.round(x*2)/2,1,50);if(P.state==='grip')S.t=ph*S.R/S.v;}
+      scaleDirty=true;geomDirty=true;refreshAll();dirty=true;
+    };
+    cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);seek(e);});
+    cv.addEventListener('pointermove',e=>{if(down)seek(e);});
+    cv.addEventListener('pointerup',()=>down=false);cv.addEventListener('pointercancel',()=>down=false);
+  });
+  dirty=true;
+}
+function buildChartChips(){
+  const box=$('#gchips');box.innerHTML='';
+  const names={fl:'<em>L</em>(φ)',n:'<em>n</em>(φ)',vs:'<em>v</em><sub>στ</sub>(φ)',rr:'<em>R</em>(φ)'};
+  Object.keys(CH).forEach(k=>{
+    const b=el('button','chip'+(S.charts[k]?' on':''),`<i class="d"></i><span>${names[k]}</span>`);
+    b.type='button';b.style.setProperty('--cc',`var(${CSSV[CH[k].col]})`);
+    b.addEventListener('click',()=>{S.charts[k]=S.charts[k]?0:1;b.classList.toggle('on',!!S.charts[k]);buildChartCells();});
+    box.appendChild(b);
+  });
+}
+
+/* ---------- ρόλος των δυνάμεων, κατάσταση, πίνακας ---------- */
+let lastRole='',lastLG='',lastRO='',lastST='';
+function roleHTML(){
+  const p=P,rows=[];
+  const col=k=>`var(${CSSV[k]})`;
+  const row=(k,sym,sub,desc,badge,cls,tot)=>`<div class="rrow${tot?' tot':''}"><span class="rsym" style="color:${col(k)}"><i>${sym}</i>${sub?'<sub>'+sub+'</sub>':''}</span><span class="rdesc">${desc}</span><span class="badge ${cls}">${badge}</span></div>`;
+  rows.push(row('w','w','',`<b>${fN(p.W)} N</b> · κατακόρυφη, προς τα κάτω. Εξισορροπείται από την κατακόρυφη συνιστώσα της L.`,'ΔΕΝ ΣΥΜΜΕΤΕΧΕΙ','no'));
+  rows.push(row('L','L','',`<b>${fN(p.N)} N</b> · η άνωση, κάθετη στα φτερά. Κατακόρυφη: L·συνφ = <b>${fN(p.Ny)} N</b> = w. Οριζόντια, προς το κέντρο: L·ημφ = <b>${fN(p.Nx)} N</b>.`,'ΜΕΡΙΚΩΣ: L·ημφ','part'));
+  rows.push(row('F','F','κ',`L·ημφ = <b>${fN(p.Fk)} N</b> = m·v²/R. Η κεντρομόλος είναι η οριζόντια συνιστώσα της άνωσης: γι' αυτό το αεροπλάνο γέρνει τα φτερά του για να στρίψει.`,'ΣΥΝΙΣΤΑΜΕΝΗ','yes',true));
+  return rows.join('');
+}
+function updateRole(){
+  const h=roleHTML();if(h!==lastRole){$('#roleBox').innerHTML=h;lastRole=h;}
+  const t='Ο αέρας δεν δίνει τριβή που να στρίβει το αεροπλάνο: η κεντρομόλος προέρχεται μόνο από την κλίση της άνωσης. Η ώθηση του κινητήρα εξισορροπεί την αντίσταση του αέρα και δεν σχεδιάζεται. Η κλίση φ για δοσμένα v και R είναι εφφ = v²/(g·R).';
+  if($('#roleHint').textContent!==t)$('#roleHint').textContent=t;
+}
+function updateStatus(){
+  const p=P,st=$('#status');let txt=`ΣΤΑΘΕΡΟ ΥΨΟΣ · φ = ${fmt(S.thd,1)}° · n = ${fmt(p.n,2)} g`,cls='ok';
+  if(p.stall){txt=`ΑΠΩΛΕΙΑ ΣΤΗΡΙΞΗΣ · ΠΤΩΣΗ · v < vστ = ${fmt(p.vst,0)} m/s`;cls='bad';if(S.t>=S.fallT-1e-6)txt+=' · ΣΥΝΤΡΙΒΗ ΣΤΟ ΕΔΑΦΟΣ';if(p.over)txt+=` · n > ${fmt(S.nmax,1)}`;}
+  else if(p.over){txt=`ΥΠΕΡΒΑΣΗ ΟΡΙΟΥ ΦΟΡΤΙΟΥ · n = ${fmt(p.n,2)} > ${fmt(S.nmax,1)}`;cls='bad';}
+  const k=cls+txt;if(k!==lastST){st.textContent=txt;st.className=cls;lastST=k;}
+}
+function updateLegend(){
+  const lg=$('#legend');
+  if(!S.rdv){if(!lg.hidden)lg.hidden=true;return;}
+  const rows=items('side').map(it=>`<div style="color:var(${CSSV[it.col]})"><i>${it.main}</i>${it.sub?'<sub>'+it.sub+'</sub>':''} = ${fN(it.val)} ${it.unit}</div>`);
+  const html=`<div class="lgh">m = ${fN(S.m)} kg · v = ${fN(S.v)} m/s · R = ${fN(S.R)} m · φ = ${fmt(S.thd,1)}°</div>`+rows.join('');
+  if(html!==lastLG){lg.innerHTML=html;lastLG=html;}
+  if(lg.hidden)lg.hidden=false;
+}
+function tile(sym,name,val,col){
+  const sh=S.show,V={'t':true,'v':sh.v,'R':sh.R,'θ':true,'φ':true,'α<sub>κ</sub>':sh.ak,'F<sub>κ</sub>':sh.F,'w':sh.w,'N':sh.N,'T':sh.T,'L':sh.L,'G':sh.G,'N·ημθ':sh.comp,'T·συνθ':sh.comp,'L·συνφ':sh.comp,'L·ημφ':sh.comp};
+  if(!S.tblAll&&!V[sym])return '';
+  return `<div class="readout"><div class="lbl">${UP(name)} <span class="lbl-sym">${sym}</span></div><div class="val mono"${col?` style="color:var(${col})"`:''}>${val}</div></div>`;
+}
+function updateTable(){
+  const box=$('#readouts');box.hidden=!S.table;if(!S.table)return;
+  const p=P;
+  const h=tile('t','Χρόνος',fmt(S.t,2)+' s')+tile('v','Ταχύτητα',fmt(S.v,1)+' m/s = '+fmt(S.v*3.6,0)+' km/h',CSSV.v)+
+    tile('φ','Γωνία κλίσης',fmt(S.thd,1)+'°')+tile('R','Ακτίνα στροφής',fmt(S.R,0)+' m')+
+    tile('ω','Γωνιακή ταχύτητα',fmt(S.v/S.R,4)+' rad/s')+
+    tile('α<sub>κ</sub>','Κεντρομόλος επιτάχυνση',fmt(p.ac,2)+' m/s²',CSSV.ak)+
+    tile('F<sub>κ</sub>','Κεντρομόλος δύναμη',fN(p.Fk)+' N',CSSV.F)+
+    tile('w','Βάρος',fN(p.W)+' N',CSSV.w)+tile('L','Άνωση',fN(p.N)+' N',CSSV.L)+
+    tile('L·συνφ','Κατακόρυφη συνιστώσα',fN(p.Ny)+' N',CSSV.L)+tile('L·ημφ','Οριζόντια συνιστώσα',fN(p.Nx)+' N',CSSV.L)+
+    tile('n','Συντελεστής φορτίου',fmt(p.n,2)+' g')+tile('v<sub>στ</sub>','Ταχύτητα απώλειας στήριξης',fmt(p.vst,1)+' m/s')+
+    tile('T<sub>περ</sub>','Περίοδος',fmt(TAU*S.R/Math.max(S.v,0.01),1)+' s');
+  if(h!==lastRO){box.innerHTML=h;lastRO=h;}
+}
+function updateTime(){
+  $('#tOut').textContent='t = '+fmt(S.t)+' s';
+  const sc=$('#sl_time');if(+sc.max!==S.tmax)sc.max=S.tmax;if(document.activeElement!==sc)sc.value=S.t;
+}
+
+/* ---------- κύριο render ---------- */
+function render(){
+  LBF++;
+  if(scaleDirty)recompute();
+  updateTime();updateStatus();updateRole();updateLegend();updateTable();
+  const v=S.view;
+  if(v==='all'||v==='d3')render3d();
+  if(v==='all'||v==='top')drawTop();
+  if(v==='all'||v==='side')drawSide();
+  $$('#charts canvas').forEach(cv=>{const d=CH[cv.dataset.k];if(d)drawChart(cv,d);});
+}
+/* ---------- ήχος: κινητήρας και προειδοποίηση (συνθετικός, Web Audio) ---------- */
+const AU={ctx:null,on:true,gain:null,osc:null,osc2:null,wg:null};
+function audioInit(){
+  if(AU.ctx){try{AU.ctx.resume();}catch(e){}return;}
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+    const ctx=new Ctx(),gain=ctx.createGain();gain.gain.value=0;
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=700;
+    const osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=80;
+    const osc2=ctx.createOscillator();osc2.type='sawtooth';osc2.frequency.value=82;
+    osc.connect(lp);osc2.connect(lp);lp.connect(gain);gain.connect(ctx.destination);
+    const wo=ctx.createOscillator();wo.type='square';wo.frequency.value=880;const wg=ctx.createGain();wg.gain.value=0;wo.connect(wg);wg.connect(ctx.destination);
+    osc.start();osc2.start();wo.start();
+    Object.assign(AU,{ctx,gain,osc,osc2,wg});ctx.resume();
+  }catch(e){AU.ctx=null;}
+}
+function audioCrash(){
+  if(!AU.ctx||!AU.on)return;
+  try{
+    const ctx=AU.ctx,t=ctx.currentTime,len=Math.floor(ctx.sampleRate*0.7),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+    const n=ctx.createBufferSource();n.buffer=buf;
+    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(5000,t);lp.frequency.exponentialRampToValueAtTime(300,t+0.6);
+    const g=ctx.createGain();g.gain.setValueAtTime(0.9,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.7);
+    n.connect(lp);lp.connect(g);g.connect(ctx.destination);n.start(t);
+    const o=ctx.createOscillator();o.type='sine';o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(35,t+0.4);
+    const og=ctx.createGain();og.gain.setValueAtTime(0.9,t);og.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+    o.connect(og);og.connect(ctx.destination);o.start(t);o.stop(t+0.55);
+    [0.04,0.11,0.2].forEach((dt,i)=>{const m=ctx.createOscillator();m.type='square';m.frequency.value=900+i*430;const mg=ctx.createGain();mg.gain.setValueAtTime(0.12,t+dt);mg.gain.exponentialRampToValueAtTime(0.001,t+dt+0.09);m.connect(mg);mg.connect(ctx.destination);m.start(t+dt);m.stop(t+dt+0.1);});
+  }catch(e){}
+}
+function audioUpdate(){
+  if(!AU.ctx)return;
+  const play=AU.on&&S.playing&&document.visibilityState!=='hidden',t=AU.ctx.currentTime;
+  AU.gain.gain.setTargetAtTime(play?0.08:0,t,0.1);
+  const f=60+clamp(S.v,0,300)*0.3;AU.osc.frequency.setTargetAtTime(f,t,0.1);AU.osc2.frequency.setTargetAtTime(f*1.03,t,0.1);
+  const warn=play&&(P.stall||P.over);
+  AU.wg.gain.setTargetAtTime(warn&&((performance.now()/1000*3)%1<0.5)?0.05:0,t,0.01);
+}
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(S.playing){
+    const prevT=S.t;S.t+=dt*S.speed;
+    if(P.stall&&prevT<S.fallT&&S.t>=S.fallT)audioCrash();
+    if(S.t>=S.tmax){if(S.loop)S.t=S.t%S.tmax;else{S.t=S.tmax;S.playing=false;updatePlay();}}
+    dirty=true;
+  }
+  if(dirty){dirty=false;render();}
+  audioUpdate();
+  requestAnimationFrame(frame);
+}
+function updatePlay(){
+  const b=$('#playBtn');b.textContent=S.playing?'⏸ Παύση':'▶ Εκκίνηση';
+  b.setAttribute('aria-label',S.playing?'Παύση':'Εκκίνηση');
+}
+
+/* ---------- πεδία ρυθμίσεων (ελεύθερη πληκτρολόγηση τιμών) ---------- */
+const syncs=[];
+const r3=v=>Number((+v).toFixed(3));
+function field(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}-n"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label>`+
+    `<div class="inputs"><input type="range" id="${c.id}-r" min="${c.min}" max="${c.max}" step="${c.step}" aria-label="${c.name}">`+
+    `<input type="number" id="${c.id}-n" step="any" aria-label="${c.name} (τιμή)"><span class="unit">${c.unit||''}</span></div>`+(c.note?`<div class="note"></div>`:'');
+  const r=$('input[type=range]',f),n=$('input[type=number]',f),nt=$('.note',f);
+  const sync=()=>{r.value=c.get();if(document.activeElement!==n)n.value=r3(c.get());if(nt)nt.textContent=c.note();};
+  r.addEventListener('input',()=>{c.set(+r.value);n.value=r3(r.value);if(nt)nt.textContent=c.note();dirty=true;});
+  n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)){c.set(v);r.value=v;if(nt)nt.textContent=c.note();dirty=true;}});
+  n.addEventListener('blur',sync);
+  parent.appendChild(f);sync();syncs.push(sync);return sync;
+}
+const refreshAll=()=>syncs.forEach(f=>f());
+function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
+const touch=()=>{recompute();geomDirty=true;dirty=true;syncs.forEach(f=>f());};
+const chg=fn=>{const ph=S.t*S.v/S.R;fn();touch();S.t=Math.min(ph*S.R/S.v,S.tmax);};
+function setV(v){chg(()=>{S.v=clamp(v,1,600);});}
+function buildSettings(b){
+  field(b,{id:'c-m',name:'Μάζα αεροπλάνου',sym:'<i>m</i>',unit:'kg',min:500,max:80000,step:100,get:()=>S.m,set:v=>{S.m=clamp(v,1,1e8);touch();}});
+  field(b,{id:'c-v',name:'Ταχύτητα',sym:'<i>v</i>',unit:'m/s',min:20,max:300,step:1,get:()=>S.v,set:setV,note:()=>'= '+fmt(S.v*3.6,0)+' km/h'});
+  const bk=el('div');bk.id='cfgBank';b.appendChild(bk);
+  field(bk,{id:'c-ph',name:'Γωνία κλίσης των φτερών',sym:'<i>φ</i>',unit:'°',min:0,max:80,step:0.5,get:()=>S.thd,set:v=>{chg(()=>{S.thd=clamp(v,0,89);});},note:()=>'→ R = '+fmt(S.R,0)+' m'});
+  const rr=el('div');rr.id='cfgR';rr.hidden=true;b.appendChild(rr);
+  field(rr,{id:'c-R',name:'Ακτίνα στροφής',sym:'<i>R</i>',unit:'m',min:100,max:10000,step:10,get:()=>S.R,set:v=>{chg(()=>{S.R=clamp(v,5,1e7);});},note:()=>'→ φ = '+fmt(S.thd,1)+'°'});
+  const pp=el('div','addrow');pp.style.margin='-4px 0 12px';
+  [['Ελαφρύ',{type:'light',m:1200,v:55,v0s:26,nmax:3.8,thd:30}],['Επιβατικό',{type:'airliner',m:70000,v:230,v0s:70,nmax:2.5,thd:25}],['Μαχητικό',{type:'fighter',m:15000,v:250,v0s:55,nmax:9,thd:60}]].forEach(([n,o])=>{const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{setMode('bank');Object.assign(S,o);S.t=0;touch();refreshAll();});pp.appendChild(x);});
+  b.appendChild(pp);
+  field(b,{id:'c-g',name:'Επιτάχυνση βαρύτητας',sym:'<i>g</i>',unit:'m/s²',min:1,max:25,step:0.01,get:()=>S.g,set:v=>{chg(()=>{S.g=clamp(v,0.1,100);});}});
+  field(b,{id:'c-v0',name:'Ταχύτητα απώλειας στήριξης σε ευθεία πτήση',sym:'<i>v</i><sub>στ0</sub>',unit:'m/s',min:15,max:120,step:1,get:()=>S.v0s,set:v=>{S.v0s=clamp(v,1,1000);touch();}});
+  field(b,{id:'c-nm',name:'Όριο συντελεστή φορτίου',sym:'<i>n</i><sub>max</sub>',unit:'g',min:1.5,max:10,step:0.1,get:()=>S.nmax,set:v=>{S.nmax=clamp(v,1,50);touch();}});
+  b.appendChild(el('div','hintline','Σε οριζόντια κυκλική πτήση με σταθερό ύψος και ταχύτητα: L·συνφ = m·g και L·ημφ = m·v²/R, άρα εφφ = v²/(g·R) και n = L/w = 1/συνφ. Στη στροφή η ταχύτητα απώλειας στήριξης αυξάνεται: v στ = v στ0·√n. Τα όρια v στ0 και n max είναι ενδεικτικά και εξαρτώνται από το αεροπλάνο.'));
+}
+function buildToggles(b){
+  const vt=el('div','vector-toggles');b.appendChild(vt);
+  const mk=(row,k,t,cv)=>{
+    const l=el('label','',`<input type="checkbox" id="sh-${k}"${S.show[k]?' checked':''}><span class="swatch" style="background:${cv?`var(${CSSV[cv]})`:'var(--textDim)'}"></span>${t}`);
+    $('input',l).addEventListener('change',e=>{S.show[k]=e.target.checked;dirty=true;});row.appendChild(l);
+  };
+  const R1=el('div','row',`<span class="grp">${UP('Δυνάμεις')}</span>`);vt.appendChild(R1);
+  mk(R1,'w','<i>w</i> βάρος','w');mk(R1,'L','<i>L</i> άνωση (κάθετη στα φτερά)','L');
+  mk(R1,'F','<i>F</i><sub>κ</sub> κεντρομόλος (συνισταμένη)','F');mk(R1,'comp','Συνιστώσες της L (οριζόντια / κατακόρυφη)',null);
+  vt.appendChild(el('div','sep'));
+  const R2=el('div','row',`<span class="grp">${UP('Κίνηση')}</span>`);vt.appendChild(R2);
+  mk(R2,'v','<i>v</i> ταχύτητα','v');mk(R2,'ak','<i>α</i><sub>κ</sub> κεντρομόλος επιτάχυνση','ak');
+  vt.appendChild(el('div','sep'));
+  const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
+  mk(R3,'R','<i>R</i> ακτίνα',null);mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'values','Τιμές στο σχήμα',null);
+}
+function buildView(b){
+  field(b,{id:'c-vs',name:'Μήκος διανυσμάτων',sym:'×',unit:'',min:0.3,max:2.5,step:0.05,get:()=>S.vs,set:v=>{S.vs=clamp(v,0.05,50);}});
+  field(b,{id:'c-lw',name:'Πάχος διανυσμάτων',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
+  field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+}
+
+/* ---------- χειριστήρια ---------- */
+$('#playBtn').addEventListener('click',()=>{audioInit();if(!S.playing&&S.t>=S.tmax)S.t=0;S.playing=!S.playing;updatePlay();dirty=true;});
+$('#sndBtn').addEventListener('click',e=>{AU.on=!AU.on;if(AU.on)audioInit();e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι');e.currentTarget.classList.toggle('on',AU.on);e.currentTarget.setAttribute('aria-pressed',AU.on);});
+$('#resetBtn').addEventListener('click',()=>{S.t=0;S.playing=false;updatePlay();dirty=true;});
+$('#speedSel').addEventListener('change',e=>S.speed=+e.target.value);
+$('#sl_time').addEventListener('input',e=>{S.t=+e.target.value;S.playing=false;updatePlay();dirty=true;});
+$('#loopChk').addEventListener('change',e=>S.loop=e.target.checked);
+$('#allChk').addEventListener('change',e=>{S.tblAll=e.target.checked;lastRO='';dirty=true;});
+function setView(v){
+  S.view=v;$('#stageWrap').dataset.view=v;
+  $$('#viewSeg button').forEach(b=>{b.classList.toggle('active',b.dataset.v===v);b.setAttribute('aria-selected',b.dataset.v===v);});dirty=true;setTimeout(()=>dirty=true,50);
+}
+$$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
+function setMode(m){
+  if(m===S.mode)return;
+  S.mode=m;
+  $('#cfgBank').hidden=m!=='bank';$('#cfgR').hidden=m==='bank';
+  $$('#modeTabs button').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-pressed',b.dataset.mode===m);});
+  if(m==='bank'&&!S.compSet){S.compSet=true;S.show.comp=true;const c=$('#sh-comp');if(c)c.checked=true;}
+  touch();lastRole='';lastRO='';lastLG='';refreshAll();
+  setTimeout(()=>dirty=true,50);
+}
+$('#modeTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.mode);});
+{const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(k[2]!==g){g=k[2];og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel'),c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);dirty=true;setTimeout(()=>dirty=true,50);return;}
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    dirty=true;setTimeout(()=>dirty=true,50);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=$('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');dirty=true;}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('#playBtn').click();}
+});
+const ro=new ResizeObserver(()=>{dirty=true;});
+['#stageWrap','#charts'].forEach(s=>ro.observe($(s)));
+window.addEventListener('resize',()=>dirty=true);
+
+/* ---------- εκκίνηση ---------- */
+$$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+const GUIDE_HTML=`<div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<p>Ένα αεροπλάνο στρίβει σε οριζόντια κυκλική πτήση, γέρνοντας τα φτερά του. Βλέπεις τις δυνάμεις που ασκούνται πάνω του και πότε κινδυνεύει να χάσει τη στήριξη.</p>
+<h3>1. Ρυθμίσεις προσομοίωσης</h3>
+<ul>
+<li>Διάλεξε αν δίνεται η <b>κλίση φ</b> των φτερών ή η <b>ακτίνα R</b> της στροφής· το άλλο μέγεθος υπολογίζεται.</li>
+<li>Άλλαξε μάζα, ταχύτητα και επιτάχυνση βαρύτητας g.</li>
+<li>Τα κουμπιά <b>Ελαφρύ</b>, <b>Επιβατικό</b>, <b>Μαχητικό</b> βάζουν τυπικές τιμές για κάθε τύπο αεροπλάνου.</li>
+<li>Ρύθμισε την ταχύτητα απώλειας στήριξης σε ευθεία πτήση v<sub>στ0</sub> και το όριο συντελεστή φορτίου n<sub>max</sub>.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Διάλεξε ποια διανύσματα θα φαίνονται: βάρος, άνωση, κεντρομόλος, ταχύτητα, κεντρομόλος επιτάχυνση, και οι συνιστώσες της άνωσης.</li>
+<li>Ρύθμισε το μήκος και το πάχος των διανυσμάτων και το μέγεθος των γραμμάτων.</li>
+<li>Άνοιξε ή κλείσε τα σύμβολα και τις τιμές πάνω στο σχήμα.</li>
+</ul>
+<h3>3. Ανάλυση</h3>
+<p>Η φυσική της στροφής με τύπους και παραδείγματα: πώς η κλίση της άνωσης δίνει την κεντρομόλο και τι είναι ο συντελεστής φορτίου.</p>
+<h3>4. Τιμές μεγεθών</h3>
+<p>Οι δυνάμεις με τις τρέχουσες τιμές τους, και από κάτω ο πίνακας των μεγεθών την τρέχουσα στιγμή. Με το «Όλα τα μεγέθη στον πίνακα» βλέπεις και τα ενδιάμεσα μεγέθη.</p>
+<h3>5. Διαγράμματα</h3>
+<p>Γραφήματα της άνωσης, του συντελεστή φορτίου, της ταχύτητας απώλειας στήριξης και της ακτίνας ως προς την κλίση φ. Διάλεξε με τα κουμπιά ποια θα εμφανίζονται.</p>
+<h3>Προβολές</h3>
+<ul>
+<li><b>3D</b>: σύρε για περιστροφή, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, δεξί κλικ ή Shift + σύρσιμο (ή δύο δάχτυλα) για μετατόπιση.</li>
+<li><b>Κάτοψη</b>: βλέπεις την κυκλική τροχιά από ψηλά.</li>
+<li><b>Από πίσω</b>: βλέπεις το αεροπλάνο από πίσω· το κέντρο της στροφής είναι αριστερά, εκτός εικόνας.</li>
+<li><b>Όλες μαζί</b>: και οι τρεις προβολές ταυτόχρονα.</li>
+</ul>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση / Επαναφορά</b> ξεκινούν ή μηδενίζουν την κίνηση.</li>
+<li><b>Επανάληψη</b>: η κίνηση ξαναρχίζει όταν τελειώσει.</li>
+<li><b>Ήχος</b>: ανοίγει ή κλείνει τον ήχο.</li>
+<li><b>Ταχύτητα αναπαραγωγής</b>: από ×0,1 (πολύ αργά) ως ×5.</li>
+<li>Το ρυθμιστικό χρόνου σε αφήνει να πας σε οποιαδήποτε στιγμή της κίνησης.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση (φωτεινή ή σκούρη). Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>`;
+let skin='blueprint';try{skin=localStorage.getItem('plane-skin')||skin;}catch(e){}
+if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
+{
+  const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
+  tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
+  rc.appendChild(tp);
+  const t1=mkTab(),t2=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
+  buildSettings(t1.b);{const mt=$('#modeTabs');mt.hidden=false;mt.style.marginBottom='14px';t1.b.insertBefore(mt,t1.b.firstChild);}buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);t2.b.appendChild($('#navHint'));{const rh=el('div','');rh.style.marginBottom='16px';rh.appendChild($('#roleBox'));rh.appendChild($('#roleHint'));t4.b.appendChild(rh);}t4.b.appendChild($('#allWrap'));t4.b.appendChild($('#readouts'));
+  const gp=$('#graphPanel');
+  const ps=[t1.p,t2.p,$('#rolePanel'),t4.p,gp,t6.p];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  ps.forEach(p=>{p.classList.remove('collapsed');$('#tabBody').appendChild(p);});
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});$$('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});dirty=true;setTimeout(()=>{dirty=true;},60);};
+  names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
+  show(0);
+}
+S.speed=5;$('#speedSel').value='5';
+const fitGrid=()=>{const g=$('.main-grid');if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,innerHeight-top-12))+'px';}else g.style.height='';dirty=true;};
+addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
+buildChartChips();buildChartCells();updatePlay();
+init3d();setSkin(skin);setView('side');
+recompute();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
+window.__car={audioCrash,AU,derive,S,S3,phys,carAt,items,roleHTML,recompute,get P(){return P;},setMode,render};
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
