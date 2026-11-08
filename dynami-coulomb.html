@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Δύναμη Coulomb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.hdr-tools{display:flex;gap:8px;align-items:center;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
+.home-btn:hover{border-color:var(--accent);}
+.zoom-select{min-width:140px!important;}
+@media(max-width:980px){#zoomSel{display:none;}}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="g16"]{
+  color-scheme:light;
+  --bg:#4B5058; --bg2:#41464E; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F1F5F9; --hdim:#CBD5E1;
+  --st-track:#D3D7DE; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="g16"] .right-col,:root[data-skin="g16"] .left-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style></head>
+<body>
+<style>.charts{grid-template-columns:1fr;grid-auto-rows:230px;}.cell .tag{z-index:2}sub{font-size:.72em;line-height:0;vertical-align:sub}.checkline i,.btn i{font-style:italic}</style>
+<div class="app">
+  <header>
+    <div class="hdr-left">
+      <div>
+        <h1 id="mainTitle" style="color:#FFD400">Δύναμη Coulomb</h1>
+        <div class="sub">Σλάβης Τάσος</div>
+      </div>
+    </div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1.25">Μέγεθος 100%</option><option value="1.125">Μέγεθος 90%</option><option value="1" selected>Μέγεθος 80%</option><option value="0.875">Μέγεθος 70%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+  </header>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-head-row">
+          <div class="vtabs" id="tgtSeg" role="tablist" aria-label="Φορτίο στο οποίο ζητάμε τη δύναμη"></div>
+          <div class="panel-tools">
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap" data-view="side">
+            <div class="stage" id="st-side"><canvas id="cv"></canvas><span class="tag">Επίπεδο φορτίων</span><button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button></div>
+            <div id="legend" hidden></div>
+            <div id="status" class="ok"></div>
+          </div>
+          <div class="transport">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="spd">Ταχύτητα αναπαραγωγής
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.02">×0,02 εξαιρετικά αργά</option>
+                <option value="0.1">×0,1 πολύ αργά</option>
+                <option value="0.25">×0,25 αργά</option>
+                <option value="0.5">×0,5</option>
+                <option value="1" selected>×1 κανονική</option>
+                <option value="2">×2 γρήγορα</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="1" step="0.001" value="0" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
+          </div>
+          <div class="transport" style="margin-top:8px;gap:6px 14px">
+            <span class="spd">Snap στο σύρσιμο:</span>
+            <label class="checkline" style="margin:0"><input type="checkbox" id="snapGrid"> Πλέγμα</label>
+            <select id="gridStepSel" aria-label="Βήμα πλέγματος"><option value="0.05" selected>5 cm</option><option value="0.1">10 cm</option><option value="0.25">25 cm</option><option value="0.5">50 cm</option></select>
+            <label class="checkline" style="margin:0"><input type="checkbox" id="snapLine"> Ευθεία</label>
+          </div>
+          <div class="hintline" id="navHint">Σύρε ένα φορτίο για να το μετακινήσεις ελεύθερα στο επίπεδο· σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση. Κάνε κλικ σε ένα φορτίο (ή στα κουμπιά πάνω) για να το προσθέσεις ή να το αφαιρέσεις από τα φορτία που δείχνουν δύναμη· μπορείς να δεις δυνάμεις σε πολλά φορτία ταυτόχρονα. Το Snap κολλάει το φορτίο που σέρνεις στο πλέγμα ή σε ευθεία (με τα άλλα φορτία, οριζόντια ή κάθετα). Με «Εκκίνηση» αφήνεται ελεύθερο το τελευταίο φορτίο που επέλεξες και κινείται λόγω της συνισταμένης, ενώ τα υπόλοιπα μένουν ακλόνητα.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row">
+          <h2>Διαγράμματα</h2>
+          <div class="panel-tools">
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Τα διαγράμματα αφορούν το τελευταίο φορτίο που επέλεξες και τις τρέχουσες ρυθμίσεις. Στο πρώτο μπορείς να κάνεις κλικ ή να σύρεις για να πας σε άλλη χρονική στιγμή της κίνησης. Οι τελείες δείχνουν την τρέχουσα κατάσταση.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col" id="rightCol"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=(x,d=2)=>{if(!isFinite(x))return '∞';let s=(+x).toFixed(d);if(/^-0(\.0+)?$/.test(s))s=s.slice(1);return s.replace('.',',');};
+const fN=x=>{const a=Math.abs(x);if(a===0)return '0';if(a<1e-3)return (+x).toExponential(2).replace('.',',');return fmt(x,a<10?3:a<100?2:1);};
+const TAU=Math.PI*2, DEG=180/Math.PI;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const FONT="'Inter',system-ui,sans-serif", MONO='"IBM Plex Mono",monospace';
+const SUBN=['₁','₂','₃'];
+
+/* ---------- κατάσταση ---------- */
+const K0=8.9875517923e9;                         /* N·m²/C² */
+const MED=[['vac','Κενό',1],['air','Αέρας',1.0006],['oil','Λάδι',2.2],['glass','Γυαλί',6],['alc','Αλκοόλη',25],['water','Νερό',80],['custom','Προσαρμοσμένο…',null]];
+const DMIN=0.1, DCON=0.07;                        /* ελάχιστη απόσταση σύρσιμου, απόσταση επαφής (m) */
+const S={
+  ch:[{x:-0.4,y:0,q:5},{x:0.4,y:0,q:-3},{x:0,y:0.6,q:2}],n:2,tgt:0,sel:[0],
+  mode:'line',d:0.8,h:0.6,medium:'air',epsC:4,mass:0.05,
+  t:0,tmax:0.5,playing:false,speed:1,loop:true,
+  zoom:1,px:0,py:0,vs:1,lw:1,fs:13,snapGrid:false,gridStep:0.05,snapLine:false,guide:null,magnet:true,constr:'para',
+  show:{part:true,res:true,others:false,dist:true,labels:true,values:false,nul:true,grid:true,nline:true}
+};
+let dirty=true, trajDirty=true;
+const epsR=()=>{if(S.medium==='custom')return Math.max(1,S.epsC);const m=MED.find(x=>x[0]===S.medium);return m?m[2]:1;};
+const posBase=i=>S.ch[i];
+let TR={dt:0.005,x:[],y:[],f:[],stop:null};
+function posOf(i){
+  if(i===S.tgt&&S.t>0&&TR.x.length>1){
+    const u=clamp(S.t/TR.dt,0,TR.x.length-1),a=Math.floor(u),b=Math.min(TR.x.length-1,a+1),w=u-a;
+    return {x:TR.x[a]*(1-w)+TR.x[b]*w,y:TR.y[a]*(1-w)+TR.y[b]*w};
+  }
+  return {x:S.ch[i].x,y:S.ch[i].y};
+}
+/* δύναμη στο i από το j (θετικό F = άπωση) */
+function pair(i,j){
+  const a=posOf(i),b=posOf(j);let dx=a.x-b.x,dy=a.y-b.y;const r=Math.max(1e-6,Math.hypot(dx,dy));dx/=r;dy/=r;
+  const F=K0*S.ch[i].q*S.ch[j].q*1e-12/(epsR()*r*r);
+  return {j,r,F:Math.abs(F),rep:F>0,fx:F*dx,fy:F*dy,ux:dx,uy:dy};
+}
+function forcesOn(i){
+  const L=[];let sx=0,sy=0,ab=0;
+  for(let j=0;j<S.n;j++)if(j!==i){const p=pair(i,j);L.push(p);sx+=p.fx;sy+=p.fy;ab+=p.F;}
+  return {L,sx,sy,ab,F:Math.hypot(sx,sy),ang:Math.atan2(sy,sx)*DEG};
+}
+/* σημείο μηδενισμού της συνισταμένης στο φορτίο i: θέση όπου το πεδίο των άλλων δύο φορτίων μηδενίζεται */
+function nullPoint(i){
+  const o=[];for(let j=0;j<S.n;j++)if(j!==i)o.push(j);
+  if(o.length!==2)return null;
+  const A=S.ch[o[0]],B=S.ch[o[1]],qa=A.q,qb=B.q;
+  if(qa===0||qb===0)return null;
+  const dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy);if(d<1e-6)return null;
+  const ux=dx/d,uy=dy/d;let s;
+  if(qa*qb>0){const a=Math.sqrt(Math.abs(qa)),b=Math.sqrt(Math.abs(qb));s=d*a/(a+b);}
+  else{const ra=Math.abs(qa),rb=Math.abs(qb);if(Math.abs(ra-rb)<1e-9)return null;const rho=Math.sqrt(ra/rb);s=rho<1?-rho*d/(1-rho):rho*d/(rho-1);}
+  return {x:A.x+ux*s,y:A.y+uy*s,between:qa*qb>0,a:o[0],b:o[1],ra:Math.abs(s),rb:Math.abs(s-d),d,ux,uy};
+}
+/* ---------- κίνηση του φορτίου-στόχου (τα άλλα ακλόνητα) ---------- */
+function simulate(){
+  const i=S.tgt,c=S.ch[i],qi=c.q,m=Math.max(1e-6,S.mass),eps=epsR();
+  const oth=[];for(let j=0;j<S.n;j++)if(j!==i)oth.push(S.ch[j]);
+  const acc=(x,y)=>{let fx=0,fy=0;for(const o of oth){const dx=x-o.x,dy=y-o.y,r=Math.max(1e-6,Math.hypot(dx,dy)),s=K0*qi*o.q*1e-12/(eps*r*r*r);fx+=s*dx;fy+=s*dy;}return [fx/m,fy/m,Math.hypot(fx,fy)];};
+  let x=c.x,y=c.y,vx=0,vy=0;const h=0.001,every=5,out={dt:h*every,x:[x],y:[y],f:[acc(x,y)[2]*m],stop:null};
+  let [ax,ay]=acc(x,y);let step=0;
+  const moving=Math.hypot(ax,ay)>1e-9&&qi!==0;
+  if(moving){
+    for(step=1;step<=12000;step++){
+      x+=vx*h+0.5*ax*h*h;y+=vy*h+0.5*ay*h*h;
+      const [bx,by]=acc(x,y);vx+=0.5*(ax+bx)*h;vy+=0.5*(ay+by)*h;ax=bx;ay=by;
+      let hit=false;for(const o of oth)if(Math.hypot(x-o.x,y-o.y)<DCON){hit=true;break;}
+      if(step%every===0){out.x.push(x);out.y.push(y);out.f.push(Math.hypot(ax,ay)*m);}
+      if(hit){out.stop='contact';break;}
+      if(Math.abs(x)>6||Math.abs(y)>6){out.stop='far';break;}
+    }
+  }
+  const T=(out.x.length-1)*out.dt;
+  S.tmax=moving?(out.stop?T+0.6:Math.max(0.5,T)):0.5;
+  /* παραμονή στο τέλος */
+  const extra=Math.ceil((S.tmax-T)/out.dt);for(let k=0;k<extra;k++){out.x.push(out.x[out.x.length-1]);out.y.push(out.y[out.y.length-1]);out.f.push(out.stop==='contact'?out.f[out.f.length-1]:out.f[out.f.length-1]);}
+  if(out.x.length<2){out.x.push(out.x[0]);out.y.push(out.y[0]);out.f.push(out.f[0]);}
+  TR=out;S.t=Math.min(S.t,S.tmax);
+  const sl=$('#sl_time');if(sl){sl.max=S.tmax;}
+}
+
+/* ---------- διατάξεις ---------- */
+function applyLayout(kind){
+  if(kind)S.mode=kind;
+  const d=S.d,h=S.h,k=S.mode;let P;
+  if(S.n===2||k==='line'){
+    P=S.n===2?[[-d/2,0],[d/2,0],[0,0]]:[[-d,0],[0,0],[d,0]];
+  }else if(k==='right'){P=[[0,0],[d,0],[0,h]];const cx=(P[0][0]+P[1][0]+P[2][0])/3,cy=(P[0][1]+P[1][1]+P[2][1])/3;P=P.map(p=>[p[0]-cx,p[1]-cy]);}
+  else if(k==='equi'){const H=Math.sqrt(3)/2*d;P=[[-d/2,0],[d/2,0],[0,H]];const cy=H/3;P=P.map(p=>[p[0],p[1]-cy]);}
+  else if(k==='isos'){P=[[-d/2,0],[d/2,0],[0,h]];const cy=h/3;P=P.map(p=>[p[0],p[1]-cy]);}
+  else return;
+  for(let i=0;i<3;i++){S.ch[i].x=P[i][0];S.ch[i].y=P[i][1];}
+  S.t=0;S.playing=false;touch();
+}
+const touch=()=>{trajDirty=true;dirty=true;};
+
+/* ---------- χρώματα ---------- */
+const CSSV={f1:'--c-ae',f2:'--c-s',f3:'--c-th',res:'--e2',nul:'--et'};
+const C={},CP={};
+const TOK=Object.assign({stage:'--st-track',dim:'--st-dim',fg:'--st-text',accent:'--accent',grid:'--st-grid',gridS:'--st-gridS',danger:'--danger',ok:'--accent3'},CSSV);
+const TOKP={stage:'--track',dim:'--textDim',fg:'--text',grid:'--grid',gridS:'--gridStrong'};
+const POS='#E5484D',NEG='#3B82F6';
+function readColors(){const cs=getComputedStyle(document.documentElement);for(const k in TOK)C[k]=cs.getPropertyValue(TOK[k]).trim();const rc=$('#rightCol'),rs=rc?getComputedStyle(rc):cs;for(const k in TOKP)CP[k]=rs.getPropertyValue(TOKP[k]).trim();for(const k in CSSV)CP[k]=rs.getPropertyValue(CSSV[k]).trim();}
+const SKINS=[["blueprint","DarkBlue",""],["classic","DarkBlack",""],["minimal","LightOrange",""],["gr","Grey",""],["n01","WhiteBlue",""],["n08","SkyBlue",""],["n12","WhiteDBlue",""],["n16","GreyDarkB",""],["n13","WhiteBGrey",""],["g16","GreyDBlue",""],["n15","SkyDBlue",""],["n18","DarkGrey",""],["n23","NavyLight",""]];
+let curSkin='blueprint';
+function setSkin(n){
+  curSkin=n;document.documentElement.dataset.skin=n;readColors();dirty=true;
+  {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
+  try{localStorage.setItem('coulomb-skin',n)}catch(e){}
+}
+
+/* ---------- σχεδίαση: βοηθητικά ---------- */
+function fit(cv){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w,h,dpr,ctx};
+}
+function arrow(ctx,x0,y0,x1,y1,col,lw,dash){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return L;
+  const ux=dx/L,uy=dy/L,h=Math.min(8+lw*1.1,L*0.55);
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw||2;ctx.lineCap='round';
+  ctx.setLineDash(dash||[]);
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1-ux*h*0.7,y1-uy*h*0.7);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45);ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);ctx.closePath();ctx.fill();
+  return L;
+}
+let LBF=0;const LBS=new WeakMap();
+function lab(ctx,x,y,main,sub,val,col,align,fs){
+  fs=fs||S.fs;ctx.save();ctx.textBaseline='middle';ctx.textAlign='left';
+  const f1=`italic 600 ${fs+1}px ${FONT}`,f2=`600 ${fs-4}px ${FONT}`,f3=`600 ${fs-2}px ${FONT}`;
+  ctx.font=f1;const w1=ctx.measureText(main).width;
+  ctx.font=f2;const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3;const w3=val?ctx.measureText(val).width:0;
+  const tot=w1+w2+w3,x0=align==='left'?x:align==='right'?x-tot:x-tot/2;
+  {let st=LBS.get(ctx);if(!st||st.f!==LBF){st={f:LBF,r:[]};LBS.set(ctx,st);}
+   const hh=fs*1.25,hit=(yy)=>st.r.some(q=>x0<q[2]&&x0+tot>q[0]&&yy-hh/2<q[3]&&yy+hh/2>q[1]);
+   let dy=0;for(const c of [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6]){if(!hit(y+c*hh)){dy=c*hh;break;}}
+   y+=dy;st.r.push([x0-2,y-hh/2,x0+tot+2,y+hh/2]);}
+  const run=fn=>{let xx=x0;ctx.font=f1;fn(main,xx,y);xx+=w1;if(sub){ctx.font=f2;fn(sub,xx+1,y+fs*0.3);xx+=w2;}if(val){ctx.font=f3;fn(val,xx+2,y);}};
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;run((t,a,b)=>ctx.strokeText(t,a,b));
+  ctx.fillStyle=col;run((t,a,b)=>ctx.fillText(t,a,b));ctx.restore();
+}
+function tipLabel(ctx,x0,y0,x1,y1,main,sub,val,col){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+  lab(ctx,x1+ux*13,y1+uy*13,main,sub,val,col,ux>0.35?'left':ux<-0.35?'right':'center');
+}
+
+/* ---------- γεωμετρία οθόνης ---------- */
+const cv=$('#cv');
+function G(){const r=cv.getBoundingClientRect();const w=r.width,h=r.height;const sc=Math.min(w/3.4,h/2.3)*S.zoom;return {w,h,sc,cx:w/2-S.px*sc,cy:h/2+S.py*sc};}
+const W2S=(g,x,y)=>[g.cx+x*g.sc,g.cy-y*g.sc];
+const chargeR=q=>13+15*Math.sqrt(Math.min(1,Math.abs(q)/20));
+const pxN=()=>400*S.vs;
+const ptStr=(x,y)=>'('+fmt(x,2)+' ; '+fmt(y,2)+') m';
+
+/* ---------- σχεδίαση σκηνής ---------- */
+let lastRole='',lastRO='',lastLG='';
+function drawForces(ctx,P,i){
+  const sh=S.show,fo=forcesOn(i),T=P[i],k=pxN(),LW=S.lw;
+  const tipOf=(ox,oy,vx,vy)=>[ox+vx*k,oy-vy*k];
+  const val=F=>sh.values?'= '+fN(F)+' N':'';
+  if(fo.L.length===1){
+    const p=fo.L[0];
+    if(sh.res||sh.part){const [e0,e1]=tipOf(T[0],T[1],p.fx,p.fy);const Ln=arrow(ctx,T[0],T[1],e0,e1,C.res,3.8*LW);if(sh.labels&&Ln>3)tipLabel(ctx,T[0],T[1],e0,e1,'F',''+(p.j+1)+(i+1),val(p.F),C.res);}
+  }else if(fo.L.length>=2){
+    const A=fo.L[0],B=fo.L[1],tA=tipOf(T[0],T[1],A.fx,A.fy),tB=tipOf(T[0],T[1],B.fx,B.fy),tR=tipOf(T[0],T[1],fo.sx,fo.sy);
+    if(S.constr==='para'&&sh.part){ctx.strokeStyle=C.dim;ctx.lineWidth=1.4;ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(tA[0],tA[1]);ctx.lineTo(tR[0],tR[1]);ctx.moveTo(tB[0],tB[1]);ctx.lineTo(tR[0],tR[1]);ctx.stroke();ctx.setLineDash([]);}
+    if(sh.part){
+      const la=arrow(ctx,T[0],T[1],tA[0],tA[1],C['f'+(A.j+1)],2.6*LW);
+      if(S.constr==='chain'){const tB2=[tA[0]+B.fx*k,tA[1]-B.fy*k];const lb=arrow(ctx,tA[0],tA[1],tB2[0],tB2[1],C['f'+(B.j+1)],2.6*LW);if(sh.labels&&lb>3)tipLabel(ctx,tA[0],tA[1],tB2[0],tB2[1],'F',''+(B.j+1)+(i+1),val(B.F),C['f'+(B.j+1)]);}
+      else{const lb=arrow(ctx,T[0],T[1],tB[0],tB[1],C['f'+(B.j+1)],2.6*LW);if(sh.labels&&lb>3)tipLabel(ctx,T[0],T[1],tB[0],tB[1],'F',''+(B.j+1)+(i+1),val(B.F),C['f'+(B.j+1)]);}
+      if(sh.labels&&la>3)tipLabel(ctx,T[0],T[1],tA[0],tA[1],'F',''+(A.j+1)+(i+1),val(A.F),C['f'+(A.j+1)]);
+    }
+    if(sh.res){const Ln=arrow(ctx,T[0],T[1],tR[0],tR[1],C.res,4*LW);if(sh.labels&&Ln>3)tipLabel(ctx,T[0],T[1],tR[0],tR[1],'ΣF',''+(i+1),val(fo.F),C.res);}
+  }
+  ctx.fillStyle=C.fg;ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(T[0],T[1],3.5,0,TAU);ctx.fill();ctx.stroke();
+}
+function render(){
+  if(trajDirty){simulate();trajDirty=false;}
+  LBF++;
+  const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  const g=G(),sh=S.show;
+  const sel=S.sel.filter(i=>i<S.n),isel=j=>sel.includes(j);
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  /* πλέγμα */
+  if(sh.grid||S.snapGrid){
+    const steps=[0.05,0.1,0.25,0.5,1,2,5];let st=(S.snapGrid&&S.gridStep*g.sc>=6)?S.gridStep:(steps.find(s=>s*g.sc>=26)||5);
+    const x0=-g.cx/g.sc,x1=(w-g.cx)/g.sc,y1=g.cy/g.sc,y0=-(h-g.cy)/g.sc;
+    ctx.lineWidth=1;
+    for(let x=Math.ceil(x0/st)*st;x<=x1;x+=st){const X=g.cx+x*g.sc,mj=Math.abs(Math.round(x/(st*5))*st*5-x)<1e-9;ctx.strokeStyle=mj?C.gridS:C.grid;ctx.globalAlpha=mj?.6:1;ctx.beginPath();ctx.moveTo(X,0);ctx.lineTo(X,h);ctx.stroke();}
+    for(let y=Math.ceil(y0/st)*st;y<=y1;y+=st){const Y=g.cy-y*g.sc,mj=Math.abs(Math.round(y/(st*5))*st*5-y)<1e-9;ctx.strokeStyle=mj?C.gridS:C.grid;ctx.globalAlpha=mj?.6:1;ctx.beginPath();ctx.moveTo(0,Y);ctx.lineTo(w,Y);ctx.stroke();}
+    ctx.globalAlpha=1;
+  }
+  /* κλίμακα μήκους */
+  {const cand=[0.05,0.1,0.25,0.5,1,2];const L=cand.find(s=>s*g.sc>=70)||2;const px=L*g.sc;
+   ctx.strokeStyle=C.dim;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(14,h-18);ctx.lineTo(14+px,h-18);ctx.moveTo(14,h-23);ctx.lineTo(14,h-13);ctx.moveTo(14+px,h-23);ctx.lineTo(14+px,h-13);ctx.stroke();
+   ctx.fillStyle=C.dim;ctx.font='600 11px '+MONO;ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText(fmt(L,L<0.1?2:L<1?2:0)+' m',14,h-26);}
+  /* οδηγός snap σε ευθεία */
+  if(S.guide){const q=S.guide,Q=W2S(g,q.x0,q.y0),e=(w+h)*2;ctx.strokeStyle=C.accent;ctx.lineWidth=1.8;ctx.globalAlpha=.9;ctx.setLineDash([9,6]);ctx.beginPath();ctx.moveTo(Q[0]-q.ux*e,Q[1]+q.uy*e);ctx.lineTo(Q[0]+q.ux*e,Q[1]-q.uy*e);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;}
+  const act=[];for(let j=0;j<S.n;j++)act.push(j);
+  const P=act.map(j=>{const p=posOf(j);return W2S(g,p.x,p.y);});
+  const nps=sel.map(i=>nullPoint(i));
+  /* ευθείες των δύο άλλων φορτίων */
+  sel.forEach((i,ix)=>{const np=nps[ix];if(np&&sh.nline&&sh.nul){const a=posOf(np.a),b=posOf(np.b),A=W2S(g,a.x,a.y),B=W2S(g,b.x,b.y);const dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy)||1,e=(w+h)*2;ctx.strokeStyle=C.nul;ctx.globalAlpha=.35;ctx.lineWidth=1.5;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(A[0]-dx/L*e,A[1]-dy/L*e);ctx.lineTo(A[0]+dx/L*e,A[1]+dy/L*e);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;}});
+  /* αποστάσεις */
+  if(sh.dist){
+    for(let a=0;a<S.n;a++)for(let b=a+1;b<S.n;b++){
+      const A=P[a],B=P[b];ctx.strokeStyle=C.dim;ctx.lineWidth=1.3;ctx.globalAlpha=.8;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+      if(sh.labels||sh.values){const pa=posOf(a),pb=posOf(b),d=Math.hypot(pa.x-pb.x,pa.y-pb.y);const mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2;const nx=-(B[1]-A[1]),ny=(B[0]-A[0]),nl=Math.hypot(nx,ny)||1;const onSel=isel(a)||isel(b);
+        lab(ctx,mx+nx/nl*(onSel?0:16),my+ny/nl*(onSel?0:16)+(onSel?-12:0),'r',''+(a+1)+(b+1),sh.values?'= '+fmt(d,2)+' m':'',C.dim,'center');}
+    }
+  }
+  /* σημεία μηδενισμού */
+  sel.forEach((i,ix)=>{
+    const np=nps[ix];if(!np||!sh.nul)return;
+    const Q=W2S(g,np.x,np.y);ctx.strokeStyle=C.nul;ctx.lineWidth=3;ctx.lineCap='round';
+    ctx.beginPath();ctx.arc(Q[0],Q[1],11,0,TAU);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(Q[0]-6,Q[1]-6);ctx.lineTo(Q[0]+6,Q[1]+6);ctx.moveTo(Q[0]+6,Q[1]-6);ctx.lineTo(Q[0]-6,Q[1]+6);ctx.stroke();
+    lab(ctx,Q[0],Q[1]+26,'ΣF',''+(i+1),'= 0'+(sh.values?' '+ptStr(np.x,np.y):''),C.nul,'center');
+    const m=24;
+    if(Q[0]<m||Q[0]>w-m||Q[1]<m||Q[1]>h-m){
+      const dx=Q[0]-w/2,dy=Q[1]-h/2,s=Math.min((w/2-m)/Math.max(1e-9,Math.abs(dx)),(h/2-m)/Math.max(1e-9,Math.abs(dy))),ex=w/2+dx*s,ey=h/2+dy*s,L=Math.hypot(dx,dy)||1;
+      arrow(ctx,ex-dx/L*26,ey-dy/L*26,ex,ey,C.nul,3.2);
+      lab(ctx,ex-dx/L*34,ey-dy/L*34,'ΣF',''+(i+1),'= 0'+(sh.values?' · '+fmt(L/g.sc,1)+' m':''),C.nul,Math.abs(dx)>Math.abs(dy)*0.5?(dx>0?'right':'left'):'center');
+    }
+  });
+  /* σφαίρες */
+  act.forEach(j=>{
+    const [X,Y]=P[j],q=S.ch[j].q,r=chargeR(q),col=q>0?POS:q<0?NEG:C.dim;
+    if(isel(j)){ctx.strokeStyle=C.accent;ctx.lineWidth=j===S.tgt?3:2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.arc(X,Y,r+7,0,TAU);ctx.stroke();ctx.setLineDash([]);}
+    const gr=ctx.createRadialGradient(X-r*.35,Y-r*.35,r*.12,X,Y,r);gr.addColorStop(0,'#FFFFFF');gr.addColorStop(.28,col);gr.addColorStop(1,col);
+    ctx.globalAlpha=.95;ctx.fillStyle=gr;ctx.beginPath();ctx.arc(X,Y,r,0,TAU);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='#0B1B30';ctx.font='700 '+Math.max(13,r*.7)+'px Inter,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(q>0?'+':q<0?'−':'',X,Y+1);
+    if(sh.labels||sh.values)lab(ctx,X,Y+r+16,'q',''+(j+1),sh.values?'= '+fmt(q,1)+' μC':'',C.fg,'center');
+  });
+  /* διανύσματα δυνάμεων στα επιλεγμένα φορτία */
+  const k=pxN(),LW=S.lw;
+  const val=F=>sh.values?'= '+fN(F)+' N':'';
+  sel.forEach(i=>drawForces(ctx,P,i));
+  /* συνισταμένες στα υπόλοιπα φορτία */
+  if(sh.others)act.forEach(j=>{if(isel(j))return;const f2=forcesOn(j),O=P[j],tt=[O[0]+f2.sx*k,O[1]-f2.sy*k];ctx.globalAlpha=.6;const Ln=arrow(ctx,O[0],O[1],tt[0],tt[1],C.res,2.4*LW,[7,5]);ctx.globalAlpha=1;if(sh.labels&&Ln>3)tipLabel(ctx,O[0],O[1],tt[0],tt[1],'ΣF',''+(j+1),val(f2.F),C.res);});
+  updateStatus();
+  updateTexts();
+  const tOut=$('#tOut');tOut.textContent='t = '+fmt(S.t,3)+' s';
+  const sl=$('#sl_time');if(document.activeElement!==sl)sl.value=S.t;
+  drawCharts();
+}
+
+/* ---------- ένδειξη κατάστασης / υπόμνημα ---------- */
+function updateStatus(){
+  const st=$('#status'),sel=S.sel.filter(i=>i<S.n);
+  let eq=-1;sel.forEach(i=>{const fo=forcesOn(i);if(fo.ab>0&&fo.F<1e-3*fo.ab)eq=i;});
+  let txt='Δύναμη στο '+sel.map(i=>'q'+SUBN[i]).join(', ');
+  if(S.show.values)txt+=': '+sel.map(i=>'ΣF'+SUBN[i]+' = '+fN(forcesOn(i).F)+' N').join(' · ');
+  if(eq>=0)txt='ΙΣΟΡΡΟΠΙΑ στο q'+SUBN[eq]+' (ΣF = 0)';
+  if(S.t>0&&TR.stop==='contact'&&S.t>=TR.dt*(TR.x.length-1)-0.7)txt+=' · επαφή';
+  st.textContent=txt;st.className=eq>=0?'ok':'';
+  $('#legend').hidden=true;
+}
+
+/* ---------- πίνακες τιμών και ανάλυση ---------- */
+const roleBox=el('div','role');roleBox.id='roleBox';
+const roleHint=el('div','hintline');roleHint.id='roleHint';
+const readouts=el('div','readouts');readouts.id='readouts';
+const analysisDyn=el('div','hintline');analysisDyn.style.cssText='margin:0 0 12px;font-size:.84rem;line-height:1.55';
+const dirTxt=a=>{const x=((a%360)+360)%360;return fmt(x,1)+'° από τον +x';};
+function updateTexts(){
+  const sel=S.sel.filter(i=>i<S.n);
+  const tile=(l,v)=>`<div class="readout"><div class="lbl">${l}</div><div class="val">${v}</div></div>`;
+  let h='',hint='',ad='';
+  let r=tile('Μέσο εᵣ',fmt(epsR(),2))+tile('k/εᵣ',(K0/epsR()).toExponential(2).replace('.',',')+' N·m²/C²');
+  sel.forEach((i,ix)=>{
+    const fo=forcesOn(i),np=nullPoint(i),eq=fo.ab>0&&fo.F<1e-3*fo.ab;
+    h+=`<div class="hintline" style="margin:${ix?'14px':'0'} 0 6px;color:var(--text)"><b>Φορτίο <i>q</i><sub>${i+1}</sub></b></div>`;
+    fo.L.forEach(p=>{
+      h+=`<div class="rrow"><span class="rsym" style="color:${C['f'+(p.j+1)]}"><i>F</i><sub>${p.j+1}${i+1}</sub></span><span class="rdesc">${p.rep?'Απωστική':'Ελκτική'} δύναμη στο <i>q</i><sub>${i+1}</sub> από το <i>q</i><sub>${p.j+1}</sub>, <i>r</i><sub>${Math.min(i,p.j)+1}${Math.max(i,p.j)+1}</sub> = ${fmt(p.r,3)} m, <i>F</i><sub>x</sub> = ${fN(p.fx)} N, <i>F</i><sub>y</sub> = ${fN(p.fy)} N</span><span class="badge ${p.rep?'neg':'yes'}">${fN(p.F)} N</span></div>`;
+    });
+    if(fo.L.length>1)h+=`<div class="rrow tot"><span class="rsym" style="color:${C.res}">ΣF</span><span class="rdesc">Συνισταμένη στο <i>q</i><sub>${i+1}</sub>: <i>ΣF</i><sub>x</sub> = ${fN(fo.sx)} N, <i>ΣF</i><sub>y</sub> = ${fN(fo.sy)} N, κατεύθυνση ${eq?'—':dirTxt(fo.ang)}</span><span class="badge ${eq?'part':'yes'}">${fN(fo.F)} N</span></div>`;
+    const nt=S.n<3?'':(np?`Για το <i>q</i><sub>${i+1}</sub>: σημείο μηδενισμού στη θέση ${ptStr(np.x,np.y)}, σε απόσταση ${fmt(np.ra,3)} m από το <i>q</i><sub>${np.a+1}</sub> και ${fmt(np.rb,3)} m από το <i>q</i><sub>${np.b+1}</sub> (${np.between?'ανάμεσά τους':'εκτός του τμήματος που τα ενώνει'}).`:`Για το <i>q</i><sub>${i+1}</sub>: δεν υπάρχει σημείο μηδενισμού (ένα από τα άλλα δύο φορτία είναι μηδενικό ή τα δύο είναι αντίθετα και ίσα).`);
+    if(nt)hint+=(hint?'<br>':'')+nt;
+    ad+=(ad?'<br>':'')+`<b><i>q</i><sub>${i+1}</sub>:</b> ΣF = ${fN(fo.F)} N`+(fo.L.length>1&&!eq?` με κατεύθυνση ${dirTxt(fo.ang)}`:'')+'. '+(eq?'Η συνισταμένη είναι μηδέν· το φορτίο ισορροπεί (ασταθώς, αφού οι ηλεκτροστατικές δυνάμεις δεν δίνουν ευσταθή ισορροπία μόνες τους).':'');
+    const pp=posOf(i);
+    r+=tile('θέση <i>q</i><sub>'+(i+1)+'</sub>',ptStr(pp.x,pp.y))+tile('|ΣF|<sub>'+(i+1)+'</sub>',fN(fo.F)+' N')+tile('φ<sub>'+(i+1)+'</sub>',eqOrAng(fo));
+  });
+  if(S.n<3)hint='Με δύο φορτία δεν υπάρχει σημείο μηδενισμού: η δύναμη μεταξύ τους δεν μηδενίζεται ποτέ. Πρόσθεσε τρίτο φορτίο από τις Ρυθμίσεις.';
+  if(h!==lastRole){roleBox.innerHTML=h;lastRole=h;}
+  if(roleHint.innerHTML!==hint)roleHint.innerHTML=hint;
+  if(S.allT){
+    for(let j=0;j<S.n;j++){if(sel.includes(j))continue;const f=forcesOn(j);r+=tile('|ΣF|<sub>'+(j+1)+'</sub>',fN(f.F)+' N');}
+    for(let a=0;a<S.n;a++)for(let b=a+1;b<S.n;b++){const pa=posOf(a),pb=posOf(b),d=Math.hypot(pa.x-pb.x,pa.y-pb.y);r+=tile('<i>r</i><sub>'+(a+1)+(b+1)+'</sub>',fmt(d,3)+' m');r+=tile('<i>U</i><sub>'+(a+1)+(b+1)+'</sub>',fN(K0*S.ch[a].q*S.ch[b].q*1e-12/(epsR()*Math.max(d,1e-6)))+' J');}
+  }
+  if(r!==lastRO){readouts.innerHTML=r;lastRO=r;}
+  readouts.hidden=false;
+  const ad2=`<b>Τώρα:</b><br>${ad}<br>${hint}`;
+  if(analysisDyn.innerHTML!==ad2)analysisDyn.innerHTML=ad2;
+}
+const eqOrAng=fo=>(fo.ab>0&&fo.F<1e-3*fo.ab)?'—':fmt(fo.ang,1)+'°';
+
+/* ---------- διαγράμματα ---------- */
+const chartDefs=[
+  {title:'|ΣF| στο φορτίο-στόχο, συναρτήσει του χρόνου t',draw:cvT=>chartT(cvT)},
+  {title:'Δυνάμεις F συναρτήσει της απόστασης r',draw:cvT=>chartR(cvT)},
+  {title:'|ΣF| συναρτήσει του φορτίου-στόχου q',draw:cvT=>chartQ(cvT)}
+];
+const cells=[];
+function buildChartCells(){
+  const box=$('#charts');
+  chartDefs.forEach((d,ix)=>{const c=el('div','cell');c.innerHTML='<canvas></canvas><span class="tag">'+d.title+'</span>';box.appendChild(c);cells.push({cell:c,cv:$('canvas',c),def:d});});
+  const c0=cells[0].cv;let down=false;
+  const scrub=e=>{const r=c0.getBoundingClientRect();const x=(e.clientX-r.left-CH.L)/(r.width-CH.L-CH.R);S.t=clamp(x,0,1)*S.tmax;S.playing=false;updatePlay();dirty=true;};
+  c0.addEventListener('pointerdown',e=>{down=true;c0.setPointerCapture(e.pointerId);scrub(e);});
+  c0.addEventListener('pointermove',e=>{if(down)scrub(e);});
+  c0.addEventListener('pointerup',()=>{down=false;});c0.addEventListener('pointercancel',()=>{down=false;});
+}
+const CH={L:50,R:14,T:36,B:30};
+const tk=v=>{const a=Math.abs(v);return a>=100?fmt(v,0):a>=10?fmt(v,1):fmt(v,2);};
+function niceMax(v){if(!(v>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(v))),m=v/e;return (m<=1?1:m<=2?2:m<=5?5:10)*e;}
+function axes(ctx,w,h,x0,x1,y0,y1,xl,yl){
+  const pw=w-CH.L-CH.R,ph=h-CH.T-CH.B;
+  ctx.fillStyle=CP.stage;ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle=CP.grid;ctx.fillStyle=CP.dim;ctx.lineWidth=1;ctx.font='600 10px '+MONO;
+  for(let k=0;k<=4;k++){const yy=CH.T+ph-ph*k/4;ctx.beginPath();ctx.moveTo(CH.L,yy);ctx.lineTo(CH.L+pw,yy);ctx.stroke();ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(fN(y0+(y1-y0)*k/4),CH.L-5,yy);}
+  for(let k=0;k<=4;k++){const xx=CH.L+pw*k/4;ctx.beginPath();ctx.moveTo(xx,CH.T);ctx.lineTo(xx,CH.T+ph);ctx.stroke();ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(tk(x0+(x1-x0)*k/4),xx,CH.T+ph+5);}
+  ctx.strokeStyle=CP.gridS;ctx.beginPath();ctx.moveTo(CH.L,CH.T);ctx.lineTo(CH.L,CH.T+ph);ctx.lineTo(CH.L+pw,CH.T+ph);ctx.stroke();
+  ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(xl,w-6,h-1);ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(yl,CH.L+4,CH.T-2);
+  return {X:x=>CH.L+pw*(x-x0)/(x1-x0),Y:y=>CH.T+ph-ph*(y-y0)/(y1-y0),pw,ph};
+}
+function dot(ctx,x,y,col){ctx.fillStyle=col;ctx.strokeStyle=CP.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,5,0,TAU);ctx.fill();ctx.stroke();}
+function chartT(cvT){
+  const {w,h,ctx}=fit(cvT);if(!w)return;
+  const fm=Math.max(...TR.f,1e-12),ym=niceMax(fm*1.1);
+  const A=axes(ctx,w,h,0,S.tmax,0,ym,'t (s)','ΣF (N)');
+  ctx.strokeStyle=CP.res;ctx.lineWidth=2.4;ctx.beginPath();
+  TR.f.forEach((f,k)=>{const x=A.X(k*TR.dt),y=A.Y(f);k?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+  const u=clamp(S.t/TR.dt,0,TR.f.length-1),a=Math.floor(u),b=Math.min(TR.f.length-1,a+1),fv=TR.f[a]*(1-(u-a))+TR.f[b]*(u-a);
+  ctx.strokeStyle=CP.dim;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(A.X(S.t),CH.T);ctx.lineTo(A.X(S.t),CH.T+A.ph);ctx.stroke();ctx.setLineDash([]);
+  dot(ctx,A.X(S.t),A.Y(fv),CP.res);
+}
+function chartR(cvT){
+  const {w,h,ctx}=fit(cvT);if(!w)return;
+  const i=S.tgt,qi=S.ch[i].q,eps=epsR(),fo=forcesOn(i);
+  const Fat=(qj,r)=>K0*Math.abs(qi*qj)*1e-12/(eps*r*r);
+  let ym=0.0;fo.L.forEach(p=>{ym=Math.max(ym,Fat(S.ch[p.j].q,0.3),p.F*2.2);});ym=niceMax(ym||1);
+  const A=axes(ctx,w,h,0,1.6,0,ym,'r (m)','F (N)');
+  ctx.save();ctx.beginPath();ctx.rect(CH.L,CH.T,A.pw,A.ph);ctx.clip();
+  fo.L.forEach(p=>{const col=CP['f'+(p.j+1)];ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.beginPath();let st=false;for(let k=0;k<=160;k++){const r=0.04+1.56*k/160,y=A.Y(Fat(S.ch[p.j].q,r));st?ctx.lineTo(A.X(r),y):ctx.moveTo(A.X(r),y);st=true;}ctx.stroke();});
+  ctx.restore();
+  fo.L.forEach(p=>{if(p.r<=1.6&&p.F<=ym)dot(ctx,A.X(p.r),A.Y(p.F),CP['f'+(p.j+1)]);});
+  ctx.font='600 11px '+FONT;ctx.textAlign='right';ctx.textBaseline='top';fo.L.forEach((p,k)=>{ctx.fillStyle=CP['f'+(p.j+1)];ctx.fillText('F'+SUBN[p.j]+SUBN[i],w-10,CH.T+4+k*14);});
+}
+function chartQ(cvT){
+  const {w,h,ctx}=fit(cvT);if(!w)return;
+  const i=S.tgt,p=posOf(i);let Ex=0,Ey=0;
+  for(let j=0;j<S.n;j++)if(j!==i){const b=posOf(j),dx=p.x-b.x,dy=p.y-b.y,r=Math.max(1e-6,Math.hypot(dx,dy)),s=K0*S.ch[j].q*1e-12/(epsR()*r*r*r);Ex+=s*dx;Ey+=s*dy;}
+  const E=Math.hypot(Ex,Ey),ym=niceMax(E*20*1.1||1);
+  const A=axes(ctx,w,h,-20,20,0,ym,'q (μC)','|ΣF| (N)');
+  ctx.strokeStyle=CP.res;ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(A.X(-20),A.Y(E*20));ctx.lineTo(A.X(0),A.Y(0));ctx.lineTo(A.X(20),A.Y(E*20));ctx.stroke();
+  const q=clamp(S.ch[i].q,-20,20);dot(ctx,A.X(q),A.Y(E*Math.abs(q)),CP.res);
+}
+function drawCharts(){cells.forEach(c=>c.def.draw(c.cv));}
+
+/* ---------- πεδία ρυθμίσεων ---------- */
+const syncs=[];
+const r3=v=>Number((+v).toFixed(3));
+function field(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}-n"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label>`+
+    `<div class="inputs"><input type="range" id="${c.id}-r" min="${c.min}" max="${c.max}" step="${c.step}" aria-label="${c.name}">`+
+    `<input type="number" id="${c.id}-n" step="any" aria-label="${c.name} (τιμή)"><span class="unit">${c.unit||''}</span></div>`+(c.note?`<div class="note"></div>`:'');
+  const r=$('input[type=range]',f),n=$('input[type=number]',f),nt=$('.note',f);
+  const sync=()=>{r.value=c.get();if(document.activeElement!==n)n.value=r3(c.get());if(nt)nt.textContent=c.note();};
+  r.addEventListener('input',()=>{c.set(+r.value);n.value=r3(r.value);if(nt)nt.textContent=c.note();dirty=true;});
+  n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)){c.set(v);r.value=v;if(nt)nt.textContent=c.note();dirty=true;}});
+  n.addEventListener('blur',sync);
+  parent.appendChild(f);sync();syncs.push(sync);return f;
+}
+const refreshAll=()=>syncs.forEach(f=>f());
+function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
+const dij=(a,b)=>Math.hypot(S.ch[a].x-S.ch[b].x,S.ch[a].y-S.ch[b].y);
+function setDist(a,b,v){v=Math.max(DMIN,v);const A=S.ch[a],B=S.ch[b];let dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy);if(d<1e-9){dx=1;dy=0;d=1;}B.x=A.x+dx/d*v;B.y=A.y+dy/d*v;S.mode='free';S.t=0;touch();updateModeChips();}
+let modeChips=[],cfg3=null,cfgHW=null,epsField=null;
+const MODES=[['line','Ευθεία'],['right','Ορθογώνιο τρίγωνο'],['equi','Ισόπλευρο τρίγωνο'],['isos','Ισοσκελές τρίγωνο'],['free','Ελεύθερη']];
+function updateModeChips(){
+  modeChips.forEach(([m,b])=>{b.classList.toggle('on',S.mode===m);b.setAttribute('aria-pressed',S.mode===m);});
+  if(cfgHW)cfgHW.hidden=!(S.n===3&&(S.mode==='right'||S.mode==='isos'));
+}
+function syncTgtBtns(){
+  $$('#tgtSeg button[data-t]').forEach(b=>{const j=+b.dataset.t,on=S.sel.includes(j);b.classList.toggle('active',on);b.setAttribute('aria-pressed',on);b.hidden=j>=S.n;});
+  const all=$('#tgtAll');if(all){all.hidden=S.n<2;all.classList.toggle('active',S.sel.length>=S.n&&S.n>=2);}
+}
+function resetT(){S.t=0;S.playing=false;updatePlay();touch();}
+function setTarget(i){if(i>=S.n)i=0;S.sel=[i];S.tgt=i;syncTgtBtns();resetT();}
+function toggleTarget(i){
+  if(i>=S.n)return;
+  const k=S.sel.indexOf(i);
+  if(k>=0){if(S.sel.length>1){S.sel.splice(k,1);if(S.tgt===i)S.tgt=S.sel[S.sel.length-1];}}
+  else{S.sel.push(i);S.tgt=i;}
+  syncTgtBtns();resetT();
+}
+function selectAll(){S.sel=[];for(let j=0;j<S.n;j++)S.sel.push(j);if(!S.sel.includes(S.tgt))S.tgt=S.sel[0];syncTgtBtns();resetT();}
+function setN(n){
+  S.n=n;
+  if(n===3&&S.mode==='free'){const c=S.ch[2];c.x=0;c.y=0.7;}
+  if(S.mode!=='free')applyLayout();
+  S.sel=S.sel.filter(i=>i<n);if(!S.sel.length)S.sel=[0];if(S.tgt>=n)S.tgt=S.sel[0];
+  if(cfg3)cfg3.hidden=n<3;
+  syncD3();
+  syncTgtBtns();updateModeChips();refreshAll();S.t=0;touch();
+}
+function buildSettings(b){
+  /* διάταξη */
+  b.appendChild(el('div','hintline','Διάταξη των φορτίων (μπορείς πάντα να τα σύρεις ελεύθερα στο επίπεδο)'));
+  const chips=el('div','chips');chips.style.margin='6px 0 10px';
+  MODES.forEach(([m,t])=>{const x=el('button','chip',t);x.type='button';x.addEventListener('click',()=>{if(m==='free')return;S.d=S.d;applyLayout(m);updateModeChips();refreshAll();});chips.appendChild(x);modeChips.push([m,x]);});
+  b.appendChild(chips);
+  const t3=el('label','checkline','<input type="checkbox" id="c-n3"> Τρίτο φορτίο q₃');b.appendChild(t3);
+  $('input',t3).addEventListener('change',e=>setN(e.target.checked?3:2));
+  field(b,{id:'c-d',name:'Πλευρά / απόσταση',sym:'<i>d</i>',unit:'m',min:0.2,max:1.4,step:0.01,get:()=>S.d,set:v=>{S.d=clamp(v,0.1,3);if(S.mode!=='free')applyLayout();touch();}});
+  cfgHW=el('div');b.appendChild(cfgHW);cfgHW.hidden=true;
+  field(cfgHW,{id:'c-h',name:'Δεύτερη διάσταση (κάθετη πλευρά / ύψος)',sym:'<i>h</i>',unit:'m',min:0.1,max:1.2,step:0.01,get:()=>S.h,set:v=>{S.h=clamp(v,0.1,3);if(S.mode!=='free')applyLayout();touch();}});
+  /* φορτία */
+  b.appendChild(el('div','hintline','Φορτία (αρνητικές τιμές = αρνητικό φορτίο)'));
+  [0,1].forEach(j=>field(b,{id:'c-q'+j,name:'Φορτίο',sym:'<i>q</i><sub>'+(j+1)+'</sub>',unit:'μC',min:-20,max:20,step:0.1,get:()=>S.ch[j].q,set:v=>{S.ch[j].q=clamp(v,-1000,1000);S.t=0;touch();}}));
+  cfg3=el('div');b.appendChild(cfg3);cfg3.hidden=true;
+  field(cfg3,{id:'c-q2',name:'Φορτίο',sym:'<i>q</i><sub>3</sub>',unit:'μC',min:-20,max:20,step:0.1,get:()=>S.ch[2].q,set:v=>{S.ch[2].q=clamp(v,-1000,1000);S.t=0;touch();}});
+  const qp=el('div','addrow');qp.style.margin='-4px 0 12px';
+  [['q₁ = −q₁',()=>{S.ch[0].q*=-1;}],['q₂ = −q₂',()=>{S.ch[1].q*=-1;}],['q₃ = −q₃',()=>{S.ch[2].q*=-1;}],['Ίσα φορτία',()=>{const q=S.ch[0].q;S.ch[1].q=q;S.ch[2].q=q;}]].forEach(([n,fn])=>{const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{fn();S.t=0;touch();refreshAll();});qp.appendChild(x);});
+  b.appendChild(qp);
+  /* αποστάσεις */
+  b.appendChild(el('div','hintline','Αποστάσεις μεταξύ των κέντρων'));
+  field(b,{id:'c-r12',name:'Απόσταση',sym:'<i>r</i><sub>12</sub>',unit:'m',min:0.1,max:2,step:0.01,get:()=>dij(0,1),set:v=>setDist(0,1,v)});
+  const d3=el('div');b.appendChild(d3);d3.id='cfgD3';
+  field(d3,{id:'c-r13',name:'Απόσταση',sym:'<i>r</i><sub>13</sub>',unit:'m',min:0.1,max:2,step:0.01,get:()=>dij(0,2),set:v=>setDist(0,2,v)});
+  field(d3,{id:'c-r23',name:'Απόσταση',sym:'<i>r</i><sub>23</sub>',unit:'m',min:0.1,max:2,step:0.01,get:()=>dij(1,2),set:v=>setDist(1,2,v)});
+  syncD3=()=>{d3.hidden=S.n<3;};syncD3();
+  {const nb=el('button','btn secondary small','Μετάβαση του φορτίου-στόχου στο σημείο μηδενισμού');nb.type='button';nb.style.margin='2px 0 14px';nb.addEventListener('click',()=>{const np=nullPoint(S.tgt);if(!np)return;S.ch[S.tgt].x=np.x;S.ch[S.tgt].y=np.y;S.mode='free';S.t=0;updateModeChips();touch();refreshAll();});b.appendChild(nb);}
+  /* μέσο */
+  b.appendChild(el('div','hintline','Υλικό μέσο μέσα στο οποίο βρίσκονται τα φορτία'));
+  const ms=el('select');ms.id='medSel';ms.style.cssText='width:100%;margin:6px 0 10px';
+  MED.forEach(([id,t,e])=>{const o=el('option','',t+(e?' (εᵣ = '+fmt(e,e<2?4:1).replace(/,?0+$/,'')+')':''));o.value=id;ms.appendChild(o);});
+  ms.value=S.medium;b.appendChild(ms);
+  epsField=el('div');b.appendChild(epsField);epsField.hidden=true;
+  field(epsField,{id:'c-eps',name:'Σχετική διηλεκτρική σταθερά',sym:'<i>ε</i><sub>r</sub>',unit:'',min:1,max:100,step:0.5,get:()=>S.epsC,set:v=>{S.epsC=clamp(v,1,1000);S.t=0;touch();}});
+  ms.addEventListener('change',()=>{S.medium=ms.value;epsField.hidden=S.medium!=='custom';S.t=0;touch();});
+  const ep=el('div','hintline','Η δύναμη Coulomb σε υλικό είναι εᵣ φορές μικρότερη από ό,τι στο κενό: F = k·|q₁q₂| / (εᵣ·r²).');b.appendChild(ep);
+  /* κίνηση */
+  b.appendChild(el('div','hintline','Για το κουμπί «Εκκίνηση»'));
+  field(b,{id:'c-m',name:'Μάζα του φορτίου-στόχου',sym:'<i>m</i>',unit:'g',min:1,max:1000,step:1,get:()=>S.mass*1000,set:v=>{S.mass=clamp(v/1000,1e-6,1e4);S.t=0;touch();}});
+}
+let syncD3=()=>{};
+function buildToggles(b){
+  const vt=el('div','vector-toggles');b.appendChild(vt);
+  const mk=(row,k,t,cv)=>{
+    const l=el('label','',`<input type="checkbox" id="sh-${k}"${S.show[k]?' checked':''}><span class="swatch" style="background:${cv?`var(${CSSV[cv]})`:'var(--textDim)'}"></span>${t}`);
+    $('input',l).addEventListener('change',e=>{S.show[k]=e.target.checked;dirty=true;});row.appendChild(l);
+  };
+  const R1=el('div','row',`<span class="grp">${UP('Δυνάμεις')}</span>`);vt.appendChild(R1);
+  mk(R1,'part','Επιμέρους δυνάμεις <i>F</i><sub>ji</sub>','f1');mk(R1,'res','<i>ΣF</i> συνισταμένη','res');mk(R1,'others','Συνισταμένες και στα άλλα φορτία','res');
+  const cr=el('div','row');cr.style.marginTop='2px';cr.innerHTML='<span class="grp">'+UP('Σχεδίαση')+'</span>';
+  const cs=el('select');[['para','Παραλληλόγραμμο'],['chain','Ουρά–κεφαλή'],['none','Μόνο διανύσματα από το φορτίο']].forEach(([v,t])=>{const o=el('option','',t);o.value=v;cs.appendChild(o);});cs.value=S.constr;cs.addEventListener('change',()=>{S.constr=cs.value;dirty=true;});cr.appendChild(cs);vt.appendChild(cr);
+  vt.appendChild(el('div','sep'));
+  const R2=el('div','row',`<span class="grp">${UP('Σημείο μηδενισμού')}</span>`);vt.appendChild(R2);
+  mk(R2,'nul','Σημείο μηδενισμού της ΣF','nul');mk(R2,'nline','Ευθεία των δύο άλλων φορτίων',null);
+  vt.appendChild(el('div','sep'));
+  const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
+  mk(R3,'dist','Αποστάσεις <i>r</i>',null);mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'values','Τιμές στο σχήμα',null);mk(R3,'grid','Πλέγμα',null);
+  vt.appendChild(el('div','sep'));
+  const R4=el('div','row',`<span class="grp">${UP('Σύρσιμο')}</span>`);vt.appendChild(R4);
+  const l2=el('label','','<input type="checkbox" id="mg-mag" checked> Μαγνητική έλξη στο σημείο μηδενισμού');$('input',l2).addEventListener('change',e=>{S.magnet=e.target.checked;});R4.appendChild(l2);
+}
+function buildView(b){
+  field(b,{id:'c-vs',name:'Κλίμακα διανυσμάτων (σταθερή)',sym:'×',unit:'',min:0.05,max:5,step:0.05,get:()=>S.vs,set:v=>{S.vs=clamp(v,0.001,1000);}});
+  const ab=el('div','addrow');ab.style.margin='-4px 0 12px';
+  const a1=el('button','btn secondary small','Αυτόματη κλίμακα');a1.type='button';a1.addEventListener('click',()=>{autoScale();refreshAll();});
+  const a2=el('button','btn secondary small','Κλίμακα = 1');a2.type='button';a2.addEventListener('click',()=>{S.vs=1;dirty=true;refreshAll();});
+  ab.appendChild(a1);ab.appendChild(a2);b.appendChild(ab);
+  const sc=el('div','hintline');sc.id='scaleNote';b.appendChild(sc);
+  field(b,{id:'c-lw',name:'Πάχος διανυσμάτων',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
+  field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+}
+function autoScale(){
+  const g=G(),target=0.32*Math.min(g.w,g.h);let mx=1e-12;
+  S.sel.filter(i=>i<S.n).forEach(i=>{const f=forcesOn(i);f.L.forEach(p=>{mx=Math.max(mx,p.F);});mx=Math.max(mx,f.F);});
+  S.vs=clamp(target/(mx*400),0.001,1000);dirty=true;
+}
+function applySnap(j,x,y,g){
+  S.guide=null;
+  if(S.snapLine){
+    const oth=[];for(let k=0;k<S.n;k++)if(k!==j)oth.push(S.ch[k]);
+    const cands=[];
+    if(oth.length===2){const dx=oth[1].x-oth[0].x,dy=oth[1].y-oth[0].y,d=Math.hypot(dx,dy);if(d>1e-6)cands.push({x0:oth[0].x,y0:oth[0].y,ux:dx/d,uy:dy/d,kind:'diag'});}
+    oth.forEach(o=>{cands.push({x0:o.x,y0:o.y,ux:1,uy:0,kind:'h'});cands.push({x0:o.x,y0:o.y,ux:0,uy:1,kind:'v'});});
+    let best=null,bd=14/g.sc;
+    cands.forEach(c=>{const d=Math.abs((x-c.x0)*c.uy-(y-c.y0)*c.ux);if(d<bd){bd=d;best=c;}});
+    if(best){
+      const t=(x-best.x0)*best.ux+(y-best.y0)*best.uy;x=best.x0+best.ux*t;y=best.y0+best.uy*t;S.guide=best;
+      if(S.snapGrid){const st=S.gridStep;if(best.kind==='h')x=Math.round(x/st)*st;else if(best.kind==='v')y=Math.round(y/st)*st;}
+      return {x,y};
+    }
+  }
+  if(S.snapGrid){const st=S.gridStep;x=Math.round(x/st)*st;y=Math.round(y/st)*st;}
+  return {x,y};
+}
+/* ---------- χειρισμός με το ποντίκι / δάχτυλο ---------- */
+const ptrs=new Map();let drag=null,pinch=null;
+const evp=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+function hitCharge(p){
+  const g=G();let best=-1,bd=1e9;
+  for(let j=0;j<S.n;j++){const q=posOf(j),X=W2S(g,q.x,q.y),d=Math.hypot(p.x-X[0],p.y-X[1]);if(d<=chargeR(S.ch[j].q)+10&&d<bd){bd=d;best=j;}}
+  return best;
+}
+cv.addEventListener('pointerdown',e=>{
+  cv.setPointerCapture(e.pointerId);const p=evp(e);ptrs.set(e.pointerId,p);
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,z:S.zoom};drag=null;return;}
+  const hit=hitCharge(p),g=G();
+  drag={id:e.pointerId,hit,x0:p.x,y0:p.y,moved:false,ox:S.px,oy:S.py,off:null};
+  if(hit>=0){const q=posOf(hit);drag.off=[q.x-(p.x-g.cx)/g.sc,q.y+(p.y-g.cy)/g.sc];}
+});
+cv.addEventListener('pointermove',e=>{
+  const p=evp(e);
+  if(!ptrs.has(e.pointerId)){cv.style.cursor=hitCharge(p)>=0?'grab':'default';return;}
+  ptrs.set(e.pointerId,p);
+  if(pinch&&ptrs.size>=2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y)||1;S.zoom=clamp(pinch.z*d/pinch.d,0.3,6);dirty=true;return;}
+  if(!drag||drag.id!==e.pointerId)return;
+  const g=G();
+  if(!drag.moved&&Math.hypot(p.x-drag.x0,p.y-drag.y0)>4){drag.moved=true;if(drag.hit>=0){S.playing=false;S.t=0;updatePlay();trajDirty=true;}cv.classList.add('grabbing');}
+  if(!drag.moved)return;
+  if(drag.hit>=0){
+    const j=drag.hit;let x=(p.x-g.cx)/g.sc+drag.off[0],y=-(p.y-g.cy)/g.sc+drag.off[1];
+    ({x,y}=applySnap(j,x,y,g));
+    for(let k=0;k<S.n;k++)if(k!==j){const o=S.ch[k],dx=x-o.x,dy=y-o.y,d=Math.hypot(dx,dy);if(d<DMIN){const u=d<1e-9?[1,0]:[dx/d,dy/d];x=o.x+u[0]*DMIN;y=o.y+u[1]*DMIN;}}
+    if(S.magnet&&S.sel.includes(j)){const np=nullPoint(j);if(np&&Math.hypot(x-np.x,y-np.y)*g.sc<16){x=np.x;y=np.y;}}
+    S.ch[j].x=x;S.ch[j].y=y;S.mode='free';updateModeChips();touch();refreshAll();
+  }else{S.px=drag.ox-(p.x-drag.x0)/g.sc;S.py=drag.oy+(p.y-drag.y0)/g.sc;dirty=true;}
+});
+function endPtr(e){
+  const had=ptrs.delete(e.pointerId);if(!had)return;
+  if(ptrs.size<2)pinch=null;
+  if(drag&&drag.id===e.pointerId){if(!drag.moved&&drag.hit>=0)toggleTarget(drag.hit);drag=null;S.guide=null;dirty=true;cv.classList.remove('grabbing');}
+}
+cv.addEventListener('pointerup',endPtr);cv.addEventListener('pointercancel',endPtr);
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();const p=evp(e),g=G(),wx=(p.x-g.cx)/g.sc,wy=-(p.y-g.cy)/g.sc;
+  S.zoom=clamp(S.zoom*Math.exp(-e.deltaY*0.0015),0.3,6);
+  const g2={...g,sc:Math.min(g.w/3.4,g.h/2.3)*S.zoom};
+  S.px=wx-(p.x-g.w/2)/g2.sc;S.py=(p.y-g.h/2)/g2.sc+wy;dirty=true;
+},{passive:false});
+$('#camreset').addEventListener('click',()=>{S.zoom=1;S.px=0;S.py=0;dirty=true;});
+
+/* ---------- ήχος (κρότος επαφής) ---------- */
+const AU={on:true,ctx:null};
+function audioInit(){if(AU.ctx)return;try{AU.ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+function audioHit(){
+  if(!AU.on||!AU.ctx)return;
+  try{const c=AU.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(140,t+0.18);g.gain.setValueAtTime(0.5,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.22);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+0.25);}catch(e){}
+}
+
+/* ---------- κύκλος ανανέωσης ---------- */
+let last=performance.now(),hitDone=false;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(trajDirty){simulate();dirty=true;}
+  if(S.playing){
+    const prev=S.t;S.t+=dt*S.speed;
+    const tc=TR.stop==='contact'?TR.dt*(TR.x.length-1)-0.6:null;
+    if(tc!=null&&prev<tc&&S.t>=tc)audioHit();
+    if(S.t>=S.tmax){if(S.loop)S.t=S.t%S.tmax;else{S.t=S.tmax;S.playing=false;updatePlay();}}
+    dirty=true;
+  }
+  if(dirty){dirty=false;render();const sn=$('#scaleNote');if(sn)sn.textContent='Σταθερή κλίμακα: 100 px ↔ '+fN(100/pxN())+' N. Έτσι τα διανύσματα μεγαλώνουν όταν πλησιάζουν τα φορτία και μικραίνουν όταν απομακρύνονται.';}
+  requestAnimationFrame(frame);
+}
+function updatePlay(){const b=$('#playBtn');b.textContent=S.playing?'⏸ Παύση':'▶ Εκκίνηση';b.setAttribute('aria-label',S.playing?'Παύση':'Εκκίνηση');}
+
+/* ---------- χειριστήρια ---------- */
+$('#playBtn').addEventListener('click',()=>{audioInit();if(!S.playing&&S.t>=S.tmax)S.t=0;S.playing=!S.playing;updatePlay();dirty=true;});
+$('#sndBtn').addEventListener('click',e=>{AU.on=!AU.on;if(AU.on)audioInit();e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι');e.currentTarget.classList.toggle('on',AU.on);e.currentTarget.setAttribute('aria-pressed',AU.on);});
+$('#resetBtn').addEventListener('click',()=>{S.t=0;S.playing=false;updatePlay();dirty=true;});
+$('#speedSel').addEventListener('change',e=>S.speed=+e.target.value);
+$('#sl_time').addEventListener('input',e=>{S.t=+e.target.value;S.playing=false;updatePlay();dirty=true;});
+$('#loopChk').addEventListener('change',e=>S.loop=e.target.checked);
+$('#snapGrid').addEventListener('change',e=>{S.snapGrid=e.target.checked;dirty=true;});
+$('#gridStepSel').addEventListener('change',e=>{S.gridStep=+e.target.value;dirty=true;});
+$('#snapLine').addEventListener('change',e=>{S.snapLine=e.target.checked;});
+{const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(!og||k[2]!==g){g=k[2];if(g){og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}else og=sel;}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel'),c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);dirty=true;setTimeout(()=>dirty=true,50);return;}
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    dirty=true;setTimeout(()=>dirty=true,50);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=$('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');dirty=true;}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('#playBtn').click();}
+});
+const ro=new ResizeObserver(()=>{dirty=true;});
+['#stageWrap','#charts'].forEach(s=>ro.observe($(s)));
+window.addEventListener('resize',()=>dirty=true);
+
+/* ---------- εκκίνηση ---------- */
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+const GUIDE_HTML=`<div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<p>Δύο ή τρία σημειακά (σφαιρικά) φορτία αλληλεπιδρούν με δυνάμεις Coulomb. Διαλέγεις σε ποιο φορτίο θες τη συνολική δύναμη και βλέπεις τις επιμέρους δυνάμεις και τη συνισταμένη τους, ενώ σχεδιάζονται διαδραστικά καθώς μετακινείς τα φορτία.</p>
+<h3>Μετακίνηση φορτίων</h3>
+<ul>
+<li><b>Σύρε ένα φορτίο</b> ελεύθερα οπουδήποτε στο επίπεδο. Οι αποστάσεις και τα διανύσματα ενημερώνονται σε πραγματικό χρόνο.</li>
+<li><b>Κλικ σε ένα φορτίο</b> (ή στα κουμπιά «<i>q</i><sub>1</sub>, <i>q</i><sub>2</sub>, <i>q</i><sub>3</sub>» και «Όλα» πάνω από το παράθυρο) προσθέτει ή αφαιρεί το φορτίο από αυτά στα οποία φαίνεται η δύναμη. Μπορείς να δεις δυνάμεις και συνισταμένες σε πολλά φορτία ταυτόχρονα.</li>
+<li><b>Snap</b> (κάτω από το παράθυρο): το «Πλέγμα» κολλάει το φορτίο που σέρνεις σε σημεία του πλέγματος (με επιλογή βήματος), και η «Ευθεία» το κολλάει στην ευθεία που ενώνει τα άλλα δύο φορτία ή σε οριζόντια/κάθετη ευθεία με κάποιο φορτίο. Η ευθεία φαίνεται με διακεκομμένη γραμμή όσο σέρνεις.</li>
+<li>Σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, «↺ Προβολή» για επαναφορά.</li>
+</ul>
+<h3>1. Ρυθμίσεις προσομοίωσης</h3>
+<ul>
+<li>Διάλεξε διάταξη: <b>ευθεία</b>, <b>ορθογώνιο</b>, <b>ισόπλευρο</b> ή <b>ισοσκελές τρίγωνο</b>. Με τα <i>d</i> και <i>h</i> ρυθμίζεις το μέγεθος του σχήματος. Μόλις σύρεις ένα φορτίο, η διάταξη γίνεται «Ελεύθερη».</li>
+<li>Πρόσθεσε <b>τρίτο φορτίο</b> με το τετραγωνάκι.</li>
+<li>Άλλαξε τα φορτία (μC), τις αποστάσεις <i>r</i><sub>12</sub>, <i>r</i><sub>13</sub>, <i>r</i><sub>23</sub> και το υλικό μέσο. Κάθε τιμή μπορεί να πληκτρολογηθεί ελεύθερα.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Εμφάνιση ή απόκρυψη επιμέρους δυνάμεων, συνισταμένης και συνισταμένων στα άλλα φορτία.</li>
+<li>Τρόπος σχεδίασης της συνισταμένης: <b>παραλληλόγραμμο</b> ή <b>ουρά–κεφαλή</b>.</li>
+<li>Η <b>κλίμακα των διανυσμάτων είναι σταθερή</b>, ώστε να φαίνεται πώς αλλάζουν με την απόσταση και το φορτίο. Με «Αυτόματη κλίμακα» ταιριάζεις το μεγαλύτερο διάνυσμα στην οθόνη.</li>
+</ul>
+<h3>Σημείο μηδενισμού</h3>
+<p>Για το φορτίο-στόχο, το σημείο μηδενισμού (σημάδι ⊗ με πράσινο χρώμα) είναι η θέση όπου, αν το τοποθετούσες εκεί, η συνισταμένη των δυνάμεων από τα άλλα δύο φορτία θα ήταν μηδέν. Με την «Μαγνητική έλξη» το φορτίο κολλάει πάνω του όταν το πλησιάζεις και η ΣF γίνεται 0.</p>
+<h3>3. Ανάλυση, 4. Τιμές μεγεθών, 5. Διαγράμματα</h3>
+<p>Η Ανάλυση εξηγεί τη φυσική με παραδείγματα· οι Τιμές δείχνουν αριθμητικά τις συνιστώσες και το μέτρο της ΣF· τα Διαγράμματα δείχνουν πώς αλλάζουν οι δυνάμεις με το χρόνο, την απόσταση και το φορτίο.</p>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση</b> αφήνει ελεύθερο το τελευταίο φορτίο που επέλεξες (με μάζα <i>m</i>) να κινηθεί υπό την ΣF· τα άλλα φορτία μένουν ακλόνητα. Αν πλησιάσει άλλο φορτίο σε επαφή, σταματά (με κρότο, αν ο ήχος είναι ανοιχτός).</li>
+<li><b>Επαναφορά</b> γυρίζει στις αρχικές θέσεις· το ρυθμιστικό χρόνου επιτρέπει να πας σε οποιαδήποτε στιγμή.</li>
+<li><b>Ταχύτητα αναπαραγωγής</b> από ×0,02 ως ×2.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση. Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>`;
+const ANALYSIS_HTML=`<div class="guide phys" style="margin-top:0;padding-top:0;border-top:0">
+<h3>Ο νόμος του Coulomb</h3>
+<p>Δύο σημειακά φορτία <i>q</i><sub>1</sub> και <i>q</i><sub>2</sub> σε απόσταση <i>r</i> ασκούν μεταξύ τους δυνάμεις ίσου μέτρου και αντίθετης φοράς πάνω στην ευθεία που τα ενώνει: <b><i>F</i> = <i>k</i>·|<i>q</i><sub>1</sub><i>q</i><sub>2</sub>| / (<i>ε</i><sub>r</sub>·<i>r</i><sup>2</sup>)</b>, με <i>k</i> = 8,99·10<sup>9</sup> N·m<sup>2</sup>/C<sup>2</sup>. Ομώνυμα φορτία απωθούνται, ετερώνυμα έλκονται. Ο 3ος νόμος του Newton ισχύει: η δύναμη στο <i>q</i><sub>1</sub> από το <i>q</i><sub>2</sub> είναι αντίθετη από τη δύναμη στο <i>q</i><sub>2</sub> από το <i>q</i><sub>1</sub>.</p>
+<h3>Εξάρτηση από απόσταση, φορτίο και υλικό</h3>
+<ul>
+<li>Διπλάσια απόσταση → <b>τετράκις μικρότερη</b> δύναμη (<i>F</i> ∝ 1/<i>r</i><sup>2</sup>).</li>
+<li>Διπλάσιο ένα από τα φορτία → διπλάσια δύναμη (<i>F</i> ∝ |<i>q</i>|).</li>
+<li>Σε υλικό με σχετική διηλεκτρική σταθερά <i>ε</i><sub>r</sub> η δύναμη μειώνεται κατά <i>ε</i><sub>r</sub>: στο νερό (<i>ε</i><sub>r</sub> ≈ 80) είναι 80 φορές μικρότερη απ' ό,τι στον αέρα.</li>
+</ul>
+<h3>Τρία φορτία: αρχή της επαλληλίας</h3>
+<p>Η συνολική δύναμη σε ένα φορτίο είναι το διανυσματικό άθροισμα των δυνάμεων από καθένα από τα άλλα, <b>ΣF</b><sub>i</sub> = Σ<sub>j≠i</sub> <b>F</b><sub>ji</sub>, ανεξάρτητα από την ύπαρξη του τρίτου. Δεν προσθέτουμε μέτρα· προσθέτουμε διανύσματα, με παραλληλόγραμμο ή «ουρά–κεφαλή», ή με συνιστώσες: <i>ΣF</i><sub>x</sub> = Σ<i>F</i><sub>x</sub>, <i>ΣF</i><sub>y</sub> = Σ<i>F</i><sub>y</sub>.</p>
+<h3>Σημείο μηδενισμού</h3>
+<p>Η συνισταμένη στο φορτίο-στόχο μηδενίζεται όταν βρεθεί εκεί όπου τα πεδία των άλλων δύο φορτίων αλληλοεξουδετερώνονται. Για φορτία <i>q</i><sub>a</sub>, <i>q</i><sub>b</sub> σε απόσταση <i>d</i>:</p>
+<ul>
+<li><b>Ομόσημα</b>: το σημείο είναι <b>ανάμεσά τους</b>, πιο κοντά στο μικρότερο φορτίο, σε απόσταση <i>x</i> = <i>d</i>·√|<i>q</i><sub>a</sub>| / (√|<i>q</i><sub>a</sub>| + √|<i>q</i><sub>b</sub>|) από το <i>q</i><sub>a</sub>.</li>
+<li><b>Ετερόσημα</b>: το σημείο είναι <b>έξω από το τμήμα</b> που τα ενώνει, στην πλευρά του μικρότερου κατά μέτρο φορτίου, με λόγο αποστάσεων √(|<i>q</i><sub>a</sub>|/|<i>q</i><sub>b</sub>|). Αν |<i>q</i><sub>a</sub>| = |<i>q</i><sub>b</sub>| δεν υπάρχει σημείο μηδενισμού.</li>
+<li>Το σημείο εξαρτάται μόνο από τα δύο άλλα φορτία, όχι από το φορτίο-στόχο ούτε από το υλικό.</li>
+</ul>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Στατικός ηλεκτρισμός:</b> ένα χτένι που τρίβουμε στα μαλλιά αποκτά φορτίο της τάξης του μC και έλκει κομματάκια χαρτί. Η δύναμη είναι αρκετή για να υπερνικήσει το βάρος τους.</li>
+<li><b>Γιατί το αλάτι διαλύεται στο νερό:</b> οι ιοντικοί δεσμοί Na<sup>+</sup>Cl<sup>−</sup> εξασθενούν 80 φορές στο νερό (<i>ε</i><sub>r</sub> ≈ 80), οπότε τα ιόντα αποχωρίζονται.</li>
+<li><b>Φωτοτυπικό και εκτυπωτής λέιζερ:</b> το τύμπανο φορτίζεται και το φορτισμένο τόνερ έλκεται μόνο στις περιοχές με αντίθετο φορτίο.</li>
+<li><b>Ηλεκτροστατικά φίλτρα:</b> στα φίλτρα καμινάδων τα σωματίδια καπνού φορτίζονται και έλκονται από φορτισμένες πλάκες.</li>
+<li><b>Ατομικός πυρήνας:</b> τα πρωτόνια απωθούνται με δυνάμεις Coulomb· οι ισχυρές πυρηνικές δυνάμεις τα κρατούν δεμένα.</li>
+</ul>
+</div>`;
+let skin='blueprint';try{skin=localStorage.getItem('coulomb-skin')||skin;}catch(e){}
+if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
+{
+  /* κουμπιά φορτίου-στόχου */
+  const seg=$('#tgtSeg');seg.appendChild(el('span','',''));
+  seg.firstChild.style.cssText='align-self:center;font:600 .78rem Inter,sans-serif;color:var(--textDim);margin-right:2px';seg.firstChild.textContent='Δείξε δύναμη στο:';
+  [0,1,2].forEach(j=>{const b=el('button','main-tab-btn','<i>q</i><sub>'+(j+1)+'</sub>');b.type='button';b.dataset.t=j;b.setAttribute('role','tab');b.addEventListener('click',()=>toggleTarget(j));seg.appendChild(b);});
+  {const ab=el('button','main-tab-btn','Όλα');ab.type='button';ab.id='tgtAll';ab.hidden=true;ab.addEventListener('click',selectAll);seg.appendChild(ab);}
+  const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
+  tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
+  rc.appendChild(tp);
+  const t1=mkTab(),t2=mkTab(),t3=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
+  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);
+  t3.b.appendChild(analysisDyn);t3.b.insertAdjacentHTML('beforeend',ANALYSIS_HTML);
+  {const rh=el('div','');rh.style.marginBottom='16px';rh.appendChild(roleBox);rh.appendChild(roleHint);t4.b.appendChild(rh);}
+  {const aw=el('label','checkline','<input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα');aw.style.margin='0 0 4px';aw.id='allWrap';t4.b.appendChild(aw);$('input',aw).addEventListener('change',e=>{S.allT=e.target.checked;lastRO='';dirty=true;});}
+  t4.b.appendChild(readouts);
+  const gp=$('#graphPanel');
+  const ps=[t1.p,t2.p,t3.p,t4.p,gp,t6.p];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  ps.forEach(p=>{p.classList.remove('collapsed');$('#tabBody').appendChild(p);});
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});$$('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});dirty=true;setTimeout(()=>{dirty=true;},60);};
+  names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
+  show(0);
+}
+let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom-v2')||1;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom-v2',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
+buildChartCells();updatePlay();
+setSkin(skin);applyLayout('line');setTarget(0);updateModeChips();refreshAll();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
+window.__coul={G,S,forcesOn,nullPoint,simulate,applyLayout,setN,setTarget,setSkin,render,posOf,get TR(){return TR;}};
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
