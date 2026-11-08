@@ -906,7 +906,7 @@ function draw(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
   const bx=sceneBox(), bw=bx.x1-bx.x0, bh=bx.y1-bx.y0;
-  G.ppm=Math.min(W*0.8/bw,H*0.62/bh)*S.zoom;
+  G.ppm=Math.min(W*0.62/bw,H*0.48/bh)*S.zoom;
   G.OX=W/2-(bx.x0+bx.x1)/2*G.ppm; G.OY=H/2+(bx.y0+bx.y1)/2*G.ppm;
   const Wd=wheels(S.t), car=S.mode==='car';
   const Rpx=[Wd.ws[0].R*G.ppm,Wd.ws[1].R*G.ppm];
