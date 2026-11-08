@@ -1,0 +1,1480 @@
+<title>Κύλιση Τροχού</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="pw"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#CBD5E1; --line:#0F172A; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#64748B;
+  --border:#E2E8F0; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#64748B; --st-grid:rgba(15,23,42,0.06); --st-gridS:#CBD5E1;
+}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#111827;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr2"] header{--text:#F2F4F8;--textDim:#A8B2C2;color:var(--text);}
+:root[data-skin="gr2"] .theme-toggle{--text:#0F172A;--textDim:#4A5870;}
+:root[data-skin="gr2"] .right-col,:root[data-skin="gr2"] #simPanel{--grid:rgba(15,23,42,0.06);}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+:root[data-skin^="rt"]{
+  color-scheme:light;
+  --bg:#EEF2F8; --bg2:#E6ECF4; --panel:#FFFFFF; --panel2:#F4F7FB;
+  --grid:rgba(26,42,68,0.06); --gridStrong:#B7C2D3; --line:#1A2A44; --accent:#B5632C;
+  --accent2:#2563EB; --accent3:#15803D; --text:#1A2A44; --textDim:#66748B;
+  --border:#DDE4EE; --track:#F4F7FB; --shadowCol:rgba(26,42,68,0.12);
+  --danger:#C0392B; --onAccent:#FFFFFF; --radius:8px;
+  --e1:#C27A0E; --e2:#C42A6B; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --st-track:#FBFCFE; --st-text:#1A2A44; --st-dim:#66748B; --st-grid:rgba(26,42,68,0.08); --st-gridS:#A9B6CA;
+}
+:root[data-skin="rt3"] .right-col{
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+:root[data-skin^="rt"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin^="ls"] .tout{color:#8A4F00;font-weight:600;}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n02"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n02"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n03"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#7C3AED;
+  --accent2:#7C3AED; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#6D28D9;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n03"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#6D28D9;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n04"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n04"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#8A4F00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n05"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n05"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n09"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9DB6D6; --line:#0F2342; --accent:#0E9AA7;
+  --accent2:#0E9AA7; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#0B7480;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#E5484D; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#EAF2FB; --st-text:#0F2342; --st-dim:#4A6285; --st-grid:rgba(15,35,66,0.08); --st-gridS:#9DB6D6;
+}
+:root[data-skin="n09"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#0B7480;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n17"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#6E97BE; --line:#F5F8FC; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#FBBF24; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F2342; --st-text:#F5F8FC; --st-dim:#AFC3DA; --st-grid:rgba(143,184,217,0.16); --st-gridS:#6E97BE;
+}
+:root[data-skin="n17"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n19"]{
+  color-scheme:dark;
+  --bg:#0A0A0C; --bg2:#111113; --panel:#17171A; --panel2:#111113;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#5A5A66; --line:#F1F1F3; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#4ADE80; --text:#F1F1F3; --textDim:#A0A0A8;
+  --border:#2B2B30; --track:#0C0C0E; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#F0932B;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0B0B0D; --st-text:#F1F1F3; --st-dim:#A0A0A8; --st-grid:rgba(255,255,255,0.08); --st-gridS:#5A5A66;
+}
+:root[data-skin="n19"] .right-col{--text:#F1F1F3;--textDim:#A0A0A8;--panel:#17171A;--panel2:#111113;--track:#0C0C0E;--border:#2B2B30;--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n42"]{
+  color-scheme:light;
+  --bg:#E9EBEF; --bg2:#DFE2E8; --panel:#F3F4F6; --panel2:#E5E7EB;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F59E0B;
+  --accent2:#F59E0B; --accent3:#15803D; --text:#1F2937; --textDim:#6B7280;
+  --border:#C4C9D1; --track:#D9DCE1; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A5A00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F59E0B; --htext:#1F2937; --hdim:#6B7280;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n42"] .right-col{--text:#1F2937;--textDim:#6B7280;--panel:#F3F4F6;--panel2:#E5E7EB;--track:#D9DCE1;--border:#C4C9D1;--atext:#8A5A00;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+.stage-max{position:absolute;top:8px;left:8px;z-index:5;opacity:.85;}
+.stage-max:hover{opacity:1;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport.one{flex-wrap:nowrap;gap:6px;}
+.transport.one>*{flex:1 1 auto;min-width:0;white-space:nowrap;}
+.transport.one .btn,.transport.one .tbox{height:38px;display:flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;margin:0;padding:0 8px;border-radius:var(--radius);font-size:.82rem;}
+.transport.one .tbox{background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;}
+.transport.one .tbox:hover{border-color:var(--accent2);}
+.transport.one .tbox:has(input:checked){border-color:var(--accent);}
+.transport.one .tbox select{flex:1;min-width:0;width:auto;height:100%;border:0;background:transparent;color:var(--text);padding:0 2px;}
+@media(max-width:760px){.transport.one{flex-wrap:wrap;}.transport.one>*{flex:1 1 45%;}}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+/* ---- ειδικά για τον τροχό ---- */
+:root{--p1:var(--c-ae);--p2:var(--c-th);--p3:var(--c-s);--p4:var(--c-ag);--p5:var(--e2);--p6:var(--car);}
+.frames{display:flex;gap:10px;flex-wrap:wrap;margin-top:0;}
+.frames .vframe{flex:1 1 340px;min-width:0;margin-top:0;}
+.vframe select{max-width:100%;}
+.vector-toggles + .vector-toggles{margin-top:10px;}
+.frames + .vector-toggles{margin-top:10px;}
+.ptcard{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px 2px;margin-bottom:8px;}
+.ptcard .pthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ptcard .pthead .checkline{margin:0;font-weight:600;}
+.ptcard .del{background:transparent;border:1px solid var(--border);color:var(--textDim);border-radius:var(--radius);width:26px;height:26px;cursor:pointer;font-size:.75rem;}
+.ptcard .del:hover{border-color:var(--danger);color:var(--danger);}
+.sol-block{margin-bottom:16px;}
+.sol-block h4{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.86rem;letter-spacing:0;color:var(--atext);margin:0 0 8px;}
+.sol-block .line{font-family:'IBM Plex Mono',monospace;font-size:.82rem;line-height:1.9;overflow-wrap:anywhere;}
+.sol-block .line .res{color:var(--atext);font-weight:600;}
+.sol-note{font-size:.8rem;color:var(--textDim);margin-top:4px;line-height:1.5;}
+.givens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
+.givens-grid .gi{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:.82rem;text-align:center;}
+.givens-grid .gi .k{font-family:'Inter';font-size:.68rem;color:var(--textDim);display:block;margin-bottom:2px;}
+#tabBody .guide h3:not(:first-child){margin-top:14px;}
+#tabBody>.panel .guide + div{margin-top:8px;}
+.stage canvas{touch-action:none;}
+</style>
+
+<div class="app">
+  <header>
+    <div>
+      <h1 id="mainTitle">Κύλιση τροχού</h1>
+      <div class="sub">Σλάβης Τάσος</div>
+    </div>
+    <select class="skin-select" id="skinSel" aria-label="Skins"></select>
+  </header>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap">
+            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση κύλισης τροχού"></canvas></div>
+          </div>
+          <div class="transport one">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline tbox"><input type="checkbox" id="loopChk"> Επανάληψη</label>
+            <label class="checkline tbox"><input type="checkbox" id="stopRev"> Παύση σε κάθε περιστροφή</label>
+            <label class="spd tbox">Ταχύτητα
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.1">×0,1</option>
+                <option value="0.25">×0,25</option>
+                <option value="0.5">×0,5</option>
+                <option value="1">×1</option>
+                <option value="2">×2</option>
+                <option value="5">×5</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="20" step="0.01" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col" id="rightCol">
+      <div class="panel tabs-panel" id="tabsPanel">
+        <div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div>
+        <div id="tabBody">
+          <div class="panel"><div class="panel-body">
+          <div class="solver-toggle" id="bodySeg"><button data-v="wheel" type="button">Τροχός</button><button data-v="disc" type="button">Δίσκος</button><button data-v="spool" type="button">Καρούλι</button></div>
+          <div id="fld_R"></div>
+          <div id="blkRi"><div id="fld_ri"></div><div class="hintline" style="margin:-4px 0 10px">Το καρούλι κυλίεται πάνω στον εσωτερικό του κύλινδρο (ακτίνα r). Ο εξωτερικός δίσκος (R) περνά κάτω από το επίπεδο, όπως σε καρούλι πάνω σε ράγες.</div></div>
+          <div class="solver-toggle" id="planeSeg"><button data-v="flat" type="button">Οριζόντιο</button><button data-v="incline" type="button">Κεκλιμένο</button></div>
+          <div id="blkAlpha"><div id="fld_alpha"></div></div>
+          <div id="fld_v0"></div>
+          <div id="fld_a"></div>
+            <div class="guide"><h3>Νήμα</h3></div>
+          <div class="solver-toggle" id="strSeg"><button data-v="none" type="button">Χωρίς</button><button data-v="h" type="button">Οριζόντιο</button><button data-v="v" type="button">Κατακόρυφο</button></div>
+          <div id="strBlk">
+            <div class="field"><label><span class="name">Σημείο εξόδου από το σώμα</span></label><select id="strExit" style="width:100%" aria-label="Σημείο εξόδου του νήματος"></select></div>
+            <div class="field"><label><span class="name">Φορά του νήματος</span></label><select id="strDir" style="width:100%" aria-label="Φορά του νήματος"></select></div>
+            <div class="field" id="strWindFld"><label><span class="name">Το νήμα τυλίγεται</span></label><select id="strWind" style="width:100%" aria-label="Πού τυλίγεται το νήμα"><option value="inner">στον εσωτερικό κύλινδρο</option><option value="outer">στην εξωτερική περιφέρεια</option></select></div>
+            <div id="fld_L0"></div>
+            <div id="strPtList"></div>
+            <div class="addrow"><button class="btn secondary small" id="addStrPt" type="button">+ Σημείο στο νήμα</button></div>
+            <div class="hintline">Το νήμα βγαίνει εφαπτομενικά από το σώμα και ξετυλίγεται καθώς αυτό κυλίεται. Στο κεκλιμένο επίπεδο, «οριζόντιο» σημαίνει παράλληλο και «κατακόρυφο» κάθετο στο επίπεδο. Όταν η φορά του νήματος το τυλίγει αντί να το ξετυλίγει, το ελεύθερο μήκος μικραίνει. Έως 4 σημεία.</div>
+          </div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+        <div class="frames" id="frames"></div>
+        <div class="vector-toggles">
+          <div class="row">
+            <span class="grp">Εμφάνιση</span>
+            <label><input type="checkbox" data-opt="labels"><span class="swatch" style="background:var(--textDim)"></span>Σύμβολα</label>
+            <label><input type="checkbox" data-opt="vals"><span class="swatch" style="background:var(--gridStrong)"></span>Τιμές στο σχήμα</label>
+            <label><input type="checkbox" data-opt="rdv"><span class="swatch" style="background:var(--gridStrong)"></span>Τιμές πάνω δεξιά</label>
+            <label><input type="checkbox" data-opt="trail"><span class="swatch" style="background:var(--accent)"></span>Ίχνος τροχιάς</label>
+            <label><input type="checkbox" data-opt="dist"><span class="swatch" style="background:var(--accent)"></span>Απόσταση τροχού</label>
+          </div>
+        </div>
+
+            <div style="height:20px"></div>
+            <div id="fld_zoom"></div>
+            <div id="fld_vs"></div>
+            <div id="fld_vw"></div>
+            <button class="btn secondary" id="resetAll" type="button">↺ Επαναφορά ρυθμίσεων</button>
+            <div class="hintline">Σύρε ένα σημείο πάνω στον τροχό για να αλλάξεις τη θέση του. Θετική φορά: προς τα δεξιά (στο κεκλιμένο επίπεδο: προς τα κάτω). Η κάμερα ακολουθεί το κέντρο του τροχού.</div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+          <div id="ptList"></div>
+          <div class="guide"><h3>Προσθήκη σημείου</h3></div>
+          <div class="addrow" id="addRow">
+            <button class="btn secondary small" data-add="top" type="button">+ Κορυφή</button>
+            <button class="btn secondary small" data-add="contact" type="button">+ Επαφή</button>
+            <button class="btn secondary small" data-add="front" type="button">+ Μπροστά</button>
+            <button class="btn secondary small" data-add="back" type="button">+ Πίσω</button>
+            <button class="btn secondary small" data-add="center" type="button">+ Κέντρο</button>
+            <button class="btn secondary small" data-add="free" type="button">+ Ενδιάμεσο</button>
+            <button class="btn secondary small" data-add="inner" id="addInner" type="button" hidden>+ Εσωτερικό</button>
+          </div>
+          <div class="hintline">Γωνία β: από την κορυφή του τροχού, δεξιόστροφα, τη στιγμή t = 0. Έως 6 σημεία.</div>
+          </div></div>
+          <div class="panel" id="tab-solution"><div class="panel-body">
+            <div class="field" style="max-width:260px"><label><span class="name">Σημείο</span></label><select id="solPt" aria-label="Σημείο για τον υπολογισμό"></select></div><div id="solBody"></div>
+            <div class="guide phys" style="margin-top:18px">
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Το σημείο επαφής είναι ακίνητο:</b> όταν ένας τροχός κυλίεται χωρίς ολίσθηση, το σημείο που ακουμπά στο έδαφος έχει στιγμιαία ταχύτητα μηδέν. Γι' αυτό ένα λάστιχο που κυλίεται πιάνει στο δρόμο, ενώ όταν «σκάει» η ολίσθηση (φρένο, πάγος) το αυτοκίνητο χάνει τον έλεγχο.</li>
+<li><b>Η κορυφή κινείται διπλάσια:</b> η ταχύτητα της κορυφής είναι υ<sub>ολ</sub> = 2υ<sub>cm</sub>. Ποδήλατο με 36 km/h έχει την κορυφή της ρόδας στα 72 km/h. Γι' αυτό τα λασπόνερια εκτοξεύονται προς τα πάνω και πίσω.</li>
+<li><b>Η βαλβίδα του ποδηλάτου:</b> το σημείο της περιφέρειας διαγράφει κυκλοειδή καμπύλη. Η κεντρομόλος επιτάχυνσή του ως προς το κέντρο είναι α<sub>κ</sub> = υ<sup>2</sup>/R. Με υ = 10 m/s και R = 0,35 m βγαίνει περίπου 286 m/s², δηλαδή σχεδόν 29 g. Γι' αυτό οι σταγόνες και η λάσπη φεύγουν εφαπτομενικά από τη ρόδα.</li>
+<li><b>Επιταχυνόμενο ποδήλατο:</b> όταν οι πεταλιές αυξάνουν την ταχύτητα, εμφανίζεται και επιτρόχια επιτάχυνση α<sub>επ</sub> = ε·R, και ισχύει α<sub>cm</sub> = ε·R. Με το κουμπί «Σύνθεση α» βλέπεις πώς προστίθενται η α<sub>cm</sub>, η α<sub>επ</sub> και η α<sub>κ</sub>.</li>
+<li><b>Ρόδες σε ανηφόρα και κατηφόρα:</b> στο κεκλιμένο επίπεδο ο τροχός επιταχύνεται ή επιβραδύνεται, και ισχύει πάλι υ<sub>cm</sub> = ω·R. Μπορείς να δοκιμάσεις αρνητική επιτάχυνση για να δεις τι γίνεται όταν ένα ποδήλατο ανεβαίνει και χάνει ταχύτητα.</li>
+<li><b>Κέρμα, μπάλα και κύλινδρος:</b> ένα κέρμα ή ένα βαρέλι που κυλίεται στο πάτωμα ακολουθεί τους ίδιους νόμους κύλισης. Τα σημεία πάνω τους (κορυφή, επαφή, μπροστά, πίσω, κέντρο) έχουν διαφορετική ταχύτητα. Στο κέντρο είναι υ<sub>cm</sub>, στο πίσω σημείο η ταχύτητα είναι κάθετη στην ακτίνα και έχει μέτρο υ<sub>cm</sub>·√2.</li>
+<li><b>Καρούλι και νήμα:</b> όταν τραβάς το νήμα από την κορυφή του εσωτερικού κυλίνδρου, το σημείο του νήματος κινείται με 2υ<sub>cm</sub> ως προς το έδαφος. Έτσι το νήμα τυλίγεται ή ξετυλίγεται καθώς το καρούλι κυλίεται, όπως σε ένα καρούλι κλωστής ή σε ένα ρολό χαρτιού.</li>
+</ul>
+</div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+            <div class="readouts" id="readouts"></div>
+          </div></div>
+          <div class="panel"><div class="panel-body">
+<div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<p>Ένας τροχός, ένας δίσκος ή ένα καρούλι κυλίεται χωρίς ολίσθηση σε οριζόντιο ή κεκλιμένο επίπεδο. Μπορείς να ορίσεις σημεία πάνω στο σώμα (ή στο νήμα) και να δεις τις ταχύτητες και τις επιταχύνσεις τους.</p>
+<h3>1. Ρυθμίσεις προσομοίωσης</h3>
+<ul>
+<li>Διάλεξε <b>Τροχός</b>, <b>Δίσκος</b> ή <b>Καρούλι</b> και <b>Οριζόντιο</b> ή <b>Κεκλιμένο</b> επίπεδο.</li>
+<li>Όρισε την ακτίνα, την αρχική ταχύτητα και την επιτάχυνση του κέντρου μάζας. Κάθε τιμή μπορεί να πληκτρολογηθεί ελεύθερα, και το κουμπί «= 0» τη μηδενίζει.</li>
+<li>Στο <b>Νήμα</b> βάζεις οριζόντιο ή κατακόρυφο νήμα που ξετυλίγεται καθώς το σώμα κυλίεται, και σημεία πάνω του.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Διάλεξε σημείο και τσέκαρε ποια διανύσματα θα φαίνονται: υ<sub>cm</sub>, υ<sub>γρ</sub>, υ<sub>ολ</sub>, α<sub>cm</sub>, α<sub>επ</sub>, α<sub>κ</sub>, α<sub>ολ</sub>.</li>
+<li>Τα κουμπιά <b>Σύνθεση υ</b> και <b>Σύνθεση α</b> δείχνουν με animation πώς σχηματίζεται το συνιστάμενο διάνυσμα.</li>
+<li>Μπορείς να δείξεις το τόξο που διαγράφει το σημείο, τη γωνία θ, το ίχνος της τροχιάς και την απόσταση που διανύει ο τροχός.</li>
+</ul>
+<h3>3. Σημεία</h3>
+<p>Ρύθμισε την απόσταση ρ/R και την αρχική γωνία β. Μπορείς επίσης να σύρεις ένα σημείο πάνω στον τροχό.</p>
+<h3>4. Ανάλυση</h3>
+<p>Δείχνει βήμα βήμα τους υπολογισμούς για το σημείο που διάλεξες, με τις τρέχουσες τιμές.</p>
+<h3>5. Τιμές μεγεθών</h3>
+<p>Πίνακας με τις τιμές των μεγεθών τη στιγμή που βλέπεις.</p>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση / Επαναφορά</b> ξεκινούν ή μηδενίζουν την κίνηση.</li>
+<li><b>Παύση σε κάθε περιστροφή</b>: η κίνηση σταματά στο τέλος κάθε πλήρους περιστροφής.</li>
+<li><b>Ταχύτητα αναπαραγωγής</b>: από ×0,1 ως ×5, και το ρυθμιστικό χρόνου πηγαίνει σε οποιαδήποτε στιγμή.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση. Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const FONT="'Inter',system-ui,sans-serif";
+const NAMES=['Α','Β','Γ','Δ','Ε','Ζ'];
+const TMAX=20;
+
+function newTg(){ return {vcm:false,vrot:false,vtot:false,acm:false,at:false,ac:false,atot:false}; }
+const DEF={
+  body:'wheel', plane:'flat', alpha:20, R:0.5, ri:0.2, v0:2, a:0, speed:0.5, zoom:1, vs:100, vw:100,
+  str:{mode:'none',exit:'top',dir:1,wind:'inner'}, L0:1, compAc:false,
+  pts:[{name:'Α',kind:'wheel',r:1,b:0,on:true,arc:false,ang:false,tg:newTg()}],
+  labels:true, vals:false, trail:false, dist:false, table:true, stopRev:false, solPt:0, loop:true
+};
+let S=clone(DEF);
+S.t=0; S.rdv=true; S.playing=false; S.comp=null; S.frames=[0,1];
+
+function num(v,sig){
+  if(!isFinite(v)) return '—';
+  if(Math.abs(v)<1e-9) return '0';
+  return String(parseFloat(v.toPrecision(sig||3))).replace('.',',');
+}
+const alphaRot=()=>S.plane==='incline'?-S.alpha*Math.PI/180:0;
+/* ακτίνα επαφής με το επίπεδο: στο καρούλι είναι ο εσωτερικός κύλινδρος */
+const contactR=()=>S.body==='spool'?S.ri:S.R;
+const windR=()=>(S.body==='spool'&&S.str.wind==='inner')?S.ri:S.R;
+/* νήμα: D = σημείο εξόδου, e = φορά, ku = dL/dθ (θετικό όταν ξετυλίγεται) */
+function strGeom(){
+  if(S.str.mode==='none') return null;
+  const rw=windR(), d=S.str.dir; let D,e;
+  if(S.str.mode==='h'){ D={s:0,h:S.str.exit==='bottom'?-rw:rw}; e={s:d,h:0}; }
+  else { D={s:S.str.exit==='front'?rw:-rw,h:0}; e={s:0,h:d}; }
+  return {D,e,rw,ku:D.h*e.s-D.s*e.h};
+}
+
+/* ---------- κινηματική ---------- */
+function kin(t){
+  const s=S.v0*t+0.5*S.a*t*t, v=S.v0+S.a*t;
+  const rc=contactR();
+  return {s,v,th:s/rc,om:v/rc,eps:S.a/rc};
+}
+/* συντεταγμένες επιπέδου: s κατά μήκος, h κάθετα. φ = γωνία από την κάθετη, δεξιόστροφα */
+function pointKin(p,k){
+  if(p.kind==='string') return stringKin(p,k);
+  const rho=p.r*S.R, phi=p.b*Math.PI/180+k.th, sn=Math.sin(phi), cs=Math.cos(phi);
+  const r={s:rho*sn,h:rho*cs};
+  const vcm={s:k.v,h:0}, vrot={s:k.om*rho*cs,h:-k.om*rho*sn};
+  const vtot={s:vcm.s+vrot.s,h:vrot.h};
+  const acm={s:S.a,h:0}, at={s:k.eps*rho*cs,h:-k.eps*rho*sn}, ac={s:-k.om*k.om*rho*sn,h:-k.om*k.om*rho*cs};
+  const atot={s:acm.s+at.s+ac.s,h:at.h+ac.h};
+  return {r,vcm,vrot,vtot,acm,at,ac,atot,rho,phi};
+}
+const mag=v=>Math.hypot(v.s,v.h);
+/* υλικό σημείο του νήματος: κινείται μαζί με το κέντρο και, ως προς αυτό, κατά μήκος του νήματος με ρυθμό ku·ω */
+function stringKin(p,k){
+  const g=strGeom(), Z={s:0,h:0};
+  if(!g) return {r:Z,vcm:Z,vrot:Z,vtot:Z,acm:Z,at:Z,ac:Z,atot:Z,rho:0,phi:0,vis:false};
+  const u=p.u0+g.ku*k.th, Lf=Math.max(0,S.L0+g.ku*k.th), vis=u>=0&&u<=Lf+1e-9;
+  const r={s:g.D.s+g.e.s*u,h:g.D.h+g.e.h*u};
+  const vcm={s:k.v,h:0}, vrot={s:g.ku*k.om*g.e.s,h:g.ku*k.om*g.e.h};
+  const vtot={s:vcm.s+vrot.s,h:vrot.h};
+  const acm={s:S.a,h:0}, at={s:g.ku*k.eps*g.e.s,h:g.ku*k.eps*g.e.h};
+  const atot={s:acm.s+at.s,h:at.h};
+  return {r,vcm,vrot,vtot,acm,at,ac:Z,atot,rho:Math.hypot(r.s,r.h),phi:0,vis};
+}
+/* στα σημεία του νήματος το «γρ»/«επ» γίνεται «σχ» (σχετικό, κατά μήκος του νήματος) */
+function dd(d,p){ return (p&&p.kind==='string'&&(d.key==='vrot'||d.key==='at'))?Object.assign({},d,{sub:'σχ'}):d; }
+
+const VD={
+  v:[{key:'vcm',tg:'vcm',n:'υ',sub:'cm',col:'e1',comp:true},{key:'vrot',tg:'vrot',n:'υ',sub:'γρ',col:'e2',comp:true},{key:'vtot',tg:'vtot',n:'υ',sub:'ολ',col:'et',comp:false}],
+  a:[{key:'acm',tg:'acm',n:'α',sub:'cm',col:'e1',comp:true},{key:'at',tg:'at',n:'α',sub:'επ',col:'e2',comp:true},{key:'ac',tg:'ac',n:'α',sub:'κ',col:'blue',comp:true},{key:'atot',tg:'atot',n:'α',sub:'ολ',col:'et',comp:false}]
+};
+
+/* ---------- καμβάς ---------- */
+const cv=$('cv'), ctx=cv.getContext('2d');
+let W=0,H=0,dpr=1,C={};
+const G={ppm:1,AX:0,AY:0,ca:1,sa:0,Rpx:50};
+function colors(){
+  const cs=getComputedStyle(document.documentElement), g=n=>cs.getPropertyValue(n).trim();
+  return {bg:g('--st-track'),grid:g('--st-grid'),axis:g('--st-gridS'),ink:g('--st-text'),muted:g('--st-dim'),acc:g('--car'),
+    e1:g('--e1'),e2:g('--e2'),et:g('--et'),blue:g('--blue'),panel:g('--st-track'),str:g('--danger'),pc:[1,2,3,4,5,6].map(n=>g('--p'+n))};
+}
+function resize(){
+  const r=cv.getBoundingClientRect();
+  dpr=window.devicePixelRatio||1; W=r.width; H=r.height;
+  if(W<2||H<2) return;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+}
+const scr=(ds,dh)=>[G.AX+G.ppm*(ds*G.ca-dh*G.sa), G.AY-G.ppm*(ds*G.sa+dh*G.ca)];
+const dirv=(a,b)=>[a*G.ca-b*G.sa, -(a*G.sa+b*G.ca)];
+
+function line(x0,y0,x1,y1,color,w,dash){
+  ctx.beginPath(); ctx.setLineDash(dash||[]); ctx.lineWidth=w||1; ctx.strokeStyle=color;
+  ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke(); ctx.setLineDash([]);
+}
+function text(t,x,y,color,align,base,font){
+  ctx.font=font||('600 13px '+FONT); ctx.textAlign=align||'center'; ctx.textBaseline=base||'middle';
+  ctx.lineJoin='round'; ctx.lineWidth=4; ctx.strokeStyle=C.bg; ctx.strokeText(t,x,y);
+  ctx.fillStyle=color; ctx.fillText(t,x,y);
+}
+function sym(main,sub,extra,x,y,color,align){
+  ctx.textBaseline='middle'; ctx.textAlign='left'; ctx.lineJoin='round'; ctx.lineWidth=4;
+  const f1='italic 600 15px '+FONT, f2='600 10px '+FONT, f3='600 12px '+FONT;
+  ctx.font=f1; const w1=ctx.measureText(main).width;
+  ctx.font=f2; const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3; const w3=extra?ctx.measureText(extra).width:0;
+  const tw=w1+w2+w3, x0=align==='left'?x:align==='right'?x-tw:x-tw/2;
+  const piece=(t,f,xx,yy)=>{ctx.font=f; ctx.strokeStyle=C.bg; ctx.strokeText(t,xx,yy); ctx.fillStyle=color; ctx.fillText(t,xx,yy);};
+  piece(main,f1,x0,y); if(sub) piece(sub,f2,x0+w1,y+4); if(extra) piece(extra,f3,x0+w1+w2,y);
+}
+function arrow(x0,y0,x1,y1,color,w,dash){
+  const L=Math.hypot(x1-x0,y1-y0); if(L<2) return;
+  const ux=(x1-x0)/L, uy=(y1-y0)/L, h=Math.min(8+w*1.1,L*0.5);
+  line(x0,y0,x1-ux*h*0.6,y1-uy*h*0.6,color,w,dash);
+  ctx.beginPath(); ctx.fillStyle=color;
+  ctx.moveTo(x1,y1); ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45); ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);
+  ctx.closePath(); ctx.fill();
+}
+
+function drawWheel(rot){
+  const R=G.Rpx;
+  ctx.save(); ctx.translate(G.AX,G.AY); ctx.rotate(rot);
+  if(S.body==='disc'){
+    ctx.beginPath(); ctx.arc(0,0,R,0,7); ctx.fillStyle=C.blue; ctx.globalAlpha=.16; ctx.fill(); ctx.globalAlpha=1;
+    ctx.lineWidth=3; ctx.strokeStyle=C.ink; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,R*0.55,0,7); ctx.lineWidth=1; ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+    for(let i=1;i<4;i++){ const a=i*Math.PI/2; line(0,0,R*Math.sin(a),-R*Math.cos(a),C.muted,1); }
+  } else if(S.body==='spool'){
+    const ri=S.ri*G.ppm;
+    ctx.beginPath(); ctx.arc(0,0,R,0,7); ctx.fillStyle=C.blue; ctx.globalAlpha=.14; ctx.fill(); ctx.globalAlpha=1;
+    ctx.lineWidth=3; ctx.strokeStyle=C.ink; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,ri,0,7); ctx.fillStyle=C.panel; ctx.fill(); ctx.lineWidth=Math.max(4,ri*0.12); ctx.strokeStyle=C.acc; ctx.stroke();
+    for(let i=0;i<4;i++){ const a=i*Math.PI/2+Math.PI/4; line(ri*Math.sin(a),-ri*Math.cos(a),R*Math.sin(a),-R*Math.cos(a),C.muted,1.5); }
+  } else {
+    ctx.beginPath(); ctx.arc(0,0,R,0,7); ctx.lineWidth=Math.max(5,R*0.07); ctx.strokeStyle=C.ink; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,0,R*0.86,0,7); ctx.lineWidth=1.5; ctx.strokeStyle=C.muted; ctx.stroke();
+    for(let i=1;i<8;i++){ const a=i*Math.PI/4; line(R*0.1*Math.sin(a),-R*0.1*Math.cos(a),R*0.86*Math.sin(a),-R*0.86*Math.cos(a),C.muted,2.5); }
+  }
+  if(S.str.mode!=='none'){
+    const rw=windR()*G.ppm+(S.body==='spool'&&S.str.wind==='inner'?0:4);
+    ctx.beginPath(); ctx.arc(0,0,rw,0,7); ctx.setLineDash([7,5]); ctx.lineWidth=5; ctx.strokeStyle=C.str; ctx.stroke(); ctx.setLineDash([]);
+  }
+  line(0,0,0,-R*(S.body==='wheel'?0.86:1),C.acc,2.5);
+  ctx.beginPath(); ctx.arc(0,0,Math.max(4,R*0.06),0,7); ctx.fillStyle=C.panel; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.ink; ctx.stroke();
+  ctx.restore();
+}
+
+function kindScale(kind,pks){
+  const Rpx=G.Rpx;
+  const vref=Math.max(Math.abs(S.v0),Math.abs(S.a)*2,1);
+  const aref=Math.max(Math.abs(S.a),S.v0*S.v0*S.R/(contactR()*contactR()),1);
+  /* σταθερή κλίμακα: δεν εξαρτάται από τα τρέχοντα μέτρα, ώστε τα διανύσματα να μη συρρικνώνονται όσο η κίνηση προχωρά */
+  return 1.15*Rpx/(kind==='v'?vref:aref)*S.vs/100;
+}
+/* μήκος διανύσματος στην οθόνη· πολύ μεγάλα διανύσματα (π.χ. ακ όταν ο τροχός επιταχύνεται) κόβονται στο όριο 2,2R χωρίς να αλλάζουν τα υπόλοιπα */
+function vpx(vv,s){
+  const m=mag(vv)*s, cap=G.Rpx*2.2, k=m>cap?cap/m:1;
+  return dirv(vv.s*s*k,vv.h*s*k);
+}
+
+let zeroN=0;
+function drawVec(O,sv,d,vv,kind,prog){
+  const Lf=Math.hypot(sv[0],sv[1]);
+  if(Lf<3){
+    /* διάνυσμα μηδενικού μέτρου: δείξε «= 0» αντί να λείπει χωρίς εξήγηση */
+    if(S.labels&&prog>=0.98&&mag(vv)<1e-6){ sym(d.n,d.sub,' = 0',O[0]+16,O[1]-16-16*zeroN,C[d.col],'left'); zeroN++; }
+    return;
+  }
+  const w=(d.comp?3:4.2)*S.vw/100;
+  arrow(O[0],O[1],O[0]+sv[0]*prog,O[1]+sv[1]*prog,C[d.col],w);
+  if(S.labels&&prog>=0.98&&Lf>=8){
+    const ex=S.vals?' = '+num(mag(vv),3)+(kind==='v'?' m/s':' m/s²'):'';
+    const ux=sv[0]/Lf, uy=sv[1]/Lf;
+    sym(d.n,d.sub,ex,O[0]+sv[0]+ux*11,O[1]+sv[1]+uy*11,C[d.col],ux>0.35?'left':ux<-0.35?'right':'center');
+  }
+}
+
+function drawComp(pi,pk,sc){
+  const c=S.comp, kind=c.kind, pp=S.pts[pi], defs=VD[kind].map(d=>dd(d,pp)), tot=defs.find(d=>!d.comp);
+  /* η κεντρομόλος μπαίνει στη σύνθεση μόνο αν το ζητήσει ο χρήστης */
+  const comps=defs.filter(d=>d.comp&&(d.key!=='ac'||(S.compAc&&pp.kind!=='string')));
+  const O=scr(pk.r.s,pk.r.h);
+  const sum={s:0,h:0}; comps.forEach(d=>{ sum.s+=pk[d.key].s; sum.h+=pk[d.key].h; });
+  /* στη σύνθεση όλα τα διανύσματα έχουν την ίδια κλίμακα, ώστε το παραλληλόγραμμο/πολύγωνο να κλείνει */
+  { const mx=Math.max(mag(sum),...comps.map(d=>mag(pk[d.key])))*sc, capc=G.Rpx*2.2; if(mx>capc) sc*=capc/mx; }
+  const vecs=comps.map(d=>dirv(pk[d.key].s*sc,pk[d.key].h*sc));
+  const tv=dirv(sum.s*sc,sum.h*sc);
+  const t=c.t, g1=clamp(t/0.25,0,1), g3=clamp((t-0.65)/0.35,0,1);
+  const ghost=(x,y,v,g,col)=>{ if(g>0&&Math.hypot(v[0],v[1])>2) arrow(x,y,x+v[0]*g,y+v[1]*g,col,2,[6,5]); };
+  if(kind==='v'){
+    const g2=clamp((t-0.25)/0.4,0,1);
+    ghost(O[0]+vecs[1][0],O[1]+vecs[1][1],vecs[0],g2,C[comps[0].col]);
+    ghost(O[0]+vecs[0][0],O[1]+vecs[0][1],vecs[1],g2,C[comps[1].col]);
+  } else {
+    let bx=0,by=0;
+    for(let i=0;i<comps.length;i++){
+      if(i>0) ghost(O[0]+bx,O[1]+by,vecs[i],clamp((t-0.25-(i-1)*0.2)/0.2,0,1),C[comps[i].col]);
+      bx+=vecs[i][0]; by+=vecs[i][1];
+    }
+  }
+  comps.forEach((d,i)=>drawVec(O,vecs[i],d,pk[d.key],kind,g1));
+  if(g3>0) drawVec(O,tv,tot,sum,kind,g3);
+  const nm=S.pts[pi].name;
+  let cap;
+  if(t<0.25) cap='1. Σχεδιάζουμε στο σημείο '+nm+' τα συστατικά διανύσματα.';
+  else if(t<0.65) cap=kind==='v'?'2. Μεταφέρουμε τα διανύσματα παράλληλα: κανόνας παραλληλογράμμου.':'2. Μεταφέρουμε τα διανύσματα ουρά–κεφαλή: κανόνας πολυγώνου.';
+  else cap='3. Η συνισταμένη ξεκινά από το '+nm+' και κλείνει το σχήμα.';
+  text(cap,14,18,C.ink,'left','middle','600 13px '+FONT);
+  text(tot.n+tot.sub+' = '+comps.map(d=>d.n+d.sub).join(' + '),14,40,C.et,'left','middle','600 13px '+FONT);
+}
+
+function draw(){
+  if(W<2||H<2) return;
+  C=colors();
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+  const k=kin(S.t), al=alphaRot(), rc=contactR();
+  G.ca=Math.cos(al); G.sa=Math.sin(al);
+  G.Rpx=Math.max(24,0.2*Math.min(H,W*0.6)*S.zoom);
+  G.ppm=G.Rpx/S.R; G.AX=W/2; G.AY=H*0.5;
+  const ppm=G.ppm;
+
+  /* έδαφος και υποδιαιρέσεις */
+  const span=(W+H)/ppm*1.2;
+  const p0=scr(-span,-rc), p1=scr(span,-rc), nb=dirv(0,-1), u=dirv(1,0);
+  ctx.beginPath(); ctx.moveTo(p0[0],p0[1]); ctx.lineTo(p1[0],p1[1]);
+  ctx.lineTo(p1[0]+nb[0]*90,p1[1]+nb[1]*90); ctx.lineTo(p0[0]+nb[0]*90,p0[1]+nb[1]*90); ctx.closePath();
+  ctx.globalAlpha=0.14; ctx.fillStyle=C.axis; ctx.fill(); ctx.globalAlpha=1;
+  const steps=[0.05,0.1,0.2,0.25,0.5,1,2,5,10,20,50,100,200,500];
+  const step=steps.find(x=>x*ppm>=80)||500;
+  const inView=q=>q[0]>-60&&q[0]<W+60&&q[1]>-120&&q[1]<H+120;
+  for(let i=Math.floor((k.s-span)/step);i<=Math.ceil((k.s+span)/step);i++){
+    const sp=i*step, q=scr(sp-k.s,-rc);
+    for(let j=1;j<5;j++){
+      const q2=scr(sp+j*step/5-k.s,-rc);
+      if(inView(q2)) line(q2[0],q2[1],q2[0]+nb[0]*9-u[0]*6,q2[1]+nb[1]*9-u[1]*6,C.axis,1);
+    }
+    if(!inView(q)) continue;
+    line(q[0],q[1],q[0]+nb[0]*15,q[1]+nb[1]*15,C.axis,2);
+    const lab=(Math.abs(sp-Math.round(sp))<1e-9?String(Math.round(sp)):sp.toFixed(step<0.1?2:1).replace('.',','))+' m';
+    text(lab,q[0]+nb[0]*30,q[1]+nb[1]*30,C.muted,'center','middle','500 11px '+FONT);
+  }
+  line(p0[0],p0[1],p1[0],p1[1],C.axis,2.5);
+
+  /* απόσταση που διανύει ο τροχός */
+  if(S.dist&&Math.abs(k.s)>1e-4){
+    const a0=scr(-k.s,-rc), a1=scr(0,-rc), up=dirv(0,1);
+    ctx.lineCap='round'; line(a0[0],a0[1],a1[0],a1[1],C.acc,5); ctx.lineCap='butt';
+    [a0,a1].forEach(q=>line(q[0],q[1],q[0]+nb[0]*54,q[1]+nb[1]*54,C.acc,1.5,[3,3]));
+    const d0=[a0[0]+nb[0]*48,a0[1]+nb[1]*48], d1=[a1[0]+nb[0]*48,a1[1]+nb[1]*48];
+    arrow(d1[0],d1[1],d0[0],d0[1],C.acc,2); arrow(d0[0],d0[1],d1[0],d1[1],C.acc,2);
+    const Ld=Math.hypot(d0[0]-d1[0],d0[1]-d1[1]), fr=Math.min(0.5,150/Math.max(Ld,1));
+    text('s = '+num(k.s,3)+' m',d1[0]+(d0[0]-d1[0])*fr+nb[0]*16,d1[1]+(d0[1]-d1[1])*fr+nb[1]*16,C.acc,'center','middle','700 13px '+FONT);
+    text('αρχή',a0[0]+up[0]*14,a0[1]+up[1]*14,C.muted,'center','middle','500 11px '+FONT);
+  }
+
+  /* δείκτης γωνίας κλίσης */
+  if(S.plane==='incline'){
+    const a=S.alpha*Math.PI/180, fx=Math.min(150,W*0.3), fy=H-26, Lh=Math.min(110,W*0.25);
+    const tx=fx-Lh*Math.cos(a), ty=fy-Lh*Math.sin(a);
+    line(fx-Lh,fy,fx,fy,C.muted,1,[4,4]); line(tx,ty,fx,fy,C.axis,2);
+    ctx.beginPath(); ctx.arc(fx,fy,34,Math.PI,Math.PI+a); ctx.lineWidth=1.5; ctx.strokeStyle=C.acc; ctx.stroke();
+    text('φ = '+num(S.alpha,3)+'°',fx-52*Math.cos(a/2)-10,fy-52*Math.sin(a/2),C.acc,'center','middle','600 12px '+FONT);
+  }
+
+  const pks=S.pts.map(p=>pointKin(p,k));
+
+  /* ίχνος τροχιάς */
+  if(S.trail){
+    const vNow=Math.max(Math.abs(k.v),0.15);
+    const Tw=Math.min(S.t,clamp(2*Math.PI*rc/vNow,0.5,20));
+    if(Tw>0.01) S.pts.forEach((p,i)=>{
+      if(!p.on||p.kind==='string') return;
+      ctx.beginPath();
+      const N=200;
+      for(let n=0;n<=N;n++){
+        const tau=S.t-Tw+Tw*n/N, kk=kin(tau), q=pointKin(p,kk);
+        const P=scr(kk.s+q.r.s-k.s,q.r.h);
+        if(n===0) ctx.moveTo(P[0],P[1]); else ctx.lineTo(P[0],P[1]);
+      }
+      ctx.lineWidth=2; ctx.strokeStyle=C.pc[i%6]; ctx.globalAlpha=0.75; ctx.stroke(); ctx.globalAlpha=1;
+    });
+  }
+
+  drawWheel(k.th-al);
+
+  /* νήμα */
+  let legN=0;
+  const sg=strGeom();
+  if(sg){
+    const dl=sg.ku*k.th, Lf=Math.max(0,S.L0+dl);
+    if(Lf>1e-6){
+      const a=scr(sg.D.s,sg.D.h), b=scr(sg.D.s+sg.e.s*Lf,sg.D.h+sg.e.h*Lf);
+      ctx.lineCap='round'; line(a[0],a[1],b[0],b[1],C.str,3.5); ctx.lineCap='butt';
+      ctx.beginPath(); ctx.arc(b[0],b[1],5,0,7); ctx.fillStyle=C.str; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.bg; ctx.stroke();
+    }
+    text('νήμα:  L = '+num(Lf,3)+' m  ·  '+(dl>=0?'ξετυλίχθηκε ':'τυλίχθηκε ')+num(Math.abs(dl),3)+' m',W-14,18+20*legN++,C.str,'right','middle','700 12px '+FONT);
+  }
+
+  /* τόξο και γωνία που διαγράφει το σημείο γύρω από το κέντρο */
+  const arcRho=[]; let angN=0;
+  S.pts.forEach((p,pi)=>{
+    if(p.kind==='string'||!p.on||(!p.arc&&!p.ang)) return;
+    const col=C.pc[pi%6], th=k.th, rho=p.r*G.Rpx;
+    if(rho<3||Math.abs(th)<1e-4) return;
+    const full=Math.abs(th)>=2*Math.PI, span=full?Math.sign(th)*2*Math.PI:th, a0=p.b*Math.PI/180;
+    const at=(a,r)=>[G.AX+r*(Math.sin(a)*G.ca-Math.cos(a)*G.sa), G.AY-r*(Math.sin(a)*G.sa+Math.cos(a)*G.ca)];
+    const N=Math.max(8,Math.ceil(Math.abs(span)/0.06));
+    const trace=r=>{ ctx.beginPath(); for(let n=0;n<=N;n++){ const q=at(a0+span*n/N,r); if(n===0) ctx.moveTo(q[0],q[1]); else ctx.lineTo(q[0],q[1]); } };
+    if(p.arc){
+      let off=0; arcRho.forEach(q=>{ if(Math.abs(q-rho)<8) off+=7; }); arcRho.push(rho);
+      trace(Math.max(3,rho-off));
+      ctx.lineWidth=4.5; ctx.strokeStyle=col; ctx.lineCap='round'; ctx.stroke(); ctx.lineCap='butt';
+    }
+    if(p.ang){
+      const ra=Math.max(12,Math.min(0.45*rho,0.42*G.Rpx)-9*angN++);
+      const qs=at(a0,rho), qe=at(a0+span,rho);
+      line(G.AX,G.AY,qs[0],qs[1],col,1.5,[5,4]); line(G.AX,G.AY,qe[0],qe[1],col,2);
+      trace(ra); ctx.lineWidth=2.5; ctx.strokeStyle=col; ctx.stroke();
+      const ql=at(a0+span/2,ra+13);
+      text('θ',ql[0],ql[1],col,'center','middle','italic 700 15px '+FONT);
+    }
+    text(p.name+':  θ = '+num(Math.abs(th),3)+' rad'+(full?' ('+num(Math.abs(th)/(2*Math.PI),2)+' στρ.)':'')+(p.arc?'  ·  τόξο = '+num(Math.abs(th)*p.r*S.R,3)+' m':''),W-14,18+20*legN++,col,'right','middle','700 12px '+FONT);
+  });
+  /* τιμές των επιλεγμένων μεγεθών πάνω δεξιά */
+  if(S.rdv){
+    S.pts.forEach((p,i)=>{
+      if(!p.on||pks[i].vis===false) return;
+      ['v','a'].forEach(kind=>VD[kind].forEach(d0=>{
+        if(!p.tg[d0.tg]) return;
+        const d=dd(d0,p), vv=pks[i][d.key], un=kind==='v'?' m/s':' m/s²';
+        const t=p.name+':  '+d.n+d.sub+' = '+num(mag(vv),3)+un+(kind==='v'?'':'');
+        text(t,W-14,18+20*legN++,C[d.col],'right','middle','700 12px '+FONT);
+      }));
+    });
+  }
+  /* ακτίνα */
+  if(S.vals){
+    const cp=scr(0,-rc);
+    line(G.AX,G.AY,cp[0],cp[1],C.muted,1.5,[5,4]);
+    text((S.body==='spool'?'r = ':'R = ')+num(rc,3)+' m',(G.AX+cp[0])/2+nb[0]*0+16,(G.AY+cp[1])/2,C.muted,'left','middle','600 12px '+FONT);
+  }
+
+  /* διανύσματα */
+  zeroN=0;
+  const sc={v:kindScale('v',pks),a:kindScale('a',pks)};
+  S.pts.forEach((p,i)=>{
+    if(!p.on||pks[i].vis===false) return;
+    const O=scr(pks[i].r.s,pks[i].r.h);
+    ['v','a'].forEach(kind=>{
+      if(S.comp&&S.comp.kind===kind&&S.comp.pt===i) return;
+      VD[kind].forEach(d=>{
+        if(!p.tg[d.tg]) return;
+        const vv=pks[i][d.key];
+        drawVec(O,vpx(vv,sc[kind]),dd(d,p),vv,kind,1);
+      });
+    });
+  });
+  if(S.comp&&S.pts[S.comp.pt]) drawComp(S.comp.pt,pks[S.comp.pt],sc[S.comp.kind]);
+
+  /* σημεία και κέντρο μάζας */
+  S.pts.forEach((p,i)=>{
+    if(!p.on||pks[i].vis===false) return;
+    const q=scr(pks[i].r.s,pks[i].r.h);
+    const dx=q[0]-G.AX, dy=q[1]-G.AY, L=Math.hypot(dx,dy);
+    ctx.beginPath(); ctx.arc(q[0],q[1],6.5,0,7); ctx.fillStyle=C.pc[i%6]; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=C.bg; ctx.stroke();
+    const ox=L>2?dx/L:0, oy=L>2?dy/L:-1;
+    text(p.name,q[0]+ox*17,q[1]+oy*17,C.ink,'center','middle','700 14px '+FONT);
+  });
+  ctx.beginPath(); ctx.arc(G.AX,G.AY,3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
+  text('Κ',G.AX+12,G.AY-11,C.muted,'center','middle','600 12px '+FONT);
+
+  readouts(k,pks);
+}
+
+/* ---------- μετρήσεις ---------- */
+function tile(sym,name,val,col){
+  return '<div class="readout"><div class="lbl">'+name+' <span class="lbl-sym">'+sym+'</span></div><div class="val mono"'+(col?' style="color:'+col+'"':'')+'>'+val+'</div></div>';
+}
+let lastRO='';
+/* ΚΕΦΑΛΑΙΑ ΧΩΡΙΣ ΤΟΝΟΥΣ στους τίτλους */
+const UP=s=>s.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').normalize('NFC');
+function readouts(k,pks){
+  if(!S.table) return;
+  let h=tile('t','Χρόνος',num(S.t,3)+' s')+tile('s','Μετατόπιση',num(k.s,3)+' m')+
+    tile('υcm','Ταχύτητα Κ',num(k.v,3)+' m/s','var(--e1)')+tile('ω','Γωνιακή ταχύτητα',num(k.om,3)+' rad/s')+
+    tile('αcm','Επιτάχυνση Κ',num(S.a,3)+' m/s²','var(--e1)')+tile('ε','Γωνιακή επιτάχυνση',num(k.eps,3)+' rad/s²');
+  S.pts.forEach((p,i)=>{
+    if(!p.on) return;
+    h+=tile('υολ,'+p.name,'Ταχύτητα',num(mag(pks[i].vtot),3)+' m/s','var(--et)');
+    h+=tile('αολ,'+p.name,'Επιτάχυνση',num(mag(pks[i].atot),3)+' m/s²','var(--et)');
+  });
+  if(h!==lastRO){ $('readouts').innerHTML=h; lastRO=h; }
+}
+
+/* ---------- υπολογισμός ---------- */
+function gi(k,v){ return '<div class="gi"><span class="k">'+k+'</span>'+v+'</div>'; }
+function block(t,b){ return '<div class="sol-block"><h4>'+t+'</h4>'+b+'</div>'; }
+function ln(t){ return '<div class="line">'+t+'</div>'; }
+function solutionString(pt){
+  const g=strGeom(); if(!g) return '<div class="sol-note">Δεν υπάρχει νήμα.</div>';
+  const k=kin(S.t), pk=pointKin(pt,k), f=n=>num(n,3), R=(x,u)=>'<span class="res">'+f(x)+' '+u+'</span>';
+  const rcn=S.body==='spool'?'r':'R', rcv=contactR(), dl=g.ku*k.th, Lf=Math.max(0,S.L0+dl);
+  let h=block('Δεδομένα τη στιγμή t = '+f(S.t)+' s','<div class="givens-grid">'+
+    gi(rcn,f(rcv)+' m')+gi('r<sub>τυλ</sub>',f(g.rw)+' m')+gi('υ<sub>cm</sub>',f(k.v)+' m/s')+gi('α<sub>cm</sub>',f(S.a)+' m/s²')+gi('u₀',f(pt.u0)+' m')+'</div>'+
+    '<div class="sol-note">Το νήμα είναι τυλιγμένο γύρω από κύλινδρο ακτίνας r<sub>τυλ</sub> και βγαίνει εφαπτομενικά. Το σημείο '+pt.name+' είναι υλικό σημείο του νήματος: κινείται μαζί με το κέντρο και, επιπλέον, κατά μήκος του νήματος καθώς αυτό ξετυλίγεται.</div>');
+  h+=block('Κύλιση και ξετύλιγμα',
+    ln('ω = υ<sub>cm</sub> / '+rcn+' = '+f(k.v)+' / '+f(rcv)+' = '+R(k.om,'rad/s'))+
+    ln('ε = α<sub>cm</sub> / '+rcn+' = '+R(k.eps,'rad/s²'))+
+    ln('Ξετυλίγεται μήκος Δ = '+(g.ku>=0?'+':'−')+'θ·r<sub>τυλ</sub> = '+R(dl,'m')+' &nbsp; ⇒ L = L₀ + Δ = '+R(Lf,'m')));
+  h+=block('Ταχύτητα του σημείου '+pt.name,
+    ln('υ<sub>σχ</sub> = ω·r<sub>τυλ</sub> = '+R(Math.abs(g.ku*k.om),'m/s')+' (κατά μήκος του νήματος, ως προς το κέντρο)')+
+    ln('υ<sub>σχ,x</sub> = '+f(pk.vrot.s)+' m/s &nbsp; υ<sub>σχ,y</sub> = '+f(pk.vrot.h)+' m/s')+
+    ln('υ<sub>ολ,x</sub> = υ<sub>cm</sub> + υ<sub>σχ,x</sub> = '+f(pk.vtot.s)+' m/s')+
+    ln('υ<sub>ολ,y</sub> = υ<sub>σχ,y</sub> = '+f(pk.vtot.h)+' m/s')+
+    ln('υ<sub>ολ</sub> = √(υ<sub>ολ,x</sub>² + υ<sub>ολ,y</sub>²) = '+R(mag(pk.vtot),'m/s')));
+  h+=block('Επιτάχυνση του σημείου '+pt.name,
+    ln('α<sub>σχ</sub> = ε·r<sub>τυλ</sub> = '+R(Math.abs(g.ku*k.eps),'m/s²')+' (το νήμα είναι ευθύ, άρα δεν υπάρχει κεντρομόλος)')+
+    ln('α<sub>ολ,x</sub> = α<sub>cm</sub> + α<sub>σχ,x</sub> = '+f(pk.atot.s)+' m/s²')+
+    ln('α<sub>ολ,y</sub> = α<sub>σχ,y</sub> = '+f(pk.atot.h)+' m/s²')+
+    ln('α<sub>ολ</sub> = √(α<sub>ολ,x</sub>² + α<sub>ολ,y</sub>²) = '+R(mag(pk.atot),'m/s²')));
+  if(pk.vis===false) h+='<div class="sol-note">Το σημείο είναι αυτή τη στιγμή τυλιγμένο πάνω στο σώμα και δεν φαίνεται στο νήμα.</div>';
+  return h;
+}
+function solution(){
+  const pt=S.pts[S.solPt]||S.pts[0];
+  if(!pt) return '<div class="sol-note">Πρόσθεσε ένα σημείο στο σώμα.</div>';
+  if(pt.kind==='string') return solutionString(pt);
+  const k=kin(S.t), pk=pointKin(pt,k), f=n=>num(n,3), R=(x,u)=>'<span class="res">'+f(x)+' '+u+'</span>';
+  const phiDeg=((pk.phi*180/Math.PI)%360+360)%360;
+  let h=block('Δεδομένα τη στιγμή t = '+f(S.t)+' s','<div class="givens-grid">'+
+    gi(S.body==='spool'?'R / r':'R',f(S.R)+(S.body==='spool'?' / '+f(S.ri):'')+' m')+gi('υ<sub>cm</sub>',f(k.v)+' m/s')+gi('α<sub>cm</sub>',f(S.a)+' m/s²')+
+    gi('ρ = '+f(pt.r)+'·R',f(pk.rho)+' m')+gi('φ = β + θ',f(phiDeg)+'°')+'</div>'+
+    '<div class="sol-note">Άξονας x: κατά μήκος του επιπέδου, θετικός προς τη φορά κίνησης. Άξονας y: κάθετα στο επίπεδο, προς τα πάνω. Η γωνία φ μετριέται από την κάθετη, δεξιόστροφα.</div>');
+  h+=block('Κύλιση χωρίς ολίσθηση',
+    ln('ω = υ<sub>cm</sub> / '+(S.body==='spool'?'r':'R')+' = '+f(k.v)+' / '+f(contactR())+' = '+R(k.om,'rad/s'))+
+    ln('ε = α<sub>cm</sub> / '+(S.body==='spool'?'r':'R')+' = '+f(S.a)+' / '+f(contactR())+' = '+R(k.eps,'rad/s²')));
+  h+=block('Ταχύτητα του σημείου '+pt.name,
+    ln('υ<sub>γρ</sub> = ω·ρ = '+f(k.om)+' · '+f(pk.rho)+' = '+R(Math.abs(k.om*pk.rho),'m/s')+' (κάθετα στην ακτίνα)')+
+    ln('υ<sub>γρ,x</sub> = ω·ρ·cosφ = '+f(pk.vrot.s)+' m/s &nbsp; υ<sub>γρ,y</sub> = −ω·ρ·sinφ = '+f(pk.vrot.h)+' m/s')+
+    ln('υ<sub>ολ,x</sub> = υ<sub>cm</sub> + υ<sub>γρ,x</sub> = '+f(pk.vtot.s)+' m/s')+
+    ln('υ<sub>ολ,y</sub> = υ<sub>γρ,y</sub> = '+f(pk.vtot.h)+' m/s')+
+    ln('υ<sub>ολ</sub> = √(υ<sub>ολ,x</sub>² + υ<sub>ολ,y</sub>²) = '+R(mag(pk.vtot),'m/s')));
+  h+=block('Επιτάχυνση του σημείου '+pt.name,
+    ln('α<sub>επ</sub> = ε·ρ = '+R(Math.abs(k.eps*pk.rho),'m/s²')+' &nbsp; α<sub>κ</sub> = ω²·ρ = '+R(k.om*k.om*pk.rho,'m/s²'))+
+    ln('α<sub>ολ,x</sub> = α<sub>cm</sub> + α<sub>επ,x</sub> + α<sub>κ,x</sub> = '+f(pk.atot.s)+' m/s²')+
+    ln('α<sub>ολ,y</sub> = α<sub>επ,y</sub> + α<sub>κ,y</sub> = '+f(pk.atot.h)+' m/s²')+
+    ln('α<sub>ολ</sub> = √(α<sub>ολ,x</sub>² + α<sub>ολ,y</sub>²) = '+R(mag(pk.atot),'m/s²')));
+  let note='';
+  if(Math.abs(pk.rho-contactR())<0.01*S.R&&mag(pk.vtot)<1e-6*Math.max(1,Math.abs(k.v))) note='Το σημείο βρίσκεται στην επαφή με το επίπεδο: η συνολική ταχύτητά του είναι μηδέν (κύλιση χωρίς ολίσθηση), αλλά η επιτάχυνσή του όχι.';
+  else if(S.body!=='spool'&&pk.rho>0.99*S.R&&Math.abs(Math.abs(phiDeg)%360)<0.5) note='Στην κορυφή του τροχού η συνολική ταχύτητα είναι διπλάσια από την ταχύτητα του κέντρου μάζας.';
+  if(note) h+='<div class="sol-note">'+note+'</div>';
+  return h;
+}
+
+/* ---------- πεδία ρυθμίσεων ---------- */
+const FIELDS={
+  R:{key:'R',name:'Ακτίνα',sym:'R',min:0.1,max:2,step:0.05,unit:'m',hmin:0.01,hmax:100},
+  alpha:{key:'alpha',name:'Γωνία κλίσης',sym:'φ',min:5,max:60,step:1,unit:'°',hmin:0.1,hmax:89.9},
+  v0:{key:'v0',name:'Αρχική ταχύτητα κέντρου μάζας',sym:'υ<sub>0</sub>',min:-15,max:15,step:0.1,unit:'m/s',free:true,zero:true},
+  a:{key:'a',name:'Επιτάχυνση κέντρου μάζας',sym:'α<sub>cm</sub>',min:-10,max:10,step:0.1,unit:'m/s²',free:true,zero:true},
+  ri:{key:'ri',name:'Εσωτερική ακτίνα',sym:'r',min:0.05,max:1.9,step:0.05,unit:'m'},
+  L0:{key:'L0',name:'Αρχικό ελεύθερο μήκος νήματος',sym:'L<sub>0</sub>',min:0.1,max:5,step:0.1,unit:'m',hmin:0.01,hmax:100},
+  zoom:{key:'zoom',name:'Μέγεθος τροχού',sym:'×',min:0.5,max:1.8,step:0.05,unit:'',hmin:0.1,hmax:5},
+  vs:{key:'vs',name:'Μήκος διανυσμάτων',sym:'%',min:30,max:250,step:5,unit:'',hmin:5,hmax:1000},
+  vw:{key:'vw',name:'Πάχος διανυσμάτων',sym:'%',min:40,max:300,step:10,unit:'',hmin:5,hmax:1000}
+};
+Object.keys(FIELDS).forEach(id=>{
+  const f=FIELDS[id];
+  $('fld_'+id).innerHTML='<div class="field"><label><span class="name">'+f.name+' <span class="fsym">'+f.sym+'</span></span></label><div class="inputs">'+
+    '<input type="range" id="sl_'+id+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" aria-label="'+f.name+'">'+
+    '<input type="number" id="nm_'+id+'" step="any" aria-label="'+f.name+' (τιμή)">'+
+    '<span class="unit">'+f.unit+'</span>'+(f.zero?'<button class="btn secondary small zero" type="button" id="z_'+id+'" title="Μηδενισμός">= 0</button>':'')+'</div></div>';
+  const on=e=>{
+    let v=parseFloat(String(e.target.value).replace(',','.')); if(!isFinite(v)) return;
+    if(e.target.type==='number'){ if(!f.free) v=clamp(v,f.hmin!=null?f.hmin:f.min,f.hmax!=null?f.hmax:f.max); }
+    else v=clamp(v,f.min,f.max);
+    S[f.key]=v; S.comp=null;
+    $('sl_'+id).value=v; if(document.activeElement!==$('nm_'+id)) $('nm_'+id).value=String(+v.toFixed(2));
+    postField(f.key);
+  };
+  $('sl_'+id).addEventListener('input',on); $('nm_'+id).addEventListener('input',on);
+  if(f.zero) $('z_'+id).addEventListener('click',()=>{ S[f.key]=0; S.comp=null; $('sl_'+id).value=0; $('nm_'+id).value='0'; });
+});
+function setField(id,v){ $('sl_'+id).value=v; if(document.activeElement!==$('nm_'+id)) $('nm_'+id).value=String(+(+v).toFixed(2)); }
+function normRi(){
+  const mx=+(S.R*0.95).toFixed(2);
+  if(S.ri>mx) S.ri=mx;
+  $('sl_ri').max=String(mx); setField('ri',S.ri);
+}
+function postField(key){
+  if(key==='R'||key==='ri') normRi();
+  if(key==='L0'){ S.pts.forEach(p=>{ if(p.kind==='string') p.u0=Math.min(p.u0,S.L0); }); buildStrPts(); }
+}
+
+function setSeg(el,v){ el.querySelectorAll('button').forEach(b=>{const on=b.dataset.v===String(v); b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));}); }
+$('bodySeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.body=b.dataset.v; sync();}});
+$('planeSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.plane=b.dataset.v; S.comp=null; sync();}});
+
+/* νήμα */
+function strOptions(){
+  const hz=S.str.mode==='h';
+  $('strExit').innerHTML=hz?'<option value="top">Πάνω</option><option value="bottom">Κάτω</option>':'<option value="back">Πίσω (αριστερά)</option><option value="front">Μπροστά (δεξιά)</option>';
+  $('strDir').innerHTML=hz?'<option value="1">Προς τα δεξιά</option><option value="-1">Προς τα αριστερά</option>':'<option value="1">Προς τα πάνω</option><option value="-1">Προς τα κάτω</option>';
+  $('strExit').value=S.str.exit; $('strDir').value=String(S.str.dir);
+}
+$('strSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  S.str.mode=b.dataset.v;
+  if(S.str.mode==='h'){ S.str.exit='top'; S.str.dir=1; }
+  if(S.str.mode==='v'){ S.str.exit='back'; S.str.dir=1; }
+  if(S.str.mode==='none') S.pts=S.pts.filter(p=>p.kind!=='string');
+  S.comp=null; buildPts(); sync();
+});
+$('strExit').addEventListener('change',e=>{ S.str.exit=e.target.value; S.comp=null; });
+$('strDir').addEventListener('change',e=>{ S.str.dir=parseInt(e.target.value,10); S.comp=null; });
+$('strWind').addEventListener('change',e=>{ S.str.wind=e.target.value; S.comp=null; });
+function buildStrPts(){
+  $('strPtList').innerHTML=S.pts.map((p,i)=>p.kind!=='string'?'':
+    '<div class="ptcard"><div class="pthead"><label class="checkline"><input type="checkbox" data-i="'+i+'" data-k="on"'+(p.on?' checked':'')+'> Σημείο '+p.name+' του νήματος</label>'+
+    '<button class="del" type="button" data-del="'+i+'" aria-label="Διαγραφή σημείου '+p.name+'">✕</button></div>'+
+    '<div class="field"><label><span class="name">Απόσταση από το σημείο εξόδου</span><span>u₀ (m)</span></label><div class="inputs">'+
+    '<input type="range" data-i="'+i+'" data-k="u0" min="0" max="'+S.L0+'" step="0.05" value="'+p.u0+'" aria-label="u₀, σημείο '+p.name+'">'+
+    '<input type="number" data-i="'+i+'" data-k="u0" min="0" max="'+S.L0+'" step="0.05" value="'+(+p.u0.toFixed(2))+'" aria-label="u₀ (τιμή)"></div></div></div>').join('');
+  $('addStrPt').hidden=S.str.mode==='none'||S.pts.filter(p=>p.kind==='string').length>=4;
+}
+$('strPtList').addEventListener('input',e=>{
+  const t=e.target, i=+t.dataset.i, k=t.dataset.k, p=S.pts[i]; if(!p||!k) return;
+  if(k==='on') p.on=t.checked;
+  else {
+    let v=parseFloat(String(t.value).replace(',','.')); if(!isFinite(v)) return;
+    p.u0=clamp(v,0,S.L0);
+    document.querySelectorAll('#strPtList [data-i="'+i+'"][data-k="u0"]').forEach(el=>{ if(el!==t) el.value=String(+p.u0.toFixed(2)); });
+  }
+  S.comp=null;
+});
+$('strPtList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b) return;
+  S.pts.splice(+b.dataset.del,1); S.comp=null; buildPts();
+});
+$('addStrPt').addEventListener('click',()=>{
+  if(S.str.mode==='none') return;
+  const n=S.pts.filter(p=>p.kind==='string').length; if(n>=4) return;
+  const used=S.pts.map(p=>p.name), name=['Ν1','Ν2','Ν3','Ν4'].find(x=>!used.includes(x));
+  S.pts.push({name,kind:'string',u0:+(S.L0*(n+1)/(n+2)).toFixed(2),on:true,arc:false,ang:false,r:0,b:0,tg:newTg()});
+  S.comp=null; buildPts();
+});
+
+/* σημεία */
+function buildPts(){
+  fixFrames();
+  const wi=S.pts.map((p,i)=>p.kind!=='string'?i:-1).filter(i=>i>=0);
+  let cur=S.pts[S.frames[0]]&&S.pts[S.frames[0]].kind!=='string'?S.frames[0]:wi[0];
+  const sel=wi.length?'<div class="field"><label><span class="name">Σημείο</span></label><select data-psel="1" style="width:100%" aria-label="Επιλογή σημείου για ρύθμιση">'+wi.map(i=>'<option value="'+i+'"'+(i===cur?' selected':'')+'>Σημείο '+S.pts[i].name+'</option>').join('')+'</select></div>':'';
+  $('ptList').innerHTML=sel+S.pts.map((p,i)=>(p.kind==='string'||i!==cur)?'':
+    '<div class="ptcard"><div class="pthead"><label class="checkline"><input type="checkbox" data-i="'+i+'" data-k="on"'+(p.on?' checked':'')+'> Σημείο '+p.name+'</label>'+
+    '<button class="del" type="button" data-del="'+i+'" aria-label="Διαγραφή σημείου '+p.name+'">✕</button></div>'+
+    '<div class="field"><label><span class="name">Απόσταση από το κέντρο</span><span>ρ / R</span></label><div class="inputs">'+
+    '<input type="range" data-i="'+i+'" data-k="r" min="0" max="1" step="0.05" value="'+p.r+'" aria-label="ρ προς R, σημείο '+p.name+'">'+
+    '<input type="number" data-i="'+i+'" data-k="r" min="0" max="1" step="0.05" value="'+(+p.r.toFixed(2))+'" aria-label="ρ προς R (τιμή)"></div></div>'+
+    '<div class="field"><label><span class="name">Αρχική γωνία β</span><span>°</span></label><div class="inputs">'+
+    '<input type="range" data-i="'+i+'" data-k="b" min="0" max="359" step="1" value="'+Math.round(p.b)+'" aria-label="Γωνία β, σημείο '+p.name+'">'+
+    '<input type="number" data-i="'+i+'" data-k="b" min="0" max="359" step="1" value="'+Math.round(p.b)+'" aria-label="Γωνία β (τιμή)"></div></div></div>').join('');
+  $('solPt').innerHTML=S.pts.map((p,i)=>'<option value="'+i+'">'+p.name+'</option>').join('');
+  S.solPt=clamp(S.solPt,0,Math.max(0,S.pts.length-1)); $('solPt').value=String(S.solPt);
+  buildStrPts();
+  buildFrames();
+}
+
+/* πλαίσια διανυσμάτων: ένα ή δύο, καθένα για το σημείο που επιλέγεις */
+function fixFrames(){
+  const n=S.pts.length; if(!n) return;
+  S.frames[0]=clamp(S.frames[0]|0,0,n-1);
+  if(n>=2&&!(S.frames[1]>=0&&S.frames[1]<n)) S.frames[1]=S.frames[0]===0?1:0;
+}
+function buildFrames(){
+  const box=$('frames'); fixFrames();
+  const n=S.pts.length;
+  if(!n){ box.innerHTML='<div class="vector-toggles"><span class="sol-note">Πρόσθεσε ένα σημείο από την κάρτα «Σημεία του σώματος».</span></div>'; return; }
+  const nf=1; let h='';
+  for(let f=0;f<nf;f++){
+    const pi=S.frames[f], p=S.pts[pi], pc='var(--p'+((pi%6)+1)+')', isS=p.kind==='string';
+    const opts=S.pts.map((q,i)=>'<option value="'+i+'"'+(i===pi?' selected':'')+'>'+q.name+'</option>').join('');
+    const cb=(tg,label,sw)=>'<label><input type="checkbox" data-f="'+f+'" data-tg="'+tg+'"'+(p.tg[tg]?' checked':'')+'><span class="swatch" style="background:var(--'+sw+')"></span><span>'+label+'</span></label>';
+    h+='<div class="vframe vector-toggles">'+
+      '<div class="row"><span class="grp">Σημείο</span><span class="swatch" style="background:'+pc+'"></span><select data-f="'+f+'" data-sel="1" aria-label="Επιλογή σημείου, πλαίσιο '+(f+1)+'">'+opts+'</select></div>'+
+      '<div class="sep"></div>'+
+      '<div class="row"><span class="grp">Ταχύτητες</span>'+cb('vcm','υ<sub>cm</sub> κέντρου μάζας','e1')+cb('vrot',isS?'υ<sub>σχ</sub> ξετυλίγματος':'υ<sub>γρ</sub> γραμμική','e2')+cb('vtot','υ<sub>ολ</sub> συνολική','et')+
+        '<button class="btn secondary small" type="button" data-f="'+f+'" data-comp="v">▶ Σύνθεση υ</button></div>'+
+      '<div class="sep"></div>'+
+      '<div class="row"><span class="grp">Επιταχύνσεις</span>'+cb('acm','α<sub>cm</sub> κέντρου μάζας','e1')+cb('at',isS?'α<sub>σχ</sub> ξετυλίγματος':'α<sub>επ</sub> επιτρόχια','e2')+(isS?'':cb('ac','α<sub>κ</sub> κεντρομόλος','blue'))+cb('atot','α<sub>ολ</sub> συνολική','et')+
+        '<button class="btn secondary small" type="button" data-f="'+f+'" data-comp="a">▶ Σύνθεση α</button>'+
+        (isS?'':'<label><input type="checkbox" data-f="'+f+'" data-compac="1"'+(S.compAc?' checked':'')+'><span>με α<sub>κ</sub> στη σύνθεση</span></label>')+'</div>'+
+      (isS?'':'<div class="sep"></div><div class="row"><label><input type="checkbox" data-f="'+f+'" data-arc="1"'+(p.arc?' checked':'')+'><span class="swatch" style="background:'+pc+'"></span>Τόξο που διαγράφει το σημείο</label>'+
+        '<label><input type="checkbox" data-f="'+f+'" data-ang="1"'+(p.ang?' checked':'')+'><span class="swatch" style="background:'+pc+'"></span>Γωνία θ</label></div>')+
+    '</div>';
+  }
+  box.innerHTML=h;
+  box.querySelectorAll('.grp').forEach(e=>{e.textContent=UP(e.textContent);});
+}
+$('frames').addEventListener('change',e=>{
+  const t=e.target, f=parseInt(t.dataset.f,10); if(isNaN(f)) return;
+  if(t.dataset.sel){ S.frames[f]=parseInt(t.value,10); S.comp=null; buildPts(); return; }
+  if(t.dataset.compac){ S.compAc=t.checked; S.comp=null; buildFrames(); return; }
+  const p=S.pts[S.frames[f]]; if(!p) return;
+  if(t.dataset.arc) p.arc=t.checked;
+  else if(t.dataset.ang) p.ang=t.checked;
+  else if(t.dataset.tg){ p.tg[t.dataset.tg]=t.checked; S.comp=null; }
+});
+$('frames').addEventListener('click',e=>{
+  const b=e.target.closest('[data-comp]'); if(!b) return;
+  startComp(b.dataset.comp,S.frames[parseInt(b.dataset.f,10)]);
+});
+function syncPts(){
+  S.pts.forEach((p,i)=>{
+    document.querySelectorAll('#ptList [data-i="'+i+'"][data-k="r"]').forEach(el=>{ if(document.activeElement!==el) el.value=String(+p.r.toFixed(2)); });
+    document.querySelectorAll('#ptList [data-i="'+i+'"][data-k="b"]').forEach(el=>{ if(document.activeElement!==el) el.value=String(Math.round(p.b)); });
+  });
+}
+$('ptList').addEventListener('input',e=>{
+  const t=e.target, i=+t.dataset.i, k=t.dataset.k, p=S.pts[i]; if(!p||!k) return;
+  if(k==='on') p.on=t.checked;
+  else if(k==='arc') p.arc=t.checked;
+  else {
+    let v=parseFloat(String(t.value).replace(',','.')); if(!isFinite(v)) return;
+    v=k==='r'?clamp(v,0,1):((v%360)+360)%360; p[k]=v;
+    document.querySelectorAll('#ptList [data-i="'+i+'"][data-k="'+k+'"]').forEach(el=>{ if(el!==t) el.value=String(k==='r'?+v.toFixed(2):Math.round(v)); });
+  }
+  S.comp=null;
+});
+$('ptList').addEventListener('change',e=>{ if(e.target.dataset.psel){ S.frames[0]=parseInt(e.target.value,10); S.comp=null; buildPts(); } });
+$('ptList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-del]'); if(!b) return;
+  S.pts.splice(+b.dataset.del,1); S.comp=null; buildPts();
+});
+const PRESETS={top:{r:1,b:0},contact:{r:1,b:180},front:{r:1,b:90},back:{r:1,b:270},center:{r:0,b:0},free:{r:0.6,b:45}};
+$('addRow').addEventListener('click',e=>{
+  const b=e.target.closest('[data-add]'); if(!b||S.pts.filter(p=>p.kind!=='string').length>=6) return;
+  const used=S.pts.map(p=>p.name), name=NAMES.find(n=>!used.includes(n));
+  const pre=b.dataset.add==='inner'?{r:S.body==='spool'?+(S.ri/S.R).toFixed(2):0.55,b:180}:PRESETS[b.dataset.add];
+  S.pts.push(Object.assign({name,kind:'wheel',on:true,arc:false,ang:false,tg:newTg()},pre)); S.frames[0]=S.pts.length-1; S.comp=null; buildPts();
+});
+$('solPt').addEventListener('change',e=>{ S.solPt=+e.target.value; $('solBody').innerHTML=solution(); });
+$('speedSel').addEventListener('change',e=>{ S.speed=parseFloat(e.target.value)||0.5; });
+$('stopRev').addEventListener('change',e=>{ S.stopRev=e.target.checked; });
+
+/* διακόπτες */
+document.querySelectorAll('input[data-opt]').forEach(el=>el.addEventListener('change',()=>{ S[el.dataset.opt]=el.checked; }));
+$('loopChk').addEventListener('change',e=>{ S.loop=e.target.checked; });
+
+/* χρόνος και σύνθεση */
+function setPlaying(v){ S.playing=v; $('playBtn').textContent=v?'❚❚ Παύση':'▶ Εκκίνηση'; }
+$('playBtn').addEventListener('click',()=>{ S.comp=null; if(S.t>=TMAX&&!S.playing) S.t=0; setPlaying(!S.playing); });
+$('resetBtn').addEventListener('click',()=>{ S.comp=null; S.t=0; setPlaying(false); });
+$('sl_time').addEventListener('input',e=>{ S.comp=null; S.t=parseFloat(e.target.value)||0; setPlaying(false); });
+function startComp(kind,pt){
+  if(!S.pts[pt]) return;
+  S.comp={kind,pt,t:0,active:true}; setPlaying(false);
+}
+
+/* κινούμενα σημεία με σύρσιμο */
+let drag=null;
+function cpos(e){ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+function hitPt(q){
+  const k=kin(S.t); let best=-1,bd=1e9;
+  S.pts.forEach((p,i)=>{
+    if(!p.on||p.kind==='string') return;
+    const pk=pointKin(p,k), P=scr(pk.r.s,pk.r.h), d=Math.hypot(q[0]-P[0],q[1]-P[1]);
+    if(d<=16&&d<bd){best=i;bd=d;}
+  });
+  return best;
+}
+cv.addEventListener('pointerdown',e=>{
+  const i=hitPt(cpos(e)); if(i<0) return;
+  drag=i; S.comp=null; try{cv.setPointerCapture(e.pointerId);}catch(_){}
+});
+cv.addEventListener('pointermove',e=>{
+  const q=cpos(e);
+  if(drag===null){ cv.style.cursor=hitPt(q)>=0?'grab':'default'; return; }
+  cv.style.cursor='grabbing';
+  const X=(q[0]-G.AX)/G.ppm, Y=-(q[1]-G.AY)/G.ppm;
+  const ds=X*G.ca+Y*G.sa, dh=-X*G.sa+Y*G.ca;
+  const k=kin(S.t), phi=Math.atan2(ds,dh), p=S.pts[drag];
+  let r=Math.min(1,Math.hypot(ds,dh)/S.R); if(r>0.94) r=1;
+  p.r=Math.round(r*100)/100;
+  p.b=(((phi-k.th)*180/Math.PI)%360+360)%360;
+  syncPts();
+});
+const endDrag=()=>{ drag=null; cv.style.cursor='default'; };
+cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
+
+/* σύμπτυξη και μεγιστοποίηση πάνελ */
+const solVisible=()=>!$('tab-solution').hidden;
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel'),c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);setTimeout(resize,60);return;}
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    document.querySelectorAll('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    document.querySelectorAll('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    setTimeout(resize,60);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=document.querySelector('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');setTimeout(resize,60);}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('playBtn').click();}
+});
+
+/* χρωματισμοί (ίδια skins με την προσομοίωση αυτοκινήτου) */
+const SKINS=[["blueprint", "DarkBlue", "Βασικά"], ["classic", "DarkBlack", "Βασικά"], ["minimal", "LightOrange", "Βασικά"], ["pw", "Λευκό", "Βασικά"], ["gr", "GreyO", "Βασικά"], ["gr2", "GreyB", "Βασικά"], ["rt3", "Δεξί 3", "Βασικά"], ["n01", "01 · Λευκό · μπλε", "Νέοι συνδυασμοί"], ["n02", "02 · Λευκό · τιρκουάζ", "Νέοι συνδυασμοί"], ["n03", "03 · Λευκό · βιολετί", "Νέοι συνδυασμοί"], ["n04", "04 · Γκρι · πορτοκαλί", "Νέοι συνδυασμοί"], ["n05", "05 · Γκρι · μπλε", "Νέοι συνδυασμοί"], ["n08", "08 · Ουρανός · μπλε", "Νέοι συνδυασμοί"], ["n09", "09 · Ουρανός · τιρκουάζ", "Νέοι συνδυασμοί"], ["n12", "12 · Λευκό + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n13", "13 · Γκρι + σκούρο δεξί σχιστόλιθος", "Νέοι συνδυασμοί"], ["n15", "15 · Ουρανός + σκούρο δεξί ναυτικό", "Νέοι συνδυασμοί"], ["n16", "16 · Μαύρο φόντο · γκρι πανελ", "Νέοι συνδυασμοί"], ["n17", "17 · Ναυτικό · σκούρο", "Νέοι συνδυασμοί"], ["n18", "18 · Σχιστόλιθος · κυανό", "Νέοι συνδυασμοί"], ["n19", "19 · Μαύρο · πορτοκαλί", "Νέοι συνδυασμοί"], ["n23", "23 · Ναυτικό + ανοιχτή σκηνή", "Νέοι συνδυασμοί"], ["n42", "42 · Γκρι · κεχριμπάρι", "Νέοι συνδυασμοί 2"]];
+function setSkin(n){
+  document.documentElement.dataset.skin=n;
+  const sel=document.getElementById('skinSel');
+  if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}
+  try{localStorage.setItem('kylisi-skin',n);}catch(_){}
+}
+{const sel=$('skinSel');{const o=document.createElement('option');o.textContent='Skins';o.value='';o.hidden=true;sel.appendChild(o);}
+ let g='',og=null;SKINS.forEach(k=>{if(k[2]!==g){g=k[2];og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});
+ sel.addEventListener('change',()=>setSkin(sel.value));}
+let skin0='blueprint'; try{skin0=localStorage.getItem('kylisi-skin')||'blueprint';}catch(_){}
+if(!SKINS.some(k=>k[0]===skin0)) skin0='blueprint';
+setSkin(skin0);
+
+$('resetAll').addEventListener('click',()=>{
+  S=clone(DEF); S.t=0; S.comp=null; S.playing=false; S.frames=[0,1]; buildPts(); sync();
+});
+
+function sync(){
+  setSeg($('bodySeg'),S.body); setSeg($('planeSeg'),S.plane);
+  $('blkAlpha').hidden=S.plane!=='incline';
+  $('blkRi').hidden=S.body!=='spool'; $('addInner').hidden=S.body!=='spool'; $('strWindFld').hidden=S.body!=='spool';
+  setSeg($('strSeg'),S.str.mode); $('strBlk').hidden=S.str.mode==='none'; strOptions(); $('strWind').value=S.str.wind; normRi(); buildStrPts();
+  Object.keys(FIELDS).forEach(id=>setField(id,S[FIELDS[id].key]));
+  $('speedSel').value=String(S.speed); $('stopRev').checked=!!S.stopRev;
+  document.querySelectorAll('input[data-opt]').forEach(el=>{ el.checked=!!S[el.dataset.opt]; });
+  $('loopChk').checked=S.loop; setPlaying(S.playing);
+}
+
+/* βρόχος κίνησης */
+let last=performance.now(), solTick=0;
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  if(S.comp&&S.comp.active){
+    S.comp.t+=dt/5;
+    if(S.comp.t>=1){ S.comp.t=1; S.comp.active=false; }
+  } else if(S.playing){
+    let tNew=S.t+dt*S.speed;
+    if(tNew>=TMAX){ if(S.loop) tNew=0; else { tNew=TMAX; setPlaying(false); } }
+    else if(S.stopRev){
+      const T2=2*Math.PI, n0=Math.floor(Math.abs(kin(S.t).th)/T2+1e-9), n1=Math.floor(Math.abs(kin(tNew).th)/T2+1e-9);
+      if(n1>n0){
+        const target=(n0+1)*T2; let lo=S.t, hi=tNew;
+        for(let i=0;i<40;i++){ const mid=(lo+hi)/2; if(Math.abs(kin(mid).th)>=target) hi=mid; else lo=mid; }
+        tNew=hi; setPlaying(false);
+      }
+    }
+    S.t=tNew;
+  }
+  if(document.activeElement!==$('sl_time')) $('sl_time').value=S.t;
+  $('tOut').textContent='t = '+S.t.toFixed(2).replace('.',',')+' s · '+(Math.abs(kin(S.t).th)/(2*Math.PI)).toFixed(2).replace('.',',')+' στρ.';
+  draw();
+  if(solVisible()&&now-solTick>120){ solTick=now; $('solBody').innerHTML=solution(); }
+  requestAnimationFrame(loop);
+}
+
+/* τίτλος, καρτέλες ρυθμίσεων και διάταξη όπως στην προσομοίωση αυτοκινήτου */
+$('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return '<span class="tw"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
+{
+  const ps=[...document.querySelectorAll('#tabBody>.panel')];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Σημεία','Ανάλυση','Τιμές μεγεθών','Οδηγίες'];
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});document.querySelectorAll('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});if(i===3) $('solBody').innerHTML=solution(); setTimeout(resize,60);};
+  names.forEach((n,i)=>{const b=document.createElement('button');b.className='main-tab-btn';b.textContent=n;b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('setTabs').appendChild(b);});
+  show(0);
+}
+const fitGrid=()=>{const g=document.querySelector('.main-grid');if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,innerHeight-top-12))+'px';}else g.style.height='';resize();};
+addEventListener('resize',fitGrid);
+buildPts(); sync(); fitGrid(); setTimeout(fitGrid,300);
+if(window.ResizeObserver) new ResizeObserver(resize).observe(cv); else window.addEventListener('resize',resize);
+requestAnimationFrame(loop);
+</script>
