@@ -483,7 +483,6 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
           <div class="panel"><div class="panel-body">
             <div class="solver-toggle" id="modeSeg"><button data-v="gear" type="button">Γρανάζια</button><button data-v="belt" type="button">Ιμάντας</button><button data-v="car" type="button">Όχημα</button></div>
             <div id="blkBelt"><div class="solver-toggle" id="beltSeg"><button data-v="open" type="button">Ανοιχτός ιμάντας</button><button data-v="cross" type="button">Σταυρωτός</button></div></div>
-            <div id="blkFrame"><div class="solver-toggle" id="frameSeg"><button data-v="ground" type="button">Παρατηρητής στο έδαφος</button><button data-v="car" type="button">Μέσα στο όχημα</button></div></div>
             <div id="fld_R1"></div>
             <div id="fld_R2"></div>
             <div id="blkD"><div id="fld_d"></div></div>
@@ -542,7 +541,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 <ul>
 <li><b>Γρανάζια:</b> δύο τροχοί σε επαφή στρέφονται αντίθετα. Τα σημεία της επαφής έχουν την ίδια γραμμική ταχύτητα.</li>
 <li><b>Ιμάντας:</b> δύο τροχοί με ιμάντα που δεν ολισθαίνει. Ο ανοιχτός ιμάντας δίνει ίδια φορά, ο σταυρωτός αντίθετη.</li>
-<li><b>Όχημα:</b> δύο τροχοί που κυλίονται χωρίς ολίσθηση. Διάλεξε παρατηρητή στο έδαφος ή μέσα στο όχημα.</li>
+<li><b>Όχημα:</b> δύο τροχοί που κυλίονται χωρίς ολίσθηση. Η γραμμική ταχύτητα κάθε σημείου έχει μέτρο υ = ω·ρ και διεύθυνση εφαπτομενική στον κύκλο του σημείου.</li>
 </ul>
 <h3>Πώς τη χρησιμοποιείς</h3>
 <ul>
@@ -586,7 +585,7 @@ const MD={
 };
 function freshState(mode,keep){
   const m=MD[mode], s=Object.assign({
-    belt:'open', frame:'ground', speed:1, zoom:1, vs:100, vw:100,
+    belt:'open', speed:1, zoom:1, vs:100, vw:100,
     tg:{v:true,w:true,ac:false,at:false,atot:false},
     charts:{w:1,th:0,v:1,a:1}, labels:true, rdv:false, trail:false, loop:true, stopRev:false
   },keep||{});
@@ -627,7 +626,7 @@ function wheels(t){
 }
 function pointKin(p,W){
   const w=W.ws[p.w], rho=p.r*w.R, phi=p.b*Math.PI/180+w.th, sn=Math.sin(phi), cs=Math.cos(phi);
-  const gr=S.mode==='car'&&S.frame==='ground';
+  const gr=false;
   const pos=[rho*sn,rho*cs];
   const vrot=[w.om*rho*cs,-w.om*rho*sn];
   const at=[w.eps*rho*cs,-w.eps*rho*sn];
@@ -678,11 +677,10 @@ function setSeg(el,v){ el.querySelectorAll('button').forEach(b=>{const on=b.data
 
 $('modeSeg').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||b.dataset.v===S.mode) return;
-  const keep={belt:S.belt,frame:S.frame,speed:S.speed,zoom:S.zoom,vs:S.vs,vw:S.vw,tg:S.tg,labels:S.labels,rdv:S.rdv,trail:S.trail,loop:S.loop,stopRev:S.stopRev,charts:S.charts};
+  const keep={belt:S.belt,speed:S.speed,zoom:S.zoom,vs:S.vs,vw:S.vw,tg:S.tg,labels:S.labels,rdv:S.rdv,trail:S.trail,loop:S.loop,stopRev:S.stopRev,charts:S.charts};
   const pl=S.playing; S=freshState(b.dataset.v,keep); S.playing=pl; sync();
 });
 $('beltSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.belt=b.dataset.v; sync();}});
-$('frameSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.frame=b.dataset.v; sync();}});
 document.querySelectorAll('input[data-tg]').forEach(el=>el.addEventListener('change',()=>{ S.tg[el.dataset.tg]=el.checked; }));
 document.querySelectorAll('input[data-opt]').forEach(el=>el.addEventListener('change',()=>{ S[el.dataset.opt]=el.checked; }));
 
@@ -873,7 +871,7 @@ const VD={
 };
 function kindScale(kind){
   const Rm=Math.max(RM(0),RM(1)), Rpx=Rm*G.ppm;
-  const wr=Math.abs(TAU*S.f)+Math.abs(S.eps), car=S.mode==='car'&&S.frame==='ground';
+  const wr=Math.abs(TAU*S.f)+Math.abs(S.eps), car=false;
   const ref=kind==='v'?Math.max(wr*Rm*(car?1.6:1),0.3):Math.max(wr*wr*Rm,Math.abs(S.eps)*Rm*2,0.5);
   return 1.1*Rpx/ref*S.vs/100;
 }
@@ -933,7 +931,7 @@ function draw(){
       ctx.beginPath();
       for(let n=0;n<=160;n++){
         const tau=S.t-Tw+Tw*n/160, Wt=wheels(tau), q=pointKin(p,Wt), w0=Wt.ws[p.w];
-        const dx=(car&&S.frame==='ground')?Wt.s-Wd.s:0;
+        const dx=car?Wt.s-Wd.s:0;
         const P=scr(w0.cx+dx+q.pos[0],w0.cy+q.pos[1]);
         if(n===0) ctx.moveTo(P[0],P[1]); else ctx.lineTo(P[0],P[1]);
       }
@@ -1098,8 +1096,8 @@ const endDrag=()=>{ drag=null; cv.style.cursor='default'; };
 cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
 
 function sync(){
-  setSeg($('modeSeg'),S.mode); setSeg($('beltSeg'),S.belt); setSeg($('frameSeg'),S.frame);
-  $('blkBelt').hidden=S.mode!=='belt'; $('blkFrame').hidden=S.mode!=='car';
+  setSeg($('modeSeg'),S.mode); setSeg($('beltSeg'),S.belt);
+  $('blkBelt').hidden=S.mode!=='belt'; 
   $('blkD').hidden=S.mode!=='belt'; $('blkL').hidden=S.mode!=='car';
   ['R1','R2','d','L','f','eps','zoom','vs','vw'].forEach(id=>setField(id,S[FIELDS[id].key]));
   $('speedSel').value=String(S.speed); $('stopRev').checked=!!S.stopRev; $('loopChk').checked=S.loop;
@@ -1241,7 +1239,7 @@ function drawCharts(){ document.querySelectorAll('#charts canvas').forEach(c=>dr
 /* ---------- ΚΑΤΑΣΤΑΣΗ (badge) ---------- */
 let lastSt='';
 function updateStatus(){
-  const tt=MODE_NAME[S.mode]+(S.mode==='car'?' · '+(S.frame==='ground'?'παρατηρητής στο έδαφος':'παρατηρητής μέσα στο όχημα'):'');
+  const tt=MODE_NAME[S.mode];
   if($('simTitle').textContent!==tt) $('simTitle').textContent=tt;
   const st=$('status'), acc=Math.abs(S.eps)>1e-9;
   const txt=(acc?'ΕΠΙΤΑΧΥΝΟΜΕΝΗ ΠΕΡΙΣΤΡΟΦΗ':'ΟΜΑΛΗ ΠΕΡΙΣΤΡΟΦΗ')+(S.mode==='car'?' · ΚΥΛΙΣΗ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ':S.mode==='gear'?' · ΕΠΑΦΗ ΟΔΟΝΤΩΝ':' · ΙΜΑΝΤΑΣ ΧΩΡΙΣ ΟΛΙΣΘΗΣΗ');
