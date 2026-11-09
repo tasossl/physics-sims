@@ -429,6 +429,11 @@ details.io textarea{width:100%;margin-top:8px;background:var(--panel2);border:1p
 #theoryBody{margin-top:4px;}
 :root{--f:var(--c-th);}
 #mainTitle{color:var(--accent);}
+#mainTitle .tw-w{color:#fff;}
+#simPanel{position:relative;}
+#simPanel.maxed{position:fixed;}
+#simPanel>.stage-tools{position:absolute;top:10px;left:10px;z-index:5;}
+#simPanel.collapsed>.stage-tools{top:10px;left:10px;}
 
 </style>
 <body>
@@ -446,19 +451,19 @@ details.io textarea{width:100%;margin-top:8px;background:var(--panel2);border:1p
   <div class="main-grid">
     <div class="left-col">
       <div class="panel" id="simPanel">
-        <div class="panel-head-row">
-          <div class="panel-tools">
-            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
-            <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
-          </div>
+        <div class="panel-tools stage-tools">
+          <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+          <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
         </div>
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap">
-            <div class="stage"><canvas id="cv" aria-label="Προσομοίωση έντασης ηλεκτρικού πεδίου"></canvas></div>
+            <div class="stage"><canvas id="cv" aria-label="Προσομοίωση έντασης ηλεκτρικού πεδίου"></canvas><div id="legend" hidden></div></div>
           </div>
           <div class="transport">
             <button class="btn secondary" id="reset" type="button">↺ Επαναφορά</button>
             <button class="btn secondary" id="autoFitBtn" type="button">⤢ Αυτόματη κλίμακα</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="tgSnapGrid"> Snap σε πλέγμα</label>
+            <label class="checkline" style="margin:0"><input type="checkbox" id="tgSnapLine"> Snap σε ευθείες</label>
             <button class="btn secondary small" id="playParaBtn" type="button">▶ Σύνθεση</button>
           </div>
         </div>
@@ -596,9 +601,6 @@ details.io textarea{width:100%;margin-top:8px;background:var(--panel2);border:1p
                 <label id="lbZero"><input type="checkbox" id="tgZero"><span class="swatch" style="background:var(--accent)"></span>Σημείο μηδενισμού E = 0</label>
                 <label id="lbPara"><input type="checkbox" id="tgPara"><span class="swatch" style="background:var(--textDim)"></span>Παραλληλόγραμμο</label>
                 <label><input type="checkbox" id="tgVals"><span class="swatch" style="background:var(--gridStrong)"></span>Τιμές στο σχήμα</label>
-                <span style="width:1px;align-self:stretch;background:var(--border)"></span>
-                <label><input type="checkbox" id="tgSnapGrid"><span class="swatch" style="background:var(--gridStrong)"></span>Snap σε πλέγμα</label>
-                <label><input type="checkbox" id="tgSnapLine"><span class="swatch" style="background:var(--gridStrong)"></span>Snap σε ευθείες</label>
               </div>
               <div class="panel subpanel">
                 <div class="panel-head-row"><h2>Προβολή</h2></div>
@@ -616,7 +618,6 @@ details.io textarea{width:100%;margin-top:8px;background:var(--panel2);border:1p
                       <label class="colpick"><input type="color" id="colEt" aria-label="Χρώμα Eολ"><span>Eολ / E</span></label>
                       <label class="colpick"><input type="color" id="colF" aria-label="Χρώμα F"><span>F</span></label>
                     </div>
-                    <button class="btn secondary" id="colReset" style="margin-top:10px">Χρώματα θέματος</button>
                   </div>
                 </div>
               </div>
@@ -684,7 +685,7 @@ const DEFAULT = {
   pm:'line', tri:'q1', x:1.2, h:2.5, theta:40, side:1,
   test:{on:false,val:1,unit:'nC',sign:1,showF:true},
   para:true, vals:false, e1:true, e2:true, et:true, ppm:60, vs:1, vw:1, vwf:1, col:{}, lines:false, zero:false, nl:12,
-  epsR:1, snapGrid:true, snapLine:true, animating:false, animT:0
+  epsR:1, snapGrid:true, snapLine:true, animating:false, animT:0, cx:0, cy:0
 };
 let S = clone(DEFAULT);
 function fullState(p){ const s=Object.assign(clone(DEFAULT),clone(p||{})); s.test=Object.assign({},DEFAULT.test,s.test||{}); return s; }
@@ -763,6 +764,7 @@ function zoomFit(){
   const padPx=56, availW=Math.max(60,W-2*padPx), availH=Math.max(60,H-2*padPx);
   let ppm=Math.min(availW/w, availH/h);
   S.ppm=Math.max(2,Math.min(140,ppm));
+  S.cx=(minX+maxX)/2; S.cy=(minY+maxY)/2;
 }
 
 /* ---------- canvas ---------- */
@@ -782,8 +784,8 @@ function resize(){
   if(firstFit){ firstFit=false; zoomFit(); sync(); }
   draw();
 }
-const X=x=>W/2+x*S.ppm, Y=y=>H/2-y*S.ppm;
-const toW=(sx,sy)=>({x:(sx-W/2)/S.ppm,y:-(sy-H/2)/S.ppm});
+const X=x=>W/2+(x-S.cx)*S.ppm, Y=y=>H/2-(y-S.cy)*S.ppm;
+const toW=(sx,sy)=>({x:(sx-W/2)/S.ppm+S.cx,y:-(sy-H/2)/S.ppm+S.cy});
 
 function text(t,x,y,color,align,base,font){
   ctx.font=font||('600 13px '+FONT); ctx.textAlign=align||'center'; ctx.textBaseline=base||'middle';
@@ -1022,8 +1024,27 @@ function draw(){
     text('P',P.x-14,P.y+16,C.ink,'center','middle');
   }
   readouts(g,F);
+  canvasLegend(g,F);
   if(activeTab===2) $('solBody').innerHTML=solution(g,F);
   if(activeTab===4) drawChart(g,F);
+}
+
+/* ---------- όψη τιμών πάνω στο viewport (εκτός αποστάσεων/φορτίων) ---------- */
+function canvasLegend(g,F){
+  const lg=$('legend'); if(!lg) return;
+  lg.hidden=!S.vals;
+  if(!S.vals) return;
+  let h='';
+  if(S.mode==='one'){
+    h+='<i>E</i> = '+sci(F.tot.m,'N/C');
+  } else {
+    h+='<i>E</i><sub>1</sub> = '+sci(F.list[0].m,'N/C')+'<br><i>E</i><sub>2</sub> = '+sci(F.list[1].m,'N/C')+'<br><i>E</i><sub>ολ</sub> = '+sci(F.tot.m,'N/C');
+  }
+  if(S.test.on){
+    const q0=q0Of(), Fm=Math.abs(q0)*F.tot.m;
+    h+='<br><i>F</i> = '+sci(Fm,'N');
+  }
+  lg.innerHTML=h;
 }
 
 /* ---------- readouts ---------- */
@@ -1265,7 +1286,7 @@ function ptr(e){const r=cv.getBoundingClientRect();return{sx:e.clientX-r.left,sy
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function limitW(w){
   const mx=W/2/S.ppm-0.5, my=H/2/S.ppm-0.5;
-  return {x:clamp(w.x,-mx,mx),y:clamp(w.y,-my,my)};
+  return {x:clamp(w.x,S.cx-mx,S.cx+mx),y:clamp(w.y,S.cy-my,S.cy+my)};
 }
 function applySnap(id,w){
   if(!S.snapGrid && !S.snapLine) return w;
@@ -1365,7 +1386,6 @@ function syncColors(){
   });
 }
 COLKEYS.forEach(([k,id])=>$(id).addEventListener('input',e=>{ S.col=S.col||{}; S.col[k]=e.target.value; applyCols(); draw(); }));
-$('colReset').addEventListener('click',()=>{ S.col={}; applyCols(); syncColors(); draw(); });
 
 /* ---------- χρωματισμοί (ΚΟΙΝΟ UI — skins) ---------- */
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -1596,7 +1616,7 @@ $('sl_epsr').addEventListener('input',onEpsR); $('nm_epsr').addEventListener('in
 const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
 {
   const h1=document.getElementById('mainTitle');
-  h1.innerHTML=h1.textContent.split(/\s+/).map(w=>{ const u=UP(w); return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`; }).join(' ');
+  h1.innerHTML=h1.textContent.split(/\s+/).map((w,i)=>{ const u=UP(w); return `<span class="tw${i===0?' tw-w':''}"><b>${u[0]}</b>${u.slice(1)}</span>`; }).join(' ');
 }
 const GUIDE_HTML=`<div class="guide">
 <h3>Τι δείχνει η προσομοίωση</h3>
