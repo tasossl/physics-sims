@@ -1,4 +1,4 @@
-<title>Κύλιση Τροχού</title>
+<title>Κύλιση τροχού</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -363,8 +363,8 @@ h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
 
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
 header h1{font-size:1.5rem;font-weight:600;}
-#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
-#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+#mainTitle .title-white{color:#FFFFFF;}
+#mainTitle .title-yellow{color:#FACC15;}
 header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
 .theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
@@ -392,8 +392,12 @@ header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IB
 .right-col h2{font-size:.85rem;}
 .panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
 .panel-tools{display:flex;gap:6px;}
-.stage-max{position:absolute;top:8px;left:8px;z-index:5;opacity:.85;}
+.stage-toolbar{position:absolute;top:8px;left:8px;right:8px;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none;}
+.stage-max{position:static;opacity:.9;pointer-events:auto;width:34px;height:34px;font-size:1rem;background:color-mix(in srgb,var(--panel) 88%,transparent);}
 .stage-max:hover{opacity:1;}
+.stage-body-toggle{margin:0;pointer-events:auto;display:flex;gap:4px;padding:3px;background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(4px);border-radius:var(--radius);}
+.stage-body-toggle button{padding:7px 12px;font-size:.76rem;min-height:32px;}
+@media(max-width:560px){.stage-toolbar{top:6px;left:6px;right:6px;gap:5px}.stage-body-toggle{gap:2px;padding:2px}.stage-body-toggle button{padding:6px 8px;font-size:.68rem;min-height:30px}.stage-max{width:32px;height:32px;}}
 #simPanel>.panel-head-row{align-items:center;gap:8px;}
 .vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
 .vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
@@ -564,7 +568,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
   <header>
     <div>
       <h1 id="mainTitle">Κύλιση τροχού</h1>
-      <div class="sub">Σλάβης Τάσος</div>
+      
     </div>
     <div class="hdr-tools">
       <a class="home-btn" href="index.html" title="Αρχική" aria-label="Αρχική"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a>
@@ -578,7 +582,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
       <div class="panel" id="simPanel">
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap">
-            <div class="stage"><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><canvas id="cv" aria-label="Προσομοίωση κύλισης τροχού"></canvas></div>
+            <div class="stage"><div class="stage-toolbar"><div class="solver-toggle stage-body-toggle" id="bodySeg" aria-label="Επιλογή σώματος"><button data-v="wheel" type="button">Τροχός</button><button data-v="disc" type="button">Δίσκος</button><button data-v="spool" type="button">Καρούλι</button></div><button class="panel-tool-btn stage-max" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button></div><canvas id="cv" aria-label="Προσομοίωση κύλισης τροχού"></canvas></div>
           </div>
           <div class="transport one">
             <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
@@ -609,9 +613,11 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
         <div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div>
         <div id="tabBody">
           <div class="panel"><div class="panel-body">
-          <div class="solver-toggle" id="bodySeg"><button data-v="wheel" type="button">Τροχός</button><button data-v="disc" type="button">Δίσκος</button><button data-v="spool" type="button">Καρούλι</button></div>
+          <div class="guide"><h3>Τρόπος κίνησης</h3></div>
+          <div class="solver-toggle" id="motionSeg"><button data-v="rolling" type="button">Κύλιση χωρίς ολίσθηση</button><button data-v="sliding" type="button">Μόνο ολίσθηση</button><button data-v="rotation" type="button">Μόνο περιστροφή</button></div>
+          <div class="hintline" id="motionHint" style="margin:-4px 0 12px"></div>
           <div id="fld_R"></div>
-          <div id="blkRi"><div id="fld_ri"></div><div class="hintline" style="margin:-4px 0 10px">Το καρούλι κυλίεται πάνω στον εσωτερικό του κύλινδρο (ακτίνα r). Ο εξωτερικός δίσκος (R) περνά κάτω από το επίπεδο, όπως σε καρούλι πάνω σε ράγες.</div></div>
+          <div id="blkRi"><div id="fld_ri"></div><div class="hintline" style="margin:-4px 0 10px">Το καρούλι στηρίζεται σε δύο παράλληλες ράγες που εφάπτονται στον εσωτερικό κύλινδρο (ακτίνα r). Ο εξωτερικός δίσκος (R) περνά στο κενό ανάμεσα στις ράγες· δεν κυλίεται πάνω σε συνεχή συμπαγή επιφάνεια.</div></div>
           <div class="solver-toggle" id="planeSeg"><button data-v="flat" type="button">Οριζόντιο</button><button data-v="incline" type="button">Κεκλιμένο</button></div>
           <div id="blkAlpha"><div id="fld_alpha"></div></div>
           <div id="fld_v0"></div>
@@ -669,10 +675,10 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 <ul>
 <li><b>Το σημείο επαφής είναι ακίνητο:</b> όταν ένας τροχός κυλίεται χωρίς ολίσθηση, το σημείο που ακουμπά στο έδαφος έχει στιγμιαία ταχύτητα μηδέν. Γι' αυτό ένα λάστιχο που κυλίεται πιάνει στο δρόμο, ενώ όταν «σκάει» η ολίσθηση (φρένο, πάγος) το αυτοκίνητο χάνει τον έλεγχο.</li>
 <li><b>Η κορυφή κινείται διπλάσια:</b> η ταχύτητα της κορυφής είναι υ<sub>ολ</sub> = 2υ<sub>cm</sub>. Ποδήλατο με 36 km/h έχει την κορυφή της ρόδας στα 72 km/h. Γι' αυτό τα λασπόνερια εκτοξεύονται προς τα πάνω και πίσω.</li>
-<li><b>Η βαλβίδα του ποδηλάτου:</b> το σημείο της περιφέρειας διαγράφει κυκλοειδή καμπύλη. Η κεντρομόλος επιτάχυνσή του ως προς το κέντρο είναι α<sub>κ</sub> = υ<sup>2</sup>/R. Με υ = 10 m/s και R = 0,35 m βγαίνει περίπου 286 m/s², δηλαδή σχεδόν 29 g. Γι' αυτό οι σταγόνες και η λάσπη φεύγουν εφαπτομενικά από τη ρόδα.</li>
-<li><b>Επιταχυνόμενο ποδήλατο:</b> όταν οι πεταλιές αυξάνουν την ταχύτητα, εμφανίζεται και επιτρόχια επιτάχυνση α<sub>επ</sub> = ε·R, και ισχύει α<sub>cm</sub> = ε·R. Με το κουμπί «Σύνθεση α» βλέπεις πώς προστίθενται η α<sub>cm</sub>, η α<sub>επ</sub> και η α<sub>κ</sub>.</li>
+<li><b>Η βαλβίδα του ποδηλάτου:</b> το σημείο της περιφέρειας διαγράφει κυκλοειδή καμπύλη. Η κεντρομόλος συνιστώσα της επιτάχυνσής του ως προς το κέντρο έχει μέτρο α<sub>κ</sub> = ω<sup>2</sup>R = υ<sup>2</sup>/R. Με υ = 10 m/s και R = 0,35 m είναι περίπου 286 m/s² (29 g). Αν μια σταγόνα αποκολληθεί, συνεχίζει αρχικά με την στιγμιαία εφαπτομενική ταχύτητά της· η κεντρομόλος επιτάχυνση είναι αυτή που απαιτείται όσο παραμένει δεσμευμένη στην κυκλική τροχιά.</li>
+<li><b>Επιταχυνόμενο ποδήλατο:</b> όταν οι πεταλιές αυξάνουν την ταχύτητα, εμφανίζεται και επιτρόχια επιτάχυνση α<sub>επ</sub> = α<sub>γων</sub>·R, και ισχύει α<sub>cm</sub> = α<sub>γων</sub>·R. Με το κουμπί «Σύνθεση α» βλέπεις πώς προστίθενται η α<sub>cm</sub>, η α<sub>επ</sub> και η α<sub>κ</sub>.</li>
 <li><b>Ρόδες σε ανηφόρα και κατηφόρα:</b> στο κεκλιμένο επίπεδο ο τροχός επιταχύνεται ή επιβραδύνεται, και ισχύει πάλι υ<sub>cm</sub> = ω·R. Μπορείς να δοκιμάσεις αρνητική επιτάχυνση για να δεις τι γίνεται όταν ένα ποδήλατο ανεβαίνει και χάνει ταχύτητα.</li>
-<li><b>Κέρμα, μπάλα και κύλινδρος:</b> ένα κέρμα ή ένα βαρέλι που κυλίεται στο πάτωμα ακολουθεί τους ίδιους νόμους κύλισης. Τα σημεία πάνω τους (κορυφή, επαφή, μπροστά, πίσω, κέντρο) έχουν διαφορετική ταχύτητα. Στο κέντρο είναι υ<sub>cm</sub>, στο πίσω σημείο η ταχύτητα είναι κάθετη στην ακτίνα και έχει μέτρο υ<sub>cm</sub>·√2.</li>
+<li><b>Κέρμα, μπάλα και κύλινδρος:</b> ένα κέρμα ή ένας κύλινδρος που κυλίεται χωρίς ολίσθηση ακολουθεί τους ίδιους κινηματικούς νόμους. Στο κέντρο η ταχύτητα είναι υ<sub>cm</sub>. Στο πίσω σημείο, για κίνηση προς τα δεξιά, η συνολική ταχύτητα έχει μέτρο √2·υ<sub>cm</sub> και σχηματίζει γωνία 45° με την οριζόντια. Η περιστροφική συνιστώσα της ταχύτητας — όχι γενικά η συνολική — είναι κάθετη στην ακτίνα.</li>
 <li><b>Καρούλι και νήμα:</b> όταν τραβάς το νήμα από την κορυφή του εσωτερικού κυλίνδρου, το σημείο του νήματος κινείται με 2υ<sub>cm</sub> ως προς το έδαφος. Έτσι το νήμα τυλίγεται ή ξετυλίγεται καθώς το καρούλι κυλίεται, όπως σε ένα καρούλι κλωστής ή σε ένα ρολό χαρτιού.</li>
 </ul>
 </div>
@@ -683,17 +689,17 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
           <div class="panel"><div class="panel-body">
 <div class="guide">
 <h3>Τι δείχνει η προσομοίωση</h3>
-<p>Ένας τροχός, ένας δίσκος ή ένα καρούλι κυλίεται χωρίς ολίσθηση σε οριζόντιο ή κεκλιμένο επίπεδο. Μπορείς να ορίσεις σημεία πάνω στο σώμα (ή στο νήμα) και να δεις τις ταχύτητες και τις επιταχύνσεις τους.</p>
+<p>Επίλεξε κύλιση χωρίς ολίσθηση, καθαρή μεταφορική ολίσθηση ή καθαρή περιστροφή γύρω από ακίνητο κέντρο. Μπορείς να ορίσεις σημεία πάνω στο σώμα και να δεις τις ταχύτητες και τις επιταχύνσεις τους. Το νήμα είναι διαθέσιμο στην κύλιση χωρίς ολίσθηση.</p>
 <h3>1. Ρυθμίσεις προσομοίωσης</h3>
 <ul>
 <li>Διάλεξε <b>Τροχός</b>, <b>Δίσκος</b> ή <b>Καρούλι</b> και <b>Οριζόντιο</b> ή <b>Κεκλιμένο</b> επίπεδο.</li>
-<li>Όρισε την ακτίνα, την αρχική ταχύτητα και την επιτάχυνση του κέντρου μάζας. Κάθε τιμή μπορεί να πληκτρολογηθεί ελεύθερα, και το κουμπί «= 0» τη μηδενίζει.</li>
+<li>Όρισε την ακτίνα, την αρχική ταχύτητα και την επιτάχυνση του κέντρου μάζας. Η επιτάχυνση είναι παράμετρος που επιλέγει ο χρήστης: το μοντέλο λύνει την κινηματική με σταθερή επιτάχυνση, δεν υπολογίζει τις δυνάμεις ή την επιτάχυνση από τη ροπή αδράνειας και τη βαρύτητα.</li>
 <li>Στο <b>Νήμα</b> βάζεις οριζόντιο ή κατακόρυφο νήμα που ξετυλίγεται καθώς το σώμα κυλίεται, και σημεία πάνω του.</li>
 </ul>
 <h3>2. Προβολή μεγεθών</h3>
 <ul>
 <li>Διάλεξε σημείο και τσέκαρε ποια διανύσματα θα φαίνονται: υ<sub>cm</sub>, υ<sub>γρ</sub>, υ<sub>ολ</sub>, α<sub>cm</sub>, α<sub>επ</sub>, α<sub>κ</sub>, α<sub>ολ</sub>.</li>
-<li>Τα κουμπιά <b>Σύνθεση υ</b> και <b>Σύνθεση α</b> δείχνουν με animation πώς σχηματίζεται το συνιστάμενο διάνυσμα.</li>
+<li>Τα κουμπιά <b>Σύνθεση υ</b> και <b>Σύνθεση α</b> δείχνουν με animation πώς σχηματίζεται το συνιστάμενο διάνυσμα. Η σύνθεση της επιτάχυνσης περιλαμβάνει πάντα και την κεντρομόλο συνιστώσα α<sub>κ</sub>.</li>
 <li>Μπορείς να δείξεις το τόξο που διαγράφει το σημείο, τη γωνία θ, το ίχνος της τροχιάς και την απόσταση που διανύει ο τροχός.</li>
 </ul>
 <h3>3. Σημεία</h3>
@@ -728,7 +734,7 @@ const TMAX=20;
 
 function newTg(){ return {vcm:false,vrot:false,vtot:false,acm:false,at:false,ac:false,atot:false}; }
 const DEF={
-  body:'wheel', plane:'flat', alpha:20, R:0.5, ri:0.2, v0:2, a:0, speed:0.5, zoom:1, vs:100, vw:100,
+  motion:'rolling', body:'wheel', plane:'flat', alpha:20, R:0.5, ri:0.2, v0:2, a:0, speed:0.5, zoom:1, vs:100, vw:100,
   str:{mode:'none',exit:'top',dir:1,wind:'inner'}, L0:1, compAc:false,
   pts:[{name:'Α',kind:'wheel',r:1,b:0,on:true,arc:false,ang:false,tg:newTg()}],
   labels:true, vals:false, trail:false, dist:false, table:true, stopRev:false, solPt:0, loop:true
@@ -741,7 +747,7 @@ function num(v,sig){
   if(Math.abs(v)<1e-9) return '0';
   return String(parseFloat(v.toPrecision(sig||3))).replace('.',',');
 }
-const alphaRot=()=>S.plane==='incline'?-S.alpha*Math.PI/180:0;
+const alphaRot=()=>S.motion!=='rotation'&&S.plane==='incline'?-S.alpha*Math.PI/180:0;
 /* ακτίνα επαφής με το επίπεδο: στο καρούλι είναι ο εσωτερικός κύλινδρος */
 const contactR=()=>S.body==='spool'?S.ri:S.R;
 const windR=()=>(S.body==='spool'&&S.str.wind==='inner')?S.ri:S.R;
@@ -756,9 +762,17 @@ function strGeom(){
 
 /* ---------- κινηματική ---------- */
 function kin(t){
-  const s=S.v0*t+0.5*S.a*t*t, v=S.v0+S.a*t;
   const rc=contactR();
-  return {s,v,th:s/rc,om:v/rc,eps:S.a/rc};
+  if(S.motion==='sliding'){
+    const s=S.v0*t+0.5*S.a*t*t, v=S.v0+S.a*t;
+    return {s,v,th:0,om:0,eps:0,a:S.a};
+  }
+  if(S.motion==='rotation'){
+    const th=S.v0*t+0.5*S.a*t*t, om=S.v0+S.a*t;
+    return {s:0,v:0,th,om,eps:S.a,a:0};
+  }
+  const s=S.v0*t+0.5*S.a*t*t, v=S.v0+S.a*t;
+  return {s,v,th:s/rc,om:v/rc,eps:S.a/rc,a:S.a};
 }
 /* συντεταγμένες επιπέδου: s κατά μήκος, h κάθετα. φ = γωνία από την κάθετη, δεξιόστροφα */
 function pointKin(p,k){
@@ -767,7 +781,7 @@ function pointKin(p,k){
   const r={s:rho*sn,h:rho*cs};
   const vcm={s:k.v,h:0}, vrot={s:k.om*rho*cs,h:-k.om*rho*sn};
   const vtot={s:vcm.s+vrot.s,h:vrot.h};
-  const acm={s:S.a,h:0}, at={s:k.eps*rho*cs,h:-k.eps*rho*sn}, ac={s:-k.om*k.om*rho*sn,h:-k.om*k.om*rho*cs};
+  const acm={s:k.a,h:0}, at={s:k.eps*rho*cs,h:-k.eps*rho*sn}, ac={s:-k.om*k.om*rho*sn,h:-k.om*k.om*rho*cs};
   const atot={s:acm.s+at.s+ac.s,h:at.h+ac.h};
   return {r,vcm,vrot,vtot,acm,at,ac,atot,rho,phi};
 }
@@ -780,10 +794,11 @@ function stringKin(p,k){
   const r={s:g.D.s+g.e.s*u,h:g.D.h+g.e.h*u};
   const vcm={s:k.v,h:0}, vrot={s:g.ku*k.om*g.e.s,h:g.ku*k.om*g.e.h};
   const vtot={s:vcm.s+vrot.s,h:vrot.h};
-  const acm={s:S.a,h:0}, at={s:g.ku*k.eps*g.e.s,h:g.ku*k.eps*g.e.h};
+  const acm={s:k.a,h:0}, at={s:g.ku*k.eps*g.e.s,h:g.ku*k.eps*g.e.h};
   const atot={s:acm.s+at.s,h:at.h};
   return {r,vcm,vrot,vtot,acm,at,ac:Z,atot,rho:Math.hypot(r.s,r.h),phi:0,vis};
 }
+
 /* στα σημεία του νήματος το «γρ»/«επ» γίνεται «σχ» (σχετικό, κατά μήκος του νήματος) */
 function dd(d,p){ return (p&&p.kind==='string'&&(d.key==='vrot'||d.key==='at'))?Object.assign({},d,{sub:'σχ'}):d; }
 
@@ -898,8 +913,9 @@ function drawVec(O,sv,d,vv,kind,prog){
 
 function drawComp(pi,pk,sc){
   const c=S.comp, kind=c.kind, pp=S.pts[pi], defs=VD[kind].map(d=>dd(d,pp)), tot=defs.find(d=>!d.comp);
-  /* η κεντρομόλος μπαίνει στη σύνθεση μόνο αν το ζητήσει ο χρήστης */
-  const comps=defs.filter(d=>d.comp&&(d.key!=='ac'||(S.compAc&&pp.kind!=='string')));
+  /* Η συνισταμένη επιτάχυνση περιλαμβάνει όλες τις φυσικές συνιστώσες. */
+  // Η συνισταμένη επιτάχυνση πρέπει πάντα να περιλαμβάνει και την κεντρομόλο συνιστώσα.
+  const comps=defs.filter(d=>d.comp&&(d.key!=='ac'||pp.kind!=='string'));
   const O=scr(pk.r.s,pk.r.h);
   const sum={s:0,h:0}; comps.forEach(d=>{ sum.s+=pk[d.key].s; sum.h+=pk[d.key].h; });
   /* στη σύνθεση όλα τα διανύσματα έχουν την ίδια κλίμακα, ώστε το παραλληλόγραμμο/πολύγωνο να κλείνει */
@@ -1091,6 +1107,8 @@ function draw(){
   ctx.beginPath(); ctx.arc(G.AX,G.AY,3.5,0,7); ctx.fillStyle=C.ink; ctx.fill();
   text('Κ',G.AX+12,G.AY-11,C.muted,'center','middle','600 12px '+FONT);
 
+  /* Η επιλογή σώματος εμφανίζεται μόνο στα κουμπιά επάνω αριστερά. */
+
   readouts(k,pks);
 }
 
@@ -1105,7 +1123,7 @@ function readouts(k,pks){
   if(!S.table) return;
   let h=tile('t','Χρόνος',num(S.t,3)+' s')+tile('s','Μετατόπιση',num(k.s,3)+' m')+
     tile('υcm','Ταχύτητα Κ',num(k.v,3)+' m/s','var(--e1)')+tile('ω','Γωνιακή ταχύτητα',num(k.om,3)+' rad/s')+
-    tile('αcm','Επιτάχυνση Κ',num(S.a,3)+' m/s²','var(--e1)')+tile('ε','Γωνιακή επιτάχυνση',num(k.eps,3)+' rad/s²');
+    tile(S.motion==='rotation'?'α<sub>γων</sub>':'αcm',S.motion==='rotation'?'Γωνιακή επιτάχυνση':'Επιτάχυνση Κ',num(k.a,3)+(S.motion==='rotation'?' rad/s²':' m/s²'),'var(--e1)')+tile('α<sub>γων</sub>','Γωνιακή επιτάχυνση',num(k.eps,3)+' rad/s²');
   S.pts.forEach((p,i)=>{
     if(!p.on) return;
     h+=tile('υολ,'+p.name,'Ταχύτητα',num(mag(pks[i].vtot),3)+' m/s','var(--et)');
@@ -1127,7 +1145,7 @@ function solutionString(pt){
     '<div class="sol-note">Το νήμα είναι τυλιγμένο γύρω από κύλινδρο ακτίνας r<sub>τυλ</sub> και βγαίνει εφαπτομενικά. Το σημείο '+pt.name+' είναι υλικό σημείο του νήματος: κινείται μαζί με το κέντρο και, επιπλέον, κατά μήκος του νήματος καθώς αυτό ξετυλίγεται.</div>');
   h+=block('Κύλιση και ξετύλιγμα',
     ln('ω = υ<sub>cm</sub> / '+rcn+' = '+f(k.v)+' / '+f(rcv)+' = '+R(k.om,'rad/s'))+
-    ln('ε = α<sub>cm</sub> / '+rcn+' = '+R(k.eps,'rad/s²'))+
+    ln('α<sub>γων</sub> = α<sub>cm</sub> / '+rcn+' = '+R(k.eps,'rad/s²'))+
     ln('Ξετυλίγεται μήκος Δ = '+(g.ku>=0?'+':'−')+'θ·r<sub>τυλ</sub> = '+R(dl,'m')+' &nbsp; ⇒ L = L₀ + Δ = '+R(Lf,'m')));
   h+=block('Ταχύτητα του σημείου '+pt.name,
     ln('υ<sub>σχ</sub> = ω·r<sub>τυλ</sub> = '+R(Math.abs(g.ku*k.om),'m/s')+' (κατά μήκος του νήματος, ως προς το κέντρο)')+
@@ -1136,7 +1154,7 @@ function solutionString(pt){
     ln('υ<sub>ολ,y</sub> = υ<sub>σχ,y</sub> = '+f(pk.vtot.h)+' m/s')+
     ln('υ<sub>ολ</sub> = √(υ<sub>ολ,x</sub>² + υ<sub>ολ,y</sub>²) = '+R(mag(pk.vtot),'m/s')));
   h+=block('Επιτάχυνση του σημείου '+pt.name,
-    ln('α<sub>σχ</sub> = ε·r<sub>τυλ</sub> = '+R(Math.abs(g.ku*k.eps),'m/s²')+' (το νήμα είναι ευθύ, άρα δεν υπάρχει κεντρομόλος)')+
+    ln('α<sub>σχ</sub> = α<sub>γων</sub>·r<sub>τυλ</sub> = '+R(Math.abs(g.ku*k.eps),'m/s²')+' (το νήμα είναι ευθύ, άρα δεν υπάρχει κεντρομόλος)')+
     ln('α<sub>ολ,x</sub> = α<sub>cm</sub> + α<sub>σχ,x</sub> = '+f(pk.atot.s)+' m/s²')+
     ln('α<sub>ολ,y</sub> = α<sub>σχ,y</sub> = '+f(pk.atot.h)+' m/s²')+
     ln('α<sub>ολ</sub> = √(α<sub>ολ,x</sub>² + α<sub>ολ,y</sub>²) = '+R(mag(pk.atot),'m/s²')));
@@ -1150,12 +1168,14 @@ function solution(){
   const k=kin(S.t), pk=pointKin(pt,k), f=n=>num(n,3), R=(x,u)=>'<span class="res">'+f(x)+' '+u+'</span>';
   const phiDeg=((pk.phi*180/Math.PI)%360+360)%360;
   let h=block('Δεδομένα τη στιγμή t = '+f(S.t)+' s','<div class="givens-grid">'+
-    gi(S.body==='spool'?'R / r':'R',f(S.R)+(S.body==='spool'?' / '+f(S.ri):'')+' m')+gi('υ<sub>cm</sub>',f(k.v)+' m/s')+gi('α<sub>cm</sub>',f(S.a)+' m/s²')+
+    gi(S.body==='spool'?'R / r':'R',f(S.R)+(S.body==='spool'?' / '+f(S.ri):'')+' m')+gi('υ<sub>cm</sub>',f(k.v)+' m/s')+gi('α<sub>cm</sub>',f(k.a)+' m/s²')+
     gi('ρ = '+f(pt.r)+'·R',f(pk.rho)+' m')+gi('φ = β + θ',f(phiDeg)+'°')+'</div>'+
     '<div class="sol-note">Άξονας x: κατά μήκος του επιπέδου, θετικός προς τη φορά κίνησης. Άξονας y: κάθετα στο επίπεδο, προς τα πάνω. Η γωνία φ μετριέται από την κάθετη, δεξιόστροφα.</div>');
-  h+=block('Κύλιση χωρίς ολίσθηση',
+  if(S.motion==='rolling') h+=block('Κύλιση χωρίς ολίσθηση',
     ln('ω = υ<sub>cm</sub> / '+(S.body==='spool'?'r':'R')+' = '+f(k.v)+' / '+f(contactR())+' = '+R(k.om,'rad/s'))+
-    ln('ε = α<sub>cm</sub> / '+(S.body==='spool'?'r':'R')+' = '+f(S.a)+' / '+f(contactR())+' = '+R(k.eps,'rad/s²')));
+    ln('α<sub>γων</sub> = α<sub>cm</sub> / '+(S.body==='spool'?'r':'R')+' = '+f(k.a)+' / '+f(contactR())+' = '+R(k.eps,'rad/s²')));
+  else if(S.motion==='sliding') h+=block('Μόνο ολίσθηση',ln('θ = 0, ω = 0, α<sub>γων</sub> = 0')+ln('s = υ₀t + ½αt² = '+R(k.s,'m'))+ln('υcm = υ₀ + αt = '+R(k.v,'m/s')));
+  else h+=block('Μόνο περιστροφή γύρω από ακίνητο κέντρο',ln('θ = ω₀t + ½α<sub>γων</sub>t² = '+R(k.th,'rad'))+ln('ω = ω₀ + α<sub>γων</sub>t = '+R(k.om,'rad/s'))+ln('υcm = 0, αcm = 0'));
   h+=block('Ταχύτητα του σημείου '+pt.name,
     ln('υ<sub>γρ</sub> = ω·ρ = '+f(k.om)+' · '+f(pk.rho)+' = '+R(Math.abs(k.om*pk.rho),'m/s')+' (κάθετα στην ακτίνα)')+
     ln('υ<sub>γρ,x</sub> = ω·ρ·cosφ = '+f(pk.vrot.s)+' m/s &nbsp; υ<sub>γρ,y</sub> = −ω·ρ·sinφ = '+f(pk.vrot.h)+' m/s')+
@@ -1163,7 +1183,7 @@ function solution(){
     ln('υ<sub>ολ,y</sub> = υ<sub>γρ,y</sub> = '+f(pk.vtot.h)+' m/s')+
     ln('υ<sub>ολ</sub> = √(υ<sub>ολ,x</sub>² + υ<sub>ολ,y</sub>²) = '+R(mag(pk.vtot),'m/s')));
   h+=block('Επιτάχυνση του σημείου '+pt.name,
-    ln('α<sub>επ</sub> = ε·ρ = '+R(Math.abs(k.eps*pk.rho),'m/s²')+' &nbsp; α<sub>κ</sub> = ω²·ρ = '+R(k.om*k.om*pk.rho,'m/s²'))+
+    ln('α<sub>επ</sub> = α<sub>γων</sub>·ρ = '+R(Math.abs(k.eps*pk.rho),'m/s²')+' &nbsp; α<sub>κ</sub> = ω²·ρ = '+R(k.om*k.om*pk.rho,'m/s²'))+
     ln('α<sub>ολ,x</sub> = α<sub>cm</sub> + α<sub>επ,x</sub> + α<sub>κ,x</sub> = '+f(pk.atot.s)+' m/s²')+
     ln('α<sub>ολ,y</sub> = α<sub>επ,y</sub> + α<sub>κ,y</sub> = '+f(pk.atot.h)+' m/s²')+
     ln('α<sub>ολ</sub> = √(α<sub>ολ,x</sub>² + α<sub>ολ,y</sub>²) = '+R(mag(pk.atot),'m/s²')));
@@ -1215,6 +1235,12 @@ function postField(key){
 }
 
 function setSeg(el,v){ el.querySelectorAll('button').forEach(b=>{const on=b.dataset.v===String(v); b.classList.toggle('active',on); b.setAttribute('aria-pressed',String(on));}); }
+$('motionSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  S.motion=b.dataset.v; S.t=0; S.playing=false; S.comp=null;
+  if(S.motion!=='rolling'){ S.str.mode='none'; S.pts=S.pts.filter(p=>p.kind!=='string'); }
+  sync();
+});
 $('bodySeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.body=b.dataset.v; sync();}});
 $('planeSeg').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){S.plane=b.dataset.v; S.comp=null; sync();}});
 
@@ -1311,7 +1337,7 @@ function buildFrames(){
       '<div class="sep"></div>'+
       '<div class="row"><span class="grp">Επιταχύνσεις</span>'+cb('acm','α<sub>cm</sub> κέντρου μάζας','e1')+cb('at',isS?'α<sub>σχ</sub> ξετυλίγματος':'α<sub>επ</sub> επιτρόχια','e2')+(isS?'':cb('ac','α<sub>κ</sub> κεντρομόλος','blue'))+cb('atot','α<sub>ολ</sub> συνολική','et')+
         '<button class="btn secondary small" type="button" data-f="'+f+'" data-comp="a">▶ Σύνθεση α</button>'+
-        (isS?'':'<label><input type="checkbox" data-f="'+f+'" data-compac="1"'+(S.compAc?' checked':'')+'><span>με α<sub>κ</sub> στη σύνθεση</span></label>')+'</div>'+
+        ''+'</div>'+
       (isS?'':'<div class="sep"></div><div class="row"><label><input type="checkbox" data-f="'+f+'" data-arc="1"'+(p.arc?' checked':'')+'><span class="swatch" style="background:'+pc+'"></span>Τόξο που διαγράφει το σημείο</label>'+
         '<label><input type="checkbox" data-f="'+f+'" data-ang="1"'+(p.ang?' checked':'')+'><span class="swatch" style="background:'+pc+'"></span>Γωνία θ</label></div>')+
     '</div>';
@@ -1322,7 +1348,6 @@ function buildFrames(){
 $('frames').addEventListener('change',e=>{
   const t=e.target, f=parseInt(t.dataset.f,10); if(isNaN(f)) return;
   if(t.dataset.sel){ S.frames[f]=parseInt(t.value,10); S.comp=null; buildPts(); return; }
-  if(t.dataset.compac){ S.compAc=t.checked; S.comp=null; buildFrames(); return; }
   const p=S.pts[S.frames[f]]; if(!p) return;
   if(t.dataset.arc) p.arc=t.checked;
   else if(t.dataset.ang) p.ang=t.checked;
@@ -1449,10 +1474,19 @@ $('resetAll').addEventListener('click',()=>{
 });
 
 function sync(){
+  setSeg($('motionSeg'),S.motion);
+  const rotating=S.motion==='rotation', sliding=S.motion==='sliding';
+  const vField=FIELDS.v0, aField=FIELDS.a;
+  vField.name=rotating?'Αρχική γωνιακή ταχύτητα':'Αρχική ταχύτητα κέντρου μάζας'; vField.sym=rotating?'ω<sub>0</sub>':'υ<sub>0</sub>'; vField.unit=rotating?'rad/s':'m/s';
+  aField.name=rotating?'Γωνιακή επιτάχυνση':'Επιτάχυνση κέντρου μάζας'; aField.sym=rotating?'α<sub>γων</sub>':'α<sub>cm</sub>'; aField.unit=rotating?'rad/s²':'m/s²';
+  ['v0','a'].forEach(id=>{ const f=FIELDS[id]; $('fld_'+id).querySelector('.name').innerHTML=f.name+' <span class="fsym">'+f.sym+'</span>'; $('fld_'+id).querySelector('.unit').textContent=f.unit; $('sl_'+id).setAttribute('aria-label',f.name); $('nm_'+id).setAttribute('aria-label',f.name+' (τιμή)'); });
+  $('motionHint').textContent=rotating?'Το κέντρο μάζας παραμένει ακίνητο. Τα πεδία υ₀ και α αντιστοιχούν εδώ σε ω₀ (rad/s) και α<sub>γων</sub> (rad/s²).':sliding?'Το σώμα μεταφέρεται χωρίς να περιστρέφεται. Τα πεδία ορίζουν την ταχύτητα και την επιτάχυνση του κέντρου μάζας.':'Ισχύει ο δεσμός κύλισης χωρίς ολίσθηση: υcm = ω·rεπ και αcm = α<sub>γων</sub>·rεπ.';
+  $('planeSeg').hidden=rotating; $('blkAlpha').hidden=rotating||S.plane!=='incline';
+  $('strSeg').hidden=S.motion!=='rolling'; $('strBlk').hidden=S.motion!=='rolling'||S.str.mode==='none';
   setSeg($('bodySeg'),S.body); setSeg($('planeSeg'),S.plane);
-  $('blkAlpha').hidden=S.plane!=='incline';
+  $('blkAlpha').hidden=rotating||S.plane!=='incline';
   $('blkRi').hidden=S.body!=='spool'; $('addInner').hidden=S.body!=='spool'; $('strWindFld').hidden=S.body!=='spool';
-  setSeg($('strSeg'),S.str.mode); $('strBlk').hidden=S.str.mode==='none'; strOptions(); $('strWind').value=S.str.wind; normRi(); buildStrPts();
+  setSeg($('strSeg'),S.str.mode); $('strBlk').hidden=S.motion!=='rolling'||S.str.mode==='none'; strOptions(); $('strWind').value=S.str.wind; normRi(); buildStrPts();
   Object.keys(FIELDS).forEach(id=>setField(id,S[FIELDS[id].key]));
   $('speedSel').value=String(S.speed); $('stopRev').checked=!!S.stopRev;
   document.querySelectorAll('input[data-opt]').forEach(el=>{ el.checked=!!S[el.dataset.opt]; });
@@ -1487,7 +1521,7 @@ function loop(now){
 }
 
 /* τίτλος, καρτέλες ρυθμίσεων και διάταξη όπως στην προσομοίωση αυτοκινήτου */
-$('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return '<span class="tw"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
+$('mainTitle').innerHTML='<span class="title-white">Κύλιση</span> <span class="title-yellow">τροχού</span>';
 {
   const ps=[...document.querySelectorAll('#tabBody>.panel')];
   [ps[3],ps[4]]=[ps[4],ps[3]];
