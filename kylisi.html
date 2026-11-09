@@ -105,6 +105,9 @@
 
 :root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
 header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.save-row{display:flex;gap:8px;margin:12px 0 8px;}
+.save-row .btn{flex:1;}
+.save-row #clearView{flex:0 0 auto;}
 .hdr-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .home-btn{width:40px;height:40px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
 .home-btn:hover{border-color:var(--accent2);}
@@ -646,6 +649,11 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
             <div id="fld_zoom"></div>
             <div id="fld_vs"></div>
             <div id="fld_vw"></div>
+            <div class="save-row">
+              <button class="btn" id="saveView" type="button">💾 Αποθήκευση προβολής</button>
+              <button class="btn secondary" id="clearView" type="button" title="Διαγραφή της αποθηκευμένης προβολής">✕ Διαγραφή</button>
+            </div>
+            <div class="hintline" id="saveNote"></div>
             <button class="btn secondary" id="resetAll" type="button">↺ Επαναφορά ρυθμίσεων</button>
             <div class="hintline">Σύρε ένα σημείο πάνω στον τροχό για να αλλάξεις τη θέση του. Θετική φορά: προς τα δεξιά (στο κεκλιμένο επίπεδο: προς τα κάτω). Η κάμερα ακολουθεί το κέντρο του τροχού.</div>
           </div></div>
@@ -1503,6 +1511,32 @@ $('zoomSel').value=String(uiZ);
 const fitGrid=()=>{const g=document.querySelector('.main-grid'),app=document.querySelector('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';resize();};
 $('zoomSel').addEventListener('change',()=>{uiZ=parseFloat($('zoomSel').value);try{localStorage.setItem('ui-zoom80',String(uiZ));}catch(_){}fitGrid();setTimeout(()=>{fitGrid();dispatchEvent(new Event('resize'));},60);});
 addEventListener('resize',fitGrid);
+
+/* ---------- ΑΠΟΘΗΚΕΥΣΗ ΠΡΟΒΟΛΗΣ (overwrite, φορτώνεται στο άνοιγμα) ---------- */
+const VIEW_KEY='kylisi-view1';
+const VIEW_KEYS=['labels','vals','rdv','trail','dist','zoom','vs','vw','compAc'];
+function viewSnapshot(){
+  const o={}; VIEW_KEYS.forEach(k=>{o[k]=S[k];});
+  o.pts=S.pts.map(p=>({tg:clone(p.tg),arc:!!p.arc,ang:!!p.ang}));
+  return o;
+}
+function applyView(o){
+  if(!o) return;
+  VIEW_KEYS.forEach(k=>{ if(o[k]!==undefined) S[k]=o[k]; });
+  (o.pts||[]).forEach((q,i)=>{ const p=S.pts[i]; if(p){ p.tg=Object.assign(newTg(),q.tg); p.arc=q.arc; p.ang=q.ang; } });
+}
+function viewNote(msg){ $('saveNote').textContent=msg; }
+function viewStatus(){
+  let s=null; try{s=localStorage.getItem(VIEW_KEY);}catch(_){}
+  viewNote(s?'Υπάρχει αποθηκευμένη προβολή· φορτώνεται αυτόματα όταν ανοίγεις την προσομοίωση. Νέα αποθήκευση την αντικαθιστά.':'Δεν υπάρχει αποθηκευμένη προβολή. Διάλεξε ρυθμίσεις και πάτα «Αποθήκευση προβολής».');
+}
+$('saveView').addEventListener('click',()=>{
+  try{ localStorage.setItem(VIEW_KEY,JSON.stringify(viewSnapshot())); viewNote('✓ Η προβολή αποθηκεύτηκε (αντικατέστησε την προηγούμενη).'); }
+  catch(_){ viewNote('Η αποθήκευση δεν είναι διαθέσιμη σε αυτό το περιβάλλον (ιδιωτική περιήγηση ή αποκλεισμένα δεδομένα).'); }
+});
+$('clearView').addEventListener('click',()=>{ try{localStorage.removeItem(VIEW_KEY);}catch(_){} viewStatus(); });
+try{ applyView(JSON.parse(localStorage.getItem(VIEW_KEY)||'null')); }catch(_){}
+viewStatus();
 buildPts(); sync(); fitGrid(); setTimeout(fitGrid,300);
 if(window.ResizeObserver) new ResizeObserver(resize).observe(cv); else window.addEventListener('resize',resize);
 requestAnimationFrame(loop);
