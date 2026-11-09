@@ -393,7 +393,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
         <div class="sub">Σλάβης Τάσος</div>
       </div>
     </div>
-    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8" selected>Μέγεθος 80%</option><option value="0.7">Μέγεθος 70%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1.25">Μέγεθος 100%</option><option value="1.125">Μέγεθος 90%</option><option value="1" selected>Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
   </header>
 
   <div class="main-grid">
@@ -1181,9 +1181,9 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
   show(0);
 }
-let uiZ=0.8;try{uiZ=+localStorage.getItem('ui-zoom-v3')||0.8;}catch(e){}
-const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(1100,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
-{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=0.8;zs.value='0.8';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom-v3',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom80')||1;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom80',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
 addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
 buildChartCells();updatePlay();
 setSkin(skin);applyLayout('line');setTarget(0);updateModeChips();refreshAll();
