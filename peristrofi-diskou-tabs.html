@@ -1470,11 +1470,14 @@ buildSettings();buildPoints();buildToggles();buildChartChips();buildChartCells()
   const stash=$('#stash'),opt=$('#ptOptPanel');
   const body=p=>{const f=document.createDocumentFragment();[...$('.panel-body',p).childNodes].forEach(n=>f.appendChild(n));return f;};
   const mk=parts=>{const P=el('div','panel'),B=el('div','panel-body');P.appendChild(B);parts.forEach(x=>{if(typeof x==='string'){const g=el('div','guide');g.innerHTML=x;B.appendChild(g);}else B.appendChild(x);});$('#tabBody').appendChild(P);return P;};
+  {const st=el('style');st.textContent='#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}#mainTitle .tw b{font-size:1.55rem;font-weight:600;}#mainTitle .y{color:var(--atext,var(--accent));}#modeTabs{margin:0 0 14px;}';document.head.appendChild(st);
+  const h1=$('header h1');h1.id='mainTitle';const UPt=s=>s.toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+  h1.innerHTML='Περιστροφή δίσκου και ράβδου'.split(' ').map((w,i)=>{const t=UPt(w);return '<span class="tw'+(i>=2?' y':'')+'"><b>'+t[0]+'</b>'+t.slice(1)+'</span>';}).join(' ');}
   const rd=el('div','readouts');rd.id='readouts';
   const gp=$('#graphPanel');
   const an=el('div');an.id='analysis';
   const ps=[
-    mk(['<h3>Αρχικές ρυθμίσεις</h3>',body(rp[0]),'<h3 id="ptsH3">Σημεία του δίσκου</h3>',body(rp[1])]),
+    mk(['<h3>Σώμα</h3>',$('#modeTabs'),'<h3>Αρχικές ρυθμίσεις</h3>',body(rp[0]),'<h3 id="ptsH3">Σημεία του δίσκου</h3>',body(rp[1])]),
     mk(['<h3>Μεγέθη στο σχήμα</h3>',body(opt),'<h3>Μορφή διανυσμάτων</h3>',body(rp[2])]),
     mk([an,`<div class="guide" style="margin-top:16px"><h3>Παραδείγματα από την καθημερινή ζωή</h3>
 <ul>
