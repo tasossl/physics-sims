@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="el"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Αλλαγές φυσικών καταστάσεων</title>
+<title>Αλλαγές φυσικών καταστάσεων · Β΄ Γυμνασίου</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -381,7 +381,7 @@ select{background:var(--panel2);border:1px solid var(--border);color:var(--text)
 footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 
-header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
+header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}#mainTitle .tw:first-child,#mainTitle .tw:first-child b{color:var(--htext);}
 /* --- Αλλαγές φυσικών καταστάσεων: προσθήκες --- */
 #status{top:10px!important;left:10px!important;}
 .stageWrap .mini{bottom:auto;top:8px;right:8px;left:auto;}
@@ -400,7 +400,7 @@ header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
         <div class="sub">Σλάβης Τάσος</div>
       </div>
     </div>
-    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8" selected>Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1.25">Μέγεθος 100%</option><option value="1.125">Μέγεθος 90%</option><option value="1" selected>Μέγεθος 80%</option><option value="0.875">Μέγεθος 70%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
   </header>
 
   <div class="main-grid">
@@ -452,7 +452,7 @@ header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
           </div>
           <label class="checkline" id="allWrap" style="margin:0 0 4px"><input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα</label>
           <div class="readouts" id="readouts" hidden></div>
-          <div class="hintline" id="navHint">Δοχείο και Μόρια: ροδέλα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, σύρσιμο για μετατόπιση, διπλό κλικ για επαναφορά. Στη μοριακή όψη ο αριθμός και το μέγεθος των μορίων δεν είναι υπό κλίμακα: δείχνει μόνο πώς κινούνται και πότε διαφεύγουν. Οι ροές ενέργειας στο δοχείο σχεδιάζονται με το ίδιο μήκος ανά W για όλες.</div>
+          <div class="hintline" id="navHint">Ροδέλα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, σύρσιμο για μετατόπιση, διπλό κλικ για επαναφορά.</div>
         </div>
       </div>
 
@@ -467,8 +467,7 @@ header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
         <div class="panel-body">
           <div class="chips" id="gchips"></div>
           <div class="charts" id="charts"></div>
-          <div class="hintline">Στα διαγράμματα του χρόνου κάνε κλικ ή σύρε για να πας σε άλλη στιγμή. Στο διάγραμμα φάσεων p–T, κάνε κλικ για να αλλάξεις την πίεση.
-        </div>
+          <div class="hintline">Στα διαγράμματα κάνε κλικ ή σύρε για να πας σε άλλη στιγμή. Στη «καμπύλη θέρμανσης» T(Q) τα οριζόντια τμήματα είναι οι αλλαγές φάσης.</div>
         </div>
       </div>
     </div>
@@ -525,7 +524,7 @@ const SUB={
     d:{m:1,T0:20,P:3000,Ta:20,k:0,p:101.325,ts:50,tmax:3000},lo:0,hi:3200,
     note:'Λιώνει στους 1538 °C και βράζει στους 2861 °C: για να εξατμιστεί 1 kg χρειάζονται 6 MJ.'}
 };
-const SUB_ORDER=['water','eth','n2','co2','pb','fe'];
+const SUB_ORDER=['water','eth','pb'];
 /* σταθερές καμπυλών */
 function curves(s){
   if(s._c)return s._c;
@@ -575,8 +574,8 @@ const S={
   tmax:900,ts:10,
   t:0,playing:false,speed:1,view:'all',loop:true,rdv:false,tblAll:false,table:true,
   vs:1,lw:1,fs:13,
-  show:{bub:true,steam:true,flows:true,therm:true,dims:false,labels:true,values:false,vel:false,hl:true,trail:true,marks:true},
-  charts:{T:1,TQ:1,F:1,PT:1,Q:0}
+  show:{bub:true,steam:true,flows:false,therm:true,dims:false,labels:true,values:false,vel:false,hl:true,trail:true,marks:true},
+  charts:{T:1,TQ:1}
 };
 let dirty=true;
 let DT=0.5, NM=2000;
@@ -673,7 +672,7 @@ let curSkin='blueprint';
 function setSkin(n){
   curSkin=n;document.documentElement.dataset.skin=n;readColors();dirty=true;
   {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
-  try{localStorage.setItem('phase-skin',n)}catch(e){}
+  try{localStorage.setItem('gymphase-skin',n)}catch(e){}
 }
 
 /* ---------- σχεδίαση 2D: βοηθητικά ---------- */
@@ -1213,6 +1212,7 @@ const CH={
       {f:x=>(hA('H',x*U.k)-H.H[0])/1000,col:'Q',lw:2.6,nm:['ΔH','']},
       {f:x=>hA('Ein',x*U.k)/1000,col:'P',lw:1.8,dash:[6,4],nm:['Q','παρεχόμενη']}]);}}
 };
+['F','PT','Q'].forEach(k=>{delete CH[k];});
 const CHIP_NAMES={T:'<em>T</em>(t)',TQ:'<em>T</em>(Q) καμπύλη θέρμανσης',F:'Κλάσματα φάσεων',PT:'Διάγραμμα φάσεων <em>p</em>–<em>T</em>',Q:'Ενέργεια <em>Q</em>(t)'};
 function ticks(a,b,n){
   const span=(b-a)||1,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),nm=raw/mag,st=(nm<1.5?1:nm<3?2:nm<7?5:10)*mag,out=[];
@@ -1297,30 +1297,24 @@ function roleHTML(){
   const c=cur,s=SB();if(!c)return '';
   const row=(k,sym,sub,desc,badge,cls,tot)=>`<div class="rrow${tot?' tot':''}"><span class="rsym" style="color:${cvar(k)}"><i>${sym}</i>${sub?'<sub>'+sub+'</sub>':''}</span><span class="rdesc">${desc}</span><span class="badge ${cls}">${badge}</span></div>`;
   const W=v=>fS(Math.abs(v),'W'),rows=[];
-  rows.push(c.P>0.5?row('P','P','',`<b>${W(c.P)}</b> · η εστία δίνει θερμότητα στο δείγμα.`,'ΘΕΡΜΑΙΝΕΙ','yes')
-        :c.P<-0.5?row('P','P','',`<b>−${W(c.P)}</b> · ο ψύκτης αφαιρεί θερμότητα από το δείγμα.`,'ΨΥΧΕΙ','neg')
-        :row('P','P','',`<b>0</b> · καμία εστία ή ψύκτης.`,'ΣΒΗΣΤΗ','no'));
-  rows.push(Math.abs(c.Ql)<0.05?row('Ta','Φ','απ',S.k>0?`<b>0</b> · το δείγμα έχει τη θερμοκρασία του περιβάλλοντος (${fmt(S.Ta,1)} °C).`:`<b>0</b> · ιδανική θερμική μόνωση (<i>k</i> = 0).`,'ΜΟΝΩΣΗ','no')
-    :c.Ql>0?row('Ta','Φ','απ',`<b>${W(c.Ql)}</b> · το δείγμα (${fmt(c.Tc,1)} °C) χάνει θερμότητα προς το ψυχρότερο περιβάλλον (${fmt(S.Ta,1)} °C).`,'ΨΥΧΕΙ','neg')
-    :row('Ta','Φ','απ',`<b>${W(c.Ql)}</b> · το θερμότερο περιβάλλον (${fmt(S.Ta,1)} °C) δίνει θερμότητα στο δείγμα.`,'ΘΕΡΜΑΙΝΕΙ','part'));
-  const sg=c.net>=0?'+':'−';
+  rows.push(c.P>0.5?row('P','P','',`<b>${W(c.P)}</b> · η εστία δίνει θερμότητα στο υλικό.`,'ΘΕΡΜΑΙΝΕΙ','yes')
+        :c.P<-0.5?row('P','P','',`<b>−${W(c.P)}</b> · ο ψύκτης παίρνει θερμότητα από το υλικό.`,'ΨΥΧΕΙ','neg')
+        :row('P','P','',`<b>0</b> · δεν υπάρχει εστία ή ψύκτης.`,'ΣΒΗΣΤΗ','no'));
   if(c.change){
-    const L=c.b.tri?(s.Lf+s.Lv):c.melt?s.Lf:s.Lv,dm=Math.abs(c.net)/L;
-    const what=c.b.tri?'εξάχνωση':c.melt?'τήξη':'εξαέρωση';
-    rows.push(row('Q','ΣΦ','',`<b>${sg}${W(c.net)}</b> · η <i>T</i> μένει σταθερή (${fmt(c.Tc,1)} °C): όλη η καθαρή ισχύς γίνεται λανθάνουσα θερμότητα, ${fS(dm*1000,'g/s')} ύλης ${c.net>=0?'περνά':'περνά αντίστροφα'} στην επόμενη φάση (${what}, <i>L</i> = ${fmt(L/1e3,0)} kJ/kg).`,'ΣΤΑΘΕΡΗ Τ','part',true));
+    const what=c.melt?(c.net>=0?'στερεό γίνεται υγρό (τήξη)':'υγρό γίνεται στερεό (πήξη)'):(c.net>=0?'υγρό γίνεται αέριο (εξαέρωση)':'αέριο γίνεται υγρό (συμπύκνωση)');
+    rows.push(row('Q','Σ','',`Η θερμοκρασία μένει σταθερή στους <b>${fmt(c.Tc,1)} °C</b>: το ${what}.`,'ΑΛΛΑΓΗ ΦΑΣΗΣ','part',true));
   }else{
     const r=c.dTdt*60;
-    rows.push(row('Q','ΣΦ','',`<b>${sg}${W(c.net)}</b> · <i>m</i><i>c</i> d<i>T</i>/d<i>t</i>: ${r>=0?'+':'−'}${fS(Math.abs(r),'K/min')} (${PH[c.phase].toLowerCase()}, <i>c</i> = ${fmt((c.phase==='s'?s.cs:c.phase==='l'?s.cl:s.cg),0)} J/(kg·K)).`,
+    rows.push(row('Q','Σ','',`${PH[c.phase]}: η θερμοκρασία ${r>=0?'ανεβαίνει':'πέφτει'} κατά <b>${fmt(Math.abs(r),1)} °C</b> το λεπτό.`,
       r>0.003?'ΘΕΡΜΑΙΝΕΤΑΙ':r<-0.003?'ΨΥΧΕΤΑΙ':'ΙΣΟΡΡΟΠΙΑ',r>0.003?'yes':r<-0.003?'neg':'part',true));
   }
   return rows.join('');
 }
 function roleHintText(){
-  const c=cur,s=SB();if(!c)return '';
-  if(c.change&&c.b.tri)return 'Σε αυτή την πίεση (κάτω από το τριπλό σημείο) δεν υπάρχει υγρή φάση: το στερεό γίνεται απευθείας αέριο και η θερμοκρασία μένει σταθερή όσο συνεχίζεται η εξάχνωση.';
-  if(c.change)return 'Κατά την αλλαγή φάσης η θερμοκρασία μένει σταθερή, ακόμα κι αν δίνεις θερμότητα: η ενέργεια δεν αυξάνει την κινητική ενέργεια των μορίων, αλλά ξεπερνά τις δυνάμεις συνοχής μεταξύ τους (δυναμική ενέργεια).';
-  if(Math.abs(c.net)<0.05)return 'Η καθαρή ισχύς είναι μηδέν: η θερμοκρασία δεν αλλάζει. Αύξησε την ισχύ της εστίας ή μείωσε την πίεση/μάζα.';
-  return 'Έξω από τις αλλαγές φάσης, η θερμότητα που δίνεται αυξάνει τη θερμοκρασία: Q = m·c·ΔT. Κάθε φάση έχει άλλη ειδική θερμότητα, γι’ αυτό η κλίση της καμπύλης θέρμανσης διαφέρει.';
+  const c=cur;if(!c)return '';
+  if(c.change)return 'Όσο γίνεται αλλαγή φάσης, η θερμοκρασία δεν αλλάζει, όσο κι αν δίνεις θερμότητα: η θερμότητα χρησιμοποιείται για να αλλάξει η κατάσταση της ύλης.';
+  if(Math.abs(c.net)<0.05)return 'Δεν δίνεται θερμότητα, γι’ αυτό η θερμοκρασία δεν αλλάζει. Αύξησε την ισχύ της εστίας.';
+  return 'Όταν δεν γίνεται αλλαγή φάσης, η θερμότητα που δίνεται ανεβάζει τη θερμοκρασία. Κάθε υλικό και κάθε κατάσταση ζεσταίνεται με διαφορετικό ρυθμό.';
 }
 function updateRole(){
   const h=roleHTML();if(h!==lastRole){$('#roleBox').innerHTML=h;lastRole=h;}
@@ -1346,9 +1340,8 @@ function updateLegend(){
   if(!S.rdv||!cur){if(!lg.hidden)lg.hidden=true;return;}
   const c=cur,s=SB();
   const row=(k,a,sub,v)=>`<div style="color:${cvar(k)}"><i>${a}</i>${sub?'<sub>'+sub+'</sub>':''} = ${v}</div>`;
-  const html=`<div class="lgh">${s.name} · m = ${fmt(S.m*1000,0)} g · p = ${fmt(S.p,1)} kPa</div>`+
-    row('T','T','',fmt(c.Tc,1)+' °C')+row('Tm','T',c.b.tri?'εξ':'τ',fmt(c.Tm-K0,1)+' °C')+(c.b.tri?'':row('Tb','T','β',fmt(c.Tb-K0,1)+' °C'))+
-    row('P','P','',fS(c.P,'W'))+row('Q','Q','',fmt((c.Ein)/1000,1)+' kJ');
+  const html=`<div class="lgh">${s.name} · m = ${fmt(S.m*1000,0)} g</div>`+
+    row('T','T','',fmt(c.Tc,1)+' °C')+row('Tm','T','τ',fmt(c.Tm-K0,1)+' °C')+row('Tb','T','β',fmt(c.Tb-K0,1)+' °C')+row('P','P','',fS(c.P,'W'));
   if(html!==lastLG){lg.innerHTML=html;lastLG=html;}
   if(lg.hidden)lg.hidden=false;
 }
@@ -1358,27 +1351,14 @@ function tile(sym,name,val,col,ess){
 }
 function updateTable(){
   const box=$('#readouts');box.hidden=!S.table;if(!S.table||!cur)return;
-  const c=cur,s=SB(),m=S.m,b=c.b;
-  const vr=Math.sqrt(3*R_GAS*c.T/s.M);
-  const t=tile;
-  const Qs=m*s.cs*(b.T1-s.Tt)*0;
-  const h=t('t','Χρόνος',fmtTime(S.t),null,1)+t('T','Θερμοκρασία',fmt(c.Tc,1)+' °C','T',1)+t('T','Θερμοκρασία (kelvin)',fmt(c.T,1)+' K','T')+
+  const c=cur,s=SB(),m=S.m,t=tile;
+  const h=t('t','Χρόνος',fmtTime(S.t),null,1)+t('T','Θερμοκρασία',fmt(c.Tc,1)+' °C','T',1)+
     t('φ','Φάση',phaseName(c),null,1)+
-    t('T<sub>'+(b.tri?'εξ':'τ')+'</sub>',b.tri?'Θερμοκρασία εξάχνωσης':'Σημείο τήξης',fmt(b.T1-K0,1)+' °C','Tm',1)+
-    (b.tri?'':t('T<sub>β</sub>','Σημείο βρασμού',fmt(b.T2-K0,1)+' °C','Tb',1))+
-    t('p','Πίεση',fmt(S.p,1)+' kPa',null,1)+
-    t('m','Μάζα δείγματος',fmt(m*1000,0)+' g',null,1)+
-    t('m<sub>s</sub>','Στερεό',fmt(c.fs*m*1000,1)+' g','cs',1)+t('m<sub>l</sub>','Υγρό',fmt(c.fl*m*1000,1)+' g','cl',1)+t('m<sub>g</sub>','Αέριο',fmt(c.fg*m*1000,1)+' g','cg',1)+
+    t('T<sub>τ</sub>','Σημείο τήξης',fmt(c.b.T1-K0,1)+' °C','Tm',1)+
+    t('T<sub>β</sub>','Σημείο βρασμού',fmt(c.b.T2-K0,1)+' °C','Tb',1)+
+    t('m','Μάζα υλικού',fmt(m*1000,0)+' g',null,1)+
     t('P','Ισχύς εστίας (+) / ψύκτη (−)',fS(c.P,'W'),'P',1)+
-    t('Φ<sub>απ</sub>','Ροή προς το περιβάλλον',fS(c.Ql,'W'),'Ta')+
-    t('Q','Ενέργεια που δόθηκε',fmt(c.Ein/1000,1)+' kJ','Q',1)+
-    t('dT/dt','Ρυθμός μεταβολής T',fmt(c.dTdt*60,2)+' K/min','T')+
-    t('c<sub>s</sub>','Ειδική θερμότητα στερεού',fmt(s.cs,0)+' J/(kg·K)')+t('c<sub>l</sub>','Ειδική θερμότητα υγρού',fmt(s.cl,0)+' J/(kg·K)')+t('c<sub>g</sub>','Ειδική θερμότητα αερίου',fmt(s.cg,0)+' J/(kg·K)')+
-    t('L<sub>f</sub>','Λανθάνουσα θερμότητα τήξης',fmt(s.Lf/1e3,0)+' kJ/kg')+t('L<sub>v</sub>','Λανθάνουσα θερμότητα εξαέρωσης',fmt(s.Lv/1e3,0)+' kJ/kg')+
-    t('Q<sub>f</sub>','Ενέργεια για τήξη όλης της μάζας',fmt(m*s.Lf/1e3,1)+' kJ')+t('Q<sub>v</sub>','Ενέργεια για εξαέρωση όλης της μάζας',fmt(m*s.Lv/1e3,1)+' kJ')+
-    t('v<sub>rms</sub>','Μέση τετραγωνική ταχύτητα μορίων',fmt(vr,0)+' m/s')+
-    t('E<sub>κ</sub>','Μέση κινητική ενέργεια μορίου (3kT/2)',fmt(1.5*KB*c.T*1e21,2)+'·10⁻²¹ J')+
-    t('ρ<sub>s</sub>/ρ<sub>l</sub>','Πυκνότητα στερεού / υγρού',fmt(s.rs,0)+' / '+fmt(s.rl,0)+' kg/m³');
+    t('Q','Θερμότητα που δόθηκε',fmt(c.Ein/1000,1)+' kJ','Q',1);
   if(h!==lastRO){box.innerHTML=h;lastRO=h;}
 }
 function updateTime(){
@@ -1390,10 +1370,7 @@ function updateTime(){
 }
 function updateSubInfo(){
   const s=SB(),c=cur;if(!c)return;
-  const b=c.b;
-  const html=`<b>${s.name}</b> · <i>M</i> = ${fmt(s.M*1000,1)} g/mol · <i>c</i><sub>s</sub> = ${fmt(s.cs,0)}, <i>c</i><sub>l</sub> = ${fmt(s.cl,0)}, <i>c</i><sub>g</sub> = ${fmt(s.cg,0)} J/(kg·K) · <i>L</i><sub>f</sub> = ${fmt(s.Lf/1e3,0)} kJ/kg · <i>L</i><sub>v</sub> = ${fmt(s.Lv/1e3,0)} kJ/kg · `+
-    (b.tri?`<i>T</i><sub>εξ</sub>(${fmt(S.p,1)} kPa) = <b>${fmt(b.T1-K0,1)} °C</b> (κάτω από το τριπλό σημείο)`:`<i>T</i><sub>τ</sub> = <b>${fmt(b.T1-K0,1)} °C</b>, <i>T</i><sub>β</sub>(${fmt(S.p,1)} kPa) = <b>${fmt(b.T2-K0,1)} °C</b>`)+
-    `<br><span style="opacity:.9">${s.note}</span>`;
+  const html=`<b>${s.name}</b> · σημείο τήξης <b>${fmt(c.b.T1-K0,1)} °C</b> · σημείο βρασμού <b>${fmt(c.b.T2-K0,1)} °C</b>`;
   if(html!==lastLI){const e=$('#subInfo');if(e)e.innerHTML=html;lastLI=html;}
 }
 let needWarm=true;
@@ -1499,75 +1476,46 @@ const refreshAll=()=>syncs.forEach(f=>f());
 function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
 const SCEN=[
   {n:'Πάγος → νερό → ατμός',set:{sub:'water',m:0.1,T0:-20,P:500,Ta:20,k:0,p:101.325,tmax:700,ts:10}},
-  {n:'Πάγος στο δωμάτιο',set:{sub:'water',m:0.2,T0:-5,P:0,Ta:25,k:3,p:101.325,tmax:3600,ts:30}},
   {n:'Ψύξη: συμπύκνωση και πήξη',set:{sub:'water',m:0.1,T0:130,P:-1000,Ta:20,k:0,p:101.325,tmax:400,ts:5}},
-  {n:'Βρασμός στο Έβερεστ',set:{sub:'water',m:0.3,T0:10,P:1000,Ta:-5,k:0,p:31.4,tmax:900,ts:10}},
-  {n:'Χύτρα ταχύτητας',set:{sub:'water',m:0.3,T0:20,P:1000,Ta:20,k:0,p:200,tmax:900,ts:10}},
-  {n:'Εξάχνωση νερού (χαμηλή πίεση)',set:{sub:'water',m:0.05,T0:-30,P:150,Ta:20,k:0,p:0.4,tmax:1200,ts:15}},
-  {n:'Ξηρός πάγος (CO₂)',set:{sub:'co2',m:0.2,T0:-85,P:0,Ta:20,k:2,p:101.325,tmax:700,ts:10}},
-  {n:'Υγρό CO₂ υπό πίεση',set:{sub:'co2',m:0.2,T0:-70,P:300,Ta:20,k:0,p:600,tmax:600,ts:5}},
-  {n:'Υγρό άζωτο',set:{sub:'n2',m:0.5,T0:-200,P:0,Ta:20,k:1,p:101.325,tmax:600,ts:10}},
-  {n:'Αιθανόλη',set:{sub:'eth',m:0.2,T0:-130,P:300,Ta:20,k:0,p:101.325,tmax:1200,ts:15}},
-  {n:'Μόλυβδος: τήξη και βρασμός',set:{sub:'pb',m:1,T0:20,P:3000,Ta:20,k:0,p:101.325,tmax:450,ts:5}},
-  {n:'Σίδηρος',set:{sub:'fe',m:1,T0:20,P:3000,Ta:20,k:0,p:101.325,tmax:3000,ts:50}}
+  {n:'Βρασμός νερού',set:{sub:'water',m:0.3,T0:20,P:1000,Ta:20,k:0,p:101.325,tmax:900,ts:10}},
+  {n:'Οινόπνευμα',set:{sub:'eth',m:0.2,T0:-130,P:300,Ta:20,k:0,p:101.325,tmax:1200,ts:15}},
+  {n:'Μόλυβδος: τήξη και βρασμός',set:{sub:'pb',m:1,T0:20,P:3000,Ta:20,k:0,p:101.325,tmax:450,ts:5}}
 ];
 function applyScen(sc){
   Object.assign(S,sc.set);simReset();S.playing=true;updatePlay();syncAll();
 }
 let syncAll=()=>{};
 function buildSettings(b){
+  S.p=101.325;S.Ta=20;S.k=0;
   const sw=el('div','field');sw.innerHTML='<label><span class="name">Έτοιμα σενάρια</span></label>';
   const sr=el('div','inputs');
   sr.innerHTML='<select id="scenSel" style="flex:1;min-width:0"><option value="-1">— Επιλογή σεναρίου —</option>'+SCEN.map((sc,i)=>`<option value="${i}">${sc.n}</option>`).join('')+'</select>';
   $('select',sr).addEventListener('change',e=>{const i=+e.target.value;if(i>=0)applyScen(SCEN[i]);});
   sw.appendChild(sr);b.appendChild(sw);
   const lf=el('div','field');
-  lf.innerHTML='<label for="subSel"><span class="name">Ουσία</span></label><div class="inputs"><select id="subSel" style="flex:1;min-width:0">'+SUB_ORDER.map(id=>`<option value="${id}">${SUB[id].name}</option>`).join('')+'</select></div><div class="hintline" id="subInfo"></div>';
+  lf.innerHTML='<label for="subSel"><span class="name">Υλικό</span></label><div class="inputs"><select id="subSel" style="flex:1;min-width:0">'+SUB_ORDER.map(id=>`<option value="${id}">${SUB[id].name}</option>`).join('')+'</select></div><div class="hintline" id="subInfo" style="margin-top:6px"></div>';
   b.appendChild(lf);
-  $('#subSel',lf).addEventListener('change',e=>{const d=SUB[e.target.value].d;Object.assign(S,{sub:e.target.value,m:d.m,T0:d.T0,P:d.P,Ta:d.Ta,k:d.k,tmax:d.tmax,ts:d.ts});simReset();needWarm=true;lastLI='';syncAll();});
-  field(b,{id:'c-m',name:'Μάζα δείγματος',sym:'<i>m</i>',unit:'kg',min:0.02,max:3,step:0.01,get:()=>S.m,set:v=>{S.m=clamp(v,0.01,10);simReset();},
-    note:()=>'Η αλλαγή επανεκκινεί την προσομοίωση'});
+  $('#subSel',lf).addEventListener('change',e=>{const d=SUB[e.target.value].d;Object.assign(S,{sub:e.target.value,m:d.m,T0:d.T0,P:d.P,Ta:20,k:0,p:101.325,tmax:d.tmax,ts:d.ts});simReset();needWarm=true;lastLI='';syncAll();});
+  field(b,{id:'c-m',name:'Μάζα υλικού',sym:'<i>m</i>',unit:'kg',min:0.02,max:3,step:0.01,get:()=>S.m,set:v=>{S.m=clamp(v,0.01,10);simReset();},
+    note:()=>'Η αλλαγή ξεκινά ξανά την προσομοίωση'});
   field(b,{id:'c-T0',name:'Αρχική θερμοκρασία',sym:'<i>T</i><sub>0</sub>',unit:'°C',min:-60,max:160,step:1,rng:()=>[SB().lo,SB().hi],get:()=>S.T0,set:v=>{S.T0=clamp(v,-273,5000);simReset();},
-    note:()=>{const s=SB(),Tm=Tmelt(s,S.p*1e3)-K0;return 'σημείο τήξης στο διάγραμμα ≈ '+fmt(Tm,1)+' °C'}});
+    note:()=>{const s=SB(),Tm=Tmelt(s,S.p*1e3)-K0;return 'σημείο τήξης ≈ '+fmt(Tm,1)+' °C'}});
   field(b,{id:'c-P',name:'Ισχύς εστίας (+) ή ψύκτη (−)',sym:'<i>P</i>',unit:'W',min:-3000,max:3000,step:50,get:()=>S.P,set:v=>{S.P=clamp(v,-20000,20000);live();},
-    note:()=>S.P>0?'θέρμανση: ΔQ = P·Δt':S.P<0?'ψύξη: αφαιρείται θερμότητα':'καμία ροή θερμότητας από εστία'});
+    note:()=>S.P>0?'η εστία δίνει θερμότητα στο υλικό':S.P<0?'ο ψύκτης παίρνει θερμότητα από το υλικό':'καμία εστία ή ψύκτης'});
   const pp=el('div','addrow');pp.style.margin='-4px 0 12px';
-  [['Ψύκτης −1000 W',-1000],['Σβηστή',0],['300 W',300],['1000 W',1000],['3000 W',3000]].forEach(([n,v])=>{const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{S.P=v;live();refreshAll();needWarm=!S.playing;});pp.appendChild(x);});
+  [['Ψύκτης −1000 W',-1000],['Σβηστή',0],['300 W',300],['1000 W',1000],['3000 W',3000]].forEach(([n,v])=>{const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{S.P=v;live();refreshAll();needWarm=!S.playing;dirty=true;});pp.appendChild(x);});
   b.appendChild(pp);
-  /* πίεση: λογαριθμική κλίμακα */
-  {
-    const f=el('div','field');
-    f.innerHTML=`<label for="c-p-n"><span class="name">Πίεση</span> <span class="fsym"><i>p</i></span></label><div class="inputs"><input type="range" id="c-p-r" min="-1" max="3" step="0.01" aria-label="Πίεση (λογαριθμική κλίμακα)"><input type="number" id="c-p-n" step="any" aria-label="Πίεση (τιμή)"><span class="unit">kPa</span></div><div class="note"></div>`;
-    const r=$('input[type=range]',f),n=$('input[type=number]',f),nt=$('.note',f);
-    const note=()=>{const s=SB();return S.p>s.pt/1000?'υπάρχει υγρή φάση · T_β = '+fmt(TLV(s,S.p*1e3)-K0,1)+' °C':'κάτω από το τριπλό σημείο ('+(s.pt>=1?fmt(s.pt/1000,1)+' kPa':'πρακτικά μηδέν')+'): όχι υγρό, μόνο εξάχνωση';};
-    const sync=()=>{r.value=Math.log10(S.p);if(document.activeElement!==n)n.value=r3(S.p);nt.textContent=note();};
-    r.addEventListener('input',()=>{S.p=clamp(Math.round(Math.pow(10,+r.value)*1000)/1000,0.1,1000);n.value=r3(S.p);nt.textContent=note();live();dirty=true;needWarm=!S.playing;});
-    n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)&&v>0){S.p=clamp(v,0.01,5000);r.value=Math.log10(S.p);nt.textContent=note();live();dirty=true;needWarm=!S.playing;}});
-    n.addEventListener('blur',sync);
-    b.appendChild(f);sync();syncs.push(sync);
-  }
-  const pr=el('div','addrow');pr.style.margin='-4px 0 12px';
-  [['Κενό 0,4',0.4],['Έβερεστ 31,4',31.4],['Θάλασσα 101,3',101.325],['Χύτρα 200',200],['6 atm 600',600]].forEach(([n,v])=>{const x=el('button','btn secondary small',n+' kPa');x.type='button';x.addEventListener('click',()=>{S.p=v;live();refreshAll();needWarm=!S.playing;});pr.appendChild(x);});
-  b.appendChild(pr);
-  field(b,{id:'c-Ta',name:'Θερμοκρασία περιβάλλοντος',sym:'<i>T</i><sub>α</sub>',unit:'°C',min:-200,max:100,step:1,get:()=>S.Ta,set:v=>{S.Ta=clamp(v,-270,3000);live();}});
-  field(b,{id:'c-k',name:'Θερμική σύζευξη με το περιβάλλον',sym:'<i>k</i>',unit:'W/K',min:0,max:20,step:0.1,get:()=>S.k,set:v=>{S.k=clamp(v,0,200);live();},
-    note:()=>S.k>0?'Φ_απ = k·(T − T_α)':'0 = ιδανική μόνωση, μόνο η εστία δίνει ενέργεια'});
   const tf=el('div','field');tf.style.marginTop='14px';
-  tf.innerHTML='<label for="tsSel"><span class="name">Χρονική κλίμακα</span></label><div class="inputs"><select id="tsSel" style="flex:1;min-width:0">'+[1,2,5,10,15,30,50,100,300,1000].map(v=>`<option value="${v}">1 s ↔ ${fmt(v,0)} s προσομοίωσης (×${fmt(v,0)})</option>`).join('')+'</select></div>';
+  tf.innerHTML='<label for="tsSel"><span class="name">Χρονική κλίμακα</span></label><div class="inputs"><select id="tsSel" style="flex:1;min-width:0">'+[1,2,5,10,15,30,50].map(v=>`<option value="${v}">${v===1?'πραγματικός χρόνος':`1 s ↔ ${fmt(v,0)} s (×${fmt(v,0)})`}</option>`).join('')+'</select></div>';
   b.appendChild(tf);
   $('#tsSel',tf).addEventListener('change',e=>{S.ts=+e.target.value;});
-  const df=el('div','field');
-  df.innerHTML='<label for="durSel"><span class="name">Διάρκεια προσομοίωσης</span></label><div class="inputs"><select id="durSel" style="flex:1;min-width:0">'+[[300,'5 λεπτά'],[600,'10 λεπτά'],[900,'15 λεπτά'],[1200,'20 λεπτά'],[1800,'30 λεπτά'],[3600,'1 ώρα'],[7200,'2 ώρες'],[14400,'4 ώρες']].map(([v,n])=>`<option value="${v}">${n}</option>`).join('')+'</select></div>';
-  b.appendChild(df);
-  $('#durSel',df).addEventListener('change',e=>{S.tmax=+e.target.value;simReset();needWarm=true;});
   syncAll=()=>{
     refreshAll();
     $('#subSel').value=S.sub;
     const ts=$('#tsSel');ts.value=String(S.ts);if(ts.value!==String(S.ts)){const o=el('option','',`1 s ↔ ${fmt(S.ts,0)} s (×${fmt(S.ts,0)})`);o.value=S.ts;ts.appendChild(o);ts.value=String(S.ts);}
-    const du=$('#durSel');du.value=String(S.tmax);if(du.value!==String(S.tmax)){const o=el('option','',fmtTime(S.tmax));o.value=S.tmax;du.appendChild(o);du.value=String(S.tmax);}
     lastLI='';lastRO='';needWarm=true;dirty=true;
   };
-  b.appendChild(el('div','hintline','Η ισχύς, η πίεση, το περιβάλλον και η σύζευξη ισχύουν από τη στιγμή που τα αλλάζεις (το μέλλον υπολογίζεται ξανά). Η ουσία, η μάζα, η αρχική θερμοκρασία και η διάρκεια επανεκκινούν την προσομοίωση.'));
+  b.appendChild(el('div','hintline','Άλλαξε μία ρύθμιση κάθε φορά. Η εστία και ο ψύκτης ισχύουν από τη στιγμή που τα αλλάζεις· το υλικό, η μάζα και η αρχική θερμοκρασία ξεκινούν ξανά την προσομοίωση.'));
 }
 function buildToggles(b){
   const vt=el('div','vector-toggles');b.appendChild(vt);
@@ -1578,18 +1526,15 @@ function buildToggles(b){
   };
   const R1=el('div','row',`<span class="grp">${UP('Δοχείο')}</span>`);vt.appendChild(R1);
   mk(R1,'bub','Φυσαλίδες βρασμού','cl');mk(R1,'steam','Μόρια αερίου (ατμός)','cg');mk(R1,'therm','Θερμόμετρο','T');
-  mk(R1,'flows','Ροές ενέργειας (<i>P</i>, Φ<sub>απ</sub>)','P');
   vt.appendChild(el('div','sep'));
   const R2=el('div','row',`<span class="grp">${UP('Μόρια')}</span>`);vt.appendChild(R2);
-  mk(R2,'vel','Διανύσματα ταχύτητας των μορίων αερίου','cg');mk(R2,'marks','Ένδειξη αλλαγής φάσης','Tb');
+  mk(R2,'marks','Ένδειξη αλλαγής φάσης','Tb');
   vt.appendChild(el('div','sep'));
   const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
-  mk(R3,'labels','Ονόματα φάσεων',null);mk(R3,'values','Τιμές στο σχήμα',null);
+  mk(R3,'labels','Ονόματα φάσεων',null);
   mk(R3,'rdv','Τιμές μεγεθών πάνω δεξιά στον καμβά',null,S);
 }
 function buildView(b){
-  field(b,{id:'c-vs',name:'Μήκος βελών',sym:'×',unit:'',min:0.3,max:2.5,step:0.05,get:()=>S.vs,set:v=>{S.vs=clamp(v,0.05,50);}});
-  field(b,{id:'c-lw',name:'Πάχος βελών',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
   field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
 }
 
@@ -1631,80 +1576,73 @@ window.addEventListener('resize',()=>dirty=true);
 /* ---------- κείμενα ---------- */
 const ANALYSIS_HTML=`<div class="guide phys-in">
 <h3>Οι τρεις φυσικές καταστάσεις</h3>
-<p>Η ύλη υπάρχει ως <b>στερεό</b> (τα μόρια ταλαντώνονται γύρω από σταθερές θέσεις), <b>υγρό</b> (τα μόρια είναι πολύ κοντά αλλά κινούνται και ολισθαίνουν) και <b>αέριο</b> (τα μόρια απέχουν πολύ και κινούνται σχεδόν ελεύθερα). Οι αλλαγές φάσης είναι: <b>τήξη</b> (στερεό → υγρό), <b>πήξη</b> (υγρό → στερεό), <b>εξαέρωση</b> (υγρό → αέριο, με εξάτμιση ή βρασμό), <b>συμπύκνωση</b> (αέριο → υγρό), <b>εξάχνωση</b> (στερεό → αέριο) και <b>απόθεση</b> (αέριο → στερεό).</p>
+<ul>
+<li><b>Στερεό:</b> τα μόρια είναι κοντά το ένα στο άλλο, σε σταθερές θέσεις, και απλώς ταλαντώνονται. Έχει σταθερό σχήμα και όγκο.</li>
+<li><b>Υγρό:</b> τα μόρια είναι κοντά, αλλά κινούνται και γλιστρούν το ένα πάνω στο άλλο. Έχει σταθερό όγκο και παίρνει το σχήμα του δοχείου.</li>
+<li><b>Αέριο:</b> τα μόρια είναι πολύ μακριά το ένα από το άλλο και κινούνται γρήγορα και ελεύθερα. Γεμίζει όλο το δοχείο.</li>
+</ul>
+<h3>Οι αλλαγές φυσικής κατάστασης</h3>
+<p><b>Τήξη</b> (στερεό → υγρό), <b>πήξη</b> (υγρό → στερεό), <b>εξαέρωση</b> (υγρό → αέριο: εξάτμιση ή βρασμός), <b>συμπύκνωση</b> (αέριο → υγρό). Κατά τις αλλαγές αυτές η ουσία μένει ίδια: τα μόρια του νερού είναι ίδια στον πάγο, στο νερό και στον ατμό. Είναι <b>φυσικά</b> φαινόμενα, όχι χημικά.</p>
 <h3>Γιατί η θερμοκρασία μένει σταθερή;</h3>
-<p>Η θερμοκρασία μετρά τη <b>μέση κινητική ενέργεια</b> των μορίων (<i>E</i><sub>κ</sub> = 3<i>kT</i>/2). Όσο το σώμα βρίσκεται σε μία φάση, η θερμότητα που δίνεται αυξάνει την κινητική ενέργεια και άρα τη θερμοκρασία. Στην αλλαγή φάσης όμως η ενέργεια χρησιμοποιείται για να <b>σπάσει τους δεσμούς</b> ανάμεσα στα μόρια (αυξάνει η δυναμική ενέργεια), οπότε η <i>T</i> δεν αλλάζει. Αυτή η ενέργεια λέγεται <b>λανθάνουσα θερμότητα</b> και αποδίδεται πίσω στο αντίστροφο φαινόμενο.</p>
-<h3>Οι τύποι</h3>
+<p>Όταν ζεσταίνουμε ένα υλικό, η θερμοκρασία του ανεβαίνει. Στο σημείο τήξης και στο σημείο βρασμού όμως η θερμοκρασία <b>σταμάτα να ανεβαίνει</b>, μέχρι να αλλάξει όλη η ποσότητα. Η θερμότητα που δίνουμε δεν κάνει τα μόρια πιο γρήγορα· χρησιμοποιείται για να «ξεκολλήσουν» τα μόρια το ένα από το άλλο. Στο διάγραμμα T(Q) τα οριζόντια τμήματα είναι οι αλλαγές φάσης.</p>
+<h3>Σημεία τήξης και βρασμού</h3>
+<p>Κάθε υλικό έχει δικό του <b>σημείο τήξης</b> και <b>σημείο βρασμού</b>, που είναι χαρακτηριστικά του. Στην κανονική ατμοσφαιρική πίεση: νερό 0 °C και 100 °C, οινόπνευμα −114 °C και 78 °C, μόλυβδος 327 °C και 1750 °C.</p>
+<h3>Θερμότητα και θερμοκρασία</h3>
+<p>Η θερμοκρασία (°C) δείχνει πόσο ζεστό είναι ένα σώμα. Η θερμότητα είναι ενέργεια που περνά από το θερμότερο στο ψυχρότερο σώμα και μετριέται σε joule (J) ή kJ. Η εστία με ισχύ 1000 W δίνει 1000 J κάθε δευτερόλεπτο. Όσο μεγαλύτερη είναι η μάζα, τόσο περισσότερη θερμότητα χρειάζεται για την ίδια αύξηση της θερμοκρασίας.</p>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
 <ul>
-<li>Μέσα σε μία φάση: <b><i>Q</i> = <i>m</i>·<i>c</i>·Δ<i>T</i></b> (<i>c</i><sub>s</sub>, <i>c</i><sub>l</sub>, <i>c</i><sub>g</sub> η ειδική θερμότητα κάθε φάσης).</li>
-<li>Τήξη ή πήξη: <b><i>Q</i> = <i>m</i>·<i>L</i><sub>f</sub></b>.</li>
-<li>Εξαέρωση ή συμπύκνωση: <b><i>Q</i> = <i>m</i>·<i>L</i><sub>v</sub></b>. Συνήθως <i>L</i><sub>v</sub> ≫ <i>L</i><sub>f</sub>.</li>
-<li>Εξάχνωση: <i>Q</i> = <i>m</i>(<i>L</i><sub>f</sub> + <i>L</i><sub>v</sub>) περίπου.</li>
-<li>Ισχύς: <b><i>Q</i> = <i>P</i>·<i>t</i></b>, άρα ο χρόνος κάθε σταδίου είναι <i>t</i> = <i>Q</i>/<i>P</i> (όταν δεν υπάρχουν απώλειες).</li>
-<li>Με απώλειες στο περιβάλλον: Φ<sub>απ</sub> = <i>k</i>·(<i>T</i> − <i>T</i><sub>α</sub>) και d<i>H</i>/d<i>t</i> = <i>P</i> − Φ<sub>απ</sub>.</li>
+<li>Ο πάγος στο ποτήρι λιώνει (τήξη) και η θερμοκρασία του νερού με τον πάγο μένει 0 °C μέχρι να λιώσει όλος.</li>
+<li>Το νερό στην κατσαρόλα βράζει (εξαέρωση) στους 100 °C.</li>
+<li>Οι σταγόνες στο καπάκι της κατσαρόλας είναι ατμός που συμπυκνώθηκε.</li>
+<li>Το νερό στο καταψύκτη γίνεται πάγος (πήξη). Το λιωμένο μέταλλο στο χυτήριο γίνεται στερεό καθώς ψύχεται.</li>
 </ul>
-<h3>Η καμπύλη θέρμανσης: αριθμητικό παράδειγμα</h3>
-<p>Πάγος 100 g στους −20 °C, που θερμαίνεται μέχρι ατμό 120 °C, με <i>P</i> = 500 W και χωρίς απώλειες:</p>
-<ul>
-<li>θέρμανση πάγου: 0,1·2090·20 = <b>4,2 kJ</b> (8 s)</li>
-<li>τήξη: 0,1·334 000 = <b>33,4 kJ</b> (67 s, στους 0 °C)</li>
-<li>θέρμανση νερού: 0,1·4186·100 = <b>41,9 kJ</b> (84 s)</li>
-<li>βρασμός: 0,1·2 260 000 = <b>226 kJ</b> (452 s, στους 100 °C)</li>
-<li>θέρμανση ατμού: 0,1·2010·20 = <b>4,0 kJ</b> (8 s)</li>
-</ul>
-<p>Σύνολο ≈ <b>309 kJ</b> σε περίπου 10 min 19 s. Η εξαέρωση παίρνει σχεδόν τα τρία τέταρτα της ενέργειας· η τήξη του πάγου κοστίζει όσο θα ανέβαζε το ίδιο νερό κατά 80 °C.</p>
-<h3>Η επίδραση της πίεσης: διάγραμμα φάσεων</h3>
-<p>Οι θερμοκρασίες αλλαγής φάσης εξαρτώνται από την πίεση. Το σημείο βρασμού ακολουθεί περίπου την εξίσωση Clausius–Clapeyron (ln <i>p</i> = <i>a</i> − <i>B</i>/<i>T</i>): όσο μικρότερη η πίεση, τόσο χαμηλότερη η <i>T</i><sub>β</sub> (νερό στο Έβερεστ ≈ 70 °C· στη χύτρα με 2 atm ≈ 120 °C). Το σημείο τήξης αλλάζει πολύ λίγο, και στο νερό <b>μειώνεται</b> με την πίεση, επειδή ο πάγος είναι λιγότερο πυκνός από το νερό.</p>
-<p>Στο <b>τριπλό σημείο</b> συνυπάρχουν και οι τρεις φάσεις (νερό: 0,0098 °C και 0,61 kPa). <b>Κάτω</b> από την πίεση του τριπλού σημείου δεν υπάρχει υγρό: το στερεό περνά απευθείας σε αέριο (εξάχνωση). Το CO<sub>2</sub> έχει τριπλό σημείο στα 518 kPa (5,1 atm), γι’ αυτό στην κανονική πίεση ο ξηρός πάγος εξαχνώνεται στους −78,5 °C.</p>
-<h3>Πυκνότητα και επίπλευση</h3>
-<p>Στις περισσότερες ουσίες το στερεό βυθίζεται στο υγρό του. Το νερό είναι η εξαίρεση: ο πάγος (917 kg/m³) επιπλέει στο νερό (998 kg/m³), με το 92% του όγκου του βυθισμένο. Παρατήρησέ το στο δοχείο.</p>
-<h3>Πραγματικά παραδείγματα</h3>
-<ul>
-<li><b>Παγάκια στο ποτό:</b> το λιωμένο παγάκι παίρνει 334 kJ/kg από το ποτό και το ψύχει χωρίς να ανεβαίνει η θερμοκρασία του παγιού (0 °C).</li>
-<li><b>Έγκαυμα από ατμό:</b> ο ατμός στους 100 °C προκαλεί χειρότερο έγκαυμα από το νερό των 100 °C, γιατί όταν συμπυκνώνεται αποδίδει 2260 kJ/kg.</li>
-<li><b>Μακαρόνια:</b> μόλις το νερό βράσει, η θερμοκρασία του δεν αυξάνεται, όσο και αν δυναμώσεις τη φωτιά· η επιπλέον ενέργεια το εξατμίζει πιο γρήγορα.</li>
-<li><b>Χύτρα ταχύτητας:</b> η μεγαλύτερη πίεση ανεβάζει το σημείο βρασμού κοντά στους 120 °C και το φαγητό μαγειρεύεται πιο γρήγορα.</li>
-<li><b>Ξηρός πάγος και υγρό άζωτο:</b> το CO<sub>2</sub> εξαχνώνεται στους −78,5 °C και το άζωτο βράζει στους −196 °C. Η «ομίχλη» είναι σταγονίδια νερού από την υγρασία του αέρα που ψύχεται.</li>
-<li><b>Λυοφιλίωση (στιγμιαίος καφές):</b> το παγωμένο νερό αφαιρείται με εξάχνωση, σε χαμηλή πίεση.</li>
-<li><b>Ψυγείο και κλιματιστικό:</b> το ψυκτικό υγρό εξατμίζεται και παίρνει θερμότητα από τον χώρο· σε άλλο σημείο συμπυκνώνεται και την αποδίδει έξω.</li>
-<li><b>Μεταλλουργία:</b> ο μόλυβδος λιώνει στους 327 °C και ο σίδηρος στους 1538 °C· ο σίδηρος θέλει 247 kJ/kg για να λιώσει.</li>
-</ul>
-<h3>Οι παραδοχές του μοντέλου</h3>
-<p>Το δείγμα έχει παντού την ίδια θερμοκρασία και βρίσκεται σε θερμοδυναμική ισορροπία (χωρίς υπερψύξη ή υπερθέρμανση), σε σταθερή πίεση <i>p</i> (έμβολο με βάρη). Οι ειδικές θερμότητες και οι λανθάνουσες θερμότητες θεωρούνται σταθερές. Ο όγκος του αερίου στο σχήμα δεν είναι υπό κλίμακα: στην πραγματικότητα 1 kg ατμού στους 100 °C καταλαμβάνει περίπου 1700 φορές τον όγκο του υγρού.</p>
 </div>`;
 const GUIDE_HTML=`<div class="guide">
-<h3>Τι κάνεις</h3>
+<h3>Τι κάνει η προσομοίωση</h3>
+<p>Ζεσταίνεις ή ψύχεις ένα υλικό και βλέπεις πώς αλλάζει η κατάστασή του: στο δοχείο, στα μόρια και στα διαγράμματα. Οι αλλαγές φάσης φαίνονται και στο όνομα πάνω αριστερά στο παράθυρο.</p>
+<h3>Πώς να τη χρησιμοποιήσεις</h3>
 <ul>
-<li>Διάλεξε <b>ουσία</b> (νερό, αιθανόλη, άζωτο, CO<sub>2</sub>, μόλυβδο, σίδηρο) ή ένα <b>έτοιμο σενάριο</b>.</li>
-<li>Ρύθμισε τη <b>μάζα</b>, την <b>αρχική θερμοκρασία</b>, την <b>ισχύ</b> της εστίας (αρνητική τιμή = ψύκτης) και την <b>πίεση</b>.</li>
-<li>Με τη <b>θερμική σύζευξη k</b> και τη θερμοκρασία περιβάλλοντος το δείγμα ανταλλάσσει θερμότητα με το περιβάλλον (π.χ. πάγος στο δωμάτιο).</li>
-<li>Πάτα <b>Εκκίνηση</b>. Η ταχύτητα αναπαραγωγής και η χρονική κλίμακα ορίζουν πόσο γρήγορα περνά ο χρόνος.</li>
-<li>Το ρυθμιστικό χρόνου σε πηγαίνει σε οποιαδήποτε στιγμή. Αν αλλάξεις ισχύ, πίεση ή περιβάλλον, η προσομοίωση συνεχίζει από τη στιγμή που βρίσκεσαι.</li>
+<li>Διάλεξε ένα <b>έτοιμο σενάριο</b> ή ρύθμισε μόνος σου το υλικό, τη μάζα, την αρχική θερμοκρασία και την ισχύ της εστίας.</li>
+<li>Πάτησε <b>Εκκίνηση</b>. Η <b>Επαναφορά</b> ξεκινά από την αρχή και η <b>Χρονική κλίμακα</b> κάνει τον χρόνο πιο γρήγορο.</li>
+<li>Με αρνητική ισχύ (ψύκτης) το υλικό ψύχεται.</li>
 </ul>
-<h3>Τι βλέπεις</h3>
+<h3>Προτάσεις για πειράματα</h3>
 <ul>
-<li><b>Δοχείο:</b> στερεό (επιπλέει στο νερό), υγρό, αέριο κάτω από έμβολο, θερμόμετρο με τα σημεία τήξης και βρασμού, και η ράβδος με τα ποσοστά των τριών φάσεων.</li>
-<li><b>Μόρια:</b> στο στερεό ταλαντώνονται γύρω από σταθερές θέσεις, στο υγρό ολισθαίνουν, στο αέριο κινούνται ελεύθερα και συγκρούονται με τα τοιχώματα. Κατά τον βρασμό σχηματίζονται φυσαλίδες μέσα στο υγρό.</li>
-<li><b>Διαγράμματα:</b> καμπύλη θέρμανσης <i>T</i>(<i>t</i>) και <i>T</i>(<i>Q</i>), κλάσματα φάσεων, διάγραμμα φάσεων <i>p</i>–<i>T</i> (κάνε κλικ για να αλλάξεις πίεση) και ενέργεια.</li>
-<li><b>Ανάλυση ενέργειας:</b> πόση ισχύς δίνεται, πόση χάνεται, και πού πηγαίνει (αύξηση θερμοκρασίας ή λανθάνουσα θερμότητα).</li>
+<li>Ζέστανε πάγο −20 °C. Ποια θερμοκρασία μένει σταθερή και πόση ώρα;</li>
+<li>Σύγκρινε νερό, οινόπνευμα και μόλυβδο: ποιο έχει το υψηλότερο σημείο τήξης;</li>
+<li>Διπλασίασε τη μάζα. Τι αλλάζει στο χρόνο της τήξης;</li>
+<li>Ψύξε υδρατμό 130 °C με ψύκτη. Τι σειρά αλλαγών βλέπεις;</li>
 </ul>
-<h3>Δοκίμασε</h3>
+<h3>Τα μεγέθη</h3>
 <ul>
-<li>Με 500 W και 100 g πάγο, μέτρησε πόσο κρατά κάθε οριζόντιο τμήμα της καμπύλης και σύγκρινέ το με τον τύπο <i>t</i> = <i>m</i>·<i>L</i>/<i>P</i>.</li>
-<li>Δώσε διπλάσια ισχύ: διπλασιάζεται η κλίση, αλλά τα οριζόντια τμήματα μένουν στις ίδιες θερμοκρασίες.</li>
-<li>Κατέβασε την πίεση στο νερό κάτω από 0,6 kPa: εξαφανίζεται το υγρό και ο πάγος εξαχνώνεται.</li>
-<li>Δες τον ξηρό πάγο: γιατί δεν γίνεται ποτέ υγρός στην ατμόσφαιρα; Ανέβασε την πίεση πάνω από 520 kPa.</li>
-<li>Βάλε αρνητική ισχύ (ψύκτη) σε ατμό: παρατήρησε τη συμπύκνωση και ύστερα την πήξη.</li>
+<li><i>T</i>: θερμοκρασία · <i>T</i><sub>τ</sub>: σημείο τήξης · <i>T</i><sub>β</sub>: σημείο βρασμού.</li>
+<li><i>m</i>: μάζα του υλικού · <i>P</i>: ισχύς εστίας (W) · <i>Q</i>: θερμότητα που δόθηκε (kJ).</li>
 </ul>
-<h3>Skins</h3>
-<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση. Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
 </div>`;
 
 /* ---------- εκκίνηση ---------- */
 onReset=()=>{needWarm=true;lastRO='';lastRole='';lastLG='';lastST='';mol.ok=false;};
 $$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
 $('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
-let skin='blueprint';try{skin=localStorage.getItem('phase-skin')||skin;}catch(e){}
+/* ---------- αποθήκευση ρυθμίσεων προβολής ---------- */
+const SAVEKEY='phasegym-view';let savedView=null;
+try{const sv=JSON.parse(localStorage.getItem(SAVEKEY)||'null');if(sv){savedView=sv;if(sv.show)Object.assign(S.show,sv.show);if(sv.charts)Object.assign(S.charts,sv.charts);['rdv','vs','lw','fs'].forEach(k=>{if(sv[k]!==undefined)S[k]=sv[k];});}}catch(e){}
+function makeSaveRow(){
+  const w=el('div','vector-toggles');w.style.marginTop='14px';
+  const row=el('div','row');w.appendChild(row);
+  const sb=el('button','btn small','💾 Αποθήκευση ρυθμίσεων'),rb=el('button','btn secondary small','Επαναφορά προεπιλογών'),msg=el('span','hintline','');msg.style.margin='0';
+  sb.type='button';rb.type='button';
+  sb.addEventListener('click',()=>{
+    try{localStorage.setItem(SAVEKEY,JSON.stringify({show:S.show,charts:S.charts,rdv:S.rdv,vs:S.vs,lw:S.lw,fs:S.fs,view:S.view}));msg.textContent='Αποθηκεύτηκε ✓ Θα φορτώνεται αυτόματα.';}
+    catch(e){msg.textContent='Δεν ήταν δυνατή η αποθήκευση σε αυτή τη συσκευή.';}
+    setTimeout(()=>{msg.textContent='';},3500);
+  });
+  rb.addEventListener('click',()=>{try{localStorage.removeItem(SAVEKEY);}catch(e){}location.reload();});
+  row.appendChild(sb);row.appendChild(rb);row.appendChild(msg);
+  const note=el('div','hintline','Αποθηκεύονται οι επιλογές της καρτέλας «Προβολή μεγεθών», οι γραφικές παραστάσεις και η όψη του παραθύρου. Το μέγεθος και το skin αποθηκεύονται ήδη αυτόματα.');
+  note.style.margin='6px 0 0';w.appendChild(note);return w;
+}
+let skin='blueprint';try{skin=localStorage.getItem('gymphase-skin')||skin;}catch(e){}
 if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
 {
   $('.guide.phys').innerHTML=ANALYSIS_HTML;
@@ -1712,7 +1650,7 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
   rc.appendChild(tp);
   const t1=mkTab(),t2=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
-  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);t2.b.appendChild($('#navHint'));
+  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);t2.b.appendChild($('#navHint'));t2.b.appendChild(makeSaveRow());
   {const rh=el('div','');rh.style.marginBottom='16px';rh.appendChild($('#roleBox'));rh.appendChild($('#roleHint'));t4.b.appendChild(rh);}
   t4.b.appendChild($('#allWrap'));t4.b.appendChild($('#readouts'));
   const gp=$('#graphPanel');
@@ -1723,14 +1661,14 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
   show(0);
 }
-let uiZ=0.8;try{uiZ=+localStorage.getItem('ui-zoom80b')||0.8;}catch(e){}
-const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ/0.8:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
-{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom80b',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+let uiZ=1;try{uiZ=+localStorage.getItem('ui-zoom-v2')||1;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom-v2',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
 addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
 buildChartChips();buildChartCells();updatePlay();
 simReset();molInit();
 cur=sampleAt(0);
-setSkin(skin);setView('all');
+setSkin(skin);setView(savedView&&['box','mol','all'].includes(savedView.view)?savedView.view:'all');
 syncAll();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
 window.__boil={S,H,SUB,sampleAt,simReset,live,get cur(){return cur;},mol,VIS,render,ensure,applyScen,SCEN,stateH,bounds};
