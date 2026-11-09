@@ -421,6 +421,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 .ptbar select{flex:1 1 150px;min-width:0;}
 .ptbar .btn:disabled{opacity:.45;cursor:default;}
 .field .zero{flex-shrink:0;}
+#mainTitle .tw.hl{color:var(--atext);}
 #simPanel.collapsed>.panel-body{display:none;}
 #simPanel.collapsed{flex:0 0 auto;}
 #status{top:10px;}
@@ -1518,8 +1519,7 @@ document.addEventListener('keydown',e=>{
 
 
 /* ---------- ΤΙΤΛΟΣ, ΚΑΡΤΕΛΕΣ, ΖΟΥΜ ---------- */
-$('mainTitle').textContent=UP($('mainTitle').textContent);
-$('mainTitle').style.fontSize='1.5rem';
+$('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map((w,i)=>{const u=UP(w);return '<span class="tw'+(i>0?' hl':'')+'"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
 {
   const raw=[...document.querySelectorAll('#tabBody>.panel')];   /* 0 Ρυθμίσεις,1 Προβολή,2 Σημεία,3 Τιμές,4 Ανάλυση,5 Οδηγίες */
   const gp=$('graphPanel'); gp.classList.remove('collapsed'); $('tabBody').appendChild(gp);
