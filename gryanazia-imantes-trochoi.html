@@ -442,10 +442,10 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
   <div class="main-grid">
     <div class="left-col">
       <div class="panel" id="simPanel">
-        <div class="panel-head-row"><h2 id="simTitle">Γρανάζια σε επαφή</h2><div class="panel-tools"><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button></div></div>
+        <div class="panel-head-row"><div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή"><button class="main-tab-btn active" data-v="2d" type="button" role="tab" aria-selected="true">2D</button><button class="main-tab-btn" data-v="3d" type="button" role="tab" aria-selected="false">3D</button></div><h2 id="simTitle" style="margin:0 auto 0 10px;font-size:.95rem;">Γρανάζια σε επαφή</h2><div class="panel-tools"><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button><button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button></div></div>
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap">
-            <div class="stage"><canvas id="cv" aria-label="Προσομοίωση"></canvas><div id="status" class="ok"></div></div>
+            <div class="stage"><canvas id="cv" aria-label="Προσομοίωση"></canvas><canvas id="gl" aria-label="Προσομοίωση 3D" style="display:none"></canvas><button class="btn secondary small" id="camreset" type="button" hidden style="position:absolute;right:10px;bottom:10px;z-index:3">↺ Κάμερα</button><div id="status" class="ok"></div></div>
           </div>
           <div class="transport one">
             <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
@@ -562,6 +562,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
     </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -717,7 +718,7 @@ function colors(){
     e1:g('--e1'),e2:g('--e2'),et:g('--et'),blue:g('--blue'),acc2:g('--c-th'),panel:g('--st-track')};
 }
 function resize(){
-  const r=cv.getBoundingClientRect();
+  const r=cv.parentElement.getBoundingClientRect();
   dpr=window.devicePixelRatio||1; W=r.width; H=r.height;
   if(W<2||H<2) return;
   cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
@@ -900,7 +901,7 @@ function drawOmega(w,Rpx){
 
 /* ---------- κύρια σχεδίαση ---------- */
 const MODE_NAME={gear:'Γρανάζια σε επαφή',belt:'Τροχοί με ιμάντα',car:'Τροχοί οχήματος'};
-function draw(){
+function draw2d(){
   if(W<2||H<2) return;
   C=colors();
   ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -1132,6 +1133,236 @@ function loop(now){
   requestAnimationFrame(loop);
 }
 
+/* ---------- 3D (three.js r128) ---------- */
+let VIEW='2d', G3=null, g3sig='', g3pts='';
+const T3={az:0.5,el:0.3,zoom:1};
+function init3d(){
+  try{
+    if(!window.THREE) throw new Error('no three');
+    Y3=new THREE.Vector3(0,1,0);
+    const r=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true});
+    const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(35,1,0.001,500);
+    scene.add(new THREE.AmbientLight(0xffffff,0.78));
+    const dl=new THREE.DirectionalLight(0xffffff,0.5); dl.position.set(-1,2.2,3); scene.add(dl);
+    G3={r,scene,cam,root:null,wh:[],marks:[],belt:null,gnd:null,gndLines:null,pts:[],om:[],w:0,h:0,dpr:0,Rm:1,T:0.3,Zc:0};
+  }catch(e){ G3=null; }
+}
+function disposeObj(o){
+  o.traverse(c=>{
+    if(c.geometry) c.geometry.dispose();
+    if(c.material){ [].concat(c.material).forEach(m=>{ if(m.map) m.map.dispose(); m.dispose(); }); }
+  });
+}
+const Cc=s=>new THREE.Color(s);
+function gearShape(N,R,phase){
+  const pa=TAU/N, dT=Math.min(0.4*TAU*R/N,0.25*R), ri=R-dT/2, ro=R+dT/2;
+  const P=(r,a)=>[r*Math.sin(a),r*Math.cos(a)], sh=new THREE.Shape();
+  let first=true;
+  const add=(p)=>{ if(first){sh.moveTo(p[0],p[1]);first=false;} else sh.lineTo(p[0],p[1]); };
+  for(let j=0;j<N;j++){
+    const c=phase+j*pa;
+    add(P(ri,c-0.30*pa)); add(P(ro,c-0.17*pa)); add(P(ro,c+0.17*pa)); add(P(ri,c+0.30*pa));
+    const n=Math.max(2,Math.ceil(0.4*pa/0.08)), a0=c+0.30*pa, a1=c+pa-0.30*pa;
+    for(let q=1;q<n;q++) add(P(ri,a0+(a1-a0)*q/n));
+  }
+  sh.closePath(); return {sh,ri};
+}
+let BGc=null;
+const tint=(c,k)=>Cc(c).lerp(BGc||Cc('#000'),k===undefined?0.55:k);
+const mat=(c,o,k)=>new THREE.MeshLambertMaterial(Object.assign({color:tint(c,k),side:THREE.DoubleSide},o||{}));
+const bas=(c,o)=>new THREE.MeshBasicMaterial(Object.assign({color:Cc(c)},o||{}));
+function edges(mesh,c){ const l=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,35),new THREE.LineBasicMaterial({color:Cc(c)})); mesh.add(l); return mesh; }
+const cylZ=(r,len,m)=>{ const g=new THREE.CylinderGeometry(r,r,len,40); g.rotateX(Math.PI/2); return new THREE.Mesh(g,m); };
+function decor(g,R,ri,T,col){
+  /* πλήμνη, ακτίνες και ο «δείκτης» που δείχνει τη γωνία περιστροφής, στην μπροστινή όψη */
+  const zf=T/2+0.0015*G3.Rm;
+  const hub=cylZ(0.1*R,T*1.5,bas(col.bg)); g.add(edges(hub,col.ink));
+  for(let i=0;i<4;i++){
+    const a=i*Math.PI/2+Math.PI/4, b=new THREE.Mesh(new THREE.BoxGeometry(0.03*R,ri*0.78,0.012*R),bas(col.muted));
+    b.position.set(Math.sin(a)*ri*0.39,Math.cos(a)*ri*0.39,zf); b.rotation.z=-a; g.add(b);
+  }
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(ri*0.82,0.008*R,6,48),bas(col.muted)); ring.position.z=zf; g.add(ring);
+  const mk=new THREE.Mesh(new THREE.BoxGeometry(0.05*R,ri*0.82,0.016*R),bas(col.acc)); mk.position.set(0,ri*0.41,zf+0.004*R); g.add(mk);
+}
+function mkArrow(color){
+  const g=new THREE.Group(), m=bas(color);
+  const sg=new THREE.CylinderGeometry(1,1,1,8); sg.translate(0,0.5,0);
+  const hg=new THREE.ConeGeometry(1,1,14); hg.translate(0,0.5,0);
+  const sh=new THREE.Mesh(sg,m), hd=new THREE.Mesh(hg,m); g.add(sh,hd); g.userData={sh,hd}; g.visible=false; return g;
+}
+let Y3=null;
+function setArrow(g,o,d,len,rad){
+  const Rm=G3.Rm; if(len<0.05*Rm){ g.visible=false; return; }
+  g.visible=true; g.position.copy(o); g.quaternion.setFromUnitVectors(Y3,d.clone().normalize());
+  const hl=Math.min(0.3*Rm,len*0.42), hr=rad*3;
+  g.userData.sh.scale.set(rad,Math.max(1e-4,len-hl*0.9),rad);
+  g.userData.hd.position.y=len-hl; g.userData.hd.scale.set(hr,hl,hr);
+}
+function labelSprite(txt,color){
+  const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d');
+  x.font='700 44px '+FONT; x.textAlign='center'; x.textBaseline='middle'; x.fillStyle=color; x.fillText(txt,32,34);
+  const t=new THREE.CanvasTexture(c), s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:false}));
+  s.renderOrder=10; return s;
+}
+function build3d(){
+  const g3=G3; if(g3.root){ g3.scene.remove(g3.root); disposeObj(g3.root); }
+  const col=colors(); g3.col=col; BGc=Cc(col.bg);
+  const root=new THREE.Group(); g3.root=root; g3.scene.add(root);
+  const R=[RM(0),RM(1)], c=centers(), Rm=Math.max(R[0],R[1]), car=S.mode==='car', T=(S.mode==='gear'?0.15:car?0.2:0.3)*Rm;
+  Object.assign(g3,{Rm,T,Zc:car?0.7*Rm:0,wh:[],marks:[],belt:null,gnd:null,gndLines:null,pts:[],om:[]});
+  g3.r.setClearColor(Cc(col.bg),1);
+  const Zs=car?[g3.Zc,-g3.Zc]:[0];
+  const N1=gearN(0), N2=gearN(1);
+  for(let i=0;i<2;i++) Zs.forEach((z,zi)=>{
+    const gr=new THREE.Group(); gr.position.set(c[i][0],c[i][1],z);
+    let ri=R[i]*0.9;
+    if(S.mode==='gear'){
+      const phase=i===0?0:1.5*Math.PI+(N1/N2)*Math.PI/2-Math.PI/N2, o=gearShape(i?N2:N1,R[i],phase); ri=o.ri;
+      const geo=new THREE.ExtrudeGeometry(o.sh,{depth:T,bevelEnabled:false}); geo.translate(0,0,-T/2);
+      gr.add(edges(new THREE.Mesh(geo,mat(i===0?col.blue:col.e2)),col.ink));
+    } else if(S.mode==='belt'){
+      gr.add(edges(cylZ(R[i],T,mat(i===0?col.blue:col.e2)),col.ink));
+      [-1,1].forEach(s=>{ const f=cylZ(R[i]*1.07,0.08*T,mat(col.muted)); f.position.z=s*T*0.5; gr.add(f); });
+      ri=R[i];
+    } else {
+      gr.add(edges(cylZ(R[i],T,mat(col.ink,{},0.1)),col.bg));
+      const rim=cylZ(R[i]*0.86,T*1.02,mat(i===0?col.blue:col.e2,{},0.7)); gr.add(rim); ri=R[i]*0.86;
+    }
+    decor(gr,R[i],ri,T,col);
+    root.add(gr); if(zi===0) g3.wh[i]=gr; else (g3.wh2=g3.wh2||[])[i]=gr;
+  });
+  if(S.mode==='gear'){ /* σημείο επαφής */
+    const s=new THREE.Mesh(new THREE.SphereGeometry(0.035*Rm,12,10),bas(col.ink)); s.position.set(R[0],0,T/2+0.02*Rm); root.add(s);
+  }
+  if(S.mode==='belt'){
+    const P=beltPath(), n=P.length, Bw=0.55*T, pos=[], idx=[];
+    P.forEach(p=>{ pos.push(p[0],p[1],-Bw/2, p[0],p[1],Bw/2); });
+    for(let i=0;i<n;i++){ const a=2*i,b=2*((i+1)%n); idx.push(a,a+1,b, a+1,b+1,b); }
+    const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); geo.setIndex(idx); geo.computeVertexNormals();
+    g3.belt=new THREE.Mesh(geo,mat(col.axis)); root.add(g3.belt);
+    const cum=[0]; for(let i=1;i<=n;i++){ const a=P[i-1],b=P[i%n]; cum.push(cum[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1])); }
+    g3.beltP=P; g3.beltCum=cum;
+    const m=Math.max(12,Math.round(cum[n]/(0.7*Rm)));
+    for(let i=0;i<m;i++){ const b=new THREE.Mesh(new THREE.BoxGeometry(0.025*Rm,0.07*Rm,Bw*1.04),bas(col.ink)); root.add(b); g3.marks.push(b); }
+  }
+  if(car){
+    const hy=Math.max(R[0],R[1]), bx0=c[0][0]-R[0]*0.85, bx1=c[1][0]+R[1]*0.85, by0=hy*0.85, by1=hy*1.65, dz=2*g3.Zc-T*1.2;
+    const body=new THREE.Mesh(new THREE.BoxGeometry(bx1-bx0,by1-by0,dz),mat(col.acc,{},0.5)); body.position.set((bx0+bx1)/2,(by0+by1)/2,0); root.add(edges(body,col.ink));
+    const mx=(c[0][0]+c[1][0])/2, cw=(bx1-bx0)*0.28, cs=new THREE.Shape();
+    cs.moveTo(mx-cw*1.3,by1); cs.lineTo(mx-cw*0.8,hy*2.1); cs.lineTo(mx+cw*0.8,hy*2.1); cs.lineTo(mx+cw*1.3,by1); cs.closePath();
+    const cg=new THREE.ExtrudeGeometry(cs,{depth:dz*0.9,bevelEnabled:false}); cg.translate(0,0,-dz*0.45);
+    const cab=new THREE.Mesh(cg,mat(col.blue,{},0.45)); root.add(edges(cab,col.ink));
+    const hb=new THREE.Mesh(new THREE.BoxGeometry(Math.abs(c[1][0]-c[0][0]),0.03*Rm,0.03*Rm),bas(col.ink)); hb.position.set(mx,(c[0][1]+c[1][1])/2,g3.Zc); root.add(hb);
+    for(let i=0;i<2;i++){ const ax=cylZ(0.05*R[i],2*g3.Zc,bas(col.ink)); ax.position.set(c[i][0],c[i][1],0); root.add(ax); }
+    const gp=new THREE.Mesh(new THREE.PlaneGeometry(40*Rm,10*Rm),new THREE.MeshBasicMaterial({color:Cc(col.axis),transparent:true,opacity:0.16,side:THREE.DoubleSide,depthWrite:false}));
+    gp.rotation.x=-Math.PI/2; gp.position.set((c[0][0]+c[1][0])/2,-0.001,0); root.add(gp);
+    const lg=new THREE.BufferGeometry(); lg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(3*2*400),3));
+    g3.gndLines=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:Cc(col.axis)})); g3.gndLines.frustumCulled=false; root.add(g3.gndLines);
+  }
+  /* σημεία, διανύσματα, ίχνη */
+  S.pts.forEach(p=>{
+    const sp=new THREE.Mesh(new THREE.SphereGeometry(0.06*Rm,16,12),bas(col.acc)); root.add(sp);
+    const lb=labelSprite(p.name,col.ink); lb.scale.set(0.17*Rm,0.17*Rm,1); root.add(lb);
+    const ar={}; ['v','ac','at','atot'].forEach(k=>{ ar[k]=mkArrow(col[{v:'e1',ac:'blue',at:'e2',atot:'et'}[k]]); root.add(ar[k]); });
+    const tl=new THREE.Line(new THREE.BufferGeometry(),new THREE.LineBasicMaterial({color:Cc(col.acc),transparent:true,opacity:0.8})); tl.frustumCulled=false; root.add(tl);
+    g3.pts.push({sp,lb,ar,tl});
+  });
+  for(let i=0;i<2;i++){ const a=mkArrow(col.acc2); root.add(a); g3.om.push(a); }
+  g3.sig=sig3();
+}
+function sig3(){
+  return [S.mode,S.belt,S.R1,S.R2,S.d,S.L,document.documentElement.dataset.skin,S.pts.map(p=>p.name+':'+p.w).join(',')].join('|');
+}
+function size3d(){
+  if(!G3||W<2||H<2) return;
+  const d=window.devicePixelRatio||1;
+  if(G3.w!==W||G3.h!==H||G3.dpr!==d){ G3.r.setPixelRatio(d); G3.r.setSize(W,H,false); G3.w=W; G3.h=H; G3.dpr=d; G3.cam.aspect=W/H; G3.cam.updateProjectionMatrix(); }
+}
+function draw3d(){
+  const g3=G3; if(!g3||W<2||H<2) return;
+  if(!g3.root||g3.sig!==sig3()) build3d();
+  size3d();
+  const Wd=wheels(S.t), car=S.mode==='car', col=g3.col, Rm=g3.Rm, T=g3.T, c=centers();
+  for(let i=0;i<2;i++){ g3.wh[i].rotation.z=-Wd.ws[i].th; if(g3.wh2) g3.wh2[i].rotation.z=-Wd.ws[i].th; }
+  /* ιμάντας: δείκτες που κινούνται πάνω του */
+  if(g3.belt){
+    const P=g3.beltP, cum=g3.beltCum, n=P.length, Lt=cum[n], off=Wd.ws[0].th*Wd.ws[0].R, m=g3.marks.length;
+    for(let i=0;i<m;i++){
+      let s=((i*Lt/m+off)%Lt+Lt)%Lt, k=1; while(k<cum.length-1&&cum[k]<s) k++;
+      const a=P[(k-1)%n], b=P[k%n], seg=cum[k]-cum[k-1]||1, u=(s-cum[k-1])/seg;
+      g3.marks[i].position.set(a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u,0); g3.marks[i].rotation.z=Math.atan2(b[1]-a[1],b[0]-a[0]);
+    }
+  }
+  /* έδαφος με χαραγές που κινούνται προς τα πίσω */
+  if(g3.gndLines){
+    const steps=[0.1,0.25,0.5,1,2,5,10], step=steps.find(x=>x>=0.7*Rm)||10, s=Wd.s, xm=(c[0][0]+c[1][0])/2, X0=xm-18*Rm, X1=xm+18*Rm, zh=2.4*g3.Zc, arr=g3.gndLines.geometry.attributes.position.array;
+    let k=0; for(let i=Math.ceil((X0+s)/step);i<=Math.floor((X1+s)/step)&&k<400;i++){ const x=i*step-s; arr.set([x,0,-zh,x,0,zh],6*k); k++; }
+    g3.gndLines.geometry.attributes.position.needsUpdate=true; g3.gndLines.geometry.setDrawRange(0,2*k);
+  }
+  /* σημεία και διανύσματα */
+  const sc={v:1.1*Rm/Math.max((Math.abs(TAU*S.f)+Math.abs(S.eps))*Rm,0.3)*S.vs/100,
+            a:1.1*Rm/Math.max((Math.abs(TAU*S.f)+Math.abs(S.eps))**2*Rm,Math.abs(S.eps)*Rm*2,0.5)*S.vs/100};
+  const rad=0.016*Rm*S.vw/100, cap=3.2*Rm;
+  S.pts.forEach((p,i)=>{
+    const o=g3.pts[i]; if(!o) return;
+    const q=pointKin(p,Wd), w=Wd.ws[p.w], zf=(car?g3.Zc:0)+T/2+0.02*Rm;
+    const P3=new THREE.Vector3(w.cx+q.pos[0],w.cy+q.pos[1],zf);
+    o.sp.visible=!!p.on; o.lb.visible=!!p.on&&!!S.labels; o.tl.visible=false;
+    o.sp.position.copy(P3); o.sp.scale.setScalar(i===S.sel?1.25:1);
+    const L=Math.hypot(q.pos[0],q.pos[1])||1; o.lb.position.set(P3.x+q.pos[0]/L*0.15*Rm,P3.y+q.pos[1]/L*0.15*Rm,zf+0.05*Rm);
+    [['v','v','v'],['ac','a','ac'],['at','a','at'],['atot','a','atot']].forEach(([k,kind,tg])=>{
+      const a=o.ar[k], vv=q[k], len=Math.min(mag(vv)*sc[kind],cap);
+      if(!p.on||!S.tg[tg]||mag(vv)<1e-9){ a.visible=false; return; }
+      setArrow(a,P3,new THREE.Vector3(vv[0],vv[1],0),len,rad);
+    });
+    if(S.trail&&p.on){
+      const om=Math.abs(w.om), Tp=om>1e-3?clamp(TAU/om,0.3,TMAX):4, Tw=Math.min(S.t,Tp);
+      if(Tw>=0.01){
+        const pts=[]; for(let n=0;n<=160;n++){ const tau=S.t-Tw+Tw*n/160, Wt=wheels(tau), qq=pointKin(p,Wt), w0=Wt.ws[p.w]; pts.push(new THREE.Vector3(w0.cx+(car?Wt.s-Wd.s:0)+qq.pos[0],w0.cy+qq.pos[1],zf)); }
+        o.tl.geometry.setFromPoints(pts); o.tl.visible=true;
+      }
+    }
+  });
+  /* ω: αξονικό διάνυσμα (δεξιόστροφη → προς το επίπεδο, αριστερόστροφη → προς τον θεατή) */
+  Wd.ws.forEach((w,i)=>{
+    const a=g3.om[i], zf=(car?g3.Zc:0)+T/2, len=0.95*w.R;
+    if(!S.tg.w||Math.abs(w.om)<1e-6){ a.visible=false; return; }
+    const into=w.om>0;
+    setArrow(a,new THREE.Vector3(w.cx,w.cy,into?zf+len:zf),new THREE.Vector3(0,0,into?-1:1),len,rad*1.2);
+  });
+  /* κάμερα */
+  const bx=sceneBox(), bw=bx.x1-bx.x0, bh=bx.y1-bx.y0, asp=W/H, E=Math.max(bw/asp,bh*1.1,car?2*g3.Zc*1.3:0.6*Rm);
+  const d=E*(car?2.8:2.3)/(T3.zoom*S.zoom), cp=Math.cos(T3.el), tx=(bx.x0+bx.x1)/2, ty=(bx.y0+bx.y1)/2;
+  g3.cam.position.set(tx+d*cp*Math.sin(T3.az),ty+d*Math.sin(T3.el),d*cp*Math.cos(T3.az)); g3.cam.lookAt(tx,ty,0);
+  g3.r.render(g3.scene,g3.cam);
+}
+function setView(v){
+  if(v==='3d'&&!G3){ const st=$('status'); st.textContent='ΤΟ 3D ΧΡΕΙΑΖΕΤΑΙ ΤΗ ΒΙΒΛΙΟΘΗΚΗ THREE.JS (ΣΥΝΔΕΣΗ ΣΤΟ ΔΙΑΔΙΚΤΥΟ)'; st.className='warn'; lastSt=''; return; }
+  VIEW=v; $('gl').style.display=v==='3d'?'block':'none'; cv.style.display=v==='3d'?'none':'block'; $('camreset').hidden=v!=='3d';
+  document.querySelectorAll('#viewSeg button').forEach(b=>{ const on=b.dataset.v===v; b.classList.toggle('active',on); b.setAttribute('aria-selected',on); });
+  resize();
+}
+{
+  const gl=$('gl'), pt=new Map(); let pd=0;
+  gl.addEventListener('pointerdown',e=>{ gl.setPointerCapture(e.pointerId); pt.set(e.pointerId,[e.clientX,e.clientY]); if(pt.size===2){ const a=[...pt.values()]; pd=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]); } });
+  gl.addEventListener('pointermove',e=>{
+    if(!pt.has(e.pointerId)) return; const o=pt.get(e.pointerId), dx=e.clientX-o[0], dy=e.clientY-o[1]; pt.set(e.pointerId,[e.clientX,e.clientY]);
+    if(pt.size===1){ T3.az-=dx*0.008; T3.el=clamp(T3.el+dy*0.008,-1.4,1.4); }
+    else if(pt.size===2){ const a=[...pt.values()], nd=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]); if(pd>0) T3.zoom=clamp(T3.zoom*nd/pd,0.3,4); pd=nd; }
+  });
+  const up=e=>{ pt.delete(e.pointerId); pd=0; };
+  gl.addEventListener('pointerup',up); gl.addEventListener('pointercancel',up);
+  gl.addEventListener('wheel',e=>{ e.preventDefault(); T3.zoom=clamp(T3.zoom*(e.deltaY<0?1.1:1/1.1),0.3,4); },{passive:false});
+  $('camreset').addEventListener('click',()=>{ T3.az=0.5; T3.el=0.3; T3.zoom=1; });
+  document.querySelectorAll('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
+}
+init3d();
+
+function draw(){
+  if(VIEW==='3d'&&G3){ draw3d(); const Wd=wheels(S.t); readouts(Wd,S.pts.map(p=>pointKin(p,Wd))); }
+  else draw2d();
+}
+
 /* ---------- ΗΧΟΣ (συνθετικός, Web Audio): βούισμα που ανεβαίνει με τη συχνότητα ---------- */
 const AU={ctx:null,on:true,gain:null,osc:null,flt:null};
 function audioInit(){
@@ -1287,7 +1518,8 @@ document.addEventListener('keydown',e=>{
 
 
 /* ---------- ΤΙΤΛΟΣ, ΚΑΡΤΕΛΕΣ, ΖΟΥΜ ---------- */
-$('mainTitle').innerHTML=$('mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return '<span class="tw"><b>'+u[0]+'</b>'+u.slice(1)+'</span>';}).join(' ');
+$('mainTitle').textContent=UP($('mainTitle').textContent);
+$('mainTitle').style.fontSize='1.5rem';
 {
   const raw=[...document.querySelectorAll('#tabBody>.panel')];   /* 0 Ρυθμίσεις,1 Προβολή,2 Σημεία,3 Τιμές,4 Ανάλυση,5 Οδηγίες */
   const gp=$('graphPanel'); gp.classList.remove('collapsed'); $('tabBody').appendChild(gp);
@@ -1314,7 +1546,7 @@ const fitGrid=()=>{
 addEventListener('resize',fitGrid);
 buildChartChips(); buildChartCells();
 sync(); fitGrid(); setTimeout(fitGrid,300);
-if(window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+if(window.ResizeObserver) new ResizeObserver(resize).observe(cv.parentElement);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(resize);
 requestAnimationFrame(loop);
 
