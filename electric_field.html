@@ -619,6 +619,10 @@ details.io textarea{width:100%;margin-top:8px;background:var(--panel2);border:1p
                       <label class="colpick"><input type="color" id="colF" aria-label="Χρώμα F"><span>F</span></label>
                     </div>
                   </div>
+                  <div class="addrow" style="margin:10px 0 0">
+                    <button class="btn small" id="viewSaveBtn" type="button">💾 Αποθήκευση ρυθμίσεων προβολής</button>
+                  </div>
+                  <div class="hintline" id="viewSaveMsg"></div>
                 </div>
               </div>
             </div>
@@ -688,6 +692,11 @@ const DEFAULT = {
   epsR:1, snapGrid:true, snapLine:true, animating:false, animT:0, cx:0, cy:0
 };
 let S = clone(DEFAULT);
+const VKEY='efield-view-v1';
+const VIEW_KEYS=['e1','e2','et','lines','zero','para','vals','snapGrid','snapLine','vs','vw','vwf','nl','col'];
+(function(){ try{ const o=JSON.parse(localStorage.getItem(VKEY)||'null'); if(!o) return;
+  VIEW_KEYS.forEach(k=>{ if(o[k]!==undefined) S[k]=o[k]; });
+}catch(e){} })();
 function fullState(p){ const s=Object.assign(clone(DEFAULT),clone(p||{})); s.test=Object.assign({},DEFAULT.test,s.test||{}); return s; }
 
 /* ---------- formatting ---------- */
@@ -1248,6 +1257,11 @@ hook('vs',v=>{S.vs=v/100;});
 hook('vw',v=>{S.vw=v/100;});
 hook('vwf',v=>{S.vwf=v/100;});
 hook('nl',v=>{S.nl=Math.round(v/2)*2;});
+$('viewSaveBtn').addEventListener('click',()=>{
+  const o={}; VIEW_KEYS.forEach(k=>{ o[k]=S[k]; });
+  try{ localStorage.setItem(VKEY,JSON.stringify(o)); $('viewSaveMsg').textContent='Αποθηκεύτηκε· θα φορτώνονται κάθε φορά που ανοίγεις την προσομοίωση.'; }
+  catch(e){ $('viewSaveMsg').textContent='Δεν ήταν δυνατή η αποθήκευση σε αυτό το πρόγραμμα περιήγησης.'; }
+});
 $('gotoZero').addEventListener('click',()=>{ const zp=zeroPoint(getGeom()); if(!zp) return; S.pm='line'; S.x=zp.s; zoomFit(); sync(); draw(); });
 $('tcOn').addEventListener('change',e=>{S.test.on=e.target.checked;sync();draw();});
 $('tcF').addEventListener('change',e=>{S.test.showF=e.target.checked;draw();});
