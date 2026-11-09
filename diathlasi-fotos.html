@@ -1,1344 +1,1176 @@
 <!DOCTYPE html>
-<html lang="el">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Προσομοίωση Διάθλασης Φωτός</title>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Διάθλαση φωτός και φαινόμενο βάθος</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
-
-:root{
-  --bg-deep:#0B1B30;
-  --bg:#10243D;
-  --bg-panel:#132A47;
-  --line-dim: rgba(143,184,217,0.18);
-  --line: #6E97BE;
-  --line-bright:#DCEEFF;
-  --gold:#E8B84B;
-  --gold-dim: rgba(232,184,75,0.35);
-  --paper:#F5F8FC;
-  --paper-dim:#AFC3DA;
-  --danger:#E0685A;
-  --radius: 3px;
-  --ray1-color:#E8B84B;
-  --ray2-color:#5EEAD4;
-  --normal-color:#7DB8FF;
-  --apparent-color:#FF6FCF;
-  --water-top:#0E3A5C;
-  --water-bot:#061423;
-  --sky-top:#1B3A5C;
-  --sky-bot:#0B1B30;
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
 }
 
-body.theme-minimal{
-  --bg-deep:#FFFFFF;
-  --bg:#F3F6FA;
-  --bg-panel:#FFFFFF;
-  --line-dim: rgba(31,45,61,0.08);
-  --line:#B9C2CE;
-  --line-bright:#1F2D3D;
-  --gold:#F0932B;
-  --gold-dim: rgba(240,147,43,0.35);
-  --paper:#1F2D3D;
-  --paper-dim:#6B7686;
-  --danger:#D64545;
-  --ray1-color:#C97A12;
-  --ray2-color:#0D9488;
-  --normal-color:#2563EB;
-  --apparent-color:#DB2777;
-  --water-top:#BFE0F5;
-  --water-bot:#7FB3D9;
-  --sky-top:#EAF3FB;
-  --sky-bot:#FFFFFF;
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
 }
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
 
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.hdr-tools{display:flex;gap:8px;align-items:center;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
+.home-btn:hover{border-color:var(--accent);}
+.zoom-select{min-width:140px!important;}
+@media(max-width:980px){#zoomSel{display:none;}}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="g16"]{
+  color-scheme:light;
+  --bg:#4B5058; --bg2:#41464E; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F1F5F9; --hdim:#CBD5E1;
+  --st-track:#D3D7DE; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="g16"] .right-col,:root[data-skin="g16"] .left-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+
+[hidden]{display:none!important;}
 *{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
+html,body{margin:0;}
 body{
-  background: var(--bg-deep);
+  background:var(--bg);
   background-image:
-    repeating-linear-gradient(var(--line-dim) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(90deg, var(--line-dim) 0 1px, transparent 1px 32px);
-  color: var(--paper);
-  font-family: 'Inter', sans-serif;
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
   min-height:100vh;
-  padding: 18px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;bottom:10px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
 }
 
-@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
 
-.wrap{max-width: 1180px; margin:0 auto;}
-
-header{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:8px;
-  border-bottom: 1px solid var(--line-dim);
-  padding-bottom: 14px;
-  margin-bottom: 18px;
-}
-h1{
-  font-family:'Oswald', sans-serif;
-  font-weight:600;
-  letter-spacing: 0.02em;
-  font-size: clamp(22px, 4vw, 32px);
-  margin:0;
-  color: var(--paper);
-}
-h1 span{color: var(--gold);}
-.byline{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:12px;
-  letter-spacing:0.04em;
-  color: var(--paper-dim);
-  margin-top:4px;
-}
-.subtitle{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:12px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color: var(--paper-dim);
-}
-.header-right{ display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
-.theme-toggle{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em; padding:6px 10px; }
-.theme-toggle span{color: var(--gold);}
-
-.layout{ display:flex; flex-direction:column; gap: 20px; }
-
-.controls{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap:14px;
-}
-
-@media (min-width: 600px) and (max-width: 1080px){
-  body{ padding: 24px 26px 64px; }
-  .controls{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
-  .card{ padding: 18px 20px; }
-  .field{ margin-bottom:18px; }
-  .stage-readouts{ top:44px; right:20px; }
-  .stage-readouts .ov-line{ font-size:13.5px; }
-}
-
-.stage{
-  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
-  border: 1px solid var(--line-dim);
-  border-radius: var(--radius);
-  padding: 14px;
-  position:relative;
-}
-.stage-label{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:11px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color: var(--gold);
-  margin-bottom:8px;
-  display:flex;
-  justify-content:space-between;
-}
-canvas{
-  width:100%;
-  height:auto;
-  aspect-ratio: 16/11;
-  display:block;
-  border-radius: var(--radius);
-  background: transparent;
-  touch-action: none;
-  cursor: grab;
-}
-canvas.grabbing{cursor:grabbing;}
-
-.hint{
-  font-family:'IBM Plex Mono', monospace;
-  font-size:11.5px;
-  color: var(--paper-dim);
-  margin-top:8px;
-  text-align:center;
-}
-
-.card{
-  background: linear-gradient(180deg, var(--bg-panel), var(--bg));
-  border: 1px solid var(--line-dim);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-}
-.card h2{
-  font-family:'Oswald', sans-serif;
-  font-weight:500;
-  font-size:13px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color: var(--gold);
-  margin: 0 0 12px 0;
-  border-bottom: 1px dashed var(--gold-dim);
-  padding-bottom:8px;
-}
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
 
 .field{margin-bottom:14px;}
-.field:last-child{margin-bottom:0;}
-.field-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
-.field-row label{ font-size:14.5px; color: var(--paper); }
-.field-row .val{ font-family:'IBM Plex Mono', monospace; font-size:14px; color: var(--gold); min-width: 64px; text-align:right; }
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
 
-.val-wrap{ display:flex; align-items:center; gap:5px; }
-.val-input{
-  width:68px;
-  background: var(--bg-deep);
-  border: 1px solid var(--line-dim);
-  color: var(--gold);
-  font-family:'IBM Plex Mono', monospace;
-  font-size:14px;
-  text-align:right;
-  padding:8px 7px;
-  border-radius: var(--radius);
-  -moz-appearance:textfield;
-}
-.val-input::-webkit-outer-spin-button, .val-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-.val-input:focus-visible{outline:2px solid var(--line-bright); outline-offset:1px;}
-.unit{ font-family:'IBM Plex Mono', monospace; font-size:12px; color: var(--paper-dim); white-space:nowrap; }
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
 
-.select-el, .ex-select{
-  width:100%;
-  background: var(--bg-deep);
-  border: 1px solid var(--line-dim);
-  color: var(--paper);
-  font-family:'Inter', sans-serif;
-  font-size:14px;
-  padding:12px;
-  border-radius: var(--radius);
-}
-
-input[type=range]{
-  -webkit-appearance:none;
-  width:100%;
-  height:5px;
-  background: var(--line-dim);
-  border-radius:3px;
-  outline:none;
-  touch-action:pan-y;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:24px;height:24px;
-  border-radius:50%;
-  background: var(--gold);
-  border: 2px solid var(--bg-deep);
-  cursor:pointer;
-  margin-top:-9.5px;
-}
-input[type=range]::-moz-range-thumb{
-  width:22px;height:22px;
-  border-radius:50%;
-  background: var(--gold);
-  border: 2px solid var(--bg-deep);
-  cursor:pointer;
-}
-input[type=range]::-webkit-slider-runnable-track{ height:5px; background: var(--line-dim); border-radius:3px; }
-input[type=range]:focus-visible::-webkit-slider-thumb{ outline: 2px solid var(--line-bright); outline-offset: 2px; }
-input[type=range]:focus-visible{ outline: none; }
-
-.toggle-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:32px; }
-.toggle-row + .toggle-row{margin-top:13px;}
-.toggle-row label{font-size:13.5px;}
-.switch{ position:relative; width:46px;height:26px; flex:none; }
-.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;}
-.slider-pill{
-  position:absolute; inset:0;
-  background: var(--line-dim);
-  border-radius:26px;
-  transition: background 0.15s;
-  border:1px solid var(--line-dim);
-  pointer-events:none;
-}
-.slider-pill:before{
-  content:"";
-  position:absolute;
-  width:18px;height:18px;
-  left:3px; top:3px;
-  background: var(--paper-dim);
-  border-radius:50%;
-  transition: transform 0.15s, background 0.15s;
-}
-.switch input:checked + .slider-pill{background: rgba(232,184,75,0.25); border-color:var(--gold-dim);}
-.switch input:checked + .slider-pill:before{transform: translateX(20px); background: var(--gold);}
-.switch input:focus-visible + .slider-pill{outline:2px solid var(--line-bright); outline-offset:2px;}
-
-button{
-  font-family:'Oswald', sans-serif;
-  font-weight:500;
-  letter-spacing:0.05em;
-  font-size:13px;
-  text-transform:uppercase;
-  border-radius: var(--radius);
-  border: 1px solid var(--line-dim);
-  background: transparent;
-  color: var(--paper);
-  padding: 12px 16px;
-  cursor:pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-  -webkit-tap-highlight-color: transparent;
-  min-height:44px;
-}
-button:hover{border-color: var(--gold-dim); color: var(--gold);}
-button:focus-visible{outline: 2px solid var(--line-bright); outline-offset:2px;}
-button.primary{ background: var(--gold); color: var(--bg-deep); border-color: var(--gold); }
-button.primary:hover{background: #f0c665; color:var(--bg-deep);}
-button.small{padding:10px 12px; font-size:11.5px; min-height:40px;}
-button:disabled{opacity:0.35; cursor:not-allowed;}
-button.danger{ border-color: rgba(224,104,90,0.4); color: #ffb3a8; padding:9px 14px; min-height:auto; font-size:11.5px; }
-button.danger:hover{background: rgba(224,104,90,0.15); border-color: var(--danger); color:#ffb3a8;}
-
-.btn-row{display:flex; gap:8px; flex-wrap:wrap;}
-
-.msg{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-top:10px; line-height:1.5; }
-.msg.warn{color: var(--danger);}
-.msg.ok{color:#4ADE80;}
-
-.readout-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.readout{ background: var(--bg-deep); border: 1px solid var(--line-dim); border-radius: var(--radius); padding: 9px 10px; }
-.readout .k{ font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--paper-dim); display:block; margin-bottom:4px; }
-.readout .v{ font-family:'IBM Plex Mono', monospace; font-size:16px; color: var(--line-bright); }
-.readout .u{font-size:11px; color: var(--paper-dim);}
-
-.stage-stats-toggle{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  margin-top:14px; padding-top:12px; border-top: 1px dashed var(--line-dim);
-}
-.stage-stats-toggle label{ font-size:13px; color: var(--paper); }
-.stage-readouts{
-  position:absolute; top:40px; right:22px;
-  display:flex; flex-direction:column; align-items:flex-end; gap:3px;
-  opacity:0; pointer-events:none; transition: opacity 0.2s ease; z-index:3;
-}
-.stage-readouts.open{opacity:1;}
-.stage-readouts .ov-line{
-  font-family:'IBM Plex Mono', monospace; font-size:12.5px; white-space:nowrap;
-  text-shadow: 0 0 5px var(--bg-deep), 0 0 9px var(--bg-deep), 0 0 9px var(--bg-deep);
-}
-.stage-readouts .ov-k{ color: var(--paper-dim); margin-right:6px; }
-.stage-readouts .v{ font-weight:600; color: var(--line-bright); }
-.stage-readouts .u{ color: var(--paper-dim); font-size:11px; margin-left:3px; }
-
-.summary{ margin-top:12px; padding-top:12px; border-top: 1px dashed var(--gold-dim); }
-.summary .row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:12.5px; padding: 3px 0; color: var(--paper); }
-.summary .row span:last-child{color:var(--gold);}
-
-.main-tab-row{ display:flex; gap:6px; overflow-x:auto; margin-bottom:16px; -ms-overflow-style:none; scrollbar-width:none; }
-.main-tab-row::-webkit-scrollbar{display:none;}
-.main-tab-btn{
-  flex:none; font-family:'Oswald', sans-serif; font-weight:500; font-size:13px; letter-spacing:0.03em; text-transform:uppercase;
-  padding:13px 20px; min-height:46px; border-radius: var(--radius);
-  border: 1px solid var(--line-dim); background: var(--bg-panel); color: var(--paper-dim);
-  cursor:pointer; white-space:nowrap; -webkit-tap-highlight-color: transparent;
-  transition: border-color .15s, color .15s, background .15s;
-}
-.main-tab-btn:hover{border-color: var(--gold-dim); color: var(--paper);}
-.main-tab-btn.active{background: var(--gold); color: var(--bg-deep); border-color: var(--gold);}
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
-
-#tab-exercise, #tab-solution, #tab-saved{
-  display:grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap:14px;
-}
-#tab-exercise.tab-panel:not(.active), #tab-solution.tab-panel:not(.active), #tab-saved.tab-panel:not(.active){display:none;}
-
-.hint-text{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); line-height:1.6; margin-top:8px; }
-.ex-result{
-  font-family:'IBM Plex Mono', monospace; font-size:13px; color: var(--paper); line-height:1.9;
-  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius); padding:14px;
-}
-.ex-result .given{color: var(--line-bright);}
-.ex-result .asked{color: var(--gold);}
-
-.field-inline{ display:flex; align-items:center; gap:8px; }
-.field-inline input[type=number]{
-  flex:1; background: var(--bg-deep); border: 1px solid var(--line-dim); color: var(--paper);
-  font-family:'IBM Plex Mono', monospace; font-size:14px; padding: 10px; border-radius: var(--radius); min-width:0;
-}
-.field-inline input[type=number]:focus-visible{outline: 2px solid var(--line-bright); outline-offset:1px;}
-
-.solution-content{ font-family:'Inter', sans-serif; font-size:14px; line-height:1.6; color: var(--paper); }
-.solution-content h3{
-  font-family:'Oswald', sans-serif; font-size:15px; color: var(--gold); margin:0 0 14px 0;
-  text-transform:uppercase; letter-spacing:0.05em;
-}
-.solution-content .sol-block{margin-bottom:18px;}
-.solution-content .sol-block h4{
-  font-family:'Oswald', sans-serif; font-weight:500; font-size:12.5px; color: var(--gold);
-  text-transform:uppercase; letter-spacing:0.07em; margin:0 0 9px 0; padding-bottom:6px; border-bottom:1px solid var(--gold-dim);
-}
-.solution-content .givens-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap:8px; }
-.solution-content .gi{
-  font-family:'IBM Plex Mono', monospace; font-size:13px; background: var(--bg-deep);
-  border:1px solid var(--line-dim); border-radius: var(--radius); padding:8px 10px;
-}
-.solution-content .gi .k{color: var(--gold); margin-right:6px; font-weight:700;}
-.solution-content .line{ font-family:'IBM Plex Mono', monospace; font-size:13px; padding:8px 2px; border-bottom: 1px dashed var(--line-dim); }
-.solution-content .line:last-child{border-bottom:none;}
-.solution-content .res{color:#4ADE80; font-weight:700;}
-.solution-content .sol-note{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--paper-dim); margin-bottom:14px; line-height:1.6; }
-
-.preset-name-input{
-  width:100%; background: var(--bg-deep); border: 1px solid var(--line-dim); color: var(--paper);
-  font-family:'Inter', sans-serif; font-size:14px; padding:12px; border-radius: var(--radius); margin-bottom:12px;
-}
-.preset-row{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  background: var(--bg-deep); border:1px solid var(--line-dim); border-radius: var(--radius);
-  padding:12px 14px; margin-bottom:8px;
-}
-.preset-row:last-child{margin-bottom:0;}
-.preset-info{min-width:0;}
-.preset-title{ font-size:14px; color: var(--paper); margin-bottom:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.preset-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--paper-dim); }
-.preset-btns{display:flex; gap:6px; flex:none;}
-
-footer{
-  margin-top: 22px; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
-  color: var(--paper-dim); text-align:center; letter-spacing:0.04em;
-}
-</style>
-</head>
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+.maxbtn{position:absolute;left:8px;top:8px;z-index:3;} #status{top:42px;} #st-side,#st-side canvas{touch-action:none;}
+header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
+#mainTitle .tw:nth-child(-n+2),#mainTitle .tw:nth-child(-n+2) b{color:var(--text);}
+</style></head>
 <body>
-<div class="wrap">
+<div class="app">
   <header>
-    <div>
-      <h1>Διάθλαση <span>Φωτός</span></h1>
-      <div class="byline">Τάσος Σλάβης</div>
+    <div class="hdr-left">
+      <div>
+        <h1 id="mainTitle">Διάθλαση φωτός και φαινόμενο βάθος</h1>
+        <div class="sub">Σλάβης Τάσος</div>
+      </div>
     </div>
-    <div class="header-right">
-      <div class="subtitle">Αέρας → Νερό · φαινόμενη θέση</div>
-      <button type="button" class="theme-toggle" id="themeToggle">Στυλ: <span id="themeName">Blueprint</span> ⇄</button>
-    </div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8" selected>Μέγεθος 80%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
   </header>
 
-  <div class="layout">
-    <div class="stage">
-      <div class="stage-label">
-        <span>Πορεία ακτίνας</span>
-        <span id="stateLabel">n₁ &gt; n₂</span>
-      </div>
-      <div class="stage-readouts open" id="stageReadouts">
-        <div class="ov-line"><span class="ov-k">θ₁ (νερό)</span><span class="v" id="outTheta1">0.0</span><span class="u">°</span></div>
-        <div class="ov-line"><span class="ov-k">θ₂ (αέρας)</span><span class="v" id="outTheta2">0.0</span><span class="u">°</span></div>
-        <div class="ov-line"><span class="ov-k">Πραγμ. βάθος</span><span class="v" id="outDepth">0.0</span><span class="u">m</span></div>
-        <div class="ov-line"><span class="ov-k">Φαιν. βάθος</span><span class="v" id="outAppDepth">0.0</span><span class="u">m</span></div>
-      </div>
-      <canvas id="canvas" width="900" height="620"></canvas>
-      <div class="hint">Σύρε το αντικείμενο ή το μάτι του παρατηρητή για να αλλάξεις θέση</div>
-
-      <div class="stage-stats-toggle">
-        <label for="showLiveStats">Μετρήσεις γωνιών εντός πλαισίου</label>
-        <div class="switch"><input type="checkbox" id="showLiveStats" checked><span class="slider-pill"></span></div>
-      </div>
-
-      <div class="summary" id="summary">
-        <div class="row"><span>Δείκτης διάθλασης κάτω μέσου (n₁)</span><span id="sumN1">–</span></div>
-        <div class="row"><span>Δείκτης διάθλασης πάνω μέσου (n₂)</span><span id="sumN2">–</span></div>
-        <div class="row"><span>Γωνία πρόσπτωσης (θ₁)</span><span id="sumTheta1">–</span></div>
-        <div class="row"><span>Γωνία διάθλασης (θ₂)</span><span id="sumTheta2">–</span></div>
-        <div class="row"><span>Πραγματικό βάθος (h)</span><span id="sumDepth">–</span></div>
-        <div class="row"><span>Φαινόμενο βάθος (h′)</span><span id="sumAppDepth">–</span></div>
-      </div>
-    </div>
-
-    <div class="main-tab-row" id="mainTabRow">
-      <button type="button" class="main-tab-btn active" data-tab="settings">⚙ Ρυθμίσεις</button>
-      <button type="button" class="main-tab-btn" data-tab="exercise">📝 Άσκηση</button>
-      <button type="button" class="main-tab-btn" data-tab="solution">📐 Λύση</button>
-      <button type="button" class="main-tab-btn" data-tab="saved">💾 Αποθηκευμένες</button>
-    </div>
-
-    <div class="tab-panel active" id="tab-settings">
-    <div class="controls">
-
-      <div class="card">
-        <h2>Θέση αντικειμένου</h2>
-        <div class="field">
-          <div class="field-row">
-            <label for="objXSlider">Οριζόντια θέση (x)</label>
-            <span class="val-wrap"><input type="number" class="val-input" id="objXNum" value="0.0" step="0.1" min="-3" max="3"><span class="unit">m</span></span>
-          </div>
-          <input type="range" id="objXSlider" min="-3" max="3" step="0.05" value="0">
-        </div>
-        <div class="field">
-          <div class="field-row">
-            <label for="objDepthSlider">Βάθος (h)</label>
-            <span class="val-wrap"><input type="number" class="val-input" id="objDepthNum" value="1.5" step="0.1" min="0.2" max="4"><span class="unit">m</span></span>
-          </div>
-          <input type="range" id="objDepthSlider" min="0.2" max="4" step="0.05" value="1.5">
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Θέση παρατηρητή</h2>
-        <div class="field">
-          <div class="field-row">
-            <label for="obsXSlider">Οριζόντια θέση (x)</label>
-            <span class="val-wrap"><input type="number" class="val-input" id="obsXNum" value="1.5" step="0.1" min="-4" max="4"><span class="unit">m</span></span>
-          </div>
-          <input type="range" id="obsXSlider" min="-4" max="4" step="0.05" value="1.5">
-        </div>
-        <div class="field">
-          <div class="field-row">
-            <label for="obsHSlider">Ύψος ματιού</label>
-            <span class="val-wrap"><input type="number" class="val-input" id="obsHNum" value="1.7" step="0.1" min="0.3" max="4"><span class="unit">m</span></span>
-          </div>
-          <input type="range" id="obsHSlider" min="0.3" max="4" step="0.05" value="1.7">
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Υλικά</h2>
-        <div class="field">
-          <div class="field-row"><label for="matBottom">Κάτω μέσο (γύρω από το αντικείμενο)</label></div>
-          <select class="select-el" id="matBottom"></select>
-          <div class="field-inline" id="matBottomCustomWrap" style="display:none; margin-top:8px;">
-            <input type="number" id="matBottomCustom" step="0.01" min="1.0" max="3.0" value="1.33">
-            <span class="unit">δείκτης n</span>
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-head-row">
+          <div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή">
+            <button data-v="main" type="button" role="tab" class="main-tab-btn">Μία ακτίνα</button>
+            <button data-v="rays" type="button" role="tab" class="main-tab-btn">Δέσμη ακτίνων</button>
           </div>
         </div>
-        <div class="field">
-          <div class="field-row"><label for="matTop">Πάνω μέσο (γύρω από τον παρατηρητή)</label></div>
-          <select class="select-el" id="matTop"></select>
-          <div class="field-inline" id="matTopCustomWrap" style="display:none; margin-top:8px;">
-            <input type="number" id="matTopCustom" step="0.01" min="1.0" max="3.0" value="1.00">
-            <span class="unit">δείκτης n</span>
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap" data-view="side">
+            <div class="stage" id="st-side"><canvas id="cv"></canvas>
+              <button class="panel-tool-btn maxbtn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+              <button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button>
+            </div>
+            <div id="legend" hidden></div>
+            <div id="status" class="ok"></div>
           </div>
-        </div>
-        <div class="msg" id="matMsg"></div>
-      </div>
-
-      <div class="card">
-        <h2>Εμφάνιση</h2>
-        <div class="toggle-row">
-          <label for="showAngles">Γωνίες θ₁, θ₂</label>
-          <div class="switch"><input type="checkbox" id="showAngles" checked><span class="slider-pill"></span></div>
-        </div>
-        <div class="toggle-row">
-          <label for="showNormal">Κάθετος στο σημείο πρόσπτωσης</label>
-          <div class="switch"><input type="checkbox" id="showNormal" checked><span class="slider-pill"></span></div>
-        </div>
-        <div class="toggle-row">
-          <label for="showApparent">Φαινόμενη θέση αντικειμένου</label>
-          <div class="switch"><input type="checkbox" id="showApparent" checked><span class="slider-pill"></span></div>
-        </div>
-        <div class="toggle-row">
-          <label for="showGrid">Κάνναβος κλίμακας (m)</label>
-          <div class="switch"><input type="checkbox" id="showGrid" checked><span class="slider-pill"></span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Ενδείξεις</h2>
-        <div class="readout-grid">
-          <div class="readout"><span class="k">n₁ (κάτω)</span><span class="v" id="rN1">–</span></div>
-          <div class="readout"><span class="k">n₂ (πάνω)</span><span class="v" id="rN2">–</span></div>
-          <div class="readout"><span class="k">θ₁</span><span class="v" id="rTheta1">–</span><span class="u">°</span></div>
-          <div class="readout"><span class="k">θ₂</span><span class="v" id="rTheta2">–</span><span class="u">°</span></div>
-          <div class="readout"><span class="k">Πραγμ. βάθος</span><span class="v" id="rDepth">–</span><span class="u">m</span></div>
-          <div class="readout"><span class="k">Φαιν. βάθος</span><span class="v" id="rAppDepth">–</span><span class="u">m</span></div>
-        </div>
-        <div class="msg" id="critMsg"></div>
-      </div>
-
-    </div>
-    </div>
-
-    <div class="tab-panel" id="tab-exercise">
-      <div class="card">
-        <h2>Δεδομένα άσκησης</h2>
-        <div class="ex-result" id="exGiven"></div>
-        <div class="btn-row" style="margin-top:12px;">
-          <button class="primary" id="newExerciseBtn">🎲 Νέα άσκηση</button>
-          <button id="applyExerciseBtn">↳ Εφαρμογή στην προσομοίωση</button>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Ερωτήματα</h2>
-        <div class="field">
-          <div class="field-row"><label for="exTheta2Input">Γωνία διάθλασης θ₂</label></div>
-          <div class="field-inline">
-            <input type="number" id="exTheta2Input" step="0.1" placeholder="π.χ. 32.5">
-            <span class="unit">°</span>
+          <div class="transport">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="spd">Ταχύτητα αναπαραγωγής
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.1">×0,1 πολύ αργά</option>
+                <option value="0.25">×0,25 αργά</option>
+                <option value="0.5">×0,5</option>
+                <option value="1" selected>×1 κανονική</option>
+                <option value="2">×2 γρήγορα</option>
+                <option value="5">×5 πολύ γρήγορα</option>
+              </select>
+            </label>
           </div>
-        </div>
-        <div class="field">
-          <div class="field-row"><label for="exAppDepthInput">Φαινόμενο βάθος h′</label></div>
-          <div class="field-inline">
-            <input type="number" id="exAppDepthInput" step="0.01" placeholder="π.χ. 1.10">
-            <span class="unit">m</span>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="5" step="0.01" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
           </div>
+          <div class="hintline" id="navHint">Σύρε το ψάρι (αντικείμενο) ή το μάτι (παρατηρητής) για να αλλάξεις θέση. Ρόδα ποντικιού ή δύο δάχτυλα: μεγέθυνση· σύρσιμο στο κενό: μετατόπιση. Ο παλμός φωτός κινείται με ταχύτητα c/n, γι' αυτό επιβραδύνεται στο πυκνότερο υλικό (η ταχύτητα επίδειξης είναι c = 1 m/s).</div>
         </div>
-        <div class="btn-row">
-          <button class="primary" id="checkExerciseBtn">✓ Έλεγχος</button>
-        </div>
-        <div class="msg" id="exFeedback"></div>
-        <div class="hint-text">Νόμος του Snell: n₁·sinθ₁ = n₂·sinθ₂. Για σχεδόν κάθετη παρατήρηση, το φαινόμενο βάθος δίνεται από h′ = h·(n₂/n₁).</div>
       </div>
-    </div>
-
-    <div class="tab-panel" id="tab-solution">
-      <div class="card" style="grid-column: 1 / -1;">
-        <h2>Λύση τρέχουσας άσκησης</h2>
-        <div class="solution-content" id="solutionContent"></div>
-        <div class="btn-row" style="margin-top:8px;">
-          <button id="solutionRefreshBtn">↺ Επανυπολογισμός</button>
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row"><h2>Διαγράμματα</h2></div>
+        <div class="panel-body">
+          <div class="chips" id="gchips"></div>
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Κάνε κλικ ή σύρε πάνω σε ένα διάγραμμα για να αλλάξεις τη γωνία πρόσπτωσης θ₁ (ή τη θέση του παρατηρητή στο τελευταίο). Η κόκκινη σκίαση δείχνει γωνίες πάνω από την κρίσιμη, όπου δεν υπάρχει διαθλώμενη ακτίνα (ολική ανάκλαση). Οι τιμές αφορούν τα τρέχοντα υλικά και βάθη.</div>
         </div>
       </div>
     </div>
-
-    <div class="tab-panel" id="tab-saved">
-      <div class="card">
-        <h2>Αποθήκευση τρέχουσας διάταξης</h2>
-        <input type="text" class="preset-name-input" id="presetName" placeholder="Όνομα διάταξης (π.χ. Ψάρι πλάγια θέαση)">
-        <div class="btn-row">
-          <button class="primary" id="savePresetBtn">💾 Αποθήκευση</button>
-          <button id="exportPresetsBtn">⇩ Εξαγωγή JSON</button>
-          <button id="importPresetsBtn">⇧ Εισαγωγή JSON</button>
-          <input type="file" id="importPresetsFile" accept="application/json" style="display:none;">
-        </div>
-        <div class="msg" id="presetMsg"></div>
-      </div>
-      <div class="card">
-        <h2>Αποθηκευμένες διατάξεις</h2>
-        <div id="presetList"><div class="msg">Δεν υπάρχουν ακόμη αποθηκευμένες διατάξεις.</div></div>
-      </div>
-    </div>
-
+    <div class="right-col" id="rightCol"></div>
   </div>
-  <footer>Προσομοίωση διάθλασης φωτός · Φυσική Γυμνασίου / Λυκείου</footer>
 </div>
 
 <script>
-(function(){
-  'use strict';
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=(x,d=2)=>{if(!isFinite(x))return '∞';let s=(+x).toFixed(d);if(/^-0(\.0+)?$/.test(s))s=s.slice(1);return s.replace('.',',');};
+const TAU=Math.PI*2, DEG=180/Math.PI;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const FONT="'Inter',system-ui,sans-serif", MONO='"IBM Plex Mono",monospace';
+const CV=1; /* ταχύτητα επίδειξης του φωτός στο κενό (m/s) */
 
-  /* ---------------- materials ---------------- */
-  const MATERIALS = [
-    {id:'air', name:'Αέρας', n:1.00},
-    {id:'ice', name:'Πάγος', n:1.31},
-    {id:'water', name:'Νερό', n:1.33},
-    {id:'ethanol', name:'Αιθυλική αλκοόλη', n:1.36},
-    {id:'glycerine', name:'Γλυκερίνη', n:1.47},
-    {id:'plexiglass', name:'Πλεξιγκλάς', n:1.49},
-    {id:'glass', name:'Γυαλί (κοινό)', n:1.52},
-    {id:'cs2', name:'Θειούχος άνθρακας', n:1.63},
-    {id:'diamond', name:'Αδάμαντας', n:2.42},
-    {id:'custom', name:'Προσαρμοσμένο…', n:null},
-  ];
+/* ---------- υλικά ---------- */
+const MATS=[
+  ['air','Αέρας',1.0003],['water','Νερό',1.33],['sea','Θαλασσινό νερό',1.34],['ice','Πάγος',1.31],
+  ['alc','Αλκοόλη',1.36],['oil','Ελαιόλαδο',1.47],['gly','Γλυκερίνη',1.47],['plx','Πλεξιγκλάς',1.49],
+  ['glass','Γυαλί',1.52],['dia','Αδάμαντας',2.42],['custom','Άλλο υλικό (δική σου τιμή n)',null]
+];
+const matById=id=>MATS.find(m=>m[0]===id)||MATS[MATS.length-1];
+const matName=(id,n)=>id==='custom'?'Άλλο υλικό':matById(id)[1];
 
-  function fillMaterialSelect(sel, defaultId){
-    MATERIALS.forEach(m=>{
-      const opt=document.createElement('option');
-      opt.value=m.id; opt.textContent = m.id==='custom' ? m.name : (m.name+' (n='+m.n.toFixed(2)+')');
-      if(m.id===defaultId) opt.selected=true;
-      sel.appendChild(opt);
-    });
+/* ---------- κατάσταση ---------- */
+const S={
+  objX:0,h:1.5,obsX:2.2,H:1.7,
+  n1:1.34,m1:'sea',n2:1.0003,m2:'air',
+  t:0,tmax:5,playing:false,speed:1,view:'main',loop:true,rdv:false,tblAll:false,table:true,
+  lw:1,fs:13,Z:1,panX:0,panY:0,
+  show:{inc:true,out:true,nrm:true,refl:false,ang:true,app:true,ext:true,dims:true,grid:true,labels:true,pulse:true,mats:true,values:false},
+  charts:{t12:1,sn:1,hap:0}
+};
+const PREF_KEY='diathlasi-view-prefs',DEF_PREFS=JSON.stringify({show:S.show,lw:S.lw,fs:S.fs,charts:S.charts});
+function applyPrefs(p){if(!p)return;if(p.show)Object.keys(S.show).forEach(k=>{if(k in p.show)S.show[k]=!!p.show[k];});
+  if(p.charts)Object.keys(S.charts).forEach(k=>{if(k in p.charts)S.charts[k]=p.charts[k]?1:0;});
+  if(typeof p.lw==='number')S.lw=p.lw;if(typeof p.fs==='number')S.fs=p.fs;}
+try{applyPrefs(JSON.parse(localStorage.getItem(PREF_KEY)));}catch(e){}
+let dirty=true, scaleDirty=true;
+
+/* ---------- φυσική ----------
+   Νόμος Snell: n1·ημθ1 = n2·ημθ2. Το σημείο διάθλασης P βρίσκεται από την αρχή του Fermat (ελάχιστος χρόνος)·
+   για επίπεδη διαχωριστική επιφάνεια το F(x)=n1·ημθ1 − n2·ημθ2 είναι αύξουσα, άρα μοναδική ρίζα (διχοτόμηση).
+   Φαινόμενη θέση: προέκταση της ακτίνας που φτάνει στο μάτι προς τα πίσω, μέχρι την κατακόρυφο του αντικειμένου. */
+function solveP(o,eyeX,eyeH){
+  const F=xp=>{const L1=Math.hypot(xp-o.objX,o.h),L2=Math.hypot(eyeX-xp,eyeH);return o.n1*(xp-o.objX)/L1-o.n2*(eyeX-xp)/L2;};
+  const sp=Math.abs(o.objX)+Math.abs(eyeX)+60;let lo=-sp,hi=sp;
+  for(let i=0;i<100;i++){const mid=(lo+hi)/2;if(F(mid)<0)lo=mid;else hi=mid;}
+  return (lo+hi)/2;
+}
+function geomFor(o){
+  const xp=solveP(o,o.obsX,o.H);
+  const L1=Math.hypot(xp-o.objX,o.h),L2=Math.hypot(o.obsX-xp,o.H);
+  const s1=clamp((xp-o.objX)/L1,-1,1),s2=clamp((o.obsX-xp)/L2,-1,1);
+  const th1=Math.asin(s1),th2=Math.asin(s2);
+  const dx=o.objX-o.obsX,den=xp-o.obsX;
+  let hApp;
+  if(Math.abs(dx)<1e-3||Math.abs(den)<1e-6)hApp=o.h*o.n2/o.n1;
+  else{const s=dx/den;hApp=o.H*(s-1);if(!isFinite(hApp)||hApp<=0)hApp=o.h*o.n2/o.n1;}
+  const crit=o.n1>o.n2?Math.asin(o.n2/o.n1):null;
+  return {xp,L1,L2,th1,th2,hApp,crit,T1:o.n1*L1/CV,T2:o.n2*L2/CV,
+    parax:o.h*o.n2/o.n1};
+}
+let G=geomFor(S);
+function recompute(){
+  G=geomFor(S);S.tmax=Math.max(0.5,G.T1+G.T2);S.t=Math.min(S.t,S.tmax);scaleDirty=false;
+}
+function pulsePos(t){
+  if(t<=G.T1){const f=G.T1>0?t/G.T1:1;return {x:S.objX+(G.xp-S.objX)*f,y:-S.h*(1-f),leg:1};}
+  const f=G.T2>0?clamp((t-G.T1)/G.T2,0,1):1;return {x:G.xp+(S.obsX-G.xp)*f,y:S.H*f,leg:2};
+}
+
+/* ---------- χρώματα (από τα tokens του θέματος) ---------- */
+const CSSV={i:'--e1',r:'--et',nrm:'--blue',app:'--e2',ang:'--c-th',lt:'--c-ae'};
+const C={};
+const TOK=Object.assign({stage:'--st-track',dim:'--st-dim',fg:'--st-text',accent:'--accent',grid:'--st-grid',gridS:'--st-gridS',danger:'--danger',ok:'--accent3',blue:'--blue'},CSSV);
+const CP={},TOKP={stage:'--track',dim:'--textDim',fg:'--text',grid:'--grid',gridS:'--gridStrong'};
+function readColors(){const cs=getComputedStyle(document.documentElement);for(const k in TOK)C[k]=cs.getPropertyValue(TOK[k]).trim();const rc=$('#rightCol'),rs=rc?getComputedStyle(rc):cs;for(const k in TOKP)CP[k]=rs.getPropertyValue(TOKP[k]).trim();for(const k in CSSV)CP[k]=rs.getPropertyValue(CSSV[k]).trim();CP.danger=rs.getPropertyValue('--danger').trim();CP.accent=rs.getPropertyValue('--accent').trim();}
+const SKINS=[["blueprint","DarkBlue",""],["classic","DarkBlack",""],["minimal","LightOrange",""],["gr","Grey",""],["n01","WhiteBlue",""],["n08","SkyBlue",""],["n12","WhiteDBlue",""],["n16","GreyDarkB",""],["n13","WhiteBGrey",""],["g16","GreyDBlue",""],["n15","SkyDBlue",""],["n18","DarkGrey",""],["n23","NavyLight",""]];
+let curSkin='blueprint';
+function setSkin(n){
+  curSkin=n;document.documentElement.dataset.skin=n;readColors();dirty=true;
+  {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
+  try{localStorage.setItem('refr-skin',n)}catch(e){}
+}
+
+/* ---------- σχεδίαση 2D: βοηθητικά ---------- */
+function fit(cv){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w,h,dpr,ctx};
+}
+function arrowHead(ctx,x0,y0,x1,y1,col,lw){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,h=8+lw*1.1;
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45);ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);ctx.closePath();ctx.fill();
+}
+let LBF=0;const LBS=new WeakMap();
+function lab(ctx,x,y,main,sub,val,col,align,fs){
+  fs=fs||S.fs;ctx.save();ctx.textBaseline='middle';ctx.textAlign='left';
+  const f1=`italic 600 ${fs+1}px ${FONT}`,f2=`600 ${fs-4}px ${FONT}`,f3=`600 ${fs-2}px ${FONT}`;
+  ctx.font=f1;const w1=ctx.measureText(main).width;
+  ctx.font=f2;const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3;const w3=val?ctx.measureText(val).width:0;
+  const tot=w1+w2+w3,x0=align==='left'?x:align==='right'?x-tot:x-tot/2;
+  {let st=LBS.get(ctx);if(!st||st.f!==LBF){st={f:LBF,r:[]};LBS.set(ctx,st);}
+   const hh=fs*1.25,hit=(yy)=>st.r.some(q=>x0<q[2]&&x0+tot>q[0]&&yy-hh/2<q[3]&&yy+hh/2>q[1]);
+   let dy=0;for(const c of [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6]){if(!hit(y+c*hh)){dy=c*hh;break;}}
+   y+=dy;st.r.push([x0-2,y-hh/2,x0+tot+2,y+hh/2]);}
+  const run=fn=>{let xx=x0;ctx.font=f1;fn(main,xx,y);xx+=w1;if(sub){ctx.font=f2;fn(sub,xx+1,y+fs*0.3);xx+=w2;}if(val){ctx.font=f3;fn(val,xx+2,y);}};
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;run((t,a,b)=>ctx.strokeText(t,a,b));
+  ctx.fillStyle=col;run((t,a,b)=>ctx.fillText(t,a,b));ctx.restore();
+}
+function txt(ctx,s,x,y,col,align,fs,w){
+  ctx.save();ctx.font=`${w||600} ${fs||S.fs-1}px ${FONT}`;ctx.textAlign=align||'left';ctx.textBaseline='middle';
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;ctx.strokeText(s,x,y);ctx.fillStyle=col;ctx.fillText(s,x,y);ctx.restore();
+}
+function poly(ctx,pts,col,lw,dash){
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';ctx.setLineDash(dash||[]);
+  ctx.beginPath();pts.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();ctx.setLineDash([]);
+}
+
+/* ---------- μετασχηματισμός κόσμου → οθόνης (σταθερό παράθυρο, ζουμ και μετατόπιση) ---------- */
+const WX0=-4.8,WX1=4.8,WY0=-3.9,WY1=3.3;
+let VW={w:1,h:1,scale:1,cx0:0,cy0:0};
+function setView(w,h){
+  const base=Math.min(w/(WX1-WX0),h/(WY1-WY0));
+  VW={w,h,scale:base*S.Z,cx0:(WX0+WX1)/2,cy0:(WY0+WY1)/2};
+}
+const X=x=>VW.w/2+(x-VW.cx0)*VW.scale+S.panX;
+const Y=y=>VW.h/2-(y-VW.cy0)*VW.scale+S.panY;
+const wx=px=>(px-VW.w/2-S.panX)/VW.scale+VW.cx0;
+const wy=py=>-(py-VW.h/2-S.panY)/VW.scale+VW.cy0;
+function setZoom(nz,sx,sy){
+  const ox=wx(sx),oy=wy(sy);S.Z=clamp(nz,0.4,8);
+  const base=Math.min(VW.w/(WX1-WX0),VW.h/(WY1-WY0));VW.scale=base*S.Z;
+  S.panX=sx-(VW.w/2+(ox-VW.cx0)*VW.scale);S.panY=sy-(VW.h/2-(oy-VW.cy0)*VW.scale);dirty=true;
+}
+
+function drawFish(ctx,x,y,k,fill,stroke,alpha,dash){
+  ctx.save();ctx.translate(x,y);ctx.globalAlpha=alpha;ctx.lineWidth=1.6;
+  ctx.fillStyle=fill;ctx.strokeStyle=stroke;if(dash)ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.ellipse(0,0,15*k,8.5*k,0,0,TAU);ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-14*k,0);ctx.lineTo(-24*k,-8*k);ctx.lineTo(-24*k,8*k);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.setLineDash([]);ctx.fillStyle=stroke;ctx.beginPath();ctx.arc(8*k,-2*k,1.9*k,0,TAU);ctx.fill();
+  ctx.restore();
+}
+function drawEye(ctx,x,y,k){
+  ctx.save();ctx.translate(x,y);ctx.lineWidth=1.8;
+  ctx.fillStyle=C.stage;ctx.strokeStyle=C.fg;
+  ctx.beginPath();ctx.ellipse(0,0,15*k,9*k,0,0,TAU);ctx.fill();ctx.stroke();
+  ctx.fillStyle=C.r;ctx.beginPath();ctx.arc(0,0,5.2*k,0,TAU);ctx.fill();
+  ctx.fillStyle=C.fg;ctx.beginPath();ctx.arc(0,0,2.3*k,0,TAU);ctx.fill();
+  ctx.restore();
+}
+function arcAt(ctx,px,py,r,a0,a1,col,lw){
+  const lo=Math.min(a0,a1),hi=Math.max(a0,a1);if(hi-lo<0.004)return;
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.setLineDash([]);ctx.beginPath();ctx.arc(px,py,r,lo,hi);ctx.stroke();
+}
+const tintA=n=>clamp(0.07+(n-1)*0.32,0.04,0.55);
+
+/* ---------- κύρια σχεδίαση ---------- */
+function drawMain(){
+  const cv=$('#cv'),{w,h,ctx}=fit(cv);if(!w||!h)return;
+  setView(w,h);
+  const lw=S.lw,k=clamp(VW.scale/58,0.8,1.5);
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const ys=Y(0);
+  /* υλικά: πάνω (n2) και κάτω (n1) */
+  ctx.fillStyle=C.blue;ctx.globalAlpha=tintA(S.n2);ctx.fillRect(0,0,w,Math.max(0,ys));
+  ctx.globalAlpha=tintA(S.n1);ctx.fillRect(0,ys,w,h-ys);ctx.globalAlpha=1;
+  /* κάνναβος */
+  if(S.show.grid){
+    const steps=[0.25,0.5,1,2,5],st=steps.find(q=>q*VW.scale>=44)||5;
+    ctx.lineWidth=1;ctx.font=`500 10px ${MONO}`;ctx.fillStyle=C.dim;
+    for(let x=Math.ceil(wx(0)/st)*st;x<=wx(w);x+=st){const px=X(x);ctx.strokeStyle=Math.abs(x)<1e-9?C.gridS:C.grid;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();}
+    for(let x=Math.floor(wx(0)/st)*st;x<wx(0);x+=st){const px=X(x);ctx.strokeStyle=C.grid;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();}
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    for(let y=Math.floor(wy(h)/st)*st;y<=wy(0)+st;y+=st){if(Math.abs(y)<1e-9)continue;const py=Y(y);if(py<0||py>h)continue;ctx.strokeStyle=C.grid;ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(Math.abs(y),st<1?2:0)+' m'+(y<0?' ↓':' ↑'),w-52,py-7);}
   }
-  const matBottomSel = document.getElementById('matBottom');
-  const matTopSel = document.getElementById('matTop');
-  fillMaterialSelect(matBottomSel,'water');
-  fillMaterialSelect(matTopSel,'air');
-  const matBottomCustomWrap = document.getElementById('matBottomCustomWrap');
-  const matTopCustomWrap = document.getElementById('matTopCustomWrap');
-  const matBottomCustom = document.getElementById('matBottomCustom');
-  const matTopCustom = document.getElementById('matTopCustom');
-
-  function getN(which){
-    const sel = which==='bottom'?matBottomSel:matTopSel;
-    const custom = which==='bottom'?matBottomCustom:matTopCustom;
-    const found = MATERIALS.find(m=>m.id===sel.value);
-    if(!found || found.id==='custom') return clamp(parseFloat(custom.value)||1.0, 1.0, 3.0);
-    return found.n;
+  /* επιφάνεια */
+  ctx.strokeStyle=C.fg;ctx.lineWidth=2.2;ctx.beginPath();
+  for(let px=0;px<=w;px+=4){const py=ys+Math.sin(px/24)*2;px?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();
+  /* ονόματα υλικών */
+  if(S.show.mats){
+    txt(ctx,'n₂ = '+fmt(S.n2,2)+' · '+matName(S.m2,S.n2),10,ys-12,C.dim,'left',S.fs-1,600);
+    txt(ctx,'n₁ = '+fmt(S.n1,2)+' · '+matName(S.m1,S.n1),10,ys+14,C.dim,'left',S.fs-1,600);
   }
-  function getMatName(which){
-    const sel = which==='bottom'?matBottomSel:matTopSel;
-    const custom = which==='bottom'?matBottomCustom:matTopCustom;
-    const found = MATERIALS.find(m=>m.id===sel.value);
-    if(!found || found.id==='custom') return 'Προσαρμοσμένο (n='+getN(which).toFixed(2)+')';
-    return found.name;
-  }
-  function syncCustomVisibility(){
-    matBottomCustomWrap.style.display = matBottomSel.value==='custom' ? 'flex':'none';
-    matTopCustomWrap.style.display = matTopSel.value==='custom' ? 'flex':'none';
-  }
-  matBottomSel.addEventListener('change', ()=>{ syncCustomVisibility(); updateAll(); });
-  matTopSel.addEventListener('change', ()=>{ syncCustomVisibility(); updateAll(); });
-  matBottomCustom.addEventListener('input', updateAll);
-  matTopCustom.addEventListener('input', updateAll);
-  syncCustomVisibility();
-
-  /* ---------------- helpers ---------------- */
-  function clamp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
-  function degToRad(d){ return d*Math.PI/180; }
-  function radToDeg(r){ return r*180/Math.PI; }
-  function fmt(n, d=2){ return (Math.abs(n) < 0.005 ? 0 : n).toFixed(d); }
-  function fmtDeg(rad){ const d = radToDeg(rad); return (Math.abs(d) < 0.05 ? 0 : d).toFixed(1); }
-
-  /* ---------------- slider <-> number linking ---------------- */
-  function linkSliderNumber(sliderEl, numEl, onChange){
-    sliderEl.addEventListener('input', () => {
-      numEl.value = sliderEl.value;
-      onChange();
-    });
-    numEl.addEventListener('change', () => {
-      let v = parseFloat(numEl.value);
-      if(isNaN(v)) v = parseFloat(sliderEl.value);
-      v = clamp(v, parseFloat(sliderEl.min), parseFloat(sliderEl.max));
-      numEl.value = v;
-      sliderEl.value = v;
-      onChange();
-    });
-  }
-
-  const objXSlider = document.getElementById('objXSlider');
-  const objXNum = document.getElementById('objXNum');
-  const objDepthSlider = document.getElementById('objDepthSlider');
-  const objDepthNum = document.getElementById('objDepthNum');
-  const obsXSlider = document.getElementById('obsXSlider');
-  const obsXNum = document.getElementById('obsXNum');
-  const obsHSlider = document.getElementById('obsHSlider');
-  const obsHNum = document.getElementById('obsHNum');
-
-  linkSliderNumber(objXSlider, objXNum, updateAll);
-  linkSliderNumber(objDepthSlider, objDepthNum, updateAll);
-  linkSliderNumber(obsXSlider, obsXNum, updateAll);
-  linkSliderNumber(obsHSlider, obsHNum, updateAll);
-
-  const showAngles = document.getElementById('showAngles');
-  const showNormal = document.getElementById('showNormal');
-  const showApparent = document.getElementById('showApparent');
-  const showGrid = document.getElementById('showGrid');
-  const showLiveStats = document.getElementById('showLiveStats');
-  [showAngles, showNormal, showApparent, showGrid].forEach(el=> el.addEventListener('change', render));
-  showLiveStats.addEventListener('change', ()=>{
-    document.getElementById('stageReadouts').classList.toggle('open', showLiveStats.checked);
-  });
-
-  /* ---------------- physics ---------------- */
-  function solveRefractionPoint(objX,objDepth,obsX,obsHeight,n1,n2){
-    function F(xp){
-      const L1=Math.hypot(xp-objX, objDepth);
-      const L2=Math.hypot(obsX-xp, obsHeight);
-      return n1*(xp-objX)/L1 - n2*(obsX-xp)/L2;
-    }
-    let lo = Math.min(objX,obsX) - 60, hi = Math.max(objX,obsX) + 60;
-    let flo = F(lo);
-    for(let i=0;i<90;i++){
-      const mid = (lo+hi)/2;
-      const fm = F(mid);
-      if((fm<0) === (flo<0)){ lo=mid; flo=fm; } else { hi=mid; }
-    }
-    return (lo+hi)/2;
-  }
-
-  function computeScene(){
-    const objX = parseFloat(objXNum.value);
-    const objDepth = parseFloat(objDepthNum.value);
-    const obsX = parseFloat(obsXNum.value);
-    const obsHeight = parseFloat(obsHNum.value);
-    const n1 = getN('bottom');
-    const n2 = getN('top');
-
-    const xp = solveRefractionPoint(objX, objDepth, obsX, obsHeight, n1, n2);
-    const L1 = Math.hypot(xp-objX, objDepth);
-    const L2 = Math.hypot(obsX-xp, obsHeight);
-    const sinT1 = clamp((xp-objX)/L1, -1, 1);
-    const sinT2 = clamp((obsX-xp)/L2, -1, 1);
-    const theta1 = Math.asin(sinT1);
-    const theta2 = Math.asin(sinT2);
-
-    // apparent position: extend the eye->P ray straight (unbent) until x == objX
-    const denom = xp - obsX;
-    let appDepth, appX = objX, appValid = true;
-    if(Math.abs(denom) < 1e-5){
-      appDepth = objDepth * (n2/n1);
-    } else {
-      const t = (objX - obsX) / denom;
-      const yApp = obsHeight * (1 - t);
-      appDepth = -yApp;
-      if(!isFinite(appDepth) || appDepth <= 0.01 || appDepth > 12){
-        appDepth = objDepth * (n2/n1);
-        appValid = (t > 1);
+  const O=[X(S.objX),Y(-S.h)],E=[X(S.obsX),Y(S.H)],P=[X(G.xp),ys];
+  const th1=G.th1,th2=G.th2;
+  /* δέσμη ακτίνων */
+  if(S.view==='rays'){
+    const angs=[-72,-60,-48,-36,-24,-12,0,12,24,36,48,60,72];
+    ctx.save();
+    angs.forEach(a=>{
+      const t1=a/DEG,xs=S.objX+S.h*Math.tan(t1),sp=S.n1/S.n2*Math.sin(t1),Ps=[X(xs),ys];
+      poly(ctx,[O,Ps],C.i,1.3*lw,[]);
+      ctx.globalAlpha=1;
+      if(Math.abs(sp)>1){
+        /* ολική ανάκλαση */
+        const dir=[Math.sin(t1),-Math.cos(t1)];
+        const len=Math.min(1e3,Math.abs((WY0-0)/dir[1]));
+        const q=[X(xs+dir[0]*len),Y(dir[1]*len)];
+        poly(ctx,[Ps,q],C.danger,1.3*lw,[5,3]);
+      }else{
+        const t2=Math.asin(sp),dir=[Math.sin(t2),Math.cos(t2)],len=Math.abs((WY1-0)/dir[1]);
+        const q=[X(xs+dir[0]*len),Y(dir[1]*len)];
+        poly(ctx,[Ps,q],C.r,1.3*lw,[]);
+        /* προέκταση προς τα πίσω */
+        const tn=Math.tan(t2);
+        if(Math.abs(tn)>1e-6){const hd=Math.abs(xs-S.objX)/Math.abs(tn);if(hd<WY1*5&&Math.abs(a)>0){const e=[X(S.objX),Y(-hd)];poly(ctx,[Ps,e],C.app,1*lw,[3,4]);}}
       }
-    }
-
-    let critAngle = null;
-    if(n1 > n2) critAngle = Math.asin(clamp(n2/n1,-1,1));
-
-    return {objX, objDepth, obsX, obsHeight, n1, n2, xp, theta1, theta2, appX, appDepth, appValid, critAngle};
+    });
+    ctx.restore();
   }
-
-  /* ---------------- canvas rendering ---------------- */
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  let dpr = window.devicePixelRatio || 1;
-
-  function resizeCanvas(){
-    dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = Math.round(rect.width*dpr);
-    canvas.height = Math.round(rect.height*dpr);
+  /* κάθετος */
+  if(S.show.nrm){ctx.strokeStyle=C.nrm;ctx.lineWidth=1.3;ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(P[0],0);ctx.lineTo(P[0],h);ctx.stroke();ctx.setLineDash([]);
+    if(S.show.labels)txt(ctx,'κάθετος',P[0]+6,14,C.nrm,'left',S.fs-2,600);}
+  /* φαινόμενη θέση */
+  const A=[X(S.objX),Y(-G.hApp)];
+  if(S.show.ext&&S.show.app){
+    poly(ctx,[P,A],C.app,1.8*lw,[4,4]);
+    poly(ctx,[O,A],C.app,1,[2,4]);
   }
+  /* ακτίνες */
+  if(S.show.inc)poly(ctx,[O,P],C.i,2.8*lw);
+  if(S.show.refl){
+    const dir=[Math.sin(th1),-Math.cos(th1)],len=Math.min(2.4,(WY0*-1)*0.7);
+    const q=[X(G.xp+dir[0]*len),Y(dir[1]*len)];poly(ctx,[P,q],C.i,1.6*lw,[5,4]);
+    if(S.show.labels)txt(ctx,'ανακλώμενη (μερική)',q[0]+4,q[1]+10,C.i,'left',S.fs-2,600);
+  }
+  if(S.show.out){poly(ctx,[P,E],C.r,2.8*lw);const ex=E[0]-P[0],ey=E[1]-P[1],el0=Math.hypot(ex,ey)||1,tx=E[0]-ex/el0*22*k,ty=E[1]-ey/el0*22*k;arrowHead(ctx,P[0],P[1],tx,ty,C.r,2.8*lw);}
+  /* φάντασμα του αντικειμένου */
+  if(S.show.app){
+    drawFish(ctx,A[0],A[1],k,C.app,C.app,0.28,true);
+    if(S.show.labels)txt(ctx,'φαινόμενη θέση',A[0],A[1]+(G.hApp>S.h?24*k:-20*k),C.app,'center',S.fs-1,600);
+  }
+  /* διαστάσεις βάθους: και οι δύο στην πλευρά αντίθετη από τον παρατηρητή· η μικρότερη στην εξωτερική γραμμή */
+  if(S.show.dims){
+    const dx=S.obsX>=S.objX?-1:1,al=dx<0?'right':'left';
+    const tick=(xx,y0,y1,col)=>{ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(xx,y0);ctx.lineTo(xx,y1);ctx.moveTo(xx-4,y0);ctx.lineTo(xx+4,y0);ctx.moveTo(xx-4,y1);ctx.lineTo(xx+4,y1);ctx.stroke();};
+    const dl=[{sym:'h',y:O[1],col:C.i,v:S.h}];
+    if(S.show.app)dl.push({sym:'h′',y:A[1],col:C.app,v:G.hApp});
+    dl.sort((p,q)=>p.v-q.v);
+    dl.forEach((d,i)=>{
+      const xx=O[0]+dx*(70*k-i*30*k);
+      tick(xx,ys,d.y,d.col);
+      const ly=i===0?(ys+d.y)/2:d.y+14;
+      lab(ctx,xx+dx*6,ly,d.sym,'',' = '+fmt(d.v,2)+' m',d.col,al,S.fs);
+    });
+  }
+  /* αντικείμενο και παρατηρητής */
+  drawFish(ctx,O[0],O[1],k,C.i,C.stage,1,false);
+  drawEye(ctx,E[0],E[1],k);
+  if(S.show.labels){
+    txt(ctx,'αντικείμενο',O[0],O[1]+(G.hApp>S.h?-24*k:26*k),C.i,'center',S.fs-1,600);
+    txt(ctx,'παρατηρητής',E[0],E[1]-22*k,C.r,'center',S.fs-1,600);
+  }
+  /* σημείο διάθλασης */
+  ctx.fillStyle=C.fg;ctx.beginPath();ctx.arc(P[0],P[1],4,0,TAU);ctx.fill();
+  /* γωνίες */
+  if(S.show.ang){
+    const aObj=Math.atan2(O[1]-P[1],O[0]-P[0]),aEye=Math.atan2(E[1]-P[1],E[0]-P[0]);
+    const r1=34,r2=48;
+    arcAt(ctx,P[0],P[1],r1,Math.PI/2,aObj,C.i,2);
+    arcAt(ctx,P[0],P[1],r2,-Math.PI/2,aEye,C.r,2);
+    const sO=O[0]>=P[0]?1:-1,sE=E[0]>=P[0]?1:-1;
+    const hasO=Math.abs(th1)>=0.02,hasE=Math.abs(th2)>=0.02;
+    const xl1=hasO?P[0]-sO*12:P[0]+12,al1=(hasO?-sO:1)>0?'left':'right';
+    const xl2=hasE?P[0]-sE*12:P[0]-12,al2=(hasE?-sE:-1)>0?'left':'right';
+    lab(ctx,xl1,P[1]+r1+16,'θ','1',' = '+fmt(Math.abs(th1)*DEG,1)+'°',C.i,al1,S.fs+1);
+    lab(ctx,xl2,P[1]-r2-14,'θ','2',' = '+fmt(Math.abs(th2)*DEG,1)+'°',C.r,al2,S.fs+1);
+  }
+  /* παλμός φωτός */
+  if(S.show.pulse){
+    const pp=pulsePos(S.t),back=pulsePos(Math.max(0,S.t-0.45));
+    const col=pp.leg===1?C.i:C.r,pts=[[X(back.x),Y(back.y)]];
+    if(back.leg!==pp.leg)pts.push(P);pts.push([X(pp.x),Y(pp.y)]);
+    poly(ctx,pts,col,5*lw,[]);
+    const gx=X(pp.x),gy=Y(pp.y),g=ctx.createRadialGradient(gx,gy,0,gx,gy,16);
+    g.addColorStop(0,col);g.addColorStop(1,'transparent');ctx.globalAlpha=0.55;ctx.fillStyle=g;ctx.beginPath();ctx.arc(gx,gy,16,0,TAU);ctx.fill();ctx.globalAlpha=1;
+    ctx.fillStyle=C.stage;ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(gx,gy,5,0,TAU);ctx.fill();ctx.stroke();
+  }
+}
 
-  function cssVar(name){ return getComputedStyle(document.body).getPropertyValue(name).trim(); }
-
-  function computeTransform(s){
-    const w = canvas.width, h = canvas.height;
-    const padPx = 46*dpr;
-    const minX = Math.min(s.objX, s.obsX, s.appX, -2.2) - 0.8;
-    const maxX = Math.max(s.objX, s.obsX, s.appX, 2.2) + 0.8;
-    const minY = -Math.max(s.objDepth, s.appDepth, 1.5) - 0.6; // world y negative = below surface
-    const maxY = Math.max(s.obsHeight, 1.5) + 0.6;
-    const worldW = maxX-minX, worldH = maxY-minY;
-    const scale = Math.min((w-2*padPx)/worldW, (h-2*padPx)/worldH);
-    const originPx = {
-      x: (w - worldW*scale)/2 - minX*scale,
-      y: padPx + maxY*scale
+/* ---------- διαγράμματα ---------- */
+const sgn=()=>S.obsX>=S.objX?1:-1;
+const critDeg=()=>G.crit==null?null:G.crit*DEG;
+const CH={
+  t12:{main:'θ',sub:'2',par:'(θ₁)',unit:'°',col:'r',xl:'θ₁ (°)',kind:'th',
+    cfg:()=>({x0:0,x1:90,mark:Math.abs(G.th1)*DEG,safe:x=>G.crit==null||x*Math.PI/180<=G.crit,
+      ser:[{nm:['θ','2'],col:'r',lw:2.3,f:x=>{const s=S.n1/S.n2*Math.sin(x/DEG);return s>1?NaN:Math.asin(s)*DEG;}},
+           {nm:['θ','1'],col:'i',lw:1.2,dash:[4,3],f:x=>x}]})},
+  sn:{main:'ημθ',sub:'2',par:'(ημθ₁)',unit:'',col:'i',xl:'ημθ₁',kind:'sin',
+    cfg:()=>({x0:0,x1:1,mark:Math.abs(Math.sin(G.th1)),safe:x=>G.crit==null||x<=Math.sin(G.crit)+1e-9,
+      ser:[{nm:['ημθ','2'],col:'r',lw:2.3,f:x=>{const s=S.n1/S.n2*x;return s>1?NaN:s;}},
+           {nm:['ημθ','1'],col:'i',lw:1.2,dash:[4,3],f:x=>x}]})},
+  hap:{main:'h′',sub:'',par:'(x παρατηρητή)',unit:'m',col:'app',xl:'x παρατηρητή (m)',kind:'obs',
+    cfg:()=>({x0:-4,x1:4,mark:S.obsX,safe:()=>true,
+      ser:[{nm:['h′',''],col:'app',lw:2.3,f:x=>geomFor(Object.assign({},S,{obsX:x})).hApp},
+           {nm:['h·n₂/n₁',''],col:'dim',lw:1.2,dash:[4,3],f:()=>G.parax},
+           {nm:['h',''],col:'i',lw:1.2,dash:[2,3],f:()=>S.h}]})}
+};
+function ticks(a,b,n){
+  const span=(b-a)||1,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),nm=raw/mag,st=(nm<1.5?1:nm<3?2:nm<7?5:10)*mag,out=[];
+  for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)out.push(Math.abs(v)<1e-12?0:v);
+  return {out,dec:Math.max(0,-Math.floor(Math.log10(st)))};
+}
+function drawChart(cv,def){const sv={};for(const k in CP){sv[k]=C[k];C[k]=CP[k];}try{drawChart0(cv,def);}finally{Object.assign(C,sv);}}
+function drawChart0(cv,def){
+  const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const cfg=def.cfg(),L=50,Rr=10,T=40,B=36,pw=w-L-Rr,ph=h-T-B,N=120;
+  cv._m={L,Rr,x0:cfg.x0,x1:cfg.x1};
+  const xs=Array.from({length:N+1},(_,i)=>cfg.x0+(cfg.x1-cfg.x0)*i/N);
+  const ser=cfg.ser.map(s=>({s,vals:xs.map(x=>s.f(x))}));
+  let mn=0,mx=0;ser.forEach(q=>q.vals.forEach(v=>{if(isFinite(v)){mn=Math.min(mn,v);mx=Math.max(mx,v);}}));
+  if(mx-mn<1e-9)mx=mn+1;const pad=(mx-mn)*0.07;if(mx>0)mx+=pad;if(mn<0)mn-=pad;
+  const XX=x=>L+(x-cfg.x0)/(cfg.x1-cfg.x0)*pw,YY=v=>T+ph-(v-mn)/(mx-mn)*ph;
+  const hx=pw/N/2+0.5;ctx.fillStyle=C.danger;ctx.globalAlpha=.16;
+  xs.forEach(x=>{if(!cfg.safe(x))ctx.fillRect(XX(x)-hx,T,2*hx,ph);});ctx.globalAlpha=1;
+  const ty=ticks(mn,mx,3);
+  ctx.font=`500 10px ${MONO}`;ctx.textBaseline='middle';ctx.textAlign='right';
+  ty.out.forEach(v=>{const y=YY(v);ctx.strokeStyle=v===0?C.gridS:C.grid;ctx.lineWidth=v===0?1.2:1;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,ty.dec),L-5,y);});
+  const tx=ticks(cfg.x0,cfg.x1,4);ctx.textAlign='center';ctx.textBaseline='top';
+  tx.out.forEach(v=>{const x=XX(v);ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,tx.dec),x,T+ph+4);});
+  ser.forEach(q=>{
+    ctx.beginPath();let pen=false;
+    q.vals.forEach((v,j)=>{if(!isFinite(v)){pen=false;return;}const x=XX(xs[j]),y=YY(v);if(pen)ctx.lineTo(x,y);else{ctx.moveTo(x,y);pen=true;}});
+    ctx.strokeStyle=C[q.s.col];ctx.lineWidth=q.s.lw;ctx.setLineDash(q.s.dash||[]);ctx.lineJoin='round';ctx.stroke();ctx.setLineDash([]);
+  });
+  const mxp=XX(clamp(cfg.mark,cfg.x0,cfg.x1));
+  ctx.strokeStyle=C.accent;ctx.lineWidth=1.3;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(mxp,T);ctx.lineTo(mxp,T+ph);ctx.stroke();ctx.setLineDash([]);
+  ser.forEach(q=>{const v=q.s.f(clamp(cfg.mark,cfg.x0,cfg.x1));if(!isFinite(v))return;ctx.fillStyle=C[q.s.col];ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mxp,YY(v),q.s.dash?3:4,0,TAU);ctx.fill();ctx.stroke();});
+  lab(ctx,8,12,def.main,def.sub,def.par+(def.unit?'  ['+def.unit+']':''),C[def.col],'left',12);
+  let lx=8;
+  cfg.ser.forEach(s=>{lab(ctx,lx,28,s.nm[0],s.nm[1],'',C[s.col],'left',11);ctx.font=`italic 600 12px ${FONT}`;lx+=ctx.measureText(s.nm[0]).width+(s.nm[1]?12:0)+16;});
+  ctx.font=`500 10px ${MONO}`;ctx.fillStyle=C.dim;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(def.xl,w-4,h-3);
+}
+function setTheta1(deg){
+  const maxd=G.crit!=null?G.crit*DEG-0.05:89.5;
+  const t1=clamp(deg,0,Math.min(89.5,maxd))/DEG,s2=S.n1/S.n2*Math.sin(t1),t2=Math.asin(clamp(s2,-1,1));
+  const sg=sgn();S.obsX=clamp(S.objX+sg*(S.h*Math.tan(t1)+S.H*Math.tan(t2)),-4.5,4.5);
+}
+function buildChartCells(){
+  const box=$('#charts');box.innerHTML='';
+  Object.keys(CH).filter(k=>S.charts[k]).forEach(k=>{
+    const c=el('div','cell'),cv=el('canvas');cv.dataset.k=k;cv.setAttribute('aria-label','Διάγραμμα '+CH[k].main+' '+CH[k].par);c.appendChild(cv);box.appendChild(c);
+    let down=false;
+    const seek=e=>{
+      const m=cv._m;if(!m)return;const r=cv.getBoundingClientRect(),f=clamp((e.clientX-r.left-m.L)/(r.width-m.L-m.Rr),0,1),x=m.x0+f*(m.x1-m.x0);
+      if(CH[k].kind==='th')setTheta1(x);
+      else if(CH[k].kind==='sin')setTheta1(Math.asin(clamp(x,0,1))*DEG);
+      else S.obsX=clamp(Math.round(x*20)/20,-4.5,4.5);
+      scaleDirty=true;refreshAll();dirty=true;
     };
-    return {scale, originPx, minX, maxX, minY, maxY};
+    cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);seek(e);});
+    cv.addEventListener('pointermove',e=>{if(down)seek(e);});
+    cv.addEventListener('pointerup',()=>down=false);cv.addEventListener('pointercancel',()=>down=false);
+  });
+  dirty=true;
+}
+function buildChartChips(){
+  const box=$('#gchips');box.innerHTML='';
+  const names={t12:'<em>θ</em><sub>2</sub>(<em>θ</em><sub>1</sub>)',sn:'ημ<em>θ</em><sub>2</sub>(ημ<em>θ</em><sub>1</sub>)',hap:'<em>h′</em>(<em>x</em>)'};
+  Object.keys(CH).forEach(k=>{
+    const b=el('button','chip'+(S.charts[k]?' on':''),`<i class="d"></i><span>${names[k]}</span>`);
+    b.type='button';b.style.setProperty('--cc',`var(${CSSV[CH[k].col]})`);
+    b.addEventListener('click',()=>{S.charts[k]=S.charts[k]?0:1;b.classList.toggle('on',!!S.charts[k]);buildChartCells();});
+    box.appendChild(b);
+  });
+}
+
+/* ---------- ανάλυση, κατάσταση, πίνακας ---------- */
+let lastRole='',lastLG='',lastRO='',lastST='';
+const sub=(a,b)=>`<i>${a}</i><sub>${b}</sub>`;
+function roleHTML(){
+  const a1=Math.abs(G.th1)*DEG,a2=Math.abs(G.th2)*DEG,rows=[];
+  const col=k=>`var(${CSSV[k]})`;
+  const row=(k,sym,sb,desc,badge,cls,tot)=>`<div class="rrow${tot?' tot':''}"><span class="rsym" style="color:${col(k)}"><i>${sym}</i>${sb?'<sub>'+sb+'</sub>':''}</span><span class="rdesc">${desc}</span><span class="badge ${cls}">${badge}</span></div>`;
+  const v1=3e8/S.n1/1e8,v2=3e8/S.n2/1e8,same=Math.abs(S.n1-S.n2)<1e-4;
+  rows.push(row('i','θ','1',`Γωνία πρόσπτωσης <b>${fmt(a1,1)}°</b> στο υλικό 1 (${matName(S.m1)}, <i>n</i><sub>1</sub> = ${fmt(S.n1,2)}), μετρημένη από την κάθετο.`,'ΠΡΟΣΠΤΩΣΗ','part'));
+  const dir=same||a1<0.05?'ΧΩΡΙΣ ΕΚΤΡΟΠΗ':S.n1>S.n2?'ΑΠΟ ΤΗΝ ΚΑΘΕΤΟ':'ΠΡΟΣ ΤΗΝ ΚΑΘΕΤΟ';
+  rows.push(row('r','θ','2',`Snell: <i>n</i><sub>1</sub>·ημ<i>θ</i><sub>1</sub> = <i>n</i><sub>2</sub>·ημ<i>θ</i><sub>2</sub> ⇒ ${fmt(S.n1,2)}·${fmt(Math.sin(a1/DEG),3)} = ${fmt(S.n2,2)}·${fmt(Math.sin(a2/DEG),3)}. Γωνία διάθλασης <b>${fmt(a2,1)}°</b>.`,dir,same||a1<0.05?'no':'yes',true));
+  rows.push(row('lt','v','',`Ταχύτητα φωτός: <b>${fmt(v1,2)}·10⁸ m/s</b> στο υλικό 1 και <b>${fmt(v2,2)}·10⁸ m/s</b> στο υλικό 2 (<i>v</i> = <i>c</i>/<i>n</i>). Η συχνότητα μένει ίδια· αλλάζει το μήκος κύματος: <i>λ</i><sub>2</sub>/<i>λ</i><sub>1</sub> = <i>n</i><sub>1</sub>/<i>n</i><sub>2</sub> = ${fmt(S.n1/S.n2,2)}.`,S.n1>S.n2?'ΠΙΟ ΑΡΓΑ ΚΑΤΩ':S.n1<S.n2?'ΠΙΟ ΑΡΓΑ ΠΑΝΩ':'ΙΔΙΑ','no'));
+  if(G.crit!=null){
+    const cd=G.crit*DEG;
+    rows.push(row('app','θ','c',`Κρίσιμη γωνία: ημ<i>θ</i><sub>c</sub> = <i>n</i><sub>2</sub>/<i>n</i><sub>1</sub> ⇒ <i>θ</i><sub>c</sub> = <b>${fmt(cd,1)}°</b>. Ακτίνες με <i>θ</i><sub>1</sub> &gt; <i>θ</i><sub>c</sub> δεν βγαίνουν στο υλικό 2 (ολική ανάκλαση). Τώρα <i>θ</i><sub>1</sub> = ${fmt(a1,1)}°.`,a1>cd*0.95?'ΚΟΝΤΑ ΣΤΗ θc':'ΑΡΚΕΤΑ ΚΑΤΩ ΑΠΟ θc',a1>cd*0.95?'neg':'no'));
+  }else{
+    rows.push(row('app','θ','c',`Επειδή <i>n</i><sub>1</sub> ≤ <i>n</i><sub>2</sub> (το φως μπαίνει σε πιο «πυκνό» υλικό), δεν υπάρχει κρίσιμη γωνία: η ακτίνα πάντα διαθλάται.`,'ΔΕΝ ΥΠΑΡΧΕΙ','no'));
   }
-  function toPx(t, x, y){ return {x: t.originPx.x + x*t.scale, y: t.originPx.y - y*t.scale}; }
-  function toWorld(t, px, py){ return {x: (px - t.originPx.x)/t.scale, y: (t.originPx.y - py)/t.scale}; }
+  rows.push(row('app','h′','',`Φαινόμενο βάθος για αυτόν τον παρατηρητή: <b>${fmt(G.hApp,2)} m</b> (πραγματικό <i>h</i> = ${fmt(S.h,2)} m). Για κάθετη ή σχεδόν κάθετη παρατήρηση: <i>h′</i> = <i>h</i>·<i>n</i><sub>2</sub>/<i>n</i><sub>1</sub> = <b>${fmt(G.parax,2)} m</b>.`,G.hApp<S.h?'ΦΑΙΝΕΤΑΙ ΡΗΧΟΤΕΡΑ':G.hApp>S.h?'ΦΑΙΝΕΤΑΙ ΒΑΘΥΤΕΡΑ':'ΙΔΙΟ','part',true));
+  return rows.join('');
+}
+function updateRole(){
+  const h=roleHTML();if(h!==lastRole){$('#roleBox').innerHTML=h;lastRole=h;}
+  const t='Η φαινόμενη θέση βρίσκεται αν προεκτείνουμε προς τα πίσω την ακτίνα που φτάνει στο μάτι, μέχρι να συναντήσει την κατακόρυφο του αντικειμένου. Το μάτι «βλέπει» το αντικείμενο εκεί που τέμνονται οι προεκτάσεις των διαθλώμενων ακτίνων.';
+  if($('#roleHint').textContent!==t)$('#roleHint').textContent=t;
+}
+function updateStatus(){
+  const st=$('#status'),a1=Math.abs(G.th1)*DEG;let txt,cls='ok';
+  if(Math.abs(S.n1-S.n2)<1e-4)txt='ΙΔΙΟΣ ΔΕΙΚΤΗΣ · ΕΥΘΕΙΑ ΠΟΡΕΙΑ';
+  else if(a1<0.05)txt='ΚΑΘΕΤΗ ΠΡΟΣΠΤΩΣΗ · ΧΩΡΙΣ ΕΚΤΡΟΠΗ';
+  else if(S.n1>S.n2)txt='ΑΠΟΜΑΚΡΥΝΕΤΑΙ ΑΠΟ ΤΗΝ ΚΑΘΕΤΟ · θ₂ > θ₁';
+  else txt='ΠΛΗΣΙΑΖΕΙ ΣΤΗΝ ΚΑΘΕΤΟ · θ₂ < θ₁';
+  if(G.crit!=null&&G.th1!==0&&a1>G.crit*DEG*0.95){txt='ΚΟΝΤΑ ΣΤΗΝ ΚΡΙΣΙΜΗ ΓΩΝΙΑ θc = '+fmt(G.crit*DEG,1)+'°';cls='bad';}
+  if(S.view==='rays'&&G.crit!=null)txt+=' · κόκκινες: ολική ανάκλαση';
+  const k=cls+txt;if(k!==lastST){st.textContent=txt;st.className=cls;lastST=k;}
+}
+function updateLegend(){
+  const lg=$('#legend');
+  if(!S.rdv){if(!lg.hidden)lg.hidden=true;return;}
+  const r=(c,m,s,v)=>`<div style="color:var(${CSSV[c]})"><i>${m}</i>${s?'<sub>'+s+'</sub>':''} = ${v}</div>`;
+  const html=`<div class="lgh">${matName(S.m1)} → ${matName(S.m2)}</div>`+
+    r('i','θ','1',fmt(Math.abs(G.th1)*DEG,1)+'°')+r('r','θ','2',fmt(Math.abs(G.th2)*DEG,1)+'°')+
+    r('i','h','',fmt(S.h,2)+' m')+r('app','h′','',fmt(G.hApp,2)+' m')+
+    r('i','n','1',fmt(S.n1,2))+r('r','n','2',fmt(S.n2,2));
+  if(html!==lastLG){lg.innerHTML=html;lastLG=html;}
+  if(lg.hidden)lg.hidden=false;
+}
+function tile(sym,name,val,col){
+  const V={'t':true,'n<sub>1</sub>':true,'n<sub>2</sub>':true,'θ<sub>1</sub>':true,'θ<sub>2</sub>':true,'h':true,'h′':true};
+  if(!S.tblAll&&!V[sym])return '';
+  return `<div class="readout"><div class="lbl">${UP(name)} <span class="lbl-sym">${sym}</span></div><div class="val mono"${col?` style="color:var(${col})"`:''}>${val}</div></div>`;
+}
+function updateTable(){
+  const box=$('#readouts');box.hidden=!S.table;if(!S.table)return;
+  const a1=Math.abs(G.th1)*DEG,a2=Math.abs(G.th2)*DEG;
+  const h=tile('t','Χρόνος',fmt(S.t,2)+' s')+
+    tile('n<sub>1</sub>','Δείκτης διάθλασης κάτω',fmt(S.n1,3),CSSV.i)+tile('n<sub>2</sub>','Δείκτης διάθλασης πάνω',fmt(S.n2,3),CSSV.r)+
+    tile('θ<sub>1</sub>','Γωνία πρόσπτωσης',fmt(a1,1)+'°',CSSV.i)+tile('θ<sub>2</sub>','Γωνία διάθλασης',fmt(a2,1)+'°',CSSV.r)+
+    tile('h','Πραγματικό βάθος',fmt(S.h,2)+' m',CSSV.i)+tile('h′','Φαινόμενο βάθος',fmt(G.hApp,2)+' m',CSSV.app)+
+    tile('Δh','Φαινόμενη ανύψωση',fmt(S.h-G.hApp,2)+' m',CSSV.app)+
+    tile('θ<sub>c</sub>','Κρίσιμη γωνία',G.crit==null?'δεν υπάρχει':fmt(G.crit*DEG,1)+'°',CSSV.app)+
+    tile('h·n<sub>2</sub>/n<sub>1</sub>','Φαινόμενο βάθος (κάθετα)',fmt(G.parax,2)+' m',CSSV.app)+
+    tile('v<sub>1</sub>','Ταχύτητα φωτός κάτω',fmt(3/S.n1,2)+'·10⁸ m/s',CSSV.lt)+tile('v<sub>2</sub>','Ταχύτητα φωτός πάνω',fmt(3/S.n2,2)+'·10⁸ m/s',CSSV.lt)+
+    tile('L<sub>1</sub>','Διαδρομή κάτω',fmt(G.L1,2)+' m',CSSV.i)+tile('L<sub>2</sub>','Διαδρομή πάνω',fmt(G.L2,2)+' m',CSSV.r)+
+    tile('λ<sub>2</sub>/λ<sub>1</sub>','Λόγος μηκών κύματος',fmt(S.n1/S.n2,3))+
+    tile('T','Χρόνος διαδρομής (επίδειξη)',fmt(G.T1+G.T2,2)+' s');
+  if(h!==lastRO){box.innerHTML=h;lastRO=h;}
+}
+function updateTime(){
+  $('#tOut').textContent='t = '+fmt(S.t)+' s';
+  const sc=$('#sl_time');if(+sc.max!==S.tmax)sc.max=S.tmax;if(document.activeElement!==sc)sc.value=S.t;
+}
+function render(){
+  LBF++;
+  if(scaleDirty)recompute();
+  updateTime();updateStatus();updateRole();updateLegend();updateTable();
+  drawMain();
+  $$('#charts canvas').forEach(cv=>{const d=CH[cv.dataset.k];if(d)drawChart(cv,d);});
+}
 
-  function niceStep(scale, targetPx){
-    const raw = targetPx/scale;
-    const pow10 = Math.pow(10, Math.floor(Math.log10(raw)));
-    const n = raw/pow10;
-    let step;
-    if(n<1.5) step=1; else if(n<3.5) step=2; else if(n<7.5) step=5; else step=10;
-    return step*pow10;
+/* ---------- ήχος: μικρό «μπιπ» όταν ο παλμός φτάνει στην επιφάνεια και στο μάτι ---------- */
+const AU={ctx:null,on:true};
+function audioInit(){
+  if(AU.ctx){try{AU.ctx.resume();}catch(e){}return;}
+  try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;AU.ctx=new Ctx();AU.ctx.resume();}catch(e){AU.ctx=null;}
+}
+function blip(f,d){
+  if(!AU.ctx||!AU.on)return;
+  try{const c=AU.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.18,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.18));
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+(d||0.18)+0.02);}catch(e){}
+}
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(S.playing){
+    const prevT=S.t;S.t+=dt*S.speed;
+    if(prevT<G.T1&&S.t>=G.T1)blip(520,0.16);
+    if(S.t>=S.tmax){blip(880,0.28);if(S.loop)S.t=S.t%S.tmax;else{S.t=S.tmax;S.playing=false;updatePlay();}}
+    dirty=true;
   }
+  if(dirty){dirty=false;render();}
+  requestAnimationFrame(frame);
+}
+function updatePlay(){
+  const b=$('#playBtn');b.textContent=S.playing?'⏸ Παύση':'▶ Εκκίνηση';
+  b.setAttribute('aria-label',S.playing?'Παύση':'Εκκίνηση');
+}
 
-  function drawScene(){
-    const s = computeScene();
-    const t = computeTransform(s);
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0,0,w,h);
+/* ---------- πεδία ρυθμίσεων (ελεύθερη πληκτρολόγηση τιμών) ---------- */
+const syncs=[];
+const r3=v=>Number((+v).toFixed(3));
+function field(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}-n"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label>`+
+    `<div class="inputs"><input type="range" id="${c.id}-r" min="${c.min}" max="${c.max}" step="${c.step}" aria-label="${c.name}">`+
+    `<input type="number" id="${c.id}-n" step="any" aria-label="${c.name} (τιμή)"><span class="unit">${c.unit||''}</span></div>`+(c.note?`<div class="note"></div>`:'');
+  const r=$('input[type=range]',f),n=$('input[type=number]',f),nt=$('.note',f);
+  const sync=()=>{r.value=c.get();if(document.activeElement!==n)n.value=r3(c.get());if(nt)nt.textContent=c.note();};
+  r.addEventListener('input',()=>{c.set(+r.value);n.value=r3(r.value);if(nt)nt.textContent=c.note();dirty=true;refreshAll();});
+  n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)){c.set(v);r.value=v;if(nt)nt.textContent=c.note();dirty=true;refreshOthers(sync);}});
+  n.addEventListener('blur',sync);
+  parent.appendChild(f);sync();syncs.push(sync);return sync;
+}
+const refreshAll=()=>syncs.forEach(f=>f());
+const refreshOthers=me=>syncs.forEach(f=>{if(f!==me)f();});
+function selField(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label><div class="inputs"><select id="${c.id}" aria-label="${c.name}" style="flex:1;min-width:0"></select></div>`;
+  const sel=$('select',f);
+  MATS.forEach(m=>{const o=document.createElement('option');o.value=m[0];o.textContent=m[3]?m[1]:(m[2]==null?m[1]:`${m[1]} (n = ${fmt(m[2],2)})`);sel.appendChild(o);});
+  const sync=()=>{if(sel.value!==c.get())sel.value=c.get();};
+  sel.addEventListener('change',()=>{c.set(sel.value);refreshAll();dirty=true;});
+  parent.appendChild(f);sync();syncs.push(sync);
+}
+function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
+const touch=()=>{scaleDirty=true;dirty=true;};
+function buildSettings(b){
+  field(b,{id:'c-ox',name:'Οριζόντια θέση αντικειμένου',sym:'<i>x</i><sub>α</sub>',unit:'m',min:-4,max:4,step:0.05,get:()=>S.objX,set:v=>{S.objX=clamp(v,-50,50);touch();}});
+  field(b,{id:'c-h',name:'Βάθος αντικειμένου',sym:'<i>h</i>',unit:'m',min:0.1,max:3.4,step:0.05,get:()=>S.h,set:v=>{S.h=clamp(v,0.01,100);touch();}});
+  field(b,{id:'c-px',name:'Οριζόντια θέση παρατηρητή',sym:'<i>x</i><sub>π</sub>',unit:'m',min:-4,max:4,step:0.05,get:()=>S.obsX,set:v=>{S.obsX=clamp(v,-50,50);touch();}});
+  field(b,{id:'c-H',name:'Ύψος ματιού πάνω από την επιφάνεια',sym:'<i>H</i>',unit:'m',min:0.2,max:2.8,step:0.05,get:()=>S.H,set:v=>{S.H=clamp(v,0.01,100);touch();}});
+  const ap=el('div','addrow');ap.style.margin='-4px 0 14px';
+  const b0=el('button','btn secondary small','Παρατηρητής ακριβώς από πάνω');b0.type='button';b0.addEventListener('click',()=>{S.obsX=S.objX;touch();refreshAll();});
+  ap.appendChild(b0);b.appendChild(ap);
+  selField(b,{id:'c-m1',name:'Υλικό κάτω (γύρω από το αντικείμενο)',sym:'<i>n</i><sub>1</sub>',get:()=>S.m1,set:v=>{S.m1=v;const m=matById(v);if(m[2]!=null)S.n1=m[2];touch();}});
+  field(b,{id:'c-n1',name:'Δείκτης διάθλασης κάτω υλικού',sym:'<i>n</i><sub>1</sub>',unit:'',min:1,max:2.6,step:0.01,get:()=>S.n1,set:v=>{S.n1=clamp(v,1,10);S.m1='custom';touch();}});
+  selField(b,{id:'c-m2',name:'Υλικό πάνω (γύρω από τον παρατηρητή)',sym:'<i>n</i><sub>2</sub>',get:()=>S.m2,set:v=>{S.m2=v;const m=matById(v);if(m[2]!=null)S.n2=m[2];touch();}});
+  field(b,{id:'c-n2',name:'Δείκτης διάθλασης πάνω υλικού',sym:'<i>n</i><sub>2</sub>',unit:'',min:1,max:2.6,step:0.01,get:()=>S.n2,set:v=>{S.n2=clamp(v,1,10);S.m2='custom';touch();}});
+  const mp=el('div','addrow');mp.style.margin='-4px 0 10px';
+  [['Θάλασσα → αέρας','sea','air'],['Πισίνα → αέρας','water','air'],['Γυαλί → αέρας','glass','air'],['Αδάμαντας → αέρας','dia','air']].forEach(([n,a,c2])=>{
+    const x=el('button','btn secondary small',n);x.type='button';x.addEventListener('click',()=>{S.m1=a;S.n1=matById(a)[2];S.m2=c2;S.n2=matById(c2)[2];touch();refreshAll();});mp.appendChild(x);});
+  const sw=el('button','btn secondary small','⇅ Αντιμετάθεση υλικών');sw.type='button';sw.addEventListener('click',()=>{[S.m1,S.m2]=[S.m2,S.m1];[S.n1,S.n2]=[S.n2,S.n1];touch();refreshAll();});mp.appendChild(sw);
+  b.appendChild(mp);
+  b.appendChild(el('div','hintline','Το κάτω υλικό περιέχει το αντικείμενο, το πάνω τον παρατηρητή. Με την αντιμετάθεση το φως πάει από πυκνό σε αραιό ή αντίστροφα. Οι τιμές n μπορούν να πληκτρολογηθούν ελεύθερα· τότε το υλικό γίνεται «Άλλο υλικό». Η πορεία της ακτίνας είναι αντιστρεπτή.'));
+}
+function buildToggles(b){
+  const vt=el('div','vector-toggles');b.appendChild(vt);
+  const mk=(row,k,t,cv)=>{
+    const l=el('label','',`<input type="checkbox" id="sh-${k}"${S.show[k]?' checked':''}><span class="swatch" style="background:${cv?`var(${CSSV[cv]})`:'var(--textDim)'}"></span>${t}`);
+    $('input',l).addEventListener('change',e=>{S.show[k]=e.target.checked;if(k==='values'){S.rdv=e.target.checked;lastLG='';}dirty=true;});row.appendChild(l);
+  };
+  const R1=el('div','row',`<span class="grp">${UP('Ακτίνες')}</span>`);vt.appendChild(R1);
+  mk(R1,'inc','Προσπίπτουσα ακτίνα (στο κάτω υλικό)','i');mk(R1,'out','Διαθλώμενη ακτίνα (στο πάνω υλικό)','r');
+  mk(R1,'nrm','Κάθετος στο σημείο πρόσπτωσης','nrm');mk(R1,'refl','Ανακλώμενη ακτίνα (μερική ανάκλαση)','i');
+  vt.appendChild(el('div','sep'));
+  const R2=el('div','row',`<span class="grp">${UP('Γωνίες και θέσεις')}</span>`);vt.appendChild(R2);
+  mk(R2,'ang','Γωνίες <i>θ</i><sub>1</sub>, <i>θ</i><sub>2</sub>','ang');mk(R2,'app','Φαινόμενη θέση αντικειμένου','app');
+  mk(R2,'ext','Προέκταση της ακτίνας προς τα πίσω','app');mk(R2,'dims','Βάθη <i>h</i> και <i>h′</i>','app');
+  vt.appendChild(el('div','sep'));
+  const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
+  mk(R3,'pulse','Παλμός φωτός',null);mk(R3,'grid','Κάνναβος (m)',null);mk(R3,'mats','Ονόματα υλικών',null);
+  mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'values','Τιμές πάνω δεξιά στο παράθυρο',null);
+}
+function buildView(b){
+  field(b,{id:'c-lw',name:'Πάχος ακτίνων',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
+  field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+}
+let NAVHINT=null;
+function buildPrefs(b){NAVHINT=NAVHINT||$('#navHint');
+  const row=el('div','row');row.style.cssText='margin-top:14px;gap:8px;flex-wrap:wrap;';
+  const sv=el('button','btn','💾 Αποθήκευση ρυθμίσεων'),rs=el('button','btn secondary','↺ Επαναφορά'),msg=el('span','');
+  sv.type=rs.type='button';msg.style.cssText='font-size:12px;opacity:.8;align-self:center;';
+  sv.title='Αποθηκεύει στον browser τις επιλογές της καρτέλας «Προβολή μεγεθών» και θα φορτώνονται την επόμενη φορά';
+  sv.addEventListener('click',()=>{try{localStorage.setItem(PREF_KEY,JSON.stringify({show:S.show,lw:S.lw,fs:S.fs,charts:S.charts}));msg.textContent='✓ Αποθηκεύτηκε';}catch(e){msg.textContent='Δεν ήταν δυνατή η αποθήκευση';}});
+  rs.addEventListener('click',()=>{try{localStorage.removeItem(PREF_KEY);}catch(e){}
+    const d=JSON.parse(DEF_PREFS);Object.assign(S.show,d.show);Object.assign(S.charts,d.charts);S.lw=d.lw;S.fs=d.fs;
+    b.innerHTML='';buildToggles(b);{const sp=el('div');sp.style.height='20px';b.appendChild(sp);}buildView(b);buildPrefs(b);b.appendChild(NAVHINT);
+    buildChartChips();buildChartCells();lastST='';dirty=true;});
+  row.append(sv,rs,msg);b.appendChild(row);
+}
 
-    const surfacePx = toPx(t, 0, 0).y;
+/* ---------- χειριστήρια ---------- */
+$('#playBtn').addEventListener('click',()=>{audioInit();if(!S.playing&&S.t>=S.tmax)S.t=0;S.playing=!S.playing;updatePlay();dirty=true;});
+$('#sndBtn').addEventListener('click',e=>{AU.on=!AU.on;if(AU.on)audioInit();e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι');e.currentTarget.classList.toggle('on',AU.on);e.currentTarget.setAttribute('aria-pressed',AU.on);});
+$('#resetBtn').addEventListener('click',()=>{S.t=0;S.playing=false;updatePlay();dirty=true;});
+$('#speedSel').addEventListener('change',e=>S.speed=+e.target.value);
+$('#sl_time').addEventListener('input',e=>{S.t=+e.target.value;S.playing=false;updatePlay();dirty=true;});
+$('#loopChk').addEventListener('change',e=>S.loop=e.target.checked);
+function setViewMode(v){
+  S.view=v;$$('#viewSeg button').forEach(b=>{b.classList.toggle('active',b.dataset.v===v);b.setAttribute('aria-selected',b.dataset.v===v);});lastST='';dirty=true;
+}
+$$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setViewMode(b.dataset.v)));
+$('#camreset').addEventListener('click',()=>{S.Z=1;S.panX=0;S.panY=0;dirty=true;});
+{const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(!og||k[2]!==g){g=k[2];if(g){og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}else og=sel;}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
+document.addEventListener('click',e=>{
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    dirty=true;setTimeout(()=>dirty=true,50);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=$('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');dirty=true;}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('#playBtn').click();}
+});
 
-    // sky
-    const skyGrad = ctx.createLinearGradient(0,0,0,surfacePx);
-    skyGrad.addColorStop(0, cssVar('--sky-top'));
-    skyGrad.addColorStop(1, cssVar('--sky-bot'));
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0,0,w,surfacePx);
-
-    // water
-    const waterGrad = ctx.createLinearGradient(0,surfacePx,0,h);
-    waterGrad.addColorStop(0, cssVar('--water-top'));
-    waterGrad.addColorStop(1, cssVar('--water-bot'));
-    ctx.fillStyle = waterGrad;
-    ctx.fillRect(0,surfacePx,w,h-surfacePx);
-
-    // grid
-    if(showGrid.checked){
-      ctx.save();
-      ctx.strokeStyle = cssVar('--line-dim');
-      ctx.lineWidth = 1*dpr;
-      const stepX = niceStep(t.scale, 55*dpr);
-      const stepY = niceStep(t.scale, 55*dpr);
-      ctx.font = (11*dpr)+'px IBM Plex Mono, monospace';
-      ctx.fillStyle = cssVar('--paper-dim');
-      for(let x = Math.ceil(t.minX/stepX)*stepX; x<=t.maxX; x+=stepX){
-        const p1=toPx(t,x,t.minY), p2=toPx(t,x,t.maxY);
-        ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
-      }
-      for(let y = Math.ceil(t.minY/stepY)*stepY; y<=t.maxY; y+=stepY){
-        if(Math.abs(y) < 1e-6) continue;
-        const p1=toPx(t,t.minX,y), p2=toPx(t,t.maxX,y);
-        ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
-        ctx.textAlign='left'; ctx.textBaseline='middle';
-        const lbl = (y<0 ? (-y).toFixed(y%1===0?0:1)+'m ↓' : y.toFixed(y%1===0?0:1)+'m ↑');
-        ctx.fillText(lbl, p1.x+4*dpr, p1.y);
-      }
-      ctx.restore();
+/* ---------- σύρσιμο αντικειμένου/ματιού, μετατόπιση και ζουμ (ρόδα, δύο δάχτυλα) ---------- */
+{
+  const cv=$('#cv'),ptr=new Map();let mode=null,pinch=null,lastP=null;
+  const loc=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+  const hit=(px,py)=>{
+    const O=[X(S.objX),Y(-S.h)],E=[X(S.obsX),Y(S.H)];
+    const dO=Math.hypot(px-O[0],py-O[1]),dE=Math.hypot(px-E[0],py-E[1]);
+    if(dO<30&&dO<=dE)return 'obj';if(dE<28)return 'eye';return null;
+  };
+  cv.addEventListener('pointerdown',e=>{
+    cv.setPointerCapture(e.pointerId);const p=loc(e);ptr.set(e.pointerId,p);
+    if(ptr.size===1){mode=hit(p[0],p[1])||'pan';lastP=p;}
+    else if(ptr.size===2){mode='pinch';const a=[...ptr.values()];pinch={d:Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,z:S.Z,mx:(a[0][0]+a[1][0])/2,my:(a[0][1]+a[1][1])/2};}
+  });
+  cv.addEventListener('pointermove',e=>{
+    const p=loc(e);
+    if(!ptr.has(e.pointerId)){cv.style.cursor=hit(p[0],p[1])?'grab':'default';return;}
+    ptr.set(e.pointerId,p);
+    if(mode==='pinch'&&ptr.size>=2){
+      const a=[...ptr.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,mx=(a[0][0]+a[1][0])/2,my=(a[0][1]+a[1][1])/2;
+      setZoom(pinch.z*d/pinch.d,mx,my);S.panX+=mx-pinch.mx;S.panY+=my-pinch.my;pinch.mx=mx;pinch.my=my;dirty=true;return;
     }
-
-    // surface line with subtle wave pattern
-    ctx.save();
-    ctx.strokeStyle = cssVar('--line-bright');
-    ctx.lineWidth = 2*dpr;
-    ctx.beginPath();
-    const waveAmp = 2.5*dpr, waveLen = 26*dpr;
-    for(let px=0; px<=w; px+=4*dpr){
-      const py = surfacePx + Math.sin(px/waveLen)*waveAmp;
-      if(px===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-    }
-    ctx.stroke();
-    ctx.restore();
-
-    const P = toPx(t, s.xp, 0);
-    const Oobj = toPx(t, s.objX, -s.objDepth);
-    const Eeye = toPx(t, s.obsX, s.obsHeight);
-
-    // normal line
-    if(showNormal.checked){
-      ctx.save();
-      ctx.setLineDash([5*dpr,5*dpr]);
-      ctx.strokeStyle = cssVar('--normal-color');
-      ctx.lineWidth = 1.3*dpr;
-      const normTop = toPx(t, s.xp, t.maxY);
-      const normBot = toPx(t, s.xp, t.minY);
-      ctx.beginPath(); ctx.moveTo(normTop.x,normTop.y); ctx.lineTo(normBot.x,normBot.y); ctx.stroke();
-      ctx.restore();
-    }
-
-    // apparent position construction
-    if(showApparent.checked && s.appDepth>0){
-      const appPx = toPx(t, s.appX, -s.appDepth);
-      ctx.save();
-      ctx.setLineDash([3*dpr,4*dpr]);
-      ctx.strokeStyle = cssVar('--apparent-color');
-      ctx.lineWidth = 1.6*dpr;
-      // extension of eye->P line, continued to apparent point
-      ctx.beginPath(); ctx.moveTo(P.x,P.y); ctx.lineTo(appPx.x,appPx.y); ctx.stroke();
-      // vertical guide between real and apparent object
-      ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(appPx.x,appPx.y); ctx.stroke();
-      ctx.restore();
-
-      // ghost marker
-      ctx.save();
-      ctx.setLineDash([]);
-      ctx.strokeStyle = cssVar('--apparent-color');
-      ctx.fillStyle = 'transparent';
-      ctx.lineWidth = 2*dpr;
-      ctx.beginPath(); ctx.arc(appPx.x, appPx.y, 9*dpr, 0, Math.PI*2); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(appPx.x-6*dpr, appPx.y-6*dpr); ctx.lineTo(appPx.x+6*dpr, appPx.y+6*dpr);
-      ctx.moveTo(appPx.x+6*dpr, appPx.y-6*dpr); ctx.lineTo(appPx.x-6*dpr, appPx.y+6*dpr);
-      ctx.stroke();
-      ctx.font = '600 '+(11.5*dpr)+'px IBM Plex Mono, monospace';
-      ctx.fillStyle = cssVar('--apparent-color');
-      ctx.textAlign='center'; ctx.textBaseline='top';
-      ctx.fillText('φαινομ. θέση', appPx.x, appPx.y+12*dpr);
-      ctx.restore();
-    }
-
-    // ray path: object -> P -> eye
-    ctx.save();
-    ctx.lineWidth = 2.6*dpr;
-    ctx.strokeStyle = cssVar('--ray1-color');
-    ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(P.x,P.y); ctx.stroke();
-    ctx.strokeStyle = cssVar('--ray2-color');
-    ctx.beginPath(); ctx.moveTo(P.x,P.y); ctx.lineTo(Eeye.x,Eeye.y); ctx.stroke();
-    // arrow at eye end
-    const ang = Math.atan2(Eeye.y-P.y, Eeye.x-P.x);
-    ctx.fillStyle = cssVar('--ray2-color');
-    ctx.beginPath();
-    ctx.moveTo(Eeye.x,Eeye.y);
-    ctx.lineTo(Eeye.x-10*dpr*Math.cos(ang-0.35), Eeye.y-10*dpr*Math.sin(ang-0.35));
-    ctx.lineTo(Eeye.x-10*dpr*Math.cos(ang+0.35), Eeye.y-10*dpr*Math.sin(ang+0.35));
-    ctx.closePath(); ctx.fill();
-    ctx.restore();
-
-    // angle arcs
-    if(showAngles.checked){
-      ctx.save();
-      ctx.lineWidth = 1.6*dpr;
-      ctx.font = '600 '+(13*dpr)+'px IBM Plex Mono, monospace';
-      // theta1: between downward normal and P->object direction (water side)
-      const a_down = Math.PI/2; // canvas angle pointing straight down
-      const aObj = Math.atan2(Oobj.y-P.y, Oobj.x-P.x);
-      ctx.strokeStyle = cssVar('--ray1-color');
-      ctx.beginPath(); ctx.arc(P.x,P.y, 34*dpr, Math.min(a_down,aObj), Math.max(a_down,aObj)); ctx.stroke();
-      ctx.fillStyle = cssVar('--ray1-color');
-      const midA1 = (a_down+aObj)/2;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('θ₁='+fmtDeg(s.theta1)+'°', P.x+50*dpr*Math.cos(midA1), P.y+50*dpr*Math.sin(midA1));
-
-      // theta2: between upward normal and P->eye direction (air side)
-      const a_up = -Math.PI/2;
-      const aEye = Math.atan2(Eeye.y-P.y, Eeye.x-P.x);
-      ctx.strokeStyle = cssVar('--ray2-color');
-      ctx.beginPath(); ctx.arc(P.x,P.y, 46*dpr, Math.min(a_up,aEye), Math.max(a_up,aEye)); ctx.stroke();
-      ctx.fillStyle = cssVar('--ray2-color');
-      const midA2 = (a_up+aEye)/2;
-      ctx.fillText('θ₂='+fmtDeg(s.theta2)+'°', P.x+66*dpr*Math.cos(midA2), P.y+66*dpr*Math.sin(midA2));
-      ctx.restore();
-    }
-
-    // object marker (fish-like)
-    drawObjectMarker(Oobj.x, Oobj.y, cssVar('--gold'));
-    // real depth guide dashed to surface
-    ctx.save();
-    ctx.setLineDash([2*dpr,4*dpr]);
-    ctx.strokeStyle = cssVar('--line');
-    ctx.lineWidth = 1*dpr;
-    const surfAtObj = toPx(t, s.objX, 0);
-    ctx.beginPath(); ctx.moveTo(Oobj.x,Oobj.y); ctx.lineTo(surfAtObj.x,surfAtObj.y); ctx.stroke();
-    ctx.restore();
-
-    // observer marker (eye)
-    drawEyeMarker(Eeye.x, Eeye.y);
-
-    // refraction point marker
-    ctx.save();
-    ctx.fillStyle = cssVar('--line-bright');
-    ctx.beginPath(); ctx.arc(P.x,P.y,3.2*dpr,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-
-    updateStageReadouts(s);
-    updateSummary(s);
-    return s;
-  }
-
-  function drawObjectMarker(x,y,color){
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.fillStyle = color;
-    ctx.strokeStyle = cssVar('--bg-deep');
-    ctx.lineWidth = 1.4*dpr;
-    ctx.beginPath();
-    ctx.ellipse(0,0, 13*dpr, 7.5*dpr, 0, 0, Math.PI*2);
-    ctx.fill(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-13*dpr,0); ctx.lineTo(-20*dpr,-6*dpr); ctx.lineTo(-20*dpr,6*dpr); ctx.closePath();
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = cssVar('--bg-deep');
-    ctx.beginPath(); ctx.arc(7*dpr,-1.5*dpr,1.6*dpr,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
-  function drawEyeMarker(x,y){
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.fillStyle = cssVar('--paper');
-    ctx.strokeStyle = cssVar('--bg-deep');
-    ctx.lineWidth = 1.4*dpr;
-    ctx.beginPath(); ctx.ellipse(0,0,12*dpr,7*dpr,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = cssVar('--ray2-color');
-    ctx.beginPath(); ctx.arc(0,0,4*dpr,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = cssVar('--bg-deep');
-    ctx.beginPath(); ctx.arc(0,0,1.8*dpr,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  }
-
-  function updateStageReadouts(s){
-    document.getElementById('outTheta1').textContent = fmt(radToDeg(s.theta1),1);
-    document.getElementById('outTheta2').textContent = fmt(radToDeg(s.theta2),1);
-    document.getElementById('outDepth').textContent = fmt(s.objDepth,2);
-    document.getElementById('outAppDepth').textContent = fmt(s.appDepth,2);
-  }
-  function updateSummary(s){
-    document.getElementById('sumN1').textContent = s.n1.toFixed(2)+' ('+getMatName('bottom')+')';
-    document.getElementById('sumN2').textContent = s.n2.toFixed(2)+' ('+getMatName('top')+')';
-    document.getElementById('sumTheta1').textContent = fmt(radToDeg(s.theta1),1)+'°';
-    document.getElementById('sumTheta2').textContent = fmt(radToDeg(s.theta2),1)+'°';
-    document.getElementById('sumDepth').textContent = fmt(s.objDepth,2)+' m';
-    document.getElementById('sumAppDepth').textContent = fmt(s.appDepth,2)+' m';
-
-    document.getElementById('rN1').textContent = s.n1.toFixed(2);
-    document.getElementById('rN2').textContent = s.n2.toFixed(2);
-    document.getElementById('rTheta1').textContent = fmt(radToDeg(s.theta1),1);
-    document.getElementById('rTheta2').textContent = fmt(radToDeg(s.theta2),1);
-    document.getElementById('rDepth').textContent = fmt(s.objDepth,2);
-    document.getElementById('rAppDepth').textContent = fmt(s.appDepth,2);
-
-    const critMsg = document.getElementById('critMsg');
-    if(s.critAngle!==null){
-      critMsg.textContent = 'Κρίσιμη γωνία (ολική ανάκλαση) ≈ '+fmt(radToDeg(s.critAngle),1)+'° — για μεγαλύτερες γωνίες πρόσπτωσης το φως δεν εξέρχεται στον αέρα.';
-      critMsg.className = 'msg';
-    } else {
-      critMsg.textContent = '';
-    }
-
-    const matMsg = document.getElementById('matMsg');
-    if(s.n1 <= s.n2){
-      matMsg.textContent = 'Το κάτω μέσο έχει n₁ ≤ n₂: η ακτίνα θα απομακρύνεται από την κάθετο πιο αργά ή θα πλησιάζει σε αυτήν.';
-      matMsg.className='msg';
-    } else { matMsg.textContent=''; }
-  }
-
-  function render(){ drawScene(); }
-  function updateAll(){ render(); }
-
-  /* ---------------- drag interaction ---------------- */
-  let dragTarget = null; // 'object' | 'observer'
-  function pointerWorld(e){
-    const rect = canvas.getBoundingClientRect();
-    const px = (e.clientX-rect.left)*dpr;
-    const py = (e.clientY-rect.top)*dpr;
-    return {px,py};
-  }
-  function nearestTarget(px,py){
-    const s = computeScene();
-    const t = computeTransform(s);
-    const Oobj = toPx(t, s.objX, -s.objDepth);
-    const Eeye = toPx(t, s.obsX, s.obsHeight);
-    const dO = Math.hypot(px-Oobj.x, py-Oobj.y);
-    const dE = Math.hypot(px-Eeye.x, py-Eeye.y);
-    const thresh = 34*dpr;
-    if(dO<thresh && dO<=dE) return {which:'object', t};
-    if(dE<thresh) return {which:'observer', t};
-    return null;
-  }
-  let pointerActive=false;
-  canvas.addEventListener('pointerdown', (e)=>{
-    const {px,py} = pointerWorld(e);
-    const hit = nearestTarget(px,py);
-    if(hit){
-      dragTarget = hit.which;
-      pointerActive = true;
-      canvas.classList.add('grabbing');
-      canvas.setPointerCapture(e.pointerId);
-    }
+    if(mode==='obj'){S.objX=clamp(wx(p[0]),-4.5,4.5);S.h=clamp(-wy(p[1]),0.1,3.6);touch();refreshAll();}
+    else if(mode==='eye'){S.obsX=clamp(wx(p[0]),-4.5,4.5);S.H=clamp(wy(p[1]),0.2,3);touch();refreshAll();}
+    else if(mode==='pan'){S.panX+=p[0]-lastP[0];S.panY+=p[1]-lastP[1];lastP=p;dirty=true;}
   });
-  canvas.addEventListener('pointermove', (e)=>{
-    if(!pointerActive || !dragTarget) return;
-    const {px,py} = pointerWorld(e);
-    const s = computeScene();
-    const t = computeTransform(s);
-    const world = toWorld(t, px, py);
-    if(dragTarget==='object'){
-      const x = clamp(world.x, parseFloat(objXSlider.min), parseFloat(objXSlider.max));
-      const depth = clamp(-world.y, parseFloat(objDepthSlider.min), parseFloat(objDepthSlider.max));
-      objXNum.value = x.toFixed(2); objXSlider.value = x;
-      objDepthNum.value = depth.toFixed(2); objDepthSlider.value = depth;
-    } else {
-      const x = clamp(world.x, parseFloat(obsXSlider.min), parseFloat(obsXSlider.max));
-      const hgt = clamp(world.y, parseFloat(obsHSlider.min), parseFloat(obsHSlider.max));
-      obsXNum.value = x.toFixed(2); obsXSlider.value = x;
-      obsHNum.value = hgt.toFixed(2); obsHSlider.value = hgt;
-    }
-    render();
-  });
-  function endDrag(){ pointerActive=false; dragTarget=null; canvas.classList.remove('grabbing'); }
-  canvas.addEventListener('pointerup', endDrag);
-  canvas.addEventListener('pointercancel', endDrag);
-  canvas.addEventListener('pointerleave', ()=>{ if(pointerActive) endDrag(); });
+  const up=e=>{ptr.delete(e.pointerId);if(ptr.size===0){mode=null;pinch=null;}else if(ptr.size===1){mode='pan';lastP=[...ptr.values()][0];pinch=null;}};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',e=>{e.preventDefault();const p=loc(e);setZoom(S.Z*Math.exp(-e.deltaY*0.0015),p[0],p[1]);},{passive:false});
+}
+const ro=new ResizeObserver(()=>{dirty=true;});
+['#stageWrap','#charts'].forEach(s=>ro.observe($(s)));
+window.addEventListener('resize',()=>dirty=true);
 
-  window.addEventListener('resize', ()=>{ resizeCanvas(); render(); });
-
-  /* ---------------- theme ---------------- */
-  const themeToggleBtn = document.getElementById('themeToggle');
-  const themeName = document.getElementById('themeName');
-  function applyTheme(name){
-    document.body.classList.toggle('theme-minimal', name==='minimal');
-    themeName.textContent = name==='minimal' ? 'Minimal' : 'Blueprint';
-    render();
-  }
-  let currentTheme = 'blueprint';
-  document.documentElement.setAttribute('data-theme','blueprint');
-  themeToggleBtn.addEventListener('click', ()=>{
-    currentTheme = currentTheme==='blueprint' ? 'minimal' : 'blueprint';
-    applyTheme(currentTheme);
-  });
-
-  /* ---------------- tabs ---------------- */
-  const mainTabBtns = document.querySelectorAll('.main-tab-btn');
-  function switchTab(name){
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('tab-'+name).classList.add('active');
-    mainTabBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
-    if(name==='solution') refreshSolution();
-  }
-  mainTabBtns.forEach(b=> b.addEventListener('click', ()=> switchTab(b.dataset.tab)));
-
-  /* ---------------- exercise ---------------- */
-  const EX_BOTTOM_POOL = ['water','ice','ethanol','glycerine','plexiglass','glass'];
-  let exVars = null;
-
-  function generateExercise(){
-    const matId = EX_BOTTOM_POOL[Math.floor(Math.random()*EX_BOTTOM_POOL.length)];
-    const mat = MATERIALS.find(m=>m.id===matId);
-    const n1 = mat.n, n2 = 1.00;
-    const critDeg = radToDeg(Math.asin(n2/n1));
-    const maxAngle = Math.min(40, critDeg-6);
-    const theta1Deg = Math.round((10 + Math.random()*(maxAngle-10))*10)/10;
-    const depth = Math.round((0.5 + Math.random()*2.5)*10)/10;
-    exVars = {n1, n2, name1: mat.name, name2:'Αέρας', theta1Deg, depth};
-    renderExercise();
-  }
-
-  function renderExercise(){
-    if(!exVars) generateExercise();
-    const v = exVars;
-    document.getElementById('exGiven').innerHTML =
-      '<span class="given">Κάτω μέσο:</span> '+v.name1+' (n₁ = '+v.n1.toFixed(2)+')<br>'+
-      '<span class="given">Πάνω μέσο:</span> '+v.name2+' (n₂ = '+v.n2.toFixed(2)+')<br>'+
-      '<span class="given">Πραγματικό βάθος αντικειμένου:</span> h = '+v.depth.toFixed(1)+' m<br>'+
-      '<span class="asked">Γωνία πρόσπτωσης (στο νερό):</span> θ₁ = '+v.theta1Deg.toFixed(1)+'°<br><br>'+
-      'Βρες: <span class="asked">(α)</span> τη γωνία διάθλασης θ₂ και <span class="asked">(β)</span> το φαινόμενο βάθος h′ (σχεδόν κάθετη παρατήρηση).';
-    document.getElementById('exTheta2Input').value='';
-    document.getElementById('exAppDepthInput').value='';
-    document.getElementById('exFeedback').textContent='';
-    document.getElementById('exFeedback').className='msg';
-  }
-
-  document.getElementById('newExerciseBtn').addEventListener('click', generateExercise);
-
-  document.getElementById('checkExerciseBtn').addEventListener('click', ()=>{
-    if(!exVars) return;
-    const v=exVars;
-    const correctT2 = radToDeg(Math.asin(clamp(v.n1/v.n2*Math.sin(degToRad(v.theta1Deg)),-1,1)));
-    const correctApp = v.depth*(v.n2/v.n1);
-    const guessT2 = parseFloat(document.getElementById('exTheta2Input').value);
-    const guessApp = parseFloat(document.getElementById('exAppDepthInput').value);
-    const okT2 = !isNaN(guessT2) && Math.abs(guessT2-correctT2) <= 1.5;
-    const okApp = !isNaN(guessApp) && Math.abs(guessApp-correctApp) <= Math.max(0.05, 0.04*v.depth);
-    const fb = document.getElementById('exFeedback');
-    let lines=[];
-    lines.push((okT2?'✓':'✗')+' θ₂: σωστή τιμή ≈ '+correctT2.toFixed(1)+'°'+(isNaN(guessT2)?' (δεν δόθηκε απάντηση)':''));
-    lines.push((okApp?'✓':'✗')+' h′: σωστή τιμή ≈ '+correctApp.toFixed(2)+' m'+(isNaN(guessApp)?' (δεν δόθηκε απάντηση)':''));
-    fb.innerHTML = lines.join('<br>');
-    fb.className = 'msg ' + ((okT2&&okApp) ? 'ok' : 'warn');
-  });
-
-  document.getElementById('applyExerciseBtn').addEventListener('click', ()=>{
-    if(!exVars) generateExercise();
-    const v=exVars;
-    matBottomSel.value = EX_BOTTOM_POOL.find(id=>MATERIALS.find(m=>m.id===id).name===v.name1) || 'water';
-    matTopSel.value = 'air';
-    syncCustomVisibility();
-    const depth = v.depth;
-    const theta1Rad = degToRad(v.theta1Deg);
-    const theta2Rad = Math.asin(clamp(v.n1/v.n2*Math.sin(theta1Rad),-1,1));
-    const objX = 0;
-    const xp = objX + depth*Math.tan(theta1Rad);
-    const obsHeight = 1.6;
-    const obsX = xp + obsHeight*Math.tan(theta2Rad);
-    objXNum.value=objX; objXSlider.value=objX;
-    objDepthNum.value=depth.toFixed(2); objDepthSlider.value=depth;
-    obsHNum.value=obsHeight; obsHSlider.value=obsHeight;
-    obsXNum.value=clamp(obsX,parseFloat(obsXSlider.min),parseFloat(obsXSlider.max)).toFixed(2);
-    obsXSlider.value=obsXNum.value;
-    switchTab('settings');
-    render();
-  });
-
-  /* ---------------- solution ---------------- */
-  function refreshSolution(){
-    if(!exVars) generateExercise();
-    const v = exVars;
-    const correctT2 = radToDeg(Math.asin(clamp(v.n1/v.n2*Math.sin(degToRad(v.theta1Deg)),-1,1)));
-    const correctApp = v.depth*(v.n2/v.n1);
-    const el = document.getElementById('solutionContent');
-    el.innerHTML =
-      '<div class="sol-block"><h4>Δεδομένα</h4><div class="givens-grid">'+
-        '<div class="gi"><span class="k">n₁</span>'+v.n1.toFixed(2)+' ('+v.name1+')</div>'+
-        '<div class="gi"><span class="k">n₂</span>'+v.n2.toFixed(2)+' ('+v.name2+')</div>'+
-        '<div class="gi"><span class="k">h</span>'+v.depth.toFixed(1)+' m</div>'+
-        '<div class="gi"><span class="k">θ₁</span>'+v.theta1Deg.toFixed(1)+'°</div>'+
-      '</div></div>'+
-      '<div class="sol-block"><h4>(α) Γωνία διάθλασης</h4>'+
-        '<div class="line">Νόμος του Snell: n₁·sinθ₁ = n₂·sinθ₂</div>'+
-        '<div class="line">sinθ₂ = (n₁/n₂)·sinθ₁ = ('+v.n1.toFixed(2)+'/'+v.n2.toFixed(2)+')·sin('+v.theta1Deg.toFixed(1)+'°) = '+ (v.n1/v.n2*Math.sin(degToRad(v.theta1Deg))).toFixed(4) +'</div>'+
-        '<div class="line">θ₂ = <span class="res">'+correctT2.toFixed(1)+'°</span></div>'+
-      '</div>'+
-      '<div class="sol-block"><h4>(β) Φαινόμενο βάθος</h4>'+
-        '<div class="sol-note">Για παρατηρητή σχεδόν πάνω από το αντικείμενο (μικρές γωνίες), το φαινόμενο βάθος συνδέεται με το πραγματικό μέσω h′ = h·(n₂/n₁).</div>'+
-        '<div class="line">h′ = h·(n₂/n₁) = '+v.depth.toFixed(1)+'·('+v.n2.toFixed(2)+'/'+v.n1.toFixed(2)+')</div>'+
-        '<div class="line">h′ = <span class="res">'+correctApp.toFixed(2)+' m</span></div>'+
-        '<div class="sol-note">Το αντικείμενο φαίνεται ρηχότερο επειδή n₁ &gt; n₂ (το κάτω μέσο είναι πιο πυκνό οπτικά).</div>'+
-      '</div>';
-  }
-  document.getElementById('solutionRefreshBtn').addEventListener('click', refreshSolution);
-
-  /* ---------------- saved presets ---------------- */
-  const PRESET_KEY = 'diathlasi_fotos_presets_v1';
-  function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }
-  function savePresetsToStorage(list){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(list)); return true; }catch(e){ return false; } }
-
-  function currentSettingsSnapshot(){
-    return {
-      objX: parseFloat(objXNum.value), objDepth: parseFloat(objDepthNum.value),
-      obsX: parseFloat(obsXNum.value), obsH: parseFloat(obsHNum.value),
-      matBottom: matBottomSel.value, matBottomCustom: matBottomCustom.value,
-      matTop: matTopSel.value, matTopCustom: matTopCustom.value
-    };
-  }
-  function applySnapshot(sn){
-    objXNum.value=sn.objX; objXSlider.value=sn.objX;
-    objDepthNum.value=sn.objDepth; objDepthSlider.value=sn.objDepth;
-    obsXNum.value=sn.obsX; obsXSlider.value=sn.obsX;
-    obsHNum.value=sn.obsH; obsHSlider.value=sn.obsH;
-    matBottomSel.value=sn.matBottom; matBottomCustom.value=sn.matBottomCustom||1.33;
-    matTopSel.value=sn.matTop; matTopCustom.value=sn.matTopCustom||1.00;
-    syncCustomVisibility();
-    render();
-  }
-
-  function renderPresetList(){
-    const list = loadPresets();
-    const wrap = document.getElementById('presetList');
-    if(list.length===0){ wrap.innerHTML='<div class="msg">Δεν υπάρχουν ακόμη αποθηκευμένες διατάξεις.</div>'; return; }
-    wrap.innerHTML='';
-    list.slice().reverse().forEach((p)=>{
-      const idx = list.indexOf(p);
-      const row = document.createElement('div');
-      row.className='preset-row';
-      const date = new Date(p.ts);
-      row.innerHTML = '<div class="preset-info"><div class="preset-title">'+p.name+'</div>'+
-        '<div class="preset-meta">'+date.toLocaleDateString('el-GR')+' · h='+p.settings.objDepth+'m</div></div>'+
-        '<div class="preset-btns"><button class="small" data-act="load">Φόρτωση</button><button class="small danger" data-act="del">Διαγραφή</button></div>';
-      row.querySelector('[data-act="load"]').addEventListener('click', ()=>{ applySnapshot(p.settings); });
-      row.querySelector('[data-act="del"]').addEventListener('click', ()=>{
-        const l = loadPresets(); l.splice(idx,1); savePresetsToStorage(l); renderPresetList();
-      });
-      wrap.appendChild(row);
-    });
-  }
-  renderPresetList();
-
-  document.getElementById('savePresetBtn').addEventListener('click', ()=>{
-    const nameEl = document.getElementById('presetName');
-    const name = nameEl.value.trim() || ('Διάταξη '+new Date().toLocaleTimeString('el-GR'));
-    const list = loadPresets();
-    list.push({name, ts: Date.now(), settings: currentSettingsSnapshot()});
-    savePresetsToStorage(list);
-    nameEl.value='';
-    document.getElementById('presetMsg').textContent='Αποθηκεύτηκε η διάταξη «'+name+'».';
-    document.getElementById('presetMsg').className='msg ok';
-    renderPresetList();
-  });
-
-  document.getElementById('exportPresetsBtn').addEventListener('click', ()=>{
-    const list = loadPresets();
-    const blob = new Blob([JSON.stringify(list,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url; a.download='diathlasi-fotos-presets.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
-  document.getElementById('importPresetsBtn').addEventListener('click', ()=>{
-    document.getElementById('importPresetsFile').click();
-  });
-  document.getElementById('importPresetsFile').addEventListener('change', (e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      try{
-        const imported = JSON.parse(reader.result);
-        if(!Array.isArray(imported)) throw new Error('bad format');
-        const list = loadPresets().concat(imported);
-        savePresetsToStorage(list);
-        renderPresetList();
-        document.getElementById('presetMsg').textContent='Έγινε εισαγωγή '+imported.length+' διατάξεων.';
-        document.getElementById('presetMsg').className='msg ok';
-      }catch(err){
-        document.getElementById('presetMsg').textContent='Το αρχείο δεν είναι έγκυρο JSON διατάξεων.';
-        document.getElementById('presetMsg').className='msg warn';
-      }
-    };
-    reader.readAsText(file);
-    e.target.value='';
-  });
-
-  /* ---------------- init ---------------- */
-  resizeCanvas();
-  generateExercise();
-  render();
+/* ---------- εκκίνηση ---------- */
+$$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+const PHYS_HTML=`<div class="guide phys">
+<h3>Η φυσική της διάθλασης</h3>
+<p>Όταν το φως περνά από ένα υλικό σε άλλο, η ταχύτητά του αλλάζει: στο υλικό με δείκτη διάθλασης <i>n</i> είναι <b><i>v</i> = <i>c</i>/<i>n</i></b>. Αν η ακτίνα πέφτει πλάγια στη διαχωριστική επιφάνεια, αλλάζει και η διεύθυνσή της. Οι γωνίες μετριούνται από την κάθετο στην επιφάνεια και συνδέονται με τον <b>νόμο του Snell</b>: <b><i>n</i><sub>1</sub>·ημ<i>θ</i><sub>1</sub> = <i>n</i><sub>2</sub>·ημ<i>θ</i><sub>2</sub></b>.</p>
+<h3>Από πυκνό σε αραιό (νερό → αέρας)</h3>
+<ul>
+<li>Αν <i>n</i><sub>1</sub> &gt; <i>n</i><sub>2</sub>, η ακτίνα <b>απομακρύνεται από την κάθετο</b>: <i>θ</i><sub>2</sub> &gt; <i>θ</i><sub>1</sub>.</li>
+<li>Η συχνότητα δεν αλλάζει στη διάθλαση· το μήκος κύματος αλλάζει ανάλογα με το 1/<i>n</i>.</li>
+<li><b>Κρίσιμη γωνία</b>: <b>ημ<i>θ</i><sub>c</sub> = <i>n</i><sub>2</sub>/<i>n</i><sub>1</sub></b>. Για <i>θ</i><sub>1</sub> &gt; <i>θ</i><sub>c</sub> δεν υπάρχει διαθλώμενη ακτίνα και το φως ανακλάται ολικά.</li>
+</ul>
+<h3>Πού «βλέπουμε» το αντικείμενο</h3>
+<ul>
+<li>Το μάτι δέχεται την ακτίνα που βγήκε από το νερό και τη «διαβάζει» ως ευθεία. Προεκτείνουμε λοιπόν την ακτίνα προς τα πίσω: εκεί που τέμνει την κατακόρυφο του αντικειμένου είναι η <b>φαινόμενη θέση</b>.</li>
+<li>Για κάθετη ή σχεδόν κάθετη παρατήρηση: <b><i>h′</i> = <i>h</i>·<i>n</i><sub>2</sub>/<i>n</i><sub>1</sub></b>. Για νερό και αέρα: <i>h′</i> ≈ 0,75 <i>h</i>.</li>
+<li>Όσο πιο πλάγια κοιτάμε, τόσο η φαινόμενη θέση απομακρύνεται από την πραγματική και η εικόνα παραμορφώνεται (δες το διάγραμμα <i>h′</i>(<i>x</i>)).</li>
+</ul>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Πισίνα:</b> βάθος 2 m φαίνεται ≈ 1,5 m (2 m / 1,33). Γι' αυτό τα παιδιά πρέπει να προσέχουν: το νερό είναι βαθύτερο απ' ό,τι δείχνει.</li>
+<li><b>Ψάρεμα με καμάκι:</b> το ψάρι φαίνεται πιο ψηλά και πιο κοντά στην επιφάνεια απ' ό,τι είναι. Ο ψαράς σημαδεύει χαμηλότερα από το σημείο που βλέπει.</li>
+<li><b>«Σπασμένο» καλαμάκι:</b> σε ένα ποτήρι με νερό, το βυθισμένο μέρος του καλαμακιού φαίνεται μετατοπισμένο, γιατί το φως του διαθλάται στην επιφάνεια.</li>
+<li><b>Κάτω από το νερό:</b> για νερό και αέρα η <i>θ</i><sub>c</sub> ≈ 49°. Ένας δύτης βλέπει όλον τον ουρανό μέσα σε ένα φωτεινό κώνο περίπου 98°· έξω από αυτόν βλέπει ανάκλαση του βυθού.</li>
+<li><b>Οπτικές ίνες:</b> το φως παγιδεύεται με διαδοχικές ολικές ανακλάσεις και ταξιδεύει χιλιόμετρα, γι' αυτό υπάρχει το γρήγορο διαδίκτυο.</li>
+<li><b>Διαμάντι:</b> με <i>n</i> = 2,42 έχει <i>θ</i><sub>c</sub> ≈ 24°. Το φως παγιδεύεται και ανακλάται πολλές φορές μέσα του, και αυτό δίνει τη λάμψη του.</li>
+<li><b>Φακοί γυαλιών και κάμερας:</b> η διάθλαση σε κυρτές επιφάνειες γυαλιού (<i>n</i> ≈ 1,5) εστιάζει το φως.</li>
+</ul>
+</div>`;
+const GUIDE_HTML=`<div class="guide">
+<h3>Τι δείχνει η προσομοίωση</h3>
+<p>Ένα αντικείμενο βρίσκεται μέσα σε ένα υλικό (π.χ. θάλασσα) και ένας παρατηρητής στον αέρα. Βλέπεις πώς πηγαίνει η ακτίνα από το αντικείμενο στο μάτι και πού φαίνεται το αντικείμενο.</p>
+<h3>1. Ρυθμίσεις προσομοίωσης</h3>
+<ul>
+<li>Άλλαξε τη θέση και το βάθος του αντικειμένου, τη θέση και το ύψος του παρατηρητή, με τα ρυθμιστικά ή πληκτρολογώντας τιμή.</li>
+<li>Διάλεξε υλικά για το κάτω και το πάνω μέσο ή πληκτρολόγησε δικό σου δείκτη διάθλασης <i>n</i>. Τα κουμπιά δίνουν γρήγορες επιλογές και αντιμετάθεση υλικών.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Διάλεξε τι θα φαίνεται: ακτίνες, κάθετος, γωνίες, φαινόμενη θέση, βάθη, κάνναβος, ονόματα υλικών.</li>
+<li>Ρύθμισε το πάχος των ακτίνων και το μέγεθος των γραμμάτων. Με το «Τιμές πάνω δεξιά» εμφανίζονται οι βασικές τιμές μέσα στο παράθυρο.</li>
+</ul>
+<h3>3. Ανάλυση</h3>
+<p>Εξηγεί με τις τρέχουσες τιμές τον νόμο του Snell, την κρίσιμη γωνία και το φαινόμενο βάθος, με παραδείγματα από την καθημερινή ζωή.</p>
+<h3>4. Τιμές μεγεθών</h3>
+<p>Πίνακας με τις τιμές τη στιγμή που βλέπεις. Με το «Όλα τα μεγέθη στον πίνακα» εμφανίζονται και τα ενδιάμεσα.</p>
+<h3>5. Διαγράμματα</h3>
+<p>Διαγράμματα <i>θ</i><sub>2</sub>(<i>θ</i><sub>1</sub>), ημ<i>θ</i><sub>2</sub>(ημ<i>θ</i><sub>1</sub>) και <i>h′</i>(<i>x</i>). Κάνε κλικ ή σύρε πάνω τους για να αλλάξεις τη γωνία ή τη θέση του παρατηρητή.</p>
+<h3>Προβολές</h3>
+<ul>
+<li><b>Μία ακτίνα</b>: μόνο η ακτίνα από το αντικείμενο στο μάτι, με τον παλμό φωτός.</li>
+<li><b>Δέσμη ακτίνων</b>: πολλές ακτίνες από το αντικείμενο. Βλέπεις πώς οι προεκτάσεις τους προς τα πίσω δεν συναντώνται σε ένα σημείο και ποιες ακτίνες ανακλώνται ολικά (κόκκινες).</li>
+<li>Σύρε το ψάρι ή το μάτι για να τα μετακινήσεις. Ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, σύρσιμο στο κενό για μετατόπιση. Το «↺ Προβολή» επαναφέρει.</li>
+</ul>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση / Επαναφορά</b> ξεκινούν ή μηδενίζουν τον παλμό φωτός.</li>
+<li><b>Επανάληψη</b>: ο παλμός ξαναρχίζει όταν φτάσει στο μάτι.</li>
+<li><b>Ήχος</b>: ένα μικρό «μπιπ» όταν ο παλμός φτάνει στην επιφάνεια και στο μάτι.</li>
+<li><b>Ταχύτητα αναπαραγωγής</b>: από ×0,1 (πολύ αργά) ως ×5.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση (φωτεινή ή σκούρη). Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>`;
+let skin='blueprint';try{skin=localStorage.getItem('refr-skin')||skin;}catch(e){}
+if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
+{
+  const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
+  tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
+  rc.appendChild(tp);
+  const t1=mkTab(),t2=mkTab(),t3=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
+  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);buildPrefs(t2.b);t2.b.appendChild($('#navHint'));
+  {const rh=el('div','');rh.style.marginBottom='4px';rh.appendChild(el('div','role'));rh.firstChild.id='roleBox';const hl=el('div','hintline');hl.id='roleHint';rh.appendChild(hl);t3.b.appendChild(rh);t3.b.insertAdjacentHTML('beforeend',PHYS_HTML);}
+  {const al=el('label','checkline','<input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα');al.id='allWrap';al.style.margin='0 0 4px';t4.b.appendChild(al);const ro2=el('div','readouts');ro2.id='readouts';t4.b.appendChild(ro2);
+    $('#allChk',al).addEventListener('change',e=>{S.tblAll=e.target.checked;lastRO='';dirty=true;});}
+  const gp=$('#graphPanel');
+  const ps=[t1.p,t2.p,t3.p,t4.p,gp,t6.p];
+  const names=['Ρυθμίσεις προσομοίωσης','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  ps.forEach(p=>{p.classList.remove('collapsed');$('#tabBody').appendChild(p);});
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});$$('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});dirty=true;setTimeout(()=>{dirty=true;},60);};
+  names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
+  show(0);
+}
+let uiZ=0.8;try{uiZ=+localStorage.getItem('ui-zoom80b')||0.8;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ/0.8:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom80b',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
+buildChartChips();buildChartCells();updatePlay();
+setSkin(skin);setViewMode('main');
+recompute();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
+window.__refr={S,geomFor,get G(){return G;},recompute,render,setViewMode,setTheta1};
+requestAnimationFrame(frame);
 })();
 </script>
-</body>
-</html>
+</body></html>
