@@ -382,7 +382,7 @@ select{background:var(--panel2);border:1px solid var(--border);color:var(--text)
 #tabBody>.panel>.panel-body{display:block;}
 footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
-.maxbtn{position:absolute;right:8px;top:8px;left:auto;z-index:4;} #status{top:8px;} #legend{top:44px;} #st-side,#st-side canvas{touch-action:none;}
+.panel-tools{margin-left:auto;} #simPanel.collapsed>.panel-body{display:none!important;} #simPanel.collapsed{flex:none!important;} #status{top:8px;} #st-side,#st-side canvas{touch-action:none;}
 header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
 #mainTitle .tw:nth-child(-n+2),#mainTitle .tw:nth-child(-n+2) b{color:var(--text);}
 </style></head>
@@ -406,11 +406,11 @@ header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
             <button data-v="main" type="button" role="tab" class="main-tab-btn">Μία ακτίνα</button>
             <button data-v="rays" type="button" role="tab" class="main-tab-btn">Δέσμη ακτίνων</button>
           </div>
+          <div class="panel-tools"><button class="collapse-btn" type="button" title="Ελαχιστοποίηση" aria-label="Ελαχιστοποίηση πάνελ">▾</button><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button></div>
         </div>
         <div class="panel-body">
           <div class="stageWrap" id="stageWrap" data-view="side">
             <div class="stage" id="st-side"><canvas id="cv"></canvas>
-              <button class="panel-tool-btn maxbtn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
               <button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button>
             </div>
             <div id="legend" hidden></div>
@@ -1030,9 +1030,11 @@ $$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setViewMode(b.da
 $('#camreset').addEventListener('click',()=>{S.Z=1;S.panX=0;S.panY=0;dirty=true;});
 {const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(!og||k[2]!==g){g=k[2];if(g){og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}else og=sel;}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
 document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel');if(p.classList.contains('maxed'))return;const c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);cb.title=c?'Επαναφορά':'Ελαχιστοποίηση';dirty=true;setTimeout(()=>dirty=true,60);return;}
   const mb=e.target.closest('[data-max]');
   if(mb){
-    const p=mb.closest('.panel'),on=p.classList.toggle('maxed');
+    const p=mb.closest('.panel');p.classList.remove('collapsed');$$('.collapse-btn',p).forEach(c=>c.classList.remove('collapsed'));const on=p.classList.toggle('maxed');
     $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
     document.body.classList.toggle('hasmax',on);
     $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
