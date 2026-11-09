@@ -384,7 +384,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style></head>
 <body>
-<style>.charts{grid-template-columns:1fr;grid-auto-rows:230px;}.cell .tag{z-index:2}sub{font-size:.72em;line-height:0;vertical-align:sub}.checkline i,.btn i{font-style:italic}</style>
+<style>#mainTitle .tw:first-child,#mainTitle .tw:first-child *{color:#fff!important}.charts{grid-template-columns:1fr;grid-auto-rows:230px;}.cell .tag{z-index:2}sub{font-size:.72em;line-height:0;vertical-align:sub}.checkline i,.btn i{font-style:italic}</style>
 <div class="app">
   <header>
     <div class="hdr-left">
@@ -438,7 +438,6 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
             <select id="gridStepSel" aria-label="Βήμα πλέγματος"><option value="0.05" selected>5 cm</option><option value="0.1">10 cm</option><option value="0.25">25 cm</option><option value="0.5">50 cm</option></select>
             <label class="checkline" style="margin:0"><input type="checkbox" id="snapLine"> Ευθεία</label>
           </div>
-          <div class="hintline" id="navHint">Σύρε ένα φορτίο για να το μετακινήσεις ελεύθερα στο επίπεδο· σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση. Κάνε κλικ σε ένα φορτίο (ή στα κουμπιά πάνω) για να το προσθέσεις ή να το αφαιρέσεις από τα φορτία που δείχνουν δύναμη· μπορείς να δεις δυνάμεις σε πολλά φορτία ταυτόχρονα. Το Snap κολλάει το φορτίο που σέρνεις στο πλέγμα ή σε ευθεία (με τα άλλα φορτία, οριζόντια ή κάθετα). Με «Εκκίνηση» αφήνεται ελεύθερο το τελευταίο φορτίο που επέλεξες και κινείται λόγω της συνισταμένης, ενώ τα υπόλοιπα μένουν ακλόνητα.</div>
         </div>
       </div>
 
@@ -485,6 +484,15 @@ const S={
   zoom:1,px:0,py:0,vs:1,lw:1,fs:13,snapGrid:false,gridStep:0.05,snapLine:false,guide:null,magnet:true,constr:'para',
   show:{part:true,res:true,others:false,dist:true,labels:true,values:false,nul:true,grid:true,nline:true}
 };
+const VKEY='coulomb-view-v1';
+(function(){try{const o=JSON.parse(localStorage.getItem(VKEY)||'null');if(!o)return;
+  if(o.show)for(const k in S.show)if(typeof o.show[k]==='boolean')S.show[k]=o.show[k];
+  if(['para','chain','none'].includes(o.constr))S.constr=o.constr;
+  if(typeof o.magnet==='boolean')S.magnet=o.magnet;
+  if(isFinite(o.vs))S.vs=Math.min(1000,Math.max(0.001,o.vs));
+  if(isFinite(o.lw))S.lw=Math.min(20,Math.max(0.1,o.lw));
+  if(isFinite(o.fs))S.fs=Math.min(60,Math.max(6,o.fs));
+}catch(e){}})();
 let dirty=true, trajDirty=true;
 const epsR=()=>{if(S.medium==='custom')return Math.max(1,S.epsC);const m=MED.find(x=>x[0]===S.medium);return m?m[2]:1;};
 const posBase=i=>S.ch[i];
@@ -936,7 +944,7 @@ function buildToggles(b){
   mk(R3,'dist','Αποστάσεις <i>r</i>',null);mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'values','Τιμές στο σχήμα',null);mk(R3,'grid','Πλέγμα',null);
   vt.appendChild(el('div','sep'));
   const R4=el('div','row',`<span class="grp">${UP('Σύρσιμο')}</span>`);vt.appendChild(R4);
-  const l2=el('label','','<input type="checkbox" id="mg-mag" checked> Μαγνητική έλξη στο σημείο μηδενισμού');$('input',l2).addEventListener('change',e=>{S.magnet=e.target.checked;});R4.appendChild(l2);
+  const l2=el('label','','<input type="checkbox" id="mg-mag"'+(S.magnet?' checked':'')+'> Μαγνητική έλξη στο σημείο μηδενισμού');$('input',l2).addEventListener('change',e=>{S.magnet=e.target.checked;});R4.appendChild(l2);
 }
 function buildView(b){
   field(b,{id:'c-vs',name:'Κλίμακα διανυσμάτων (σταθερή)',sym:'×',unit:'',min:0.05,max:5,step:0.05,get:()=>S.vs,set:v=>{S.vs=clamp(v,0.001,1000);}});
@@ -947,6 +955,14 @@ function buildView(b){
   const sc=el('div','hintline');sc.id='scaleNote';b.appendChild(sc);
   field(b,{id:'c-lw',name:'Πάχος διανυσμάτων',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
   field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+  const sv=el('div','addrow');sv.style.margin='6px 0 0';
+  const sb=el('button','btn small','💾 Αποθήκευση ρυθμίσεων προβολής');sb.type='button';
+  const sm=el('span','hintline','');sm.style.margin='0 0 0 10px';sm.id='saveMsg';
+  sb.addEventListener('click',()=>{
+    try{localStorage.setItem(VKEY,JSON.stringify({show:S.show,constr:S.constr,magnet:S.magnet,vs:S.vs,lw:S.lw,fs:S.fs}));sm.textContent='Αποθηκεύτηκε· θα φορτώνονται κάθε φορά που ανοίγεις την προσομοίωση.';}
+    catch(e){sm.textContent='Δεν ήταν δυνατή η αποθήκευση σε αυτό το πρόγραμμα περιήγησης.';}
+  });
+  sv.appendChild(sb);b.appendChild(sv);b.appendChild(sm);
 }
 function autoScale(){
   const g=G(),target=0.32*Math.min(g.w,g.h);let mx=1e-12;
@@ -1078,10 +1094,12 @@ $('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const
 const GUIDE_HTML=`<div class="guide">
 <h3>Τι δείχνει η προσομοίωση</h3>
 <p>Δύο ή τρία σημειακά (σφαιρικά) φορτία αλληλεπιδρούν με δυνάμεις Coulomb. Διαλέγεις σε ποιο φορτίο θες τη συνολική δύναμη και βλέπεις τις επιμέρους δυνάμεις και τη συνισταμένη τους, ενώ σχεδιάζονται διαδραστικά καθώς μετακινείς τα φορτία.</p>
+<h3>Χειρισμός στο επίπεδο</h3>
+<p>Σύρε ένα φορτίο για να το μετακινήσεις ελεύθερα στο επίπεδο· σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση. Τα κουμπιά «Δείξε δύναμη στο» q₁, q₂, q₃ δείχνουν τη δύναμη μόνο στο αντίστοιχο φορτίο, ενώ το «Όλα» τη δείχνει σε όλα μαζί. Με κλικ πάνω σε ένα φορτίο μπορείς να το προσθέσεις ή να το αφαιρέσεις από όσα δείχνουν δύναμη. Το Snap κολλάει το φορτίο που σέρνεις στο πλέγμα ή σε ευθεία (με τα άλλα φορτία, οριζόντια ή κάθετα). Με «Εκκίνηση» αφήνεται ελεύθερο το τελευταίο φορτίο που επέλεξες και κινείται λόγω της συνισταμένης, ενώ τα υπόλοιπα μένουν ακλόνητα.</p>
 <h3>Μετακίνηση φορτίων</h3>
 <ul>
 <li><b>Σύρε ένα φορτίο</b> ελεύθερα οπουδήποτε στο επίπεδο. Οι αποστάσεις και τα διανύσματα ενημερώνονται σε πραγματικό χρόνο.</li>
-<li><b>Κλικ σε ένα φορτίο</b> (ή στα κουμπιά «<i>q</i><sub>1</sub>, <i>q</i><sub>2</sub>, <i>q</i><sub>3</sub>» και «Όλα» πάνω από το παράθυρο) προσθέτει ή αφαιρεί το φορτίο από αυτά στα οποία φαίνεται η δύναμη. Μπορείς να δεις δυνάμεις και συνισταμένες σε πολλά φορτία ταυτόχρονα.</li>
+<li><b>Κλικ σε ένα φορτίο</b> προσθέτει ή αφαιρεί το φορτίο από αυτά στα οποία φαίνεται η δύναμη. Μπορείς να δεις δυνάμεις και συνισταμένες σε πολλά φορτία ταυτόχρονα.</li>
 <li><b>Snap</b> (κάτω από το παράθυρο): το «Πλέγμα» κολλάει το φορτίο που σέρνεις σε σημεία του πλέγματος (με επιλογή βήματος), και η «Ευθεία» το κολλάει στην ευθεία που ενώνει τα άλλα δύο φορτία ή σε οριζόντια/κάθετη ευθεία με κάποιο φορτίο. Η ευθεία φαίνεται με διακεκομμένη γραμμή όσο σέρνεις.</li>
 <li>Σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, «↺ Προβολή» για επαναφορά.</li>
 </ul>
@@ -1092,6 +1110,7 @@ const GUIDE_HTML=`<div class="guide">
 <li>Άλλαξε τα φορτία (μC), τις αποστάσεις <i>r</i><sub>12</sub>, <i>r</i><sub>13</sub>, <i>r</i><sub>23</sub> και το υλικό μέσο. Κάθε τιμή μπορεί να πληκτρολογηθεί ελεύθερα.</li>
 </ul>
 <h3>2. Προβολή μεγεθών</h3>
+<p>Το κουμπί «Αποθήκευση ρυθμίσεων προβολής» κρατά τις επιλογές αυτού του tab (εμφανιζόμενα μεγέθη, σχεδίαση, κλίμακα, πάχος, γράμματα) στο πρόγραμμα περιήγησης και τις φορτώνει την επόμενη φορά. Αν αλλάξεις κάτι και το ξαναπατήσεις, οι νέες ρυθμίσεις αντικαθιστούν τις παλιές.</p>
 <ul>
 <li>Εμφάνιση ή απόκρυψη επιμέρους δυνάμεων, συνισταμένης και συνισταμένων στα άλλα φορτία.</li>
 <li>Τρόπος σχεδίασης της συνισταμένης: <b>παραλληλόγραμμο</b> ή <b>ουρά–κεφαλή</b>.</li>
@@ -1143,7 +1162,7 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   /* κουμπιά φορτίου-στόχου */
   const seg=$('#tgtSeg');seg.appendChild(el('span','',''));
   seg.firstChild.style.cssText='align-self:center;font:600 .78rem Inter,sans-serif;color:var(--textDim);margin-right:2px';seg.firstChild.textContent='Δείξε δύναμη στο:';
-  [0,1,2].forEach(j=>{const b=el('button','main-tab-btn','<i>q</i><sub>'+(j+1)+'</sub>');b.type='button';b.dataset.t=j;b.setAttribute('role','tab');b.addEventListener('click',()=>toggleTarget(j));seg.appendChild(b);});
+  [0,1,2].forEach(j=>{const b=el('button','main-tab-btn','<i>q</i><sub>'+(j+1)+'</sub>');b.type='button';b.dataset.t=j;b.setAttribute('role','tab');b.addEventListener('click',()=>setTarget(j));seg.appendChild(b);});
   {const ab=el('button','main-tab-btn','Όλα');ab.type='button';ab.id='tgtAll';ab.hidden=true;ab.addEventListener('click',selectAll);seg.appendChild(ab);}
   const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
   tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
