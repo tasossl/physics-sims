@@ -223,6 +223,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 header h1{font-size:1.5rem;font-weight:600;}
 #mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
 #mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+#mainTitle .yl{color:#F2C230;}
+:root[data-skin="gr"] #mainTitle .yl,:root[data-skin="minimal"] #mainTitle .yl,:root[data-skin="n01"] #mainTitle .yl,:root[data-skin="n08"] #mainTitle .yl,:root[data-skin="n12"] #mainTitle .yl,:root[data-skin="n13"] #mainTitle .yl,:root[data-skin="n15"] #mainTitle .yl{color:#B58100;}
 header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
 .theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
@@ -1302,7 +1304,7 @@ window.addEventListener('resize',()=>dirty=true);
 
 /* ---------- εκκίνηση ---------- */
 $$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
-$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map((w,i,ar)=>{const u=UP(w);return `<span class="tw${i>=ar.length-2?' yl':''}"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
 const GUIDE_HTML=`<div class="guide">
 <h3>Τι δείχνει η προσομοίωση</h3>
 <p>Μια μοτοσυκλέτα κινείται σε κυκλική στροφή. Βλέπεις τις δυνάμεις που ασκούνται πάνω της, πώς γέρνει και πότε χάνει την πρόσφυση.</p>
