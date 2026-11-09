@@ -1513,7 +1513,7 @@ buildSettings();buildPoints();buildToggles();buildChartChips();buildChartCells()
   show(0);
 }
 let uiZ=0.8;try{const z=parseFloat(localStorage.getItem('ui-zoom80b'));if([1,0.9,0.8].includes(z))uiZ=z;}catch(e){}
-const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ*1.25:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
 {const zs=$('#zoomSel');zs.value=String(uiZ);zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom80b',String(uiZ));}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
 window.addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
 init3d();setSkin(skin);setView('d3');
