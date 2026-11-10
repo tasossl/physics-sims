@@ -384,7 +384,19 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style></head>
 <body>
-<style>#mainTitle .tw:first-child,#mainTitle .tw:first-child *{color:#fff!important}.charts{grid-template-columns:1fr;grid-auto-rows:230px;}.cell .tag{z-index:2}sub{font-size:.72em;line-height:0;vertical-align:sub}.checkline i,.btn i{font-style:italic}</style>
+<style>#mainTitle .tw:first-child,#mainTitle .tw:first-child *{color:#fff!important}.charts{grid-template-columns:1fr;grid-auto-rows:230px;}.cell .tag{z-index:2}sub{font-size:.72em;line-height:0;vertical-align:sub}.checkline i,.btn i{font-style:italic}
+.stageWrap[data-view]{grid-template-columns:minmax(0,1fr);grid-template-rows:none;}
+.stageWrap[data-view="2d"] #st-3d,.stageWrap[data-view="3d"] #st-2d{display:none;}
+.stageWrap[data-view="both"]{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.stageWrap:not([data-view="both"]) .tag{display:none;}
+#status{top:8px!important;}
+.stageWrap[data-view="both"] #status{top:30px!important;}
+.panel-tool-btn.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.main-grid.noright{grid-template-columns:minmax(0,1fr);}
+.main-grid.noright .right-col{display:none;}
+#st-3d{touch-action:none;cursor:grab;}
+@media(max-width:980px){.stageWrap[data-view="both"]{grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(2,300px);height:auto;}}
+</style>
 <div class="app">
   <header>
     <div class="hdr-left">
@@ -400,23 +412,29 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
     <div class="left-col">
       <div class="panel" id="simPanel">
         <div class="panel-head-row">
-          <div class="vtabs" id="tgtSeg" role="tablist" aria-label="Φορτίο στο οποίο ζητάμε τη δύναμη"></div>
+          <div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή">
+            <button data-v="2d" type="button" role="tab" class="main-tab-btn">2D</button>
+            <button data-v="3d" type="button" role="tab" class="main-tab-btn">3D</button>
+            <button data-v="both" type="button" role="tab" class="main-tab-btn">2D + 3D</button>
+          </div>
           <div class="panel-tools">
-            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
+            <button class="panel-tool-btn on" id="panelToggle" type="button" title="Απόκρυψη πάνελ ρυθμίσεων" aria-label="Απόκρυψη πάνελ ρυθμίσεων" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg></button>
             <button class="collapse-btn" type="button" title="Σμίκρυνση" aria-label="Σμίκρυνση πάνελ">▾</button>
+            <button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button>
           </div>
         </div>
         <div class="panel-body">
-          <div class="stageWrap" id="stageWrap" data-view="side">
-            <div class="stage" id="st-side"><canvas id="cv"></canvas><span class="tag">Επίπεδο φορτίων</span><button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button></div>
+          <div class="stageWrap" id="stageWrap" data-view="2d">
+            <div class="stage" id="st-2d"><canvas id="cv"></canvas><span class="tag">2D</span><button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button></div>
+            <div class="stage" id="st-3d"><canvas id="gl"></canvas><canvas id="ov3" style="pointer-events:none"></canvas><span class="tag">3D</span><button class="btn secondary small mini" id="camreset3" type="button">↺ Κάμερα</button><div id="gl-fallback" hidden>Το 3D δεν είναι διαθέσιμο σε αυτόν τον browser. Η προβολή 2D λειτουργεί κανονικά.</div></div>
             <div id="legend" hidden></div>
-            <div id="status" class="ok"></div>
+            <div id="status" class="ok" hidden></div>
           </div>
           <div class="transport">
             <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
             <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
-            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
-            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk"> Επανάληψη</label>
+            <button class="btn secondary small" id="sndBtn" type="button" aria-pressed="false">🔊 Ήχος: όχι</button>
             <label class="spd">Ταχύτητα αναπαραγωγής
               <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
                 <option value="0.02">×0,02 εξαιρετικά αργά</option>
@@ -460,6 +478,7 @@ footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padd
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (()=>{
 'use strict';
@@ -480,8 +499,8 @@ const DMIN=0.1, DCON=0.07;                        /* ελάχιστη απόστ
 const S={
   ch:[{x:-0.4,y:0,q:5},{x:0.4,y:0,q:-3},{x:0,y:0.6,q:2}],n:2,tgt:0,sel:[0],
   mode:'line',d:0.8,h:0.6,medium:'air',epsC:4,mass:0.05,
-  t:0,tmax:0.5,playing:false,speed:1,loop:true,
-  zoom:1,px:0,py:0,vs:1,lw:1,fs:13,snapGrid:false,gridStep:0.05,snapLine:false,guide:null,magnet:true,constr:'para',
+  t:0,tmax:0.5,playing:false,speed:1,loop:false,
+  view:'2d',zoom:1,px:0,py:0,vs:1,lw:1,fs:13,snapGrid:false,gridStep:0.05,snapLine:false,guide:null,magnet:true,constr:'para',
   show:{part:true,res:true,others:false,dist:true,labels:true,values:false,nul:true,grid:true,nline:true}
 };
 const VKEY='coulomb-view-v1';
@@ -653,9 +672,7 @@ function drawForces(ctx,P,i){
   }
   ctx.fillStyle=C.fg;ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(T[0],T[1],3.5,0,TAU);ctx.fill();ctx.stroke();
 }
-function render(){
-  if(trajDirty){simulate();trajDirty=false;}
-  LBF++;
+function draw2D(){
   const {w,h,ctx}=fit(cv);if(!w||!h)return;
   const g=G(),sh=S.show;
   const sel=S.sel.filter(i=>i<S.n),isel=j=>sel.includes(j);
@@ -717,6 +734,12 @@ function render(){
   sel.forEach(i=>drawForces(ctx,P,i));
   /* συνισταμένες στα υπόλοιπα φορτία */
   if(sh.others)act.forEach(j=>{if(isel(j))return;const f2=forcesOn(j),O=P[j],tt=[O[0]+f2.sx*k,O[1]-f2.sy*k];ctx.globalAlpha=.6;const Ln=arrow(ctx,O[0],O[1],tt[0],tt[1],C.res,2.4*LW,[7,5]);ctx.globalAlpha=1;if(sh.labels&&Ln>3)tipLabel(ctx,O[0],O[1],tt[0],tt[1],'ΣF',''+(j+1),val(f2.F),C.res);});
+}
+function render(){
+  if(trajDirty){simulate();trajDirty=false;}
+  LBF++;
+  if(S.view!=='3d')draw2D();
+  if(S.view!=='2d')draw3D();
   updateStatus();
   updateTexts();
   const tOut=$('#tOut');tOut.textContent='t = '+fmt(S.t,3)+' s';
@@ -728,11 +751,10 @@ function render(){
 function updateStatus(){
   const st=$('#status'),sel=S.sel.filter(i=>i<S.n);
   let eq=-1;sel.forEach(i=>{const fo=forcesOn(i);if(fo.ab>0&&fo.F<1e-3*fo.ab)eq=i;});
-  let txt='Δύναμη στο '+sel.map(i=>'q'+SUBN[i]).join(', ');
-  if(S.show.values)txt+=': '+sel.map(i=>'ΣF'+SUBN[i]+' = '+fN(forcesOn(i).F)+' N').join(' · ');
+  let txt='';
   if(eq>=0)txt='ΙΣΟΡΡΟΠΙΑ στο q'+SUBN[eq]+' (ΣF = 0)';
-  if(S.t>0&&TR.stop==='contact'&&S.t>=TR.dt*(TR.x.length-1)-0.7)txt+=' · επαφή';
-  st.textContent=txt;st.className=eq>=0?'ok':'';
+  if(S.t>0&&TR.stop==='contact'&&S.t>=TR.dt*(TR.x.length-1)-0.7)txt+=(txt?' · ':'')+'επαφή';
+  st.hidden=!txt;st.textContent=txt;st.className=eq>=0?'ok':'';
   $('#legend').hidden=true;
 }
 
@@ -965,7 +987,7 @@ function buildView(b){
   sv.appendChild(sb);b.appendChild(sv);b.appendChild(sm);
 }
 function autoScale(){
-  const g=G(),target=0.32*Math.min(g.w,g.h);let mx=1e-12;
+  const g=G(),target=0.32*Math.min(g.w||520,g.h||420);let mx=1e-12;
   S.sel.filter(i=>i<S.n).forEach(i=>{const f=forcesOn(i);f.L.forEach(p=>{mx=Math.max(mx,p.F);});mx=Math.max(mx,f.F);});
   S.vs=clamp(target/(mx*400),0.001,1000);dirty=true;
 }
@@ -986,6 +1008,12 @@ function applySnap(j,x,y,g){
   }
   if(S.snapGrid){const st=S.gridStep;x=Math.round(x/st)*st;y=Math.round(y/st)*st;}
   return {x,y};
+}
+function moveCharge(j,x,y,sc){
+  ({x,y}=applySnap(j,x,y,{sc}));
+  for(let k=0;k<S.n;k++)if(k!==j){const o=S.ch[k],dx=x-o.x,dy=y-o.y,d=Math.hypot(dx,dy);if(d<DMIN){const u=d<1e-9?[1,0]:[dx/d,dy/d];x=o.x+u[0]*DMIN;y=o.y+u[1]*DMIN;}}
+  if(S.magnet&&S.sel.includes(j)){const np=nullPoint(j);if(np&&Math.hypot(x-np.x,y-np.y)*sc<16){x=np.x;y=np.y;}}
+  S.ch[j].x=x;S.ch[j].y=y;S.mode='free';updateModeChips();touch();refreshAll();
 }
 /* ---------- χειρισμός με το ποντίκι / δάχτυλο ---------- */
 const ptrs=new Map();let drag=null,pinch=null;
@@ -1013,10 +1041,7 @@ cv.addEventListener('pointermove',e=>{
   if(!drag.moved)return;
   if(drag.hit>=0){
     const j=drag.hit;let x=(p.x-g.cx)/g.sc+drag.off[0],y=-(p.y-g.cy)/g.sc+drag.off[1];
-    ({x,y}=applySnap(j,x,y,g));
-    for(let k=0;k<S.n;k++)if(k!==j){const o=S.ch[k],dx=x-o.x,dy=y-o.y,d=Math.hypot(dx,dy);if(d<DMIN){const u=d<1e-9?[1,0]:[dx/d,dy/d];x=o.x+u[0]*DMIN;y=o.y+u[1]*DMIN;}}
-    if(S.magnet&&S.sel.includes(j)){const np=nullPoint(j);if(np&&Math.hypot(x-np.x,y-np.y)*g.sc<16){x=np.x;y=np.y;}}
-    S.ch[j].x=x;S.ch[j].y=y;S.mode='free';updateModeChips();touch();refreshAll();
+    moveCharge(j,x,y,g.sc);
   }else{S.px=drag.ox-(p.x-drag.x0)/g.sc;S.py=drag.oy+(p.y-drag.y0)/g.sc;dirty=true;}
 });
 function endPtr(e){
@@ -1033,8 +1058,183 @@ cv.addEventListener('wheel',e=>{
 },{passive:false});
 $('#camreset').addEventListener('click',()=>{S.zoom=1;S.px=0;S.py=0;dirty=true;});
 
+/* ---------- τρισδιάστατη προβολή (three.js) ---------- */
+const V3={ok:false,tried:false,az:0,el:1.0,dist:3.3,tx:0,tz:0,w:0,h:0};
+const cv3=$('#gl'),ov3=$('#ov3'),st3=$('#st-3d');
+let R3=null,SC3=null,CAM3=null,GRID3=null,GRIDKEY='',FLOOR3=null,ARR3=null;
+let G_CYL=null,G_CONE=null;const sph3=[],ring3=[],nul3=[],MAT3={};
+const V3A=()=>new THREE.Vector3();
+const rad3=q=>0.045+0.05*Math.sqrt(Math.min(1,Math.abs(q)/20));
+const col3=s=>{try{return new THREE.Color(String(s).trim());}catch(e){return new THREE.Color(0x888888);}};
+const matC=(c,op)=>{const k=c+'|'+(op||1);if(!MAT3[k]){MAT3[k]=new THREE.MeshBasicMaterial({color:col3(c),transparent:(op||1)<1,opacity:op||1});}return MAT3[k];};
+function init3(){
+  V3.tried=true;
+  if(typeof THREE==='undefined'){$('#gl-fallback').hidden=false;return;}
+  try{
+    R3=new THREE.WebGLRenderer({canvas:cv3,antialias:true});
+    SC3=new THREE.Scene();CAM3=new THREE.PerspectiveCamera(38,1,0.05,100);
+    SC3.add(new THREE.AmbientLight(0xffffff,0.78));
+    const dl=new THREE.DirectionalLight(0xffffff,0.65);dl.position.set(2,5,3);SC3.add(dl);
+    FLOOR3=new THREE.Mesh(new THREE.PlaneGeometry(6,6),new THREE.MeshBasicMaterial({color:0x888888,transparent:true,opacity:0.35}));
+    FLOOR3.rotation.x=-Math.PI/2;FLOOR3.position.y=-0.003;SC3.add(FLOOR3);
+    ARR3=new THREE.Group();SC3.add(ARR3);
+    G_CYL=new THREE.CylinderGeometry(1,1,1,10);G_CONE=new THREE.ConeGeometry(1,1,18);
+    const sg=new THREE.SphereGeometry(1,32,22),rg=new THREE.RingGeometry(1.18,1.34,48),ng=new THREE.RingGeometry(0.72,1,40);
+    for(let j=0;j<3;j++){
+      const m=new THREE.Mesh(sg,new THREE.MeshPhongMaterial({color:0xcccccc,shininess:70}));SC3.add(m);sph3.push(m);
+      const r=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));r.rotation.x=-Math.PI/2;r.position.y=0.004;SC3.add(r);ring3.push(r);
+      const n=new THREE.Mesh(ng,new THREE.MeshBasicMaterial({color:0x00ff00,side:THREE.DoubleSide}));n.rotation.x=-Math.PI/2;n.position.y=0.006;n.scale.setScalar(0.055);SC3.add(n);nul3.push(n);
+    }
+    V3.ok=true;
+  }catch(e){V3.ok=false;$('#gl-fallback').hidden=false;}
+}
+function cam3(){
+  const ce=Math.cos(V3.el),se=Math.sin(V3.el);
+  CAM3.position.set(V3.tx+V3.dist*ce*Math.sin(V3.az),V3.dist*se,V3.tz+V3.dist*ce*Math.cos(V3.az));
+  CAM3.lookAt(V3.tx,0,V3.tz);CAM3.updateMatrixWorld();
+}
+const _pv=new (typeof THREE!=='undefined'?THREE.Vector3:Object)();
+function scr3(x,y,hh){_pv.set(x,hh,-y).project(CAM3);return [(_pv.x+1)/2*V3.w,(1-_pv.y)/2*V3.h,_pv.z];}
+const pxm3=()=>(V3.h/2)/(Math.tan(CAM3.fov*Math.PI/360)*V3.dist);
+function mkArrow3(p0,p1,colr,rad,op){
+  const d=p1.clone().sub(p0),L=d.length();if(L<2e-3)return;
+  const u=d.clone().divideScalar(L),head=Math.min(0.06+rad*5,L*0.55),sh=Math.max(1e-3,L-head*0.9);
+  const q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),u);
+  const m=matC(colr,op);
+  const s=new THREE.Mesh(G_CYL,m);s.scale.set(rad,sh,rad);s.quaternion.copy(q);s.position.copy(p0).addScaledVector(u,sh/2);ARR3.add(s);
+  const c=new THREE.Mesh(G_CONE,m);c.scale.set(rad*2.8,head,rad*2.8);c.quaternion.copy(q);c.position.copy(p0).addScaledVector(u,L-head/2);ARR3.add(c);
+}
+function dash3(ctx,a,b,col,lw){ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();ctx.setLineDash([]);}
+function draw3D(){
+  if(!V3.tried)init3();
+  if(!V3.ok)return;
+  const r=st3.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height);if(!w||!h)return;
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  if(V3.w!==w||V3.h!==h||V3.dpr!==dpr){V3.w=w;V3.h=h;V3.dpr=dpr;R3.setPixelRatio(dpr);R3.setSize(w,h,false);CAM3.aspect=w/h;CAM3.updateProjectionMatrix();}
+  cam3();
+  const sh=S.show,sel=S.sel.filter(i=>i<S.n),isel=j=>sel.includes(j);
+  const stageC=col3(C.stage),gS=col3(C.gridS);
+  R3.setClearColor(stageC,1);
+  /* δάπεδο και πλέγμα */
+  const step=S.snapGrid?S.gridStep:0.25,gk=step+'|'+C.stage+'|'+C.gridS;
+  if(gk!==GRIDKEY){
+    GRIDKEY=gk;if(GRID3){SC3.remove(GRID3);GRID3.geometry.dispose();GRID3.material.dispose();}
+    GRID3=new THREE.GridHelper(6,Math.min(240,Math.round(6/step)),gS,stageC.clone().lerp(gS,0.4));SC3.add(GRID3);
+    FLOOR3.material.color.copy(stageC.clone().lerp(gS,0.12));
+  }
+  GRID3.visible=!!(sh.grid||S.snapGrid);
+  /* σφαίρες */
+  const act=[];for(let j=0;j<S.n;j++)act.push(j);
+  const pos=act.map(j=>posOf(j)),rj=act.map(j=>rad3(S.ch[j].q));
+  for(let j=0;j<3;j++){
+    const on=j<S.n;sph3[j].visible=on;ring3[j].visible=on&&isel(j);nul3[j].visible=false;
+    if(!on)continue;
+    const q=S.ch[j].q;sph3[j].material.color.copy(col3(q>0?POS:q<0?NEG:C.dim));
+    sph3[j].scale.setScalar(rj[j]);sph3[j].position.set(pos[j].x,rj[j],-pos[j].y);
+    ring3[j].scale.setScalar(rj[j]);ring3[j].material.color.copy(col3(C.accent));ring3[j].position.set(pos[j].x,0.004,-pos[j].y);
+  }
+  /* σημεία μηδενισμού */
+  const nps=sel.map(i=>nullPoint(i));
+  sel.forEach((i,ix)=>{const np=nps[ix];if(np&&sh.nul){nul3[i].visible=true;nul3[i].material.color.copy(col3(C.nul));nul3[i].position.set(np.x,0.006,-np.y);}});
+  /* διανύσματα */
+  while(ARR3.children.length)ARR3.remove(ARR3.children[0]);
+  const K=S.vs*2.1,LW=S.lw,V=(x,y,hh)=>new THREE.Vector3(x,hh,-y);
+  const tips=[];  /* για ετικέτες: [i, είδος, από, προς, χρώμα, κείμενα...] */
+  const addA=(i,x0,y0,x1,y1,colr,rd,lbl,op)=>{const hh=rj[i];mkArrow3(V(x0,y0,hh),V(x1,y1,hh),colr,rd*LW,op);if(lbl)tips.push({a:[x0,y0,hh],b:[x1,y1,hh],col:colr,l:lbl});};
+  const valT=F=>sh.values?'= '+fN(F)+' N':'';
+  sel.forEach(i=>{
+    const fo=forcesOn(i),T=pos[i];
+    if(fo.L.length===1){
+      const p=fo.L[0];
+      if(sh.res||sh.part)addA(i,T.x,T.y,T.x+p.fx*K,T.y+p.fy*K,C.res,0.011,{m:'F',s:''+(p.j+1)+(i+1),v:valT(p.F)});
+    }else if(fo.L.length>=2){
+      const A=fo.L[0],B=fo.L[1],tA=[T.x+A.fx*K,T.y+A.fy*K],tB=[T.x+B.fx*K,T.y+B.fy*K],tR=[T.x+fo.sx*K,T.y+fo.sy*K];
+      if(sh.part){
+        addA(i,T.x,T.y,tA[0],tA[1],C['f'+(A.j+1)],0.007,{m:'F',s:''+(A.j+1)+(i+1),v:valT(A.F)});
+        if(S.constr==='chain')addA(i,tA[0],tA[1],tA[0]+B.fx*K,tA[1]+B.fy*K,C['f'+(B.j+1)],0.007,{m:'F',s:''+(B.j+1)+(i+1),v:valT(B.F)});
+        else addA(i,T.x,T.y,tB[0],tB[1],C['f'+(B.j+1)],0.007,{m:'F',s:''+(B.j+1)+(i+1),v:valT(B.F)});
+      }
+      if(sh.res)addA(i,T.x,T.y,tR[0],tR[1],C.res,0.012,{m:'ΣF',s:''+(i+1),v:valT(fo.F)});
+      if(S.constr==='para'&&sh.part)tips.push({dash:[[tA[0],tA[1],rj[i]],[tR[0],tR[1],rj[i]]],dash2:[[tB[0],tB[1],rj[i]],[tR[0],tR[1],rj[i]]]});
+    }
+  });
+  if(sh.others)act.forEach(j=>{if(isel(j))return;const f2=forcesOn(j),T=pos[j];addA(j,T.x,T.y,T.x+f2.sx*K,T.y+f2.sy*K,C.res,0.008,{m:'ΣF',s:''+(j+1),v:valT(f2.F)},0.55);});
+  R3.render(SC3,CAM3);
+  /* επικάλυψη 2D: ετικέτες, αποστάσεις, οδηγοί */
+  const {ctx}=fit(ov3);ctx.clearRect(0,0,w,h);
+  if(S.guide){const q=S.guide;dash3(ctx,scr3(q.x0-q.ux*4,q.y0-q.uy*4,0.004),scr3(q.x0+q.ux*4,q.y0+q.uy*4,0.004),C.accent,1.8);}
+  if(sh.dist)for(let a=0;a<S.n;a++)for(let b2=a+1;b2<S.n;b2++){
+    const A=scr3(pos[a].x,pos[a].y,rj[a]),B=scr3(pos[b2].x,pos[b2].y,rj[b2]);
+    dash3(ctx,A,B,C.dim,1.3);
+    if(sh.labels||sh.values){const d=Math.hypot(pos[a].x-pos[b2].x,pos[a].y-pos[b2].y);lab(ctx,(A[0]+B[0])/2,(A[1]+B[1])/2-12,'r',''+(a+1)+(b2+1),sh.values?'= '+fmt(d,2)+' m':'',C.dim,'center');}
+  }
+  tips.forEach(t=>{
+    if(t.dash){dash3(ctx,scr3(...t.dash[0]),scr3(...t.dash[1]),C.dim,1.4);dash3(ctx,scr3(...t.dash2[0]),scr3(...t.dash2[1]),C.dim,1.4);return;}
+    if(!sh.labels)return;
+    const a=scr3(t.a[0],t.a[1],t.a[2]),b=scr3(t.b[0],t.b[1],t.b[2]);
+    if(Math.hypot(a[0]-b[0],a[1]-b[1])>6)tipLabel(ctx,a[0],a[1],b[0],b[1],t.l.m,t.l.s,t.l.v,t.col);
+  });
+  act.forEach(j=>{if(sh.labels||sh.values){const c=scr3(pos[j].x,pos[j].y,rj[j]),pr=rj[j]*pxm3()/(V3.dist/Math.max(0.3,CAM3.position.distanceTo(new THREE.Vector3(pos[j].x,rj[j],-pos[j].y))));lab(ctx,c[0],c[1]+pr+16,'q',''+(j+1),sh.values?'= '+fmt(S.ch[j].q,1)+' μC':'',C.fg,'center');}});
+  sel.forEach((i,ix)=>{const np=nps[ix];if(!np||!sh.nul)return;const c=scr3(np.x,np.y,0.006);lab(ctx,c[0],c[1]+22,'ΣF',''+(i+1),'= 0'+(sh.values?' '+ptStr(np.x,np.y):''),C.nul,'center');});
+}
+/* χειρισμός 3D: περιστροφή, μετατόπιση, ζουμ και σύρσιμο φορτίων πάνω στο επίπεδο */
+{
+  const ptr3=new Map();let d3=null,pin3=null;
+  const e3=e=>{const r=st3.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+  function plane3(p,hh){
+    const rc=new THREE.Raycaster();rc.setFromCamera(new THREE.Vector2(p.x/V3.w*2-1,-(p.y/V3.h*2-1)),CAM3);
+    const out=new THREE.Vector3();return rc.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),-hh),out)?out:null;
+  }
+  function hit3(p){
+    if(!V3.ok||!CAM3)return -1;let best=-1,bd=1e9;
+    for(let j=0;j<S.n;j++){const q=posOf(j),rj=rad3(S.ch[j].q),c=scr3(q.x,q.y,rj),dc=CAM3.position.distanceTo(new THREE.Vector3(q.x,rj,-q.y)),pr=rj*(V3.h/2)/(Math.tan(CAM3.fov*Math.PI/360)*dc),d=Math.hypot(p.x-c[0],p.y-c[1]);
+      if(d<=pr+10&&d<bd){bd=d;best=j;}}
+    return best;
+  }
+  st3.addEventListener('contextmenu',e=>e.preventDefault());
+  st3.addEventListener('pointerdown',e=>{
+    if(!V3.ok||e.target.closest('button'))return;
+    st3.setPointerCapture(e.pointerId);const p=e3(e);ptr3.set(e.pointerId,p);
+    if(ptr3.size===2){const [a,b]=[...ptr3.values()];pin3={d:Math.hypot(a.x-b.x,a.y-b.y)||1,dist:V3.dist};d3=null;return;}
+    const hit=hit3(p);
+    d3={id:e.pointerId,hit,x0:p.x,y0:p.y,moved:false,az:V3.az,el:V3.el,tx:V3.tx,tz:V3.tz,pan:e.button===2||e.shiftKey,off:[0,0]};
+    if(hit>=0){const q=posOf(hit),w0=plane3(p,rad3(S.ch[hit].q));if(w0)d3.off=[q.x-w0.x,q.y+w0.z];}
+  });
+  st3.addEventListener('pointermove',e=>{
+    if(!V3.ok)return;const p=e3(e);
+    if(!ptr3.has(e.pointerId)){st3.style.cursor=hit3(p)>=0?'grab':'default';return;}
+    ptr3.set(e.pointerId,p);
+    if(pin3&&ptr3.size>=2){const [a,b]=[...ptr3.values()];const d=Math.hypot(a.x-b.x,a.y-b.y)||1;V3.dist=clamp(pin3.dist*pin3.d/d,0.8,12);dirty=true;return;}
+    if(!d3||d3.id!==e.pointerId)return;
+    if(!d3.moved&&Math.hypot(p.x-d3.x0,p.y-d3.y0)>4){d3.moved=true;if(d3.hit>=0){S.playing=false;S.t=0;updatePlay();trajDirty=true;}}
+    if(!d3.moved)return;
+    if(d3.hit>=0){
+      const w0=plane3(p,rad3(S.ch[d3.hit].q));if(!w0)return;
+      moveCharge(d3.hit,w0.x+d3.off[0],-w0.z+d3.off[1],pxm3());
+    }else if(d3.pan){
+      const s=V3.dist*0.0016,dx=p.x-d3.x0,dy=p.y-d3.y0;
+      V3.tx=d3.tx-dx*s*Math.cos(d3.az)-dy*s*Math.sin(d3.az);V3.tz=d3.tz+dx*s*Math.sin(d3.az)-dy*s*Math.cos(d3.az);dirty=true;
+    }else{
+      V3.az=d3.az-(p.x-d3.x0)*0.008;V3.el=clamp(d3.el+(p.y-d3.y0)*0.006,0.12,1.5);dirty=true;
+    }
+  });
+  const end3=e=>{
+    if(!ptr3.delete(e.pointerId))return;
+    if(ptr3.size<2)pin3=null;
+    if(d3&&d3.id===e.pointerId){if(!d3.moved&&d3.hit>=0)toggleTarget(d3.hit);d3=null;S.guide=null;dirty=true;}
+  };
+  st3.addEventListener('pointerup',end3);st3.addEventListener('pointercancel',end3);
+  st3.addEventListener('wheel',e=>{e.preventDefault();V3.dist=clamp(V3.dist*Math.exp(e.deltaY*0.0012),0.8,12);dirty=true;},{passive:false});
+  $('#camreset3').addEventListener('click',()=>{V3.az=0;V3.el=1.0;V3.dist=3.3;V3.tx=0;V3.tz=0;dirty=true;});
+}
+function setView(v){
+  S.view=v;$('#stageWrap').dataset.view=v;
+  $$('#viewSeg button').forEach(b=>{const on=b.dataset.v===v;b.classList.toggle('active',on);b.setAttribute('aria-selected',on);});
+  dirty=true;setTimeout(()=>{dirty=true;},60);
+}
+
 /* ---------- ήχος (κρότος επαφής) ---------- */
-const AU={on:true,ctx:null};
+const AU={on:false,ctx:null};
 function audioInit(){if(AU.ctx)return;try{AU.ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
 function audioHit(){
   if(!AU.on||!AU.ctx)return;
@@ -1095,12 +1295,14 @@ const GUIDE_HTML=`<div class="guide">
 <h3>Τι δείχνει η προσομοίωση</h3>
 <p>Δύο ή τρία σημειακά (σφαιρικά) φορτία αλληλεπιδρούν με δυνάμεις Coulomb. Διαλέγεις σε ποιο φορτίο θες τη συνολική δύναμη και βλέπεις τις επιμέρους δυνάμεις και τη συνισταμένη τους, ενώ σχεδιάζονται διαδραστικά καθώς μετακινείς τα φορτία.</p>
 <h3>Χειρισμός στο επίπεδο</h3>
-<p>Σύρε ένα φορτίο για να το μετακινήσεις ελεύθερα στο επίπεδο· σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση. Τα κουμπιά «Δείξε δύναμη στο» q₁, q₂, q₃ δείχνουν τη δύναμη μόνο στο αντίστοιχο φορτίο, ενώ το «Όλα» τη δείχνει σε όλα μαζί. Με κλικ πάνω σε ένα φορτίο μπορείς να το προσθέσεις ή να το αφαιρέσεις από όσα δείχνουν δύναμη. Το Snap κολλάει το φορτίο που σέρνεις στο πλέγμα ή σε ευθεία (με τα άλλα φορτία, οριζόντια ή κάθετα). Με «Εκκίνηση» αφήνεται ελεύθερο το τελευταίο φορτίο που επέλεξες και κινείται λόγω της συνισταμένης, ενώ τα υπόλοιπα μένουν ακλόνητα.</p>
+<p>Σύρε ένα φορτίο για να το μετακινήσεις ελεύθερα στο επίπεδο· σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση. Τα κουμπιά «Δείξε δύναμη στο» (tab «Προβολή μεγεθών») q₁, q₂, q₃ δείχνουν τη δύναμη μόνο στο αντίστοιχο φορτίο, ενώ το «Όλα» τη δείχνει σε όλα μαζί. Με κλικ πάνω σε ένα φορτίο μπορείς να το προσθέσεις ή να το αφαιρέσεις από όσα δείχνουν δύναμη. Το Snap κολλάει το φορτίο που σέρνεις στο πλέγμα ή σε ευθεία (με τα άλλα φορτία, οριζόντια ή κάθετα). Με «Εκκίνηση» αφήνεται ελεύθερο το τελευταίο φορτίο που επέλεξες και κινείται λόγω της συνισταμένης, ενώ τα υπόλοιπα μένουν ακλόνητα.</p>
 <h3>Μετακίνηση φορτίων</h3>
 <ul>
 <li><b>Σύρε ένα φορτίο</b> ελεύθερα οπουδήποτε στο επίπεδο. Οι αποστάσεις και τα διανύσματα ενημερώνονται σε πραγματικό χρόνο.</li>
 <li><b>Κλικ σε ένα φορτίο</b> προσθέτει ή αφαιρεί το φορτίο από αυτά στα οποία φαίνεται η δύναμη. Μπορείς να δεις δυνάμεις και συνισταμένες σε πολλά φορτία ταυτόχρονα.</li>
 <li><b>Snap</b> (κάτω από το παράθυρο): το «Πλέγμα» κολλάει το φορτίο που σέρνεις σε σημεία του πλέγματος (με επιλογή βήματος), και η «Ευθεία» το κολλάει στην ευθεία που ενώνει τα άλλα δύο φορτία ή σε οριζόντια/κάθετη ευθεία με κάποιο φορτίο. Η ευθεία φαίνεται με διακεκομμένη γραμμή όσο σέρνεις.</li>
+<li><b>Προβολή</b>: τα κουμπιά «2D», «3D» και «2D + 3D» πάνω από το παράθυρο διαλέγουν επίπεδη ή τρισδιάστατη εικόνα. Στο 3D σύρε το κενό για περιστροφή της κάμερας, δεξί κλικ ή Shift + σύρσιμο για μετατόπιση, ρόδα ποντικιού για μεγέθυνση· τα φορτία σέρνονται κανονικά πάνω στο επίπεδο.</li>
+<li>Το πρώτο κουμπί πάνω δεξιά (κίτρινο) κρύβει ή εμφανίζει το πάνελ ρυθμίσεων· το ▾ μαζεύει το παράθυρο και το ⛶ το μεγιστοποιεί.</li>
 <li>Σύρε το κενό για μετατόπιση της εικόνας, ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, «↺ Προβολή» για επαναφορά.</li>
 </ul>
 <h3>1. Ρυθμίσεις προσομοίωσης</h3>
@@ -1160,7 +1362,7 @@ let skin='blueprint';try{skin=localStorage.getItem('coulomb-skin')||skin;}catch(
 if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
 {
   /* κουμπιά φορτίου-στόχου */
-  const seg=$('#tgtSeg');seg.appendChild(el('span','',''));
+  const seg=el('div','vtabs');seg.id='tgtSeg';seg.setAttribute('role','tablist');seg.setAttribute('aria-label','Φορτίο στο οποίο ζητάμε τη δύναμη');seg.style.marginBottom='14px';seg.appendChild(el('span','',''));
   seg.firstChild.style.cssText='align-self:center;font:600 .78rem Inter,sans-serif;color:var(--textDim);margin-right:2px';seg.firstChild.textContent='Δείξε δύναμη στο:';
   [0,1,2].forEach(j=>{const b=el('button','main-tab-btn','<i>q</i><sub>'+(j+1)+'</sub>');b.type='button';b.dataset.t=j;b.setAttribute('role','tab');b.addEventListener('click',()=>setTarget(j));seg.appendChild(b);});
   {const ab=el('button','main-tab-btn','Όλα');ab.type='button';ab.id='tgtAll';ab.hidden=true;ab.addEventListener('click',selectAll);seg.appendChild(ab);}
@@ -1168,7 +1370,7 @@ if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
   tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
   rc.appendChild(tp);
   const t1=mkTab(),t2=mkTab(),t3=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
-  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);
+  buildSettings(t1.b);t2.b.appendChild(seg);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);
   t3.b.appendChild(analysisDyn);t3.b.insertAdjacentHTML('beforeend',ANALYSIS_HTML);
   {const rh=el('div','');rh.style.marginBottom='16px';rh.appendChild(roleBox);rh.appendChild(roleHint);t4.b.appendChild(rh);}
   {const aw=el('label','checkline','<input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα');aw.style.margin='0 0 4px';aw.id='allWrap';t4.b.appendChild(aw);$('input',aw).addEventListener('change',e=>{S.allT=e.target.checked;lastRO='';dirty=true;});}
@@ -1185,10 +1387,17 @@ let uiZ=0.8;try{uiZ=+localStorage.getItem('ui-zoom80')||0.8;}catch(e){}
 const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
 {const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=1;zs.value='1';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom80',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
 addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
-buildChartCells();updatePlay();
+$$('#viewSeg button').forEach(bt=>bt.addEventListener('click',()=>setView(bt.dataset.v)));
+$('#panelToggle').addEventListener('click',e=>{
+  const g=$('.main-grid'),closed=g.classList.toggle('noright'),bt=e.currentTarget;
+  bt.classList.toggle('on',!closed);bt.setAttribute('aria-pressed',!closed);
+  bt.title=bt.ariaLabel=closed?'Εμφάνιση πάνελ ρυθμίσεων':'Απόκρυψη πάνελ ρυθμίσεων';
+  dirty=true;setTimeout(()=>{dirty=true;window.dispatchEvent(new Event('resize'));},60);
+});
+buildChartCells();updatePlay();setView(S.view);
 setSkin(skin);applyLayout('line');setTarget(0);updateModeChips();refreshAll();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
-window.__coul={G,S,forcesOn,nullPoint,simulate,applyLayout,setN,setTarget,setSkin,render,posOf,get TR(){return TR;}};
+window.__coul={V3,scr3,setView,G,S,forcesOn,nullPoint,simulate,applyLayout,setN,setTarget,setSkin,render,posOf,get TR(){return TR;}};
 requestAnimationFrame(frame);
 })();
 </script>
