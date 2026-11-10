@@ -508,11 +508,13 @@ footer{
     discrod: '<circle cx="12" cy="16" r="4"/><circle cx="12" cy="16" r="1"/><path d="M2.5 16h19"/><path d="M5.2 9.4A9 9 0 0 1 18.8 9.4"/><path d="M18.8 9.4l-3.2-.2M18.8 9.4l-.2-3.2"/>',
     coulomb: '<circle cx="5.8" cy="12" r="4.6"/><circle cx="18.2" cy="12" r="4.6"/><path d="M3.6 12h4.4M5.8 9.8v4.4M16 12h4.4"/><path d="M11.2 12h1.6" stroke-dasharray="1 1"/>',
     efield: '<circle cx="12" cy="12" r="3"/><path d="M10.9 12h2.2M12 10.9v2.2"/><path d="M12 8.8V3.5M12 15.2v5.3M8.8 12H3.5M15.2 12h5.3M9.7 9.7 6 6M14.3 9.7 18 6M9.7 14.3 6 18M14.3 14.3 18 18"/>',
+    uniformfield: '<path d="M3 4.5h18M3 19.5h18"/><path d="M7 8v8M12 8v8M17 8v8"/><path d="M5.7 14.4 7 16l1.3-1.6M10.7 14.4 12 16l1.3-1.6M15.7 14.4 17 16l1.3-1.6"/>',
     atom: ICONS.nuclear,
     search: '<circle cx="11" cy="11" r="6"/><path d="M16 16l4.500 4.500"/>'
   };
   const ICON_RULES = [
     ['coulomb', /coulomb|κουλομπ/],
+    ['uniformfield', /ομογεν|omogen|uniform|homogen/],
     ['efield',  /πεδιο|field/],
     ['phase',   /καταστασ|μεταβολ|phase/],
     ['boil',    /βρασμ|εξατμιση|vrasm|evapor|boil/],
