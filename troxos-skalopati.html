@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Τροχός και σκαλοπάτι</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* Διάταξη: προσομοίωση 5/8, ρυθμίσεις 3/8 δεξιά. Χρωματισμοί και φόντα όπως στην «Περιστροφή δίσκου». */
+:root,:root[data-skin="blueprint"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#10243D; --panel:#132A47; --panel2:#10243D;
+  --grid:rgba(143,184,217,0.18); --gridStrong:#6E97BE; --line:#DCEEFF; --accent:#E8B84B;
+  --accent2:#7DB8FF; --accent3:#4ADE80; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.18); --track:#10243D; --shadowCol:rgba(232,184,75,0.18);
+  --danger:#E0685A; --onAccent:#0B1B30; --radius:3px;
+  --e1:#E8B84B; --e2:#FF6FCF; --et:#4ADE80; --blue:#7DB8FF;
+  --c-ae:#FF9B54; --c-th:#C6A8FF; --c-s:#5EEAD4; --c-ag:#A3E635;
+}
+:root[data-skin="minimal"]{
+  color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F3F6FA; --panel:#FFFFFF; --panel2:#F3F6FA;
+  --grid:rgba(31,45,61,0.08); --gridStrong:#B9C2CE; --line:#1F2D3D; --accent:#F0932B;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#1F2D3D; --textDim:#6B7686;
+  --border:rgba(31,45,61,0.10); --track:#F3F6FA; --shadowCol:rgba(240,147,43,0.18);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:3px;
+  --e1:#F0932B; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#7C3AED; --c-th:#0E7490; --c-s:#B45309; --c-ag:#BE123C;
+}
+:root[data-skin="classic"]{
+  --radius:4px;
+    color-scheme:dark;
+    --bg:#0d141c; --bg2:#101a24; --panel:#151f2a; --panel2:#1d2a37;
+    --grid:rgba(229,236,243,0.06); --gridStrong:#2a3a4a; --line:#e5ecf3; --accent:#5b93ff;
+    --accent2:#ab8cf5; --accent3:#34d399; --text:#e5ecf3; --textDim:#93a3b3;
+    --border:#243342; --track:#0b1219; --shadowCol:rgba(91,147,255,0.25);
+    --danger:#ff6a60; --onAccent:#0b1219;
+    --e1:#f2ab26; --e2:#f472b6; --et:#34d399; --blue:#5c9bff;
+    --c-ae:#ab8cf5; --c-th:#4cc9e0; --c-s:#e0b050; --c-ag:#bef264;
+}
+
+/* Σκηνή ανοιχτή / πανελ σκούρα και αντίστροφα */
+:root{--car:var(--accent);--st-track:var(--track);--st-text:var(--text);--st-dim:var(--textDim);--st-grid:var(--grid);--st-gridS:var(--gridStrong);}
+:root[data-skin="gr"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AA7BB; --line:#0F172A; --accent:#F8B47A;
+  --accent2:#2563EB; --accent3:#16A34A; --text:#0F172A; --textDim:#5B6A80;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.12);
+  --danger:#D64545; --onAccent:#1F1300; --atext:#8A4F00; --radius:8px;
+  --e1:#D97706; --e2:#DB2777; --et:#16A34A; --blue:#2563EB;
+  --c-ae:#EA580C; --c-th:#7C3AED; --c-s:#0E9AA7; --c-ag:#65A30D;
+  --car:#F0932B;
+  --st-track:#FFFFFF; --st-text:#0F172A; --st-dim:#5B6A80; --st-grid:rgba(15,23,42,0.07); --st-gridS:#B4BFCF;
+}
+:root[data-skin="gr"] .tout{color:#8A4F00;font-weight:600;}
+:root[data-skin="gr"] .field input[type=number]{color:#8A4F00;font-weight:600;}
+  color-scheme:dark;
+  --panel:#2F5890; --panel2:#274C80; --track:#274C80; --text:#FFFFFF; --textDim:#D3E1F3;
+  --border:rgba(210,228,250,0.28); --grid:rgba(210,228,250,0.14); --gridStrong:#8FB0D6; --line:#EAF3FF;
+  --accent2:#9CC8FF; --accent3:#5EE89A; --danger:#FF9A8A; --atext:#FFB46B;
+  --blue:#A9D0FF; --e2:#FF9CCB; --c-ae:#FFB070; --e1:#FFD36B; --et:#6BF0A5; --c-th:#CDB4FF; --c-s:#6FE3EE; --c-ag:#B6E84E;
+}
+.right-col{color:var(--text);}
+.stage{background:var(--st-track);--text:var(--st-text);--textDim:var(--st-dim);}
+#legend,#status{background:color-mix(in srgb,var(--st-track) 84%,transparent);}
+
+:root{--atext:var(--accent);--htext:var(--text);--hdim:var(--textDim);--ptext:var(--text);}
+header{--text:var(--htext);--textDim:var(--hdim);color:var(--text);}
+.skin-wrap{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:var(--htext);}
+.hdr-tools{display:flex;gap:8px;align-items:center;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.home-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;}
+.home-btn:hover{border-color:var(--accent);}
+.zoom-select{min-width:140px!important;}
+@media(max-width:980px){#zoomSel{display:none;}}
+.skin-select{text-align:center;text-align-last:center;background:var(--panel);color:var(--ptext);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-family:'Inter',sans-serif;font-size:.85rem;min-width:260px;max-width:100%;cursor:pointer;}
+.app .field input[type=number]{background:var(--track);color:var(--atext);}
+.app .tout{color:var(--atext);}
+#status,#legend,.app .stage #status,.app .stage #legend{background:color-mix(in srgb,var(--st-track) 88%,transparent)!important;}
+:root[data-skin="n01"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n01"] .right-col{--text:#0F172A;--textDim:#5B6A80;--panel:#FFFFFF;--panel2:#F1F5F9;--track:#E9EEF5;--border:#D5DCE6;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n08"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n08"] .right-col{--text:#0F2342;--textDim:#4A6285;--panel:#DCE9F8;--panel2:#EEF4FC;--track:#FFFFFF;--border:#B3C8E3;--atext:#1D4ED8;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n12"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#F1F5F9; --panel:#FFFFFF; --panel2:#F1F5F9;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F0932B;
+  --accent2:#F0932B; --accent3:#15803D; --text:#0F172A; --textDim:#5B6A80;
+  --border:#D5DCE6; --track:#E9EEF5; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n12"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#F0932B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n13"]{
+  color-scheme:light;
+  --bg:#F8FAFC; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0B2A5B; --hdim:#3F5F8F;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n13"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="g16"]{
+  color-scheme:light;
+  --bg:#4B5058; --bg2:#41464E; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#F8B47A;
+  --accent2:#F8B47A; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#8A4F00;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F1F5F9; --hdim:#CBD5E1;
+  --st-track:#D3D7DE; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="g16"] .right-col,:root[data-skin="g16"] .left-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#F8B47A;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n15"]{
+  color-scheme:light;
+  --bg:#EAF2FB; --bg2:#EEF4FC; --panel:#DCE9F8; --panel2:#EEF4FC;
+  --grid:rgba(15,23,42,0.06); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#2563EB;
+  --accent2:#2563EB; --accent3:#15803D; --text:#0F2342; --textDim:#4A6285;
+  --border:#B3C8E3; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#1D4ED8;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#0F172A; --hdim:#5B6A80;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n15"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#7DB8FF;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n16"]{
+  color-scheme:light;
+  --bg:#0A0A0C; --bg2:#E6EAF1; --panel:#C9CFDA; --panel2:#E6EAF1;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#111827;
+  --accent2:#111827; --accent3:#15803D; --text:#0F172A; --textDim:#4A5870;
+  --border:#A9B3C4; --track:#FFFFFF; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#FFFFFF; --radius:8px; --atext:#111827;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n16"] .right-col{--text:#0F172A;--textDim:#4A5870;--panel:#C9CFDA;--panel2:#E6EAF1;--track:#FFFFFF;--border:#A9B3C4;--atext:#111827;--grid:rgba(15,23,42,0.07);--gridStrong:#9AAEC6;--blue:#2563EB;--e1:#C27A0E;--e2:#D6336C;--et:#15803D;--c-ae:#D9600F;--c-th:#6A3DD0;--c-s:#0E8FA0;--c-ag:#4D7C0F;}
+:root[data-skin="n18"]{
+  color-scheme:dark;
+  --bg:#0F172A; --bg2:#162033; --panel:#1E293B; --panel2:#162033;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#475569; --line:#E2E8F0; --accent:#38BDF8;
+  --accent2:#38BDF8; --accent3:#4ADE80; --text:#E2E8F0; --textDim:#94A3B8;
+  --border:#334155; --track:#0B1220; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#0F172A; --radius:8px; --atext:#38BDF8;
+  --e1:#FBBF24; --e2:#F472B6; --et:#4ADE80; --blue:#60A5FA;
+  --c-ae:#FB923C; --c-th:#A78BFA; --c-s:#2DD4BF; --c-ag:#A3E635;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#0F172A; --st-text:#E2E8F0; --st-dim:#94A3B8; --st-grid:rgba(148,163,184,0.12); --st-gridS:#475569;
+}
+:root[data-skin="n18"] .right-col{--text:#E2E8F0;--textDim:#94A3B8;--panel:#1E293B;--panel2:#162033;--track:#0B1220;--border:#334155;--atext:#38BDF8;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+:root[data-skin="n23"]{
+  color-scheme:dark;
+  --bg:#0B1B30; --bg2:#0F2342; --panel:#12294A; --panel2:#0F2342;
+  --grid:rgba(255,255,255,0.05); --gridStrong:#9AAEC6; --line:#1B2A41; --accent:#E8B84B;
+  --accent2:#E8B84B; --accent3:#15803D; --text:#F5F8FC; --textDim:#AFC3DA;
+  --border:rgba(143,184,217,0.24); --track:#0B1B30; --shadowCol:rgba(0,0,0,0.14);
+  --danger:#D64545; --onAccent:#1F1300; --radius:8px; --atext:#E8B84B;
+  --e1:#C27A0E; --e2:#D6336C; --et:#15803D; --blue:#2563EB;
+  --c-ae:#D9600F; --c-th:#6A3DD0; --c-s:#0E8FA0; --c-ag:#4D7C0F;
+  --car:#F0932B; --htext:#F2F4F8; --hdim:#A8B2C2;
+  --st-track:#FFFFFF; --st-text:#1B2A41; --st-dim:#5A6A82; --st-grid:rgba(31,45,61,0.08); --st-gridS:#9AAEC6;
+}
+:root[data-skin="n23"] .right-col{--text:#F5F8FC;--textDim:#AFC3DA;--panel:#12294A;--panel2:#0F2342;--track:#0B1B30;--border:rgba(143,184,217,0.24);--atext:#E8B84B;--grid:rgba(210,228,250,0.14);--gridStrong:#6E97BE;--blue:#60A5FA;--e1:#FBBF24;--e2:#F472B6;--et:#4ADE80;--c-ae:#FB923C;--c-th:#A78BFA;--c-s:#2DD4BF;--c-ag:#A3E635;}
+
+[hidden]{display:none!important;}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--bg);
+  background-image:
+    repeating-linear-gradient(var(--grid) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 32px);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;
+  min-height:100vh;
+  padding-block:18px;
+  padding-top:max(8px,env(safe-area-inset-top,0px));
+  padding-bottom:max(18px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body.hasmax{overflow:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif; margin:0; letter-spacing:.02em;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.app{max-width:1360px;margin:0 auto;}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+header h1{font-size:1.5rem;font-weight:600;}
+#mainTitle .tw{font-size:1.15rem;margin-right:.05em;white-space:nowrap;display:inline-block;}
+#mainTitle .tw b{font-size:1.55rem;font-weight:600;}
+header .sub{color:var(--textDim);font-size:.85rem;margin-top:2px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;}
+.theme-toggle{display:flex;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.theme-toggle button{background:transparent;border:none;color:var(--textDim);padding:7px 14px;font-family:'Inter';font-size:.8rem;cursor:pointer;}
+.theme-toggle button.active{background:var(--accent);color:var(--onAccent);font-weight:600;}
+
+.main-grid{display:grid;grid-template-columns:5fr 3fr;gap:14px;margin-bottom:16px;align-items:start;}
+@media(max-width:980px){.main-grid{grid-template-columns:1fr;}}
+@media(min-width:981px){
+  .main-grid{align-items:stretch;}
+  .left-col,.right-col{min-height:0;height:100%;}
+  #simPanel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel>.panel-body{flex:1;display:flex;flex-direction:column;min-height:0;}
+  #simPanel .stageWrap,#simPanel .stageWrap[data-view="all"]{height:auto;flex:1;min-height:200px;}
+  #tabsPanel{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #tabBody{flex:1;min-height:0;overflow-y:auto;padding-right:6px;}
+}
+.left-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;font-size:12.5px;}
+.right-col .panel{padding:12px 13px;}
+.right-col .field{margin-bottom:10px;}
+.right-col .field label{font-size:.78rem;margin-bottom:5px;}
+.right-col .field input[type=number]{width:64px;padding:5px 6px;font-size:.78rem;}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-width:0;}
+.panel h2{font-family:'Inter',system-ui,sans-serif;font-size:.9rem;font-weight:600;color:var(--atext);letter-spacing:0;}
+.right-col h2{font-size:.85rem;}
+.panel-head-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;border-bottom:1px dashed var(--shadowCol);padding-bottom:8px;}
+.panel-tools{display:flex;gap:6px;}
+#simPanel>.panel-head-row{align-items:center;gap:8px;}
+.vtabs{display:flex;gap:6px;flex-wrap:wrap;min-width:0;}
+.vtabs .main-tab-btn{padding:8px 12px;min-height:38px;font-size:.8rem;}
+.panel-tool-btn,.collapse-btn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);width:28px;height:28px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-tool-btn:hover,.collapse-btn:hover{border-color:var(--accent2);}
+.collapse-btn{transition:transform .2s;}
+.collapse-btn.collapsed{transform:rotate(-90deg);}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-head-row{margin-bottom:0;}
+.subpanel{margin-top:12px;padding:12px 13px;}
+.panel.maxed{position:fixed;inset:0;z-index:50;margin:0;border-radius:0;overflow:auto;background:var(--bg);padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+#simPanel.maxed .stageWrap{height:calc(100vh - 340px);min-height:300px;}
+#simPanel.maxed .stageWrap[data-view="all"]{height:calc(100vh - 340px);}
+#graphPanel.maxed .charts{grid-auto-rows:minmax(220px,calc((100vh - 200px) / 2));}
+
+:focus-visible{outline:2px solid var(--line);outline-offset:1px;}
+
+.solver-toggle{display:flex;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.solver-toggle button{flex:1;background:transparent;border:none;color:var(--textDim);padding:9px 10px;font-family:'Inter';font-size:.8rem;font-weight:600;cursor:pointer;}
+.solver-toggle button.active{background:var(--accent);color:var(--onAccent);}
+
+.stageWrap{position:relative;height:clamp(340px,52vh,540px);display:grid;grid-template-columns:1fr;gap:8px;}
+.stageWrap[data-view="all"]{height:clamp(420px,64vh,680px);grid-template-columns:3fr 2fr;grid-template-rows:1fr 1fr;}
+.stageWrap[data-view="all"] #st-3d{grid-row:1/3;}
+.stageWrap[data-view="d3"] #st-top,.stageWrap[data-view="d3"] #st-side,
+.stageWrap[data-view="top"] #st-3d,.stageWrap[data-view="top"] #st-side,
+.stageWrap[data-view="side"] #st-3d,.stageWrap[data-view="side"] #st-top{display:none;}
+.stage{position:relative;min-width:0;min-height:0;border-radius:var(--radius);background:var(--track);border:1px solid var(--border);overflow:hidden;}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.tag{position:absolute;left:10px;top:8px;font:600 .75rem 'Inter',system-ui,sans-serif;letter-spacing:0;color:var(--textDim);pointer-events:none;}
+#st-3d{touch-action:none;cursor:grab;}
+#st-3d:active{cursor:grabbing;}
+#gl-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--textDim);}
+.mini{position:absolute;right:10px;top:8px;z-index:2;}
+#legend{position:absolute;top:8px;right:8px;z-index:3;pointer-events:none;text-align:right;font:600 12px/1.55 'Inter',sans-serif;padding:5px 9px;border-radius:var(--radius);background:color-mix(in srgb,var(--track) 82%,transparent);font-variant-numeric:tabular-nums;max-width:55%;}
+#legend i{font-style:italic;font-weight:700;font-size:13px;}
+#legend sub{font-size:9px;}
+#legend .lgh{color:var(--textDim);font-weight:600;font-size:11px;letter-spacing:.04em;margin-bottom:2px;}
+.stageWrap[data-view="all"] #legend{right:calc((100% - 8px) * 0.4 + 16px);max-width:34%;}
+#status{position:absolute;left:10px;top:30px;z-index:3;pointer-events:none;font:600 .72rem 'Oswald',sans-serif;letter-spacing:.06em;padding:5px 10px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb,var(--track) 86%,transparent);max-width:calc(100% - 20px);}
+#status.ok{color:var(--accent3);border-color:var(--accent3);}
+#status.bad{color:var(--danger);border-color:var(--danger);}
+@media(max-width:980px){
+  .stageWrap[data-view="all"] #legend{right:8px;max-width:55%;}
+  .stageWrap[data-view="all"]{height:auto;grid-template-columns:1fr;grid-template-rows:repeat(3,260px);}
+  .stageWrap[data-view="all"] #st-3d{grid-row:auto;}
+  #simPanel.maxed .stageWrap[data-view="all"]{height:auto;}
+}
+
+.transport{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.transport input[type=range]{flex:1;min-width:120px;}
+.transport .tout{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--atext);min-width:150px;text-align:right;font-variant-numeric:tabular-nums;}
+.transport .spd{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--textDim);}
+.vector-toggles{display:flex;gap:10px 14px;flex-wrap:wrap;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);align-items:center;}
+.vector-toggles .grp{font-family:'Oswald',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--textDim);min-width:92px;}
+.vector-toggles .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;width:100%;}
+.vector-toggles label{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text);cursor:pointer;}
+.vector-toggles input,.checkline input{accent-color:var(--accent);width:15px;height:15px;margin:0;}
+.vector-toggles .swatch{width:12px;height:12px;border-radius:3px;display:inline-block;}
+.vector-toggles .sep{height:1px;width:100%;background:var(--border);}
+.vector-toggles sub,.field sub,.readout sub,.rrow sub{font-size:.7em;}
+.checkline{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.83rem;color:var(--text);cursor:pointer;}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px;}
+.readout{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;text-align:center;}
+.readout .lbl{font-size:.68rem;color:var(--textDim);letter-spacing:.05em;}
+.readout .val{font-family:'IBM Plex Mono',monospace;font-size:.95rem;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums;}
+.hintline{font-size:.76rem;color:var(--textDim);margin-top:10px;line-height:1.5;}
+
+/* ρόλος των δυνάμεων */
+.role{display:flex;flex-direction:column;gap:7px;}
+.rrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:7px 9px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);font-size:.78rem;line-height:1.4;}
+.rrow .rsym{font-weight:700;font-size:1.05rem;text-align:center;font-family:'Inter',sans-serif;}
+.rrow.tot{border-color:var(--et);}
+.rrow .rdesc b{font-weight:600;}
+.badge{font:600 .66rem 'Oswald',sans-serif;letter-spacing:.06em;padding:3px 8px;border-radius:var(--radius);border:1px solid var(--border);white-space:nowrap;color:var(--textDim);}
+.badge.yes{color:var(--onAccent);background:var(--et);border-color:var(--et);}
+.badge.part{color:var(--et);border-color:var(--et);}
+.badge.neg{color:var(--danger);border-color:var(--danger);}
+.badge.no{color:var(--textDim);}
+@media(max-width:560px){.rrow{grid-template-columns:30px 1fr;}.rrow .badge{grid-column:2;justify-self:start;}}
+
+.field{margin-bottom:14px;}
+.field label{display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem;color:var(--textDim);margin-bottom:6px;gap:8px;}
+.field label .name{color:var(--text);font-weight:600;}
+.field label .fsym{color:var(--textDim);font-weight:400;margin-left:6px;}
+.field .inputs{display:flex;gap:8px;align-items:center;}
+.field input[type=range]{flex:1;min-width:0;}
+.field .note{font-size:.76rem;color:var(--atext);margin-top:4px;text-align:right;padding-right:42px;font-family:'IBM Plex Mono',monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;background:var(--grid);border-radius:3px;outline:none;}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;margin-top:-8px;}
+input[type=range]::-moz-range-track{height:5px;background:var(--grid);border-radius:3px;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);cursor:pointer;}
+.field input[type=number]{width:74px;background:var(--bg);border:1px solid var(--border);color:var(--accent);border-radius:var(--radius);padding:6px 7px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;text-align:right;}
+.field .unit{font-size:.75rem;color:var(--textDim);width:34px;}
+select{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:6px 8px;font-family:'Inter';font-size:.8rem;}
+
+.btn{background:var(--accent);color:var(--onAccent);border:none;border-radius:var(--radius);padding:9px 14px;font-family:'Inter';font-weight:600;font-size:.82rem;cursor:pointer;}
+.btn:hover{filter:brightness(1.1);}
+.btn.secondary{background:transparent;color:var(--textDim);border:1px solid var(--border);}
+.btn.secondary:hover{border-color:var(--shadowCol);color:var(--text);}
+.btn.secondary.on{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.btn.small{padding:5px 11px;font-size:.74rem;}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;cursor:pointer;color:var(--textDim);font:600 .76rem 'Inter',sans-serif;}
+.chip i.d{width:9px;height:9px;border-radius:50%;background:var(--cc,var(--textDim));display:inline-block;}
+.chip em{font-style:italic;font-weight:700;}
+.chip.on{color:var(--text);border-color:var(--cc,var(--accent));background:var(--panel2);}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));grid-auto-rows:190px;gap:8px;}
+.cell{position:relative;min-width:0;background:var(--track);border:1px solid var(--border);border-radius:var(--radius);}
+.cell canvas{position:absolute;inset:0;width:100%;height:100%;cursor:col-resize;touch-action:none;}
+.main-tab-row{display:flex;gap:6px;margin-bottom:16px;}
+.main-tab-btn{font-family:'Inter',system-ui,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:0;padding:12px 20px;min-height:44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel);color:var(--textDim);cursor:pointer;white-space:nowrap;}
+.main-tab-btn.active{background:var(--accent);color:var(--onAccent);border-color:var(--accent);}
+.tabs-panel{padding-top:16px;}
+.set-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:16px;}
+.set-tabs .main-tab-btn{padding:8px 4px;min-height:38px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.set-tabs .main-tab-btn:nth-child(-n+2){grid-column:span 2;font-size:.82rem;}
+.guide{font-size:.84rem;line-height:1.55;}
+.guide.phys{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);}
+.guide p{margin:0 0 4px;}
+.guide h3{font-size:.86rem;margin:14px 0 4px;color:var(--atext);font-weight:600;}
+.guide h3:first-child{margin-top:0;}
+.guide ul{margin:0;padding-left:18px;}
+.guide li{margin:3px 0;}
+#tabBody>.panel{border:0;background:transparent;padding:0;margin:0;box-shadow:none;}
+#tabBody>.panel>.panel-head-row{display:none;}
+#tabBody>.panel>.panel-body{display:block;}
+footer{text-align:center;color:var(--hdim);font-size:.72rem;margin-top:22px;padding-bottom:10px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+.panel-tools{margin-left:auto;} #simPanel.collapsed>.panel-body{display:none!important;} #simPanel.collapsed{flex:none!important;} #status{top:8px;} #st-side,#st-side canvas{touch-action:none;}
+header h1,#mainTitle .tw,#mainTitle .tw b{color:var(--atext);}
+#mainTitle .tw:nth-child(-n+1),#mainTitle .tw:nth-child(-n+1) b{color:var(--text);}
+.sgroup{font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--atext);margin:16px 0 8px;padding-top:10px;border-top:1px solid var(--border);}
+.sgroup:first-child{margin-top:0;border-top:0;padding-top:0;}
+.solve{font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.7;white-space:pre-wrap;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;}
+.addrow{display:flex;flex-wrap:wrap;gap:6px;}
+</style></head>
+<body>
+<div class="app">
+  <header>
+    <div class="hdr-left">
+      <div>
+        <h1 id="mainTitle">Τροχός και σκαλοπάτι</h1>
+        <div class="sub">Σλάβης Τάσος</div>
+      </div>
+    </div>
+    <div class="hdr-tools"><a class="home-btn" href="index.html" title="Αρχική σελίδα προσομοιώσεων" aria-label="Αρχική σελίδα προσομοιώσεων"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h5v-6h3v6h5V10"/></svg></a><select class="skin-select zoom-select" id="zoomSel" aria-label="Μέγεθος εμφάνισης"><option value="1">Μέγεθος 100%</option><option value="0.9">Μέγεθος 90%</option><option value="0.8" selected>Μέγεθος 80%</option><option value="0.7">Μέγεθος 70%</option></select><select class="skin-select" id="skinSel" aria-label="Skins"></select></div>
+  </header>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <div class="panel" id="simPanel">
+        <div class="panel-head-row">
+          <div class="vtabs" id="viewSeg" role="tablist" aria-label="Προβολή">
+            <button data-v="forces" type="button" role="tab" class="main-tab-btn">Δυνάμεις</button>
+            <button data-v="torques" type="button" role="tab" class="main-tab-btn">Ροπές ως προς Γ</button>
+          </div>
+          <div class="panel-tools"><button class="collapse-btn" type="button" title="Ελαχιστοποίηση" aria-label="Ελαχιστοποίηση πάνελ">▾</button><button class="panel-tool-btn" data-max type="button" title="Μεγιστοποίηση" aria-label="Μεγιστοποίηση πάνελ">⛶</button></div>
+        </div>
+        <div class="panel-body">
+          <div class="stageWrap" id="stageWrap" data-view="side">
+            <div class="stage" id="st-side"><canvas id="cv"></canvas>
+              <button class="btn secondary small mini" id="camreset" type="button">↺ Προβολή</button>
+            </div>
+            <div id="legend" hidden></div>
+            <div id="status" class="ok"></div>
+          </div>
+          <div class="transport">
+            <button class="btn" id="playBtn" type="button">▶ Εκκίνηση</button>
+            <button class="btn secondary" id="resetBtn" type="button">↺ Επαναφορά</button>
+            <label class="checkline" style="margin:0 0 0 6px"><input type="checkbox" id="loopChk" checked> Επανάληψη</label>
+            <button class="btn secondary small on" id="sndBtn" type="button" aria-pressed="true">🔊 Ήχος: ναι</button>
+            <label class="spd">Ταχύτητα αναπαραγωγής
+              <select id="speedSel" aria-label="Ταχύτητα αναπαραγωγής">
+                <option value="0.05">×0,05 πολύ αργά</option>
+                <option value="0.1">×0,1 αργά</option>
+                <option value="0.25" selected>×0,25</option>
+                <option value="0.5">×0,5</option>
+                <option value="1">×1 κανονική</option>
+                <option value="2">×2 γρήγορα</option>
+              </select>
+            </label>
+          </div>
+          <div class="transport" style="margin-top:8px">
+            <input type="range" id="sl_time" min="0" max="2" step="0.001" aria-label="Χρόνος">
+            <span class="tout" id="tOut">t = 0,00 s</span>
+          </div>
+          <div class="hintline" id="navHint">Σύρε το σημείο εφαρμογής της F πάνω στον τροχό για να αλλάξεις το ύψος της. Κοντά στο ύψος του κέντρου η F «κολλάει» στο κέντρο (άξονας). Ρόδα ποντικιού ή δύο δάχτυλα: μεγέθυνση· σύρσιμο στο κενό: μετατόπιση. Οι αλλαγές στις ρυθμίσεις επαναφέρουν τον τροχό στην αρχική θέση. Μοντέλο: λείο δάπεδο, γωνία αρκετά τραχιά ώστε ο τροχός να μην ολισθαίνει πάνω της.</div>
+        </div>
+      </div>
+      <div class="panel" id="graphPanel">
+        <div class="panel-head-row"><h2>Διαγράμματα</h2></div>
+        <div class="panel-body">
+          <div class="chips" id="gchips"></div>
+          <div class="charts" id="charts"></div>
+          <div class="hintline">Κάνε κλικ ή σύρε πάνω σε ένα διάγραμμα για να αλλάξεις το ύψος εφαρμογής της F, το ύψος του σκαλοπατιού ή την τιμή της F. Η κόκκινη σκίαση δείχνει περιοχές όπου η F δεν μπορεί να ανεβάσει τον τροχό. Οι τιμές αφορούν τον τρέχοντα τροχό και σκαλοπάτι.</div>
+        </div>
+      </div>
+    </div>
+    <div class="right-col" id="rightCol"></div>
+  </div>
+</div>
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=(x,d=2)=>{if(!isFinite(x))return '∞';let s=(+x).toFixed(d);if(/^-0(\.0+)?$/.test(s))s=s.slice(1);return s.replace('.',',');};
+const TAU=Math.PI*2, DEG=180/Math.PI;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const UP=s=>String(s).toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').normalize('NFC');
+const FONT="'Inter',system-ui,sans-serif", MONO='"IBM Plex Mono",monospace';
+const niceCeil=x=>{const p=Math.pow(10,Math.floor(Math.log10(x)));const f=x/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p;};
+
+/* ---------- κατάσταση ---------- */
+const S={
+  Rcm:50,hcm:15,m:20,g:10,F:150,yFcm:50,attach:'rim',mode:'push',kind:'disc',
+  t:0,tmax:2,playing:false,speed:0.25,view:'forces',loop:true,rdv:false,tblAll:false,table:true,
+  lw:1,len:1,fs:13,Z:1,panX:0,panY:0,
+  show:{w:true,F:true,N1:true,N2:true,T:true,Q:false,arms:true,line:true,dims:true,trail:false,grid:true,labels:true,vals:false,values:false},
+  charts:{fy:1,nf:1,fh:0,tau:0}
+};
+const PREF_KEY='troxos-view-prefs',DEF_PREFS=JSON.stringify({show:S.show,lw:S.lw,len:S.len,fs:S.fs,charts:S.charts});
+function applyPrefs(p){if(!p)return;if(p.show)Object.keys(S.show).forEach(k=>{if(k in p.show)S.show[k]=!!p.show[k];});
+  if(p.charts)Object.keys(S.charts).forEach(k=>{if(k in p.charts)S.charts[k]=p.charts[k]?1:0;});
+  if(typeof p.lw==='number')S.lw=p.lw;if(typeof p.len==='number')S.len=p.len;if(typeof p.fs==='number')S.fs=p.fs;}
+try{applyPrefs(JSON.parse(localStorage.getItem(PREF_KEY)));}catch(e){}
+S.rdv=S.show.values;
+let dirty=true, scaleDirty=true;
+
+/* ---------- φυσική ----------
+   Γ = (0,h) η γωνία του σκαλοπατιού, το δάπεδο είναι το y = 0, ο τροχός ακουμπά αρχικά στο δάπεδο και στη γωνία.
+   θ = γωνία του ΓΚ από την κατακόρυφο, Κ = (−R ημθ, h + R συνθ). Όταν N₁ = 0 ο τροχός στρέφεται γύρω από το Γ.
+   Όριο ανάβασης: F·(yF − h) = w·d, με d = √(2Rh − h²). */
+/*PHYS-START*/
+function GEO(){
+  const R=S.Rcm/100, h=Math.min(S.hcm/100,R), W=S.m*S.g;
+  const d=Math.sqrt(Math.max(0,2*R*h-h*h));
+  const theta0=Math.atan2(d,R-h);
+  const axle=S.attach==='axle';
+  const yF=axle?R:Math.min(2*R,Math.max(0,S.yFcm/100));
+  const k=S.kind==='disc'?0.5:1;
+  const Ic=k*S.m*R*R, Ip=Ic+S.m*R*R;
+  const sy0=axle?0:yF-R, sx0=axle?0:(S.mode==='push'?-1:1)*Math.sqrt(Math.max(0,R*R-sy0*sy0));
+  const b=yF-h;
+  const Fmin=(b>1e-9&&d>0)?W*d/b:Infinity;
+  return {R,h,W,d,theta0,yF,axle,Ic,Ip,sx0,sy0,b,Fmin,m:S.m,g:S.g};
+}
+function sOff(g,D){const c=Math.cos(D),s=Math.sin(D);return {x:g.sx0*c+g.sy0*s,y:-g.sx0*s+g.sy0*c};}
+/* δεξιόστροφη ροπή ως προς Γ: θετική όταν ανυψώνει τον τροχό */
+function torqueParts(g,th,rotOff,F){
+  const D=rotOff+g.theta0-th, s=sOff(g,D);
+  const yFl=g.h+g.R*Math.cos(th)+s.y;
+  return {tF:F*(yFl-g.h),tW:g.W*g.R*Math.sin(th),yFl};
+}
+function torqueP(g,th,rotOff,F){const q=torqueParts(g,th,rotOff,F);return q.tF-q.tW;}
+const unitNT=th=>({n:{x:-Math.sin(th),y:Math.cos(th)},t:{x:Math.cos(th),y:Math.sin(th)}});
+function pivotForces(g,th,om,al,F){
+  const u=unitNT(th), m=g.m;
+  const ax=m*(g.R*al*u.t.x-g.R*om*om*u.n.x);
+  const ay=m*(g.R*al*u.t.y-g.R*om*om*u.n.y);
+  const Q={x:ax-F,y:ay+g.W};
+  return {Q,N2:Q.x*u.n.x+Q.y*u.n.y,Tf:Q.x*u.t.x+Q.y*u.t.y,n:u.n,t:u.t};
+}
+function staticForces(g,F){
+  const N1=g.W-F*g.b/g.d;
+  const Q={x:-F,y:g.W-N1};
+  const u=unitNT(g.theta0);
+  return {N1,Q,N2:Q.x*u.n.x+Q.y*u.n.y,Tf:Q.x*u.t.x+Q.y*u.t.y,n:u.n,t:u.t};
+}
+function restForces(g,F){
+  const T=torqueP(g,g.theta0,0,F);
+  if(T<=1e-9){const s=staticForces(g,F);return {N1:s.N1,Q:s.Q,N2:s.N2,Tf:s.Tf,n:s.n,t:s.t,th:g.theta0,T};}
+  const p=pivotForces(g,g.theta0,0,T/g.Ip,F);
+  return {N1:0,Q:p.Q,N2:p.N2,Tf:p.Tf,n:p.n,t:p.t,th:g.theta0,T};
+}
+function newState(g){return {phase:'rest',th:g.theta0,om:0,t:0,rotOff:0,rot:0,x:0,y:0,vx:0,vy:0,note:''};}
+function stepSim(s,g,dt,F){
+  s.t+=dt;
+  if(s.phase==='rest'){ if(torqueP(g,g.theta0,s.rotOff,F)>1e-9) s.phase='lift'; else return; }
+  if(s.phase==='lift'){
+    const al1=torqueP(g,s.th,s.rotOff,F)/g.Ip;
+    const thn=s.th-(s.om*dt+0.5*al1*dt*dt);
+    const al2=torqueP(g,thn,s.rotOff,F)/g.Ip;
+    s.om+=0.5*(al1+al2)*dt; s.th=thn;
+    if(s.th>=g.theta0&&s.om<=0){ s.th=g.theta0; s.om=0; s.phase='rest'; return; }
+    if(s.th<=0){ s.th=0; s.x=0; s.y=g.h+g.R; s.rot=s.rotOff+g.theta0; s.phase='done'; s.note='top'; return; }
+    const N2=g.W*Math.cos(s.th)+F*Math.sin(s.th)-g.m*g.R*s.om*s.om;
+    if(N2<0){
+      const th=s.th;
+      s.x=-g.R*Math.sin(th); s.y=g.h+g.R*Math.cos(th);
+      s.vx=g.R*s.om*Math.cos(th); s.vy=g.R*s.om*Math.sin(th);
+      s.rot=s.rotOff+g.theta0-th; s.phase='flight';
+    }
+    return;
+  }
+  if(s.phase==='flight'){
+    const so=sOff(g,s.rot), alpha=so.y*F/g.Ic;
+    s.vx+=F/g.m*dt; s.vy-=g.g*dt;
+    s.x+=s.vx*dt; s.y+=s.vy*dt;
+    s.om+=alpha*dt; s.rot+=s.om*dt;
+    if(s.x>=0&&s.y-g.R<=g.h){ s.y=g.h+g.R; s.phase='done'; s.note='landed'; return; }
+    const dx=s.x, dy=s.y-g.h, dist=Math.hypot(dx,dy);
+    if(s.x<0&&dist<=g.R&&(s.vx*dx+s.vy*dy)<0){
+      const th=Math.atan2(-s.x,s.y-g.h);
+      s.om=(s.vx*Math.cos(th)+s.vy*Math.sin(th))/g.R;
+      s.th=th; s.rotOff=s.rot-(g.theta0-th); s.phase='lift';
+      return;
+    }
+    if(s.y-g.R<=0){ s.y=g.R; s.phase='fell'; }
+  }
+}
+/* θέση και δυνάμεις μιας κατάστασης */
+function pose(g,s,F){
+  let C,D,f=null;
+  if(s.phase==='rest'||s.phase==='lift'){
+    const th=s.th;
+    C={x:-g.R*Math.sin(th),y:g.h+g.R*Math.cos(th)};
+    D=s.rotOff+g.theta0-th;
+    if(s.phase==='rest'&&s.rotOff===0&&th===g.theta0){f=restForces(g,F);}
+    else{
+      const T=torqueP(g,th,s.rotOff,F), p=pivotForces(g,th,s.om,T/g.Ip,F);
+      f={N1:0,Q:p.Q,N2:p.N2,Tf:p.Tf,n:p.n,t:p.t,th,T};
+    }
+  }else{C={x:s.x,y:s.y};D=s.rot;}
+  const so=sOff(g,D);
+  return {C,D,fp:{x:C.x+so.x,y:C.y+so.y},f};
+}
+/* προϋπολογισμός ολόκληρης της κίνησης, ώστε να λειτουργεί το ρυθμιστικό χρόνου */
+const REC=0.002;
+const snap=s=>({phase:s.phase,th:s.th,om:s.om,t:s.t,rotOff:s.rotOff,rot:s.rot,x:s.x,y:s.y,vx:s.vx,vy:s.vy,note:s.note});
+function buildTraj(g,F){
+  const s=newState(g), fr=[snap(s)], ev={lift:null,flight:null,end:null};
+  if(torqueP(g,g.theta0,0,F)<=1e-9) return {fr,ev,idle:true};
+  const DT=0.0002, TCAP=8; let next=REC;
+  while(s.t<TCAP){
+    const ph0=s.phase;
+    stepSim(s,g,DT,F);
+    if(ph0!==s.phase){
+      if(s.phase==='lift'&&ev.lift==null)ev.lift=s.t;
+      if(s.phase==='flight'&&ev.flight==null)ev.flight=s.t;
+    }
+    if(s.phase==='done'||s.phase==='fell'){ev.end=s.t;fr.push(snap(s));break;}
+    if(s.t>=next-1e-12){fr.push(snap(s));next+=REC;}
+  }
+  return {fr,ev,idle:false};
+}
+function frameAt(tr,t){
+  const n=tr.fr.length;if(n===1)return tr.fr[0];
+  const i=Math.round(t/REC);if(i>=n-1)return tr.fr[n-1];return tr.fr[Math.max(0,i)];
+}
+const fminAt=(g,h,yF)=>{const d=Math.sqrt(Math.max(0,2*g.R*h-h*h)),b=yF-h;return (b>1e-9&&d>0)?g.W*d/b:Infinity;};
+/*PHYS-END*/
+let G=GEO(), TR=buildTraj(G,S.F), CUR=TR.fr[0], PS=pose(G,CUR,S.F);
+function recompute(){
+  G=GEO();TR=buildTraj(G,S.F);
+  S.tmax=TR.idle?2:Math.max(0.8,TR.fr[TR.fr.length-1].t+0.6);
+  S.t=clamp(S.t,0,S.tmax);scaleDirty=false;
+}
+const liftAngle=s=>(s.phase==='rest'||s.phase==='lift')?G.theta0-s.th:(s.phase==='done'&&s.note==='top'?G.theta0:null);
+
+/* ---------- χρώματα (από τα tokens του θέματος) ---------- */
+const CSSV={w:'--e1',F:'--c-th',N1:'--blue',N2:'--et',T:'--c-ae',Q:'--e2',arm:'--c-s'};
+const C={};
+const TOK=Object.assign({stage:'--st-track',dim:'--st-dim',fg:'--st-text',accent:'--accent',grid:'--st-grid',gridS:'--st-gridS',danger:'--danger',ok:'--accent3',blue:'--blue'},CSSV);
+const CP={},TOKP={stage:'--track',dim:'--textDim',fg:'--text',grid:'--grid',gridS:'--gridStrong'};
+function readColors(){const cs=getComputedStyle(document.documentElement);for(const k in TOK)C[k]=cs.getPropertyValue(TOK[k]).trim();const rc=$('#rightCol'),rs=rc?getComputedStyle(rc):cs;for(const k in TOKP)CP[k]=rs.getPropertyValue(TOKP[k]).trim();for(const k in CSSV)CP[k]=rs.getPropertyValue(CSSV[k]).trim();CP.danger=rs.getPropertyValue('--danger').trim();CP.accent=rs.getPropertyValue('--accent').trim();}
+const SKINS=[["blueprint","DarkBlue",""],["classic","DarkBlack",""],["minimal","LightOrange",""],["gr","Grey",""],["n01","WhiteBlue",""],["n08","SkyBlue",""],["n12","WhiteDBlue",""],["n16","GreyDarkB",""],["n13","WhiteBGrey",""],["g16","GreyDBlue",""],["n15","SkyDBlue",""],["n18","DarkGrey",""],["n23","NavyLight",""]];
+let curSkin='blueprint';
+function setSkin(n){
+  curSkin=n;document.documentElement.dataset.skin=n;readColors();dirty=true;
+  {const sel=$('#skinSel');if(sel){[].forEach.call(sel.options,o=>{if(o.value)o.textContent=(o.value===n?'✓ ':'')+(o.dataset.l||o.textContent.replace(/^✓ /,''));});sel.selectedIndex=0;}}
+  try{localStorage.setItem('troxos-skin',n)}catch(e){}
+}
+
+/* ---------- σχεδίαση 2D: βοηθητικά ---------- */
+function fit(cv){
+  const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width),h=Math.round(r.height);
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w,h,dpr,ctx};
+}
+function arrowHead(ctx,x0,y0,x1,y1,col,lw){
+  const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,h=8+lw*1.1;
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-ux*h-uy*h*0.45,y1-uy*h+ux*h*0.45);ctx.lineTo(x1-ux*h+uy*h*0.45,y1-uy*h-ux*h*0.45);ctx.closePath();ctx.fill();
+}
+let LBF=0;const LBS=new WeakMap();
+function lab(ctx,x,y,main,sub,val,col,align,fs){
+  fs=fs||S.fs;ctx.save();ctx.textBaseline='middle';ctx.textAlign='left';
+  const f1=`italic 600 ${fs+1}px ${FONT}`,f2=`600 ${fs-4}px ${FONT}`,f3=`600 ${fs-2}px ${FONT}`;
+  ctx.font=f1;const w1=ctx.measureText(main).width;
+  ctx.font=f2;const w2=sub?ctx.measureText(sub).width+1:0;
+  ctx.font=f3;const w3=val?ctx.measureText(val).width:0;
+  const tot=w1+w2+w3,x0=align==='left'?x:align==='right'?x-tot:x-tot/2;
+  {let st=LBS.get(ctx);if(!st||st.f!==LBF){st={f:LBF,r:[]};LBS.set(ctx,st);}
+   const hh=fs*1.25,hit=(yy)=>st.r.some(q=>x0<q[2]&&x0+tot>q[0]&&yy-hh/2<q[3]&&yy+hh/2>q[1]);
+   let dy=0;for(const c of [0,-1,1,-2,2,-3,3,-4,4,-5,5,-6,6]){if(!hit(y+c*hh)){dy=c*hh;break;}}
+   y+=dy;st.r.push([x0-2,y-hh/2,x0+tot+2,y+hh/2]);}
+  const run=fn=>{let xx=x0;ctx.font=f1;fn(main,xx,y);xx+=w1;if(sub){ctx.font=f2;fn(sub,xx+1,y+fs*0.3);xx+=w2;}if(val){ctx.font=f3;fn(val,xx+2,y);}};
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;run((t,a,b)=>ctx.strokeText(t,a,b));
+  ctx.fillStyle=col;run((t,a,b)=>ctx.fillText(t,a,b));ctx.restore();
+}
+function txt(ctx,s,x,y,col,align,fs,w){
+  ctx.save();ctx.font=`${w||600} ${fs||S.fs-1}px ${FONT}`;ctx.textAlign=align||'left';ctx.textBaseline='middle';
+  ctx.lineJoin='round';ctx.lineWidth=4;ctx.strokeStyle=C.stage;ctx.strokeText(s,x,y);ctx.fillStyle=col;ctx.fillText(s,x,y);ctx.restore();
+}
+
+/* ---------- μετασχηματισμός κόσμου → οθόνης (ζουμ και μετατόπιση) ---------- */
+let VW={w:1,h:1,scale:1,cx0:0,cy0:0,base:1};
+function setView(w,h){
+  const R=G.R,d=G.d,push=S.mode==='push';
+  const x0=push?-d-3.2*R:-d-1.5*R, x1=push?1.9*R:3.1*R, y0=-0.5*R, y1=G.h+2.55*R;
+  const base=Math.min(w/(x1-x0),h/(y1-y0))*0.96;
+  VW={w,h,base,scale:base*S.Z,cx0:(x0+x1)/2,cy0:(y0+y1)/2};
+}
+const X=x=>VW.w/2+(x-VW.cx0)*VW.scale+S.panX;
+const Y=y=>VW.h/2-(y-VW.cy0)*VW.scale+S.panY;
+const wx=px=>(px-VW.w/2-S.panX)/VW.scale+VW.cx0;
+const wy=py=>-(py-VW.h/2-S.panY)/VW.scale+VW.cy0;
+function setZoom(nz,sx,sy){
+  const ox=wx(sx),oy=wy(sy);S.Z=clamp(nz,0.4,8);VW.scale=VW.base*S.Z;
+  S.panX=sx-(VW.w/2+(ox-VW.cx0)*VW.scale);S.panY=sy-(VW.h/2-(oy-VW.cy0)*VW.scale);dirty=true;
+}
+
+let cutAny=false;
+const HIT={fp:null,tail:null,tip:null};
+/* διάνυσμα: σταθερή κλίμακα, κόβεται με σήμα // αν θα έβγαινε υπερβολικά μεγάλο ή εκτός παραθύρου */
+function vec(ctx,x0,y0,vx,vy,col,main,sub,val,o){
+  o=o||{};let L=Math.hypot(vx,vy);if(L<2)return null;
+  let cut=!!o.cut;
+  if(o.maxL&&L>o.maxL){const k=o.maxL/L;vx*=k;vy*=k;L=o.maxL;cut=true;}
+  if(o.maxL){
+    let kk=1;
+    if(vx>0.01)kk=Math.min(kk,(VW.w-12-x0)/vx);else if(vx<-0.01)kk=Math.min(kk,(12-x0)/vx);
+    if(vy>0.01)kk=Math.min(kk,(VW.h-26-y0)/vy);else if(vy<-0.01)kk=Math.min(kk,(26-y0)/vy);
+    if(kk<1){kk=Math.max(kk,0.2);vx*=kk;vy*=kk;L*=kk;cut=true;}
+  }
+  if(cut)cutAny=true;
+  const ux=vx/L,uy=vy/L,lw=2.6*S.lw,hl=8+lw*1.1;
+  ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;ctx.lineCap='round';
+  if(o.dash)ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+vx-ux*hl*0.7,y0+vy-uy*hl*0.7);ctx.stroke();ctx.setLineDash([]);
+  arrowHead(ctx,x0,y0,x0+vx,y0+vy,col,lw);
+  ctx.beginPath();ctx.arc(x0,y0,lw*0.9+1,0,TAU);ctx.fill();
+  ctx.restore();
+  if(cut){
+    const mx=x0+vx*0.5,my=y0+vy*0.5,nx=-uy,ny=ux,w=lw+3;
+    ctx.save();ctx.lineCap='butt';ctx.strokeStyle=C.stage;ctx.lineWidth=lw+3;
+    ctx.beginPath();ctx.moveTo(mx-ux*5,my-uy*5);ctx.lineTo(mx+ux*5,my+uy*5);ctx.stroke();
+    ctx.strokeStyle=col;ctx.lineWidth=Math.max(1.5,lw*0.55);
+    for(const q of [-4,4]){ctx.beginPath();ctx.moveTo(mx+ux*(q+3)-nx*w,my+uy*(q+3)-ny*w);ctx.lineTo(mx+ux*(q-3)+nx*w,my+uy*(q-3)+ny*w);ctx.stroke();}
+    ctx.restore();
+  }
+  if(S.show.labels){
+    const fs=S.fs;let tx,ty,al;
+    if(o.pos==='mid'){tx=x0+vx*0.5;ty=y0+vy*0.5+fs+3;al='center';}
+    else if(o.pos==='r'){tx=x0+vx+9;ty=y0+vy+(uy>0?fs*0.5:-fs*0.5);al='left';}
+    else if(o.pos==='l'){tx=x0+vx-9;ty=y0+vy+(uy>0?fs*0.5:-fs*0.5);al='right';}
+    else{tx=x0+vx+ux*10;ty=y0+vy+uy*10+(uy>0.35?fs*0.6:uy<-0.35?-fs*0.6:0);al=ux>0.35?'left':ux<-0.35?'right':'center';}
+    lab(ctx,tx,ty,main,sub,S.show.vals&&val!=null?' = '+val:'',col,al,fs);
+  }
+  return {x:x0+vx,y:y0+vy};
+}
+function drawWheel(ctx,cx,cy,Rpx,D){
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(D);
+  const ring=S.kind==='ring';
+  const gr=ctx.createRadialGradient(0,0,Rpx*0.1,0,0,Rpx);
+  gr.addColorStop(0,C.stage);gr.addColorStop(1,C.stage);
+  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(0,0,Rpx,0,TAU);ctx.fill();
+  ctx.fillStyle=C.blue;ctx.globalAlpha=ring?0.07:0.2;ctx.beginPath();ctx.arc(0,0,Rpx,0,TAU);ctx.fill();ctx.globalAlpha=1;
+  const bw=Math.max(2.5,Rpx*(ring?0.1:0.06));
+  ctx.strokeStyle=C.fg;ctx.lineWidth=bw;ctx.beginPath();ctx.arc(0,0,Rpx-bw/2,0,TAU);ctx.stroke();
+  ctx.strokeStyle=C.dim;ctx.lineWidth=1.2;ctx.globalAlpha=0.7;ctx.beginPath();ctx.arc(0,0,Rpx*0.8,0,TAU);ctx.stroke();
+  ctx.lineWidth=Math.max(1.5,Rpx*0.025);
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;ctx.beginPath();ctx.moveTo(Math.cos(a)*Rpx*0.1,Math.sin(a)*Rpx*0.1);ctx.lineTo(Math.cos(a)*Rpx*0.8,Math.sin(a)*Rpx*0.8);ctx.stroke();}
+  ctx.globalAlpha=1;
+  ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(Rpx*0.62,0,Math.max(2.5,Rpx*0.04),0,TAU);ctx.fill();
+  ctx.fillStyle=C.fg;ctx.beginPath();ctx.arc(0,0,Math.max(3,Rpx*0.06),0,TAU);ctx.fill();
+  ctx.restore();
+}
+function hatch(ctx,x,y,w,h,step){
+  if(w<=0||h<=0)return;
+  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+  ctx.strokeStyle=C.gridS;ctx.globalAlpha=0.45;ctx.lineWidth=1;ctx.beginPath();
+  for(let i=-h;i<w;i+=step){ctx.moveTo(x+i,y+h);ctx.lineTo(x+i+h,y);}
+  ctx.stroke();ctx.restore();
+}
+function torqueArc(ctx,cx,cy,r,a0,a1,ccw,col,lw){
+  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineCap='round';ctx.beginPath();ctx.arc(cx,cy,r,a0,a1,ccw);ctx.stroke();ctx.restore();
+  const ex=cx+r*Math.cos(a1),ey=cy+r*Math.sin(a1),tx=ccw?Math.sin(a1):-Math.sin(a1),ty=ccw?-Math.cos(a1):Math.cos(a1);
+  arrowHead(ctx,ex-tx*6,ey-ty*6,ex+tx*4,ey+ty*4,col,lw);
+  return [ex,ey];
+}
+const niceStep=x=>{const p=Math.pow(10,Math.floor(Math.log10(x)));const f=x/p;return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p;};
+
+/* ---------- κύρια σχεδίαση ---------- */
+function drawMain(){
+  const cv=$('#cv'),{w,h,ctx}=fit(cv);if(!w||!h)return;
+  setView(w,h);
+  const g=G,P=PS,f=P.f,R=g.R,sc=VW.scale,lw=S.lw;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const gY=Y(0),hY=Y(g.h),gX=X(0),Rpx=R*sc;
+  /* κάνναβος */
+  if(S.show.grid){
+    const steps=[0.02,0.05,0.1,0.2,0.5,1,2],st=steps.find(q=>q*sc>=40)||2;
+    ctx.lineWidth=1;ctx.font=`500 10px ${MONO}`;
+    for(let x=Math.floor(wx(0)/st)*st;x<=wx(w);x+=st){const px=X(x);ctx.strokeStyle=Math.abs(x)<1e-9?C.gridS:C.grid;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke();}
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    for(let y=Math.ceil(wy(h)/st)*st;y<=wy(0);y+=st){const py=Y(y);ctx.strokeStyle=Math.abs(y)<1e-9?C.gridS:C.grid;ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke();
+      if(y>1e-9){ctx.fillStyle=C.dim;ctx.fillText(st<1?fmt(y*100,0)+' cm':fmt(y,0)+' m',w-50,py-7);}}
+  }
+  /* δάπεδο και σκαλοπάτι */
+  ctx.save();ctx.fillStyle=C.gridS;ctx.globalAlpha=0.14;ctx.beginPath();ctx.moveTo(0,gY);ctx.lineTo(gX,gY);ctx.lineTo(gX,hY);ctx.lineTo(w,hY);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();ctx.restore();
+  hatch(ctx,0,gY,gX,h-gY,9);hatch(ctx,gX,hY,w-gX,h-hY,9);
+  ctx.save();ctx.strokeStyle=C.fg;ctx.lineWidth=2.2;ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(0,gY);ctx.lineTo(gX,gY);ctx.lineTo(gX,hY);ctx.lineTo(w,hY);ctx.stroke();ctx.restore();
+  /* διάσταση h */
+  if(S.show.dims&&hY<gY-6){
+    const hx=X(0.42*R);
+    ctx.save();ctx.strokeStyle=C.accent;ctx.lineWidth=1.3;ctx.beginPath();
+    ctx.moveTo(hx,gY);ctx.lineTo(hx,hY);ctx.moveTo(hx-5,gY);ctx.lineTo(hx+5,gY);ctx.moveTo(hx-5,hY);ctx.lineTo(hx+5,hY);ctx.stroke();ctx.restore();
+    lab(ctx,hx+8,(gY+hY)/2,'h','',S.show.vals?' = '+fmt(S.hcm,1)+' cm':'',C.accent,'left',S.fs);
+  }
+  const cpx=[X(P.C.x),Y(P.C.y)],Pp=[gX,hY],fpx=[X(P.fp.x),Y(P.fp.y)];
+  /* φορέας της F */
+  if(S.show.line){ctx.save();ctx.strokeStyle=C.F;ctx.globalAlpha=0.4;ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(0,fpx[1]);ctx.lineTo(w,fpx[1]);ctx.stroke();ctx.restore();}
+  /* ίχνος κέντρου */
+  if(S.show.trail){
+    ctx.save();ctx.strokeStyle=C.dim;ctx.lineWidth=1.4;ctx.setLineDash([2,5]);ctx.beginPath();let first=true;
+    for(let i=0;i<TR.fr.length;i+=4){const q=TR.fr[i];if(q.t>S.t)break;const pp=pose(g,q,S.F);const a=X(pp.C.x),b=Y(pp.C.y);if(first){ctx.moveTo(a,b);first=false;}else ctx.lineTo(a,b);}
+    ctx.lineTo(cpx[0],cpx[1]);ctx.stroke();ctx.restore();
+  }
+  /* τροχός */
+  drawWheel(ctx,cpx[0],cpx[1],Rpx,P.D);
+  /* μοχλοβραχίονες ως προς Γ, πάνω από τον τροχό */
+  const torq=S.view==='torques';
+  if(f&&(S.show.arms||torq)){
+    const dcur=R*Math.sin(f.th),bb=P.fp.y-g.h;
+    const cE=C.w,cF=C.F;
+    const tick=(x,y,vert)=>{ctx.beginPath();if(vert){ctx.moveTo(x,y-6);ctx.lineTo(x,y+6);}else{ctx.moveTo(x-6,y);ctx.lineTo(x+6,y);}ctx.stroke();};
+    ctx.save();ctx.lineCap='round';
+    ctx.strokeStyle=cE;ctx.globalAlpha=0.55;ctx.lineWidth=1.3;ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.moveTo(cpx[0],cpx[1]);ctx.lineTo(cpx[0],gY);ctx.stroke();
+    ctx.globalAlpha=1;ctx.setLineDash([]);ctx.lineWidth=2.6;
+    if(dcur>0.01*R){ctx.beginPath();ctx.moveTo(Pp[0],Pp[1]);ctx.lineTo(cpx[0],Pp[1]);ctx.stroke();tick(cpx[0],Pp[1],true);}
+    ctx.strokeStyle=cF;
+    if(Math.abs(bb)>0.01*R){ctx.beginPath();ctx.moveTo(Pp[0],Pp[1]);ctx.lineTo(Pp[0],fpx[1]);ctx.stroke();tick(Pp[0],fpx[1],false);}
+    ctx.restore();
+    if(dcur>0.04*R)lab(ctx,(cpx[0]+Pp[0])/2,Pp[1]-10,'d','',S.show.vals?' = '+fmt(dcur*100,1)+' cm':'',cE,'center',S.fs+1);
+    if(Math.abs(bb)>0.06*R)lab(ctx,Pp[0]+10,(Pp[1]+fpx[1])/2,'b','',S.show.vals?' = '+fmt(bb*100,1)+' cm':'',cF,'left',S.fs+1);
+  }
+  /* ακτίνα R */
+  if(S.show.dims){
+    const ra=-35*Math.PI/180,ex=cpx[0]+Math.cos(ra)*Rpx,ey=cpx[1]+Math.sin(ra)*Rpx;
+    ctx.save();ctx.strokeStyle=C.dim;ctx.lineWidth=1.2;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(cpx[0],cpx[1]);ctx.lineTo(ex,ey);ctx.stroke();ctx.restore();
+    lab(ctx,(cpx[0]+ex)/2+4,(cpx[1]+ey)/2-8,'R','',S.show.vals?' = '+fmt(S.Rcm,1)+' cm':'',C.dim,'left',S.fs);
+  }
+  /* σημεία Κ, Γ, Α */
+  ctx.save();ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(Pp[0],Pp[1],4,0,TAU);ctx.fill();ctx.restore();
+  if(S.show.labels){
+    lab(ctx,Pp[0]+8,Pp[1]-10,'Γ','','',C.accent,'left',S.fs+1);
+    lab(ctx,cpx[0]-9,cpx[1]-10,'Κ','','',C.dim,'right',S.fs);
+    if(f&&f.N1>1e-6&&!torq)lab(ctx,cpx[0]+9,gY+11,'Α','','',C.N1,'left',S.fs+1);
+  }
+  /* σημείο εφαρμογής της F */
+  ctx.save();ctx.fillStyle=C.F;ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(fpx[0],fpx[1],6,0,TAU);ctx.fill();ctx.stroke();ctx.restore();
+  /* διανύσματα: το w έχει πάντα το ίδιο μήκος, τα άλλα σε αναλογία με αυτό */
+  const kp=(S.len*0.6*Rpx)/g.W, LMAX=2*Rpx;
+  const showV=k=>torq?(k==='w'||k==='F'):S.show[k];
+  const N=x=>fmt(x,Math.abs(x)<10?1:0)+' N';
+  cutAny=false;HIT.tail=null;HIT.tip=null;
+  if(showV('w'))vec(ctx,cpx[0],cpx[1],0,g.W*kp,C.w,'w','',N(g.W),{pos:'r'});
+  if(showV('F')){
+    const room=(S.mode==='push'?fpx[0]:w-fpx[0])-10,maxF=Math.max(24,Math.min(LMAX,room));
+    const Lraw=S.F*kp,Lx=Math.min(Lraw,maxF),cutF=Lraw>maxF;
+    if(S.mode==='push'){HIT.tail=[fpx[0]-Lx,fpx[1]];HIT.tip=[fpx[0],fpx[1]];vec(ctx,fpx[0]-Lx,fpx[1],Lx,0,C.F,'F','',N(S.F),{cut:cutF,pos:g.axle?'mid':null});}
+    else{HIT.tail=[fpx[0],fpx[1]];HIT.tip=[fpx[0]+Lx,fpx[1]];vec(ctx,fpx[0],fpx[1],Lx,0,C.F,'F','',N(S.F),{cut:cutF,pos:g.axle?'mid':null});}
+  }
+  if(f&&!torq){
+    if(showV('N1')&&f.N1>1e-6)vec(ctx,cpx[0],gY,0,-f.N1*kp,C.N1,'N','1',N(f.N1),{maxL:LMAX,pos:'l'});
+    if(showV('N2')&&Math.abs(f.N2)>1e-6)vec(ctx,Pp[0],Pp[1],f.n.x*f.N2*kp,-f.n.y*f.N2*kp,C.N2,'N','2',N(f.N2),{maxL:LMAX});
+    if(showV('T')&&Math.abs(f.Tf)>1e-6)vec(ctx,Pp[0],Pp[1],f.t.x*f.Tf*kp,-f.t.y*f.Tf*kp,C.T,'T','',N(Math.abs(f.Tf)),{maxL:LMAX});
+    if(showV('Q'))vec(ctx,Pp[0],Pp[1],f.Q.x*kp,-f.Q.y*kp,C.Q,'Q','',N(Math.hypot(f.Q.x,f.Q.y)),{maxL:LMAX,dash:true});
+  }
+  HIT.fp=fpx;
+  /* προβολή ροπών: τόξα ως προς Γ */
+  if(torq&&f){
+    const tp=torqueParts(g,f.th,CUR.rotOff,S.F);
+    const e1=torqueArc(ctx,Pp[0],Pp[1],34,-2.5,-0.75,false,C.F,2.6*lw);
+    const e2=torqueArc(ctx,Pp[0],Pp[1],52,-0.75,-2.5,true,C.w,2.6*lw);
+    lab(ctx,e1[0]+8,e1[1]-4,'Στ','F',S.show.vals?' = '+fmt(tp.tF,1)+' N·m':'',C.F,'left',S.fs);
+    lab(ctx,e2[0]-8,e2[1]-6,'Στ','w',S.show.vals?' = '+fmt(tp.tW,1)+' N·m':'',C.w,'right',S.fs);
+  }
+  /* κλίμακες */
+  if(showV('w')||showV('F')){
+    const nv=niceStep(70/kp),Lb=nv*kp,bx=14,by=h-16;
+    ctx.save();ctx.strokeStyle=C.dim;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Lb,by);ctx.moveTo(bx,by-4);ctx.lineTo(bx,by+4);ctx.moveTo(bx+Lb,by-4);ctx.lineTo(bx+Lb,by+4);ctx.stroke();ctx.restore();
+    txt(ctx,fmt(nv,nv<1?1:0)+' N',bx+Lb+8,by,C.dim,'left',S.fs-2,600);
+  }
+  { const lenM=niceStep(60/sc),Lb=lenM*sc,bx=w-14-Lb,by=h-16;
+    ctx.save();ctx.strokeStyle=C.dim;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+Lb,by);ctx.moveTo(bx,by-4);ctx.lineTo(bx,by+4);ctx.moveTo(bx+Lb,by-4);ctx.lineTo(bx+Lb,by+4);ctx.stroke();ctx.restore();
+    txt(ctx,lenM>=1?fmt(lenM,0)+' m':fmt(lenM*100,lenM*100<1?1:0)+' cm',bx-8,by,C.dim,'right',S.fs-2,600); }
+  if(cutAny)txt(ctx,'// = κομμένο διάνυσμα, η τιμή του γράφεται κανονικά',w/2,h-34,C.dim,'center',S.fs-2,600);
+}
+
+/* ---------- διαγράμματα ---------- */
+const CH={
+  fy:{main:'F',sub:'όρ',par:'(y_F)',unit:'N',col:'F',xl:'y_F (cm)',kind:'yF',
+    cfg:()=>({x0:0,x1:2*S.Rcm,mark:G.yF*100,safe:x=>x/100>G.h+1e-9,
+      ser:[{nm:['F','όρ'],col:'F',lw:2.3,f:x=>{const v=fminAt(G,G.h,x/100);return v>10*G.W?NaN:v;}},
+           {nm:['F',''],col:'w',lw:1.2,dash:[4,3],f:()=>S.F}]})},
+  fh:{main:'F',sub:'όρ',par:'(h)',unit:'N',col:'F',xl:'h (cm)',kind:'h',
+    cfg:()=>({x0:0,x1:S.Rcm,mark:G.h*100,safe:x=>x/100<G.yF-1e-9,
+      ser:[{nm:['F','όρ'],col:'F',lw:2.3,f:x=>{const v=fminAt(G,x/100,G.yF);return v>10*G.W?NaN:v;}},
+           {nm:['F',''],col:'w',lw:1.2,dash:[4,3],f:()=>S.F}]})},
+  nf:{main:'N',sub:'',par:'(F)',unit:'N',col:'N2',xl:'F (N)',kind:'F',
+    cfg:()=>({x0:0,x1:isFinite(G.Fmin)?1.4*G.Fmin:2*G.W,mark:S.F,safe:()=>true,
+      ser:[{nm:['N','1'],col:'N1',lw:2.3,f:x=>restForces(G,x).N1},
+           {nm:['N','2'],col:'N2',lw:2.3,f:x=>restForces(G,x).N2}]})},
+  tau:{main:'Στ',sub:'',par:'(φ)',unit:'N·m',col:'F',xl:'γωνία ανύψωσης φ (°)',kind:'phi',
+    cfg:()=>({x0:0,x1:G.theta0*DEG,mark:(liftAngle(CUR)||0)*DEG,safe:()=>true,
+      ser:[{nm:['Στ','F'],col:'F',lw:2.3,f:x=>torqueParts(G,G.theta0-x/DEG,0,S.F).tF},
+           {nm:['Στ','w'],col:'w',lw:2.3,f:x=>torqueParts(G,G.theta0-x/DEG,0,S.F).tW}]})}
+};
+function ticks(a,b,n){
+  const span=(b-a)||1,raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),nm=raw/mag,st=(nm<1.5?1:nm<3?2:nm<7?5:10)*mag,out=[];
+  for(let v=Math.ceil(a/st-1e-9)*st;v<=b+1e-9;v+=st)out.push(Math.abs(v)<1e-12?0:v);
+  return {out,dec:Math.max(0,-Math.floor(Math.log10(st)))};
+}
+function drawChart(cv,def){const sv={};for(const k in CP){sv[k]=C[k];C[k]=CP[k];}try{drawChart0(cv,def);}finally{Object.assign(C,sv);}}
+function drawChart0(cv,def){
+  const {w,h,ctx}=fit(cv);if(!w||!h)return;
+  ctx.fillStyle=C.stage;ctx.fillRect(0,0,w,h);
+  const cfg=def.cfg(),L=50,Rr=10,T=40,B=36,pw=w-L-Rr,ph=h-T-B,N=120;
+  cv._m={L,Rr,x0:cfg.x0,x1:cfg.x1};
+  const xs=Array.from({length:N+1},(_,i)=>cfg.x0+(cfg.x1-cfg.x0)*i/N);
+  const ser=cfg.ser.map(s=>({s,vals:xs.map(x=>s.f(x))}));
+  let mn=0,mx=0;ser.forEach(q=>q.vals.forEach(v=>{if(isFinite(v)){mn=Math.min(mn,v);mx=Math.max(mx,v);}}));
+  if(mx-mn<1e-9)mx=mn+1;const pad=(mx-mn)*0.07;if(mx>0)mx+=pad;if(mn<0)mn-=pad;
+  const XX=x=>L+(x-cfg.x0)/(cfg.x1-cfg.x0)*pw,YY=v=>T+ph-(v-mn)/(mx-mn)*ph;
+  const hx=pw/N/2+0.5;ctx.fillStyle=C.danger;ctx.globalAlpha=.16;
+  xs.forEach(x=>{if(!cfg.safe(x))ctx.fillRect(XX(x)-hx,T,2*hx,ph);});ctx.globalAlpha=1;
+  const ty=ticks(mn,mx,3);
+  ctx.font=`500 10px ${MONO}`;ctx.textBaseline='middle';ctx.textAlign='right';
+  ty.out.forEach(v=>{const y=YY(v);ctx.strokeStyle=v===0?C.gridS:C.grid;ctx.lineWidth=v===0?1.2:1;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,ty.dec),L-5,y);});
+  const tx=ticks(cfg.x0,cfg.x1,4);ctx.textAlign='center';ctx.textBaseline='top';
+  tx.out.forEach(v=>{const x=XX(v);ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.fillStyle=C.dim;ctx.fillText(fmt(v,tx.dec),x,T+ph+4);});
+  ser.forEach(q=>{
+    ctx.beginPath();let pen=false;
+    q.vals.forEach((v,j)=>{if(!isFinite(v)){pen=false;return;}const x=XX(xs[j]),y=YY(v);if(pen)ctx.lineTo(x,y);else{ctx.moveTo(x,y);pen=true;}});
+    ctx.strokeStyle=C[q.s.col];ctx.lineWidth=q.s.lw;ctx.setLineDash(q.s.dash||[]);ctx.lineJoin='round';ctx.stroke();ctx.setLineDash([]);
+  });
+  const mxp=XX(clamp(cfg.mark,cfg.x0,cfg.x1));
+  ctx.strokeStyle=C.accent;ctx.lineWidth=1.3;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(mxp,T);ctx.lineTo(mxp,T+ph);ctx.stroke();ctx.setLineDash([]);
+  ser.forEach(q=>{const v=q.s.f(clamp(cfg.mark,cfg.x0,cfg.x1));if(!isFinite(v))return;ctx.fillStyle=C[q.s.col];ctx.strokeStyle=C.stage;ctx.lineWidth=2;ctx.beginPath();ctx.arc(mxp,YY(v),q.s.dash?3:4,0,TAU);ctx.fill();ctx.stroke();});
+  const par=def.par.replace('y_F','yF');
+  lab(ctx,8,12,def.main,def.sub,par+(def.unit?'  ['+def.unit+']':''),C[def.col],'left',12);
+  let lx=8;
+  cfg.ser.forEach(s=>{lab(ctx,lx,28,s.nm[0],s.nm[1],'',C[s.col],'left',11);ctx.font=`italic 600 12px ${FONT}`;lx+=ctx.measureText(s.nm[0]).width+(s.nm[1]?18:0)+16;});
+  ctx.font=`500 10px ${MONO}`;ctx.fillStyle=C.dim;ctx.textAlign='right';ctx.textBaseline='bottom';ctx.fillText(def.xl.replace('y_F','yF'),w-4,h-3);
+}
+function buildChartCells(){
+  const box=$('#charts');box.innerHTML='';
+  Object.keys(CH).filter(k=>S.charts[k]).forEach(k=>{
+    const c=el('div','cell'),cv=el('canvas');cv.dataset.k=k;cv.setAttribute('aria-label','Διάγραμμα '+CH[k].main+' '+CH[k].par.replace('y_F','yF'));c.appendChild(cv);box.appendChild(c);
+    let down=false;
+    const seek=e=>{
+      const m=cv._m;if(!m)return;const r=cv.getBoundingClientRect(),fr=clamp((e.clientX-r.left-m.L)/(r.width-m.L-m.Rr),0,1),x=m.x0+fr*(m.x1-m.x0);
+      const kind=CH[k].kind;
+      if(kind==='yF'){const yr=x/S.Rcm;if(Math.abs(yr-1)<0.03){S.attach='axle';S.yFcm=S.Rcm;}else{S.attach='rim';S.yFcm=Math.round(x*2)/2;}touch();}
+      else if(kind==='h'){S.hcm=clamp(Math.round(x*2)/2,1,S.Rcm);touch();}
+      else if(kind==='F'){S.F=Math.max(0,Math.round(x));touch();}
+      else if(kind==='phi'){
+        const ph=x/DEG;let hit=null;
+        for(const q of TR.fr){const a=liftAngle(q);if(a!=null&&a>=ph-1e-9){hit=q;break;}}
+        if(hit){S.t=hit.t;S.playing=false;updatePlay();}
+      }
+      refreshAll();dirty=true;
+    };
+    cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture(e.pointerId);seek(e);});
+    cv.addEventListener('pointermove',e=>{if(down)seek(e);});
+    cv.addEventListener('pointerup',()=>down=false);cv.addEventListener('pointercancel',()=>down=false);
+  });
+  dirty=true;
+}
+function buildChartChips(){
+  const box=$('#gchips');box.innerHTML='';
+  const names={fy:'<em>F</em><sub>όρ</sub>(<em>y</em><sub>F</sub>)',fh:'<em>F</em><sub>όρ</sub>(<em>h</em>)',nf:'<em>N</em>(<em>F</em>)',tau:'Στ(<em>φ</em>)'};
+  Object.keys(CH).forEach(k=>{
+    const b=el('button','chip'+(S.charts[k]?' on':''),`<i class="d"></i><span>${names[k]}</span>`);
+    b.type='button';b.style.setProperty('--cc',`var(${CSSV[CH[k].col]})`);
+    b.addEventListener('click',()=>{S.charts[k]=S.charts[k]?0:1;b.classList.toggle('on',!!S.charts[k]);buildChartCells();});
+    box.appendChild(b);
+  });
+}
+
+/* ---------- ανάλυση, κατάσταση, πίνακας ---------- */
+let lastRole='',lastLG='',lastRO='',lastST='',lastSolve='';
+function roleHTML(){
+  const g=G,f=PS.f,rows=[];
+  const col=k=>`var(${CSSV[k]})`;
+  const row=(k,sym,sb,desc,badge,cls,tot)=>`<div class="rrow${tot?' tot':''}"><span class="rsym" style="color:${col(k)}"><i>${sym}</i>${sb?'<sub>'+sb+'</sub>':''}</span><span class="rdesc">${desc}</span><span class="badge ${cls}">${badge}</span></div>`;
+  const N=x=>`<b>${fmt(x,1)} N</b>`;
+  const rest=CUR.phase==='rest'&&(!f||f.T<=1e-9);
+  rows.push(row('w','w','',`Βάρος ${N(g.W)} (<i>w</i> = <i>m</i>·<i>g</i>), κατακόρυφα προς τα κάτω από το κέντρο Κ. Η ροπή του ως προς τη γωνία Γ είναι <i>w</i>·<i>d</i> με μοχλοβραχίονα <i>d</i> = ${fmt(g.d*100,1)} cm και προσπαθεί να κρατήσει τον τροχό κάτω.`,'ΚΡΑΤΑ ΤΟΝ ΤΡΟΧΟ','neg'));
+  rows.push(row('F','F','',`Οριζόντια δύναμη ${N(S.F)} σε ύψος <i>y</i><sub>F</sub> = ${fmt(g.yF*100,1)} cm. Μοχλοβραχίονας ως προς Γ: <i>b</i> = <i>y</i><sub>F</sub> − <i>h</i> = ${fmt(g.b*100,1)} cm, ροπή <i>F</i>·<i>b</i>.`,g.b<=1e-9?'ΔΕΝ ΑΝΥΨΩΝΕΙ':S.F>g.Fmin?'ΑΝΥΨΩΝΕΙ':'ΔΕΝ ΑΡΚΕΙ',g.b<=1e-9?'neg':S.F>g.Fmin?'yes':'neg'));
+  if(f){
+    rows.push(row('N1','N','1',`Αντίδραση του λείου δαπέδου, κάθετη προς τα πάνω: ${N(f.N1)}. ${f.N1>1e-6?'Μικραίνει καθώς μεγαλώνει η <i>F</i>: <i>N</i><sub>1</sub> = <i>w</i> − <i>F</i>·<i>b</i>/<i>d</i>.':'Έχει μηδενιστεί: ο τροχός ξεκόλλησε από το δάπεδο.'}`,f.N1>1e-6?'ΣΕ ΕΠΑΦΗ':'ΜΗΔΕΝ',f.N1>1e-6?'part':'neg'));
+    rows.push(row('N2','N','2',`Κάθετη δύναμη της γωνίας, κατά τη διεύθυνση ΓΚ: ${N(f.N2)}. Περνά από το Γ, άρα δεν έχει ροπή ως προς αυτό.`,f.N2>1e-6?'ΣΕ ΕΠΑΦΗ':'ΧΑΝΕΤΑΙ Η ΕΠΑΦΗ',f.N2>1e-6?'part':'neg'));
+    rows.push(row('T','T','',`Τριβή στη γωνία, εφαπτομενική: ${N(Math.abs(f.Tf))}. ${f.N2>1e-6?'Για να μην ολισθαίνει ο τροχός χρειάζεται συντελεστής τριβής μ ≥ <i>T</i>/<i>N</i><sub>2</sub> = <b>'+fmt(Math.abs(f.Tf)/f.N2,2)+'</b>.':''}`,'ΑΠΟ ΤΗ ΓΩΝΙΑ','part'));
+    rows.push(row('Q','Q','',`Ολική δύναμη της γωνίας (<i>N</i><sub>2</sub> και <i>T</i> μαζί): ${N(Math.hypot(f.Q.x,f.Q.y))}. Περνά από το Γ.`,rest?'ΙΣΟΡΡΟΠΙΑ':'ΣΥΝΙΣΤΑΜΕΝΗ','part',true));
+  }else{
+    rows.push(row('N2','N','2',`Ο τροχός δεν ακουμπά πια στη γωνία (<i>N</i><sub>2</sub> = 0) ούτε στο δάπεδο. Δέχεται μόνο το βάρος και την <i>F</i>.`,'ΕΛΕΥΘΕΡΗ ΚΙΝΗΣΗ','neg',true));
+  }
+  return rows.join('');
+}
+function solveHTML(){
+  const g=G,m3=x=>fmt(x,3),f1=x=>fmt(x,1),L=[];
+  L.push('<b>1. Γεωμετρία της επαφής</b>');
+  L.push(`d = √(2Rh − h²) = √(2·${m3(g.R)}·${m3(g.h)} − ${m3(g.h)}²) = ${m3(g.d)} m`);
+  L.push(`ημθ₀ = d/R ⇒ θ₀ = ${f1(g.theta0*DEG)}°`);
+  L.push('');
+  L.push('<b>2. Όριο ανάβασης (N₁ = 0)</b>');
+  L.push('Στ(Γ) = 0 ⇒ F·(yF − h) = w·d');
+  if(g.b>1e-9)L.push(`Fόρ = w·d/(yF − h) = ${f1(g.W)}·${m3(g.d)}/(${m3(g.yF)} − ${m3(g.h)}) = <b>${f1(g.Fmin)} N</b>`);
+  else L.push(`yF = ${m3(g.yF)} m ≤ h = ${m3(g.h)} m ⇒ η F δεν έχει ροπή ανύψωσης, Fόρ → ∞`);
+  L.push('');
+  L.push('<b>3. Με τις τρέχουσες τιμές</b>');
+  if(g.b>1e-9&&S.F<g.Fmin){L.push(`F = ${f1(S.F)} N < Fόρ ⇒ ισορροπία`);L.push(`N₁ = w − F·(yF − h)/d = ${f1(g.W-S.F*g.b/g.d)} N`);}
+  else if(g.b>1e-9){L.push(`F = ${f1(S.F)} N ≥ Fόρ ⇒ N₁ = 0 και ο τροχός στρέφεται γύρω από το Γ`);L.push(`I(Γ) = I(Κ) + mR² = ${m3(g.Ip)} kg·m²`);L.push(`α(0) = [F·(yF − h) − w·d]/I(Γ) = ${fmt(torqueP(g,g.theta0,0,S.F)/g.Ip,2)} rad/s²`);}
+  else L.push(`N₁ = w + F·(h − yF)/d = ${f1(g.W+S.F*(-g.b)/g.d)} N`);
+  return L.join('\n');
+}
+function updateRole(){
+  const h=roleHTML();if(h!==lastRole){$('#roleBox').innerHTML=h;lastRole=h;}
+  const t='Οι δυνάμεις N₂, T και Q περνούν από τη γωνία Γ, γι\' αυτό δεν έχουν ροπή ως προς αυτήν. Μόνο το βάρος και η F δημιουργούν ροπές ως προς Γ.';
+  if($('#roleHint').textContent!==t)$('#roleHint').textContent=t;
+  const sv=solveHTML();if(sv!==lastSolve){$('#solveBox').innerHTML=sv;lastSolve=sv;}
+}
+function updateStatus(){
+  const st=$('#status');let t,cls='ok';
+  if(CUR.phase==='done')t=CUR.note==='top'?'Ο ΤΡΟΧΟΣ ΑΝΕΒΗΚΕ ΣΤΟ ΣΚΑΛΟΠΑΤΙ':'ΧΑΘΗΚΕ Η ΕΠΑΦΗ ΜΕ ΤΗ ΓΩΝΙΑ · ΠΡΟΣΓΕΙΩΣΗ ΣΤΟ ΣΚΑΛΟΠΑΤΙ';
+  else if(CUR.phase==='fell'){t='Ο ΤΡΟΧΟΣ ΕΠΕΣΕ ΠΙΣΩ ΣΤΟ ΔΑΠΕΔΟ';cls='bad';}
+  else if(CUR.phase==='flight')t='N₂ = 0 · Ο ΤΡΟΧΟΣ ΧΑΝΕΙ ΤΗΝ ΕΠΑΦΗ ΜΕ ΤΗ ΓΩΝΙΑ';
+  else if(CUR.phase==='lift')t='ΣΤΡΕΦΕΤΑΙ ΓΥΡΩ ΑΠΟ ΤΗ ΓΩΝΙΑ Γ · N₁ = 0';
+  else if(G.b<=1e-9){t='Η F ΔΕΝ ΜΠΟΡΕΙ ΝΑ ΑΝΕΒΑΣΕΙ ΤΟΝ ΤΡΟΧΟ · ΕΙΝΑΙ ΧΑΜΗΛΑ';cls='bad';}
+  else if(!TR.idle)t='Η ΡΟΠΗ ΤΗΣ F ΞΕΠΕΡΝΑ ΤΗΝ ΡΟΠΗ ΤΟΥ ΒΑΡΟΥΣ · ΠΑΤΑ ΕΚΚΙΝΗΣΗ';
+  else t='ΙΣΟΡΡΟΠΙΑ · Η ΡΟΠΗ ΤΟΥ ΒΑΡΟΥΣ ΥΠΕΡΙΣΧΥΕΙ';
+  const k=cls+t;if(k!==lastST){st.textContent=t;st.className=cls;lastST=k;}
+}
+function updateLegend(){
+  const lg=$('#legend');
+  if(!S.rdv){if(!lg.hidden)lg.hidden=true;return;}
+  const f=PS.f,r=(c,m,s,v)=>`<div style="color:var(${CSSV[c]})"><i>${m}</i>${s?'<sub>'+s+'</sub>':''} = ${v}</div>`;
+  const N=x=>fmt(x,1)+' N';
+  let html=`<div class="lgh">${S.kind==='disc'?'Δίσκος':'Στεφάνι'} · <i>R</i> = ${fmt(S.Rcm,1)} cm · <i>h</i> = ${fmt(S.hcm,1)} cm</div>`+r('w','w','',N(G.W))+r('F','F','',N(S.F));
+  if(f)html+=r('N1','N','1',N(f.N1))+r('N2','N','2',N(f.N2))+r('T','T','',N(Math.abs(f.Tf)));
+  if(html!==lastLG){lg.innerHTML=html;lastLG=html;}
+  if(lg.hidden)lg.hidden=false;
+}
+function tile(sym,name,val,col){
+  const V={'t':1,'w':1,'F':1,'F<sub>όρ</sub>':1,'N<sub>1</sub>':1,'N<sub>2</sub>':1,'T':1};
+  if(!S.tblAll&&!V[sym])return '';
+  return `<div class="readout"><div class="lbl">${UP(name)} <span class="lbl-sym">${sym}</span></div><div class="val mono"${col?` style="color:var(${col})"`:''}>${val}</div></div>`;
+}
+function updateTable(){
+  const box=$('#readouts');box.hidden=!S.table;if(!S.table)return;
+  const f=PS.f,g=G,dash='—',N=x=>fmt(x,1)+' N';
+  const tp=f?torqueParts(g,f.th,CUR.rotOff,S.F):null,ang=liftAngle(CUR);
+  const h=tile('t','Χρόνος',fmt(S.t,2)+' s')+
+    tile('w','Βάρος',N(g.W),CSSV.w)+tile('F','Δύναμη',N(S.F),CSSV.F)+
+    tile('F<sub>όρ</sub>','Ελάχιστη δύναμη ανάβασης',isFinite(g.Fmin)?N(g.Fmin):'δεν υπάρχει',CSSV.F)+
+    tile('N<sub>1</sub>','Αντίδραση δαπέδου',f?N(f.N1):dash,CSSV.N1)+tile('N<sub>2</sub>','Κάθετη δύναμη γωνίας',f?N(f.N2):dash,CSSV.N2)+
+    tile('T','Τριβή γωνίας',f?N(Math.abs(f.Tf)):dash,CSSV.T)+
+    tile('Q','Ολική δύναμη γωνίας',f?N(Math.hypot(f.Q.x,f.Q.y)):dash,CSSV.Q)+
+    tile('μ','Απαιτούμενος συντελεστής τριβής',f&&f.N2>1e-6?fmt(Math.abs(f.Tf)/f.N2,2):dash,CSSV.T)+
+    tile('d','Μοχλοβραχίονας του βάρους',f?fmt(g.R*Math.sin(f.th)*100,1)+' cm':fmt(g.d*100,1)+' cm',CSSV.w)+
+    tile('b','Μοχλοβραχίονας της F',fmt((PS.fp.y-g.h)*100,1)+' cm',CSSV.F)+
+    tile('Στ<sub>F</sub>','Ροπή της F ως προς Γ',tp?fmt(tp.tF,1)+' N·m':dash,CSSV.F)+tile('Στ<sub>w</sub>','Ροπή του βάρους ως προς Γ',tp?fmt(tp.tW,1)+' N·m':dash,CSSV.w)+
+    tile('φ','Γωνία ανύψωσης',ang!=null?fmt(ang*DEG,1)+'°':dash)+tile('ω','Γωνιακή ταχύτητα',fmt(CUR.om,2)+' rad/s')+
+    tile('y<sub>F</sub>','Ύψος εφαρμογής της F',fmt(g.yF*100,1)+' cm',CSSV.F)+tile('h','Ύψος σκαλοπατιού',fmt(g.h*100,1)+' cm')+tile('R','Ακτίνα',fmt(g.R*100,1)+' cm')+
+    tile('m','Μάζα',fmt(g.m,1)+' kg')+tile('I<sub>Κ</sub>','Ροπή αδράνειας ως προς Κ',fmt(g.Ic,3)+' kg·m²')+tile('I<sub>Γ</sub>','Ροπή αδράνειας ως προς Γ',fmt(g.Ip,3)+' kg·m²');
+  if(h!==lastRO){box.innerHTML=h;lastRO=h;}
+}
+function updateTime(){
+  $('#tOut').textContent='t = '+fmt(S.t)+' s';
+  const sc=$('#sl_time');if(+sc.max!==S.tmax)sc.max=S.tmax;if(document.activeElement!==sc)sc.value=S.t;
+}
+function render(){
+  LBF++;
+  if(scaleDirty)recompute();
+  CUR=frameAt(TR,S.t);PS=pose(G,CUR,S.F);
+  updateTime();updateStatus();updateRole();updateLegend();updateTable();
+  drawMain();
+  $$('#charts canvas').forEach(cv=>{const d=CH[cv.dataset.k];if(d)drawChart(cv,d);});
+}
+
+/* ---------- ήχος: «μπιπ» στην ξεκόλληση, στην απώλεια επαφής και στο τέλος ---------- */
+const AU={ctx:null,on:true};
+function audioInit(){
+  if(AU.ctx){try{AU.ctx.resume();}catch(e){}return;}
+  try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;AU.ctx=new Ctx();AU.ctx.resume();}catch(e){AU.ctx=null;}
+}
+function blip(f,d){
+  if(!AU.ctx||!AU.on)return;
+  try{const c=AU.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.18,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.18));
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+(d||0.18)+0.02);}catch(e){}
+}
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(S.playing){
+    const prevT=S.t;S.t+=dt*S.speed;const ev=TR.ev;
+    if(ev.lift!=null&&prevT<ev.lift&&S.t>=ev.lift)blip(520,0.14);
+    if(ev.flight!=null&&prevT<ev.flight&&S.t>=ev.flight)blip(330,0.2);
+    if(ev.end!=null&&prevT<ev.end&&S.t>=ev.end)blip(880,0.3);
+    if(S.t>=S.tmax){if(S.loop)S.t=0;else{S.t=S.tmax;S.playing=false;updatePlay();}}
+    dirty=true;
+  }
+  if(dirty){dirty=false;render();}
+  requestAnimationFrame(frame);
+}
+function updatePlay(){
+  const b=$('#playBtn');b.textContent=S.playing?'⏸ Παύση':'▶ Εκκίνηση';
+  b.setAttribute('aria-label',S.playing?'Παύση':'Εκκίνηση');
+}
+
+/* ---------- πεδία ρυθμίσεων (ελεύθερη πληκτρολόγηση τιμών) ---------- */
+const syncs=[];
+const r3=v=>Number((+v).toFixed(3));
+function field(parent,c){
+  const f=el('div','field');
+  f.innerHTML=`<label for="${c.id}-n"><span class="name">${c.name}${c.sym?` <span class="fsym">${c.sym}</span>`:''}</span></label>`+
+    `<div class="inputs"><input type="range" id="${c.id}-r" min="${c.min}" max="${typeof c.max==='function'?c.max():c.max}" step="${c.step}" aria-label="${c.name}">`+
+    `<input type="number" id="${c.id}-n" step="any" aria-label="${c.name} (τιμή)"><span class="unit">${c.unit||''}</span></div>`;
+  const r=$('input[type=range]',f),n=$('input[type=number]',f);
+  const sync=()=>{if(typeof c.max==='function')r.max=c.max();r.value=c.get();if(document.activeElement!==n)n.value=r3(c.get());};
+  r.addEventListener('input',()=>{c.set(+r.value);n.value=r3(r.value);dirty=true;refreshAll();});
+  n.addEventListener('input',()=>{const v=parseFloat(String(n.value).replace(',','.'));if(isFinite(v)){c.set(v);r.value=v;dirty=true;refreshOthers(sync);}});
+  n.addEventListener('blur',sync);
+  parent.appendChild(f);sync();syncs.push(sync);return sync;
+}
+const refreshAll=()=>syncs.forEach(f=>f());
+const refreshOthers=me=>syncs.forEach(f=>{if(f!==me)f();});
+function segField(parent,c){
+  const box=el('div','solver-toggle');box.id=c.id;
+  c.opts.forEach(([v,t])=>{const b=el('button','',t);b.type='button';b.dataset.val=v;b.addEventListener('click',()=>{c.set(v);refreshAll();dirty=true;});box.appendChild(b);});
+  const sync=()=>$$('button',box).forEach(b=>b.classList.toggle('active',b.dataset.val===String(c.get())));
+  parent.appendChild(box);sync();syncs.push(sync);
+}
+function mkTab(){const p=el('div','panel');const b=el('div','panel-body');p.appendChild(b);return {p,b};}
+const touch=()=>{S.t=0;scaleDirty=true;dirty=true;};
+function buildSettings(b){
+  const grp=t=>b.appendChild(el('div','sgroup',UP(t)));
+  const qb=(row,t,fn)=>{const x=el('button','btn secondary small',t);x.type='button';x.addEventListener('click',()=>{fn();touch();refreshAll();});row.appendChild(x);};
+  grp('Τροχός');
+  segField(b,{id:'sg-kind',opts:[['disc','Δίσκος · I = ½mR²'],['ring','Στεφάνι · I = mR²']],get:()=>S.kind,set:v=>{S.kind=v;touch();}});
+  field(b,{id:'c-R',name:'Ακτίνα τροχού',sym:'<i>R</i>',unit:'cm',min:10,max:100,step:1,get:()=>S.Rcm,set:v=>{S.Rcm=clamp(v,1,1000);S.hcm=Math.min(S.hcm,S.Rcm);touch();}});
+  field(b,{id:'c-m',name:'Μάζα τροχού',sym:'<i>m</i>',unit:'kg',min:1,max:200,step:0.5,get:()=>S.m,set:v=>{S.m=clamp(v,0.01,100000);touch();}});
+  field(b,{id:'c-g',name:'Επιτάχυνση βαρύτητας',sym:'<i>g</i>',unit:'m/s²',min:1,max:25,step:0.1,get:()=>S.g,set:v=>{S.g=clamp(v,0.1,100);touch();}});
+  grp('Σκαλοπάτι');
+  field(b,{id:'c-h',name:'Ύψος σκαλοπατιού',sym:'<i>h</i>',unit:'cm',min:1,max:()=>S.Rcm,step:0.5,get:()=>S.hcm,set:v=>{S.hcm=clamp(v,0.1,S.Rcm);touch();}});
+  b.appendChild(el('div','hintline','Το ύψος μπορεί να φτάσει το πολύ την ακτίνα R. Για μεγαλύτερο ύψος ο τροχός θα ακουμπούσε στην κατακόρυφη επιφάνεια και όχι στη γωνία.'));
+  grp('Δύναμη F');
+  segField(b,{id:'sg-mode',opts:[['push','Ώθηση (από αριστερά)'],['pull','Έλξη (από δεξιά)']],get:()=>S.mode,set:v=>{S.mode=v;touch();}});
+  field(b,{id:'c-F',name:'Τιμή δύναμης',sym:'<i>F</i>',unit:'N',min:0,max:()=>Math.max(500,niceCeil(3*S.m*S.g)),step:1,get:()=>S.F,set:v=>{S.F=clamp(v,0,1e7);touch();}});
+  segField(b,{id:'sg-att',opts:[['rim','Στην περιφέρεια'],['axle','Στο κέντρο (άξονας)']],get:()=>S.attach,set:v=>{S.attach=v;touch();}});
+  field(b,{id:'c-yF',name:'Ύψος εφαρμογής από το δάπεδο',sym:'<i>y</i><sub>F</sub>',unit:'cm',min:0,max:()=>2*S.Rcm,step:0.5,get:()=>GEO().yF*100,set:v=>{S.yFcm=clamp(v,0,2*S.Rcm);S.attach='rim';touch();}});
+  const r1=el('div','addrow');r1.style.margin='-4px 0 8px';
+  qb(r1,'Στο κέντρο',()=>{S.attach='axle';S.yFcm=S.Rcm;});
+  qb(r1,'Στην κορυφή',()=>{S.attach='rim';S.yFcm=2*S.Rcm;});
+  qb(r1,'Στο ύψος της γωνίας',()=>{S.attach='rim';S.yFcm=S.hcm;});
+  b.appendChild(r1);
+  const r2=el('div','addrow');r2.style.margin='0 0 8px';
+  [['F = 0,95 Fόρ',0.95],['F = 1,05 Fόρ',1.05],['F = 1,5 Fόρ',1.5]].forEach(([t,k])=>qb(r2,t,()=>{const fm=GEO().Fmin;if(isFinite(fm))S.F=Math.round(fm*k*10)/10;}));
+  b.appendChild(r2);
+  b.appendChild(el('div','hintline','Τα κουμπιά «F = … Fόρ» βάζουν τη δύναμη ως ποσοστό της ελάχιστης δύναμης ανάβασης.'));
+}
+function buildToggles(b){
+  const vt=el('div','vector-toggles');b.appendChild(vt);
+  const mk=(row,k,t,cv)=>{
+    const l=el('label','',`<input type="checkbox" id="sh-${k}"${S.show[k]?' checked':''}><span class="swatch" style="background:${cv?`var(${CSSV[cv]})`:'var(--textDim)'}"></span>${t}`);
+    $('input',l).addEventListener('change',e=>{S.show[k]=e.target.checked;if(k==='values'){S.rdv=e.target.checked;lastLG='';}dirty=true;});row.appendChild(l);
+  };
+  const R1=el('div','row',`<span class="grp">${UP('Δυνάμεις')}</span>`);vt.appendChild(R1);
+  mk(R1,'w','Βάρος <i>w</i>','w');mk(R1,'F','Δύναμη <i>F</i>','F');mk(R1,'N1','Δάπεδο <i>N</i><sub>1</sub>','N1');
+  mk(R1,'N2','Γωνία, κάθετη <i>N</i><sub>2</sub>','N2');mk(R1,'T','Γωνία, τριβή <i>T</i>','T');mk(R1,'Q','Γωνία, ολική <i>Q</i>','Q');
+  vt.appendChild(el('div','sep'));
+  const R2=el('div','row',`<span class="grp">${UP('Ροπές')}</span>`);vt.appendChild(R2);
+  mk(R2,'arms','Μοχλοβραχίονες <i>d</i> και <i>b</i> ως προς Γ','arm');mk(R2,'line','Φορέας της <i>F</i>','F');
+  vt.appendChild(el('div','sep'));
+  const R3=el('div','row',`<span class="grp">${UP('Εμφάνιση')}</span>`);vt.appendChild(R3);
+  mk(R3,'dims','Διαστάσεις <i>h</i> και <i>R</i>',null);mk(R3,'trail','Ίχνος του κέντρου',null);mk(R3,'grid','Κάνναβος',null);
+  mk(R3,'labels','Σύμβολα στο σχήμα',null);mk(R3,'vals','Τιμές δίπλα στα διανύσματα και στις διαστάσεις',null);
+  mk(R3,'values','Τιμές πάνω δεξιά στο παράθυρο',null);
+}
+function buildView(b){
+  field(b,{id:'c-lw',name:'Πάχος διανυσμάτων',sym:'×',unit:'',min:0.5,max:3,step:0.1,get:()=>S.lw,set:v=>{S.lw=clamp(v,0.1,20);}});
+  field(b,{id:'c-len',name:'Μήκος διανυσμάτων',sym:'×',unit:'',min:0.4,max:2.2,step:0.05,get:()=>S.len,set:v=>{S.len=clamp(v,0.1,10);}});
+  field(b,{id:'c-fs',name:'Μέγεθος γραμμάτων',sym:'',unit:'px',min:10,max:22,step:1,get:()=>S.fs,set:v=>{S.fs=clamp(v,6,60);}});
+}
+let NAVHINT=null;
+function buildPrefs(b){NAVHINT=NAVHINT||$('#navHint');
+  const row=el('div','row');row.style.cssText='margin-top:14px;gap:8px;flex-wrap:wrap;';
+  const sv=el('button','btn','💾 Αποθήκευση ρυθμίσεων'),rs=el('button','btn secondary','↺ Επαναφορά'),msg=el('span','');
+  sv.type=rs.type='button';msg.style.cssText='font-size:12px;opacity:.8;align-self:center;';
+  sv.title='Αποθηκεύει στον browser τις επιλογές της καρτέλας «Προβολή μεγεθών» και θα φορτώνονται την επόμενη φορά';
+  sv.addEventListener('click',()=>{try{localStorage.setItem(PREF_KEY,JSON.stringify({show:S.show,lw:S.lw,len:S.len,fs:S.fs,charts:S.charts}));msg.textContent='✓ Αποθηκεύτηκε';}catch(e){msg.textContent='Δεν ήταν δυνατή η αποθήκευση';}});
+  rs.addEventListener('click',()=>{try{localStorage.removeItem(PREF_KEY);}catch(e){}
+    const d=JSON.parse(DEF_PREFS);Object.assign(S.show,d.show);Object.assign(S.charts,d.charts);S.lw=d.lw;S.len=d.len;S.fs=d.fs;S.rdv=S.show.values;lastLG='';
+    b.innerHTML='';buildToggles(b);{const sp=el('div');sp.style.height='20px';b.appendChild(sp);}buildView(b);buildPrefs(b);b.appendChild(NAVHINT);
+    buildChartChips();buildChartCells();lastST='';dirty=true;});
+  row.append(sv,rs,msg);b.appendChild(row);
+}
+
+/* ---------- χειριστήρια ---------- */
+$('#playBtn').addEventListener('click',()=>{audioInit();if(!S.playing&&S.t>=S.tmax)S.t=0;S.playing=!S.playing;updatePlay();dirty=true;});
+$('#sndBtn').addEventListener('click',e=>{AU.on=!AU.on;if(AU.on)audioInit();e.currentTarget.textContent='🔊 Ήχος: '+(AU.on?'ναι':'όχι');e.currentTarget.classList.toggle('on',AU.on);e.currentTarget.setAttribute('aria-pressed',AU.on);});
+$('#resetBtn').addEventListener('click',()=>{S.t=0;S.playing=false;updatePlay();dirty=true;});
+$('#speedSel').addEventListener('change',e=>S.speed=+e.target.value);
+$('#sl_time').addEventListener('input',e=>{S.t=+e.target.value;S.playing=false;updatePlay();dirty=true;});
+$('#loopChk').addEventListener('change',e=>S.loop=e.target.checked);
+function setViewMode(v){
+  S.view=v;$$('#viewSeg button').forEach(b=>{b.classList.toggle('active',b.dataset.v===v);b.setAttribute('aria-selected',b.dataset.v===v);});lastST='';dirty=true;
+}
+$$('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setViewMode(b.dataset.v)));
+$('#camreset').addEventListener('click',()=>{S.Z=1;S.panX=0;S.panY=0;dirty=true;});
+{const sel=$('#skinSel');{const h=document.createElement('option');h.textContent='Skins';h.value='';h.hidden=true;sel.appendChild(h);}let g='',og=null;SKINS.forEach(k=>{if(!og||k[2]!==g){g=k[2];if(g){og=document.createElement('optgroup');og.label=g;sel.appendChild(og);}else og=sel;}const o=document.createElement('option');o.value=k[0];o.textContent=k[1];o.dataset.l=k[1];og.appendChild(o);});sel.addEventListener('change',()=>setSkin(sel.value));}
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.collapse-btn');
+  if(cb){const p=cb.closest('.panel');if(p.classList.contains('maxed'))return;const c=p.classList.toggle('collapsed');cb.classList.toggle('collapsed',c);cb.title=c?'Επαναφορά':'Ελαχιστοποίηση';dirty=true;setTimeout(()=>dirty=true,60);return;}
+  const mb=e.target.closest('[data-max]');
+  if(mb){
+    const p=mb.closest('.panel');p.classList.remove('collapsed');$$('.collapse-btn',p).forEach(c=>c.classList.remove('collapsed'));const on=p.classList.toggle('maxed');
+    $$('.panel.maxed').forEach(x=>{if(x!==p)x.classList.remove('maxed');});
+    document.body.classList.toggle('hasmax',on);
+    $$('[data-max]').forEach(x=>{const m=x.closest('.panel').classList.contains('maxed');x.title=m?'Επαναφορά μεγέθους':'Μεγιστοποίηση';x.setAttribute('aria-label',m?'Επαναφορά μεγέθους πάνελ':'Μεγιστοποίηση πάνελ');});
+    dirty=true;setTimeout(()=>dirty=true,50);
+  }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){const m=$('.panel.maxed');if(m){m.classList.remove('maxed');document.body.classList.remove('hasmax');dirty=true;}}
+  if(e.code==='Space'&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('#playBtn').click();}
+});
+
+/* ---------- σύρσιμο του σημείου εφαρμογής της F, μετατόπιση και ζουμ (ρόδα, δύο δάχτυλα) ---------- */
+{
+  const cv=$('#cv'),ptr=new Map();let mode=null,pinch=null,lastP=null;
+  const loc=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+  const hit=(px,py)=>{
+    if(!HIT.fp||CUR.phase!=='rest')return false;
+    if(Math.hypot(px-HIT.fp[0],py-HIT.fp[1])<=16)return true;
+    if(HIT.tail&&HIT.tip){const x0=Math.min(HIT.tail[0],HIT.tip[0]),x1=Math.max(HIT.tail[0],HIT.tip[0]);if(px>=x0&&px<=x1&&Math.abs(py-HIT.tail[1])<=10)return true;}
+    return false;
+  };
+  cv.addEventListener('pointerdown',e=>{
+    cv.setPointerCapture(e.pointerId);const p=loc(e);ptr.set(e.pointerId,p);
+    if(ptr.size===1){mode=hit(p[0],p[1])?'F':'pan';lastP=p;if(mode==='F')cv.style.cursor='grabbing';}
+    else if(ptr.size===2){mode='pinch';const a=[...ptr.values()];pinch={d:Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,z:S.Z,mx:(a[0][0]+a[1][0])/2,my:(a[0][1]+a[1][1])/2};}
+  });
+  cv.addEventListener('pointermove',e=>{
+    const p=loc(e);
+    if(!ptr.has(e.pointerId)){cv.style.cursor=hit(p[0],p[1])?'grab':'default';return;}
+    ptr.set(e.pointerId,p);
+    if(mode==='pinch'&&ptr.size>=2){
+      const a=[...ptr.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,mx=(a[0][0]+a[1][0])/2,my=(a[0][1]+a[1][1])/2;
+      setZoom(pinch.z*d/pinch.d,mx,my);S.panX+=mx-pinch.mx;S.panY+=my-pinch.my;pinch.mx=mx;pinch.my=my;dirty=true;return;
+    }
+    if(mode==='F'){
+      const R=G.R,yr=clamp(wy(p[1]),0,2*R)/R;
+      if(Math.abs(yr-1)<0.04){S.attach='axle';S.yFcm=S.Rcm;}else{S.attach='rim';S.yFcm=yr*S.Rcm;}
+      touch();refreshAll();
+    }
+    else if(mode==='pan'){S.panX+=p[0]-lastP[0];S.panY+=p[1]-lastP[1];lastP=p;dirty=true;}
+  });
+  const up=e=>{ptr.delete(e.pointerId);cv.style.cursor='default';if(ptr.size===0){mode=null;pinch=null;}else if(ptr.size===1){mode='pan';lastP=[...ptr.values()][0];pinch=null;}};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',e=>{e.preventDefault();const p=loc(e);setZoom(S.Z*Math.exp(-e.deltaY*0.0015),p[0],p[1]);},{passive:false});
+}
+const ro=new ResizeObserver(()=>{dirty=true;});
+['#stageWrap','#charts'].forEach(s=>ro.observe($(s)));
+window.addEventListener('resize',()=>dirty=true);
+
+/* ---------- εκκίνηση ---------- */
+$$('[data-up]').forEach(e=>{e.textContent=UP(e.textContent);});
+$('#mainTitle').innerHTML=$('#mainTitle').textContent.split(/\s+/).map(w=>{const u=UP(w);return `<span class="tw"><b>${u[0]}</b>${u.slice(1)}</span>`;}).join(' ');
+const PHYS_HTML=`<div class="guide phys">
+<h3>Λύση με τις τρέχουσες τιμές</h3>
+<div class="solve" id="solveBox"></div>
+<h3>Η φυσική του προβλήματος</h3>
+<p>Ο τροχός (μάζα <i>m</i>, ακτίνα <i>R</i>) ακουμπά στο λείο δάπεδο και στη γωνία Γ ενός σκαλοπατιού ύψους <i>h</i>. Μια οριζόντια δύναμη <b><i>F</i></b> τον σπρώχνει προς το σκαλοπάτι. Ο τροχός ανεβαίνει μόνο όταν χάσει την επαφή με το δάπεδο, δηλαδή όταν <b><i>N</i><sub>1</sub> = 0</b>. Τότε στρέφεται γύρω από τη γωνία Γ.</p>
+<h3>Ροπές ως προς τη γωνία Γ</h3>
+<ul>
+<li>Η γωνία Γ απέχει οριζόντια από το κέντρο Κ κατά <b><i>d</i> = √(2<i>R</i><i>h</i> − <i>h</i>²)</b>, από το πυθαγόρειο θεώρημα: (<i>R</i> − <i>h</i>)² + <i>d</i>² = <i>R</i>².</li>
+<li>Οι δυνάμεις <i>N</i><sub>2</sub>, <i>T</i> και η ολική <i>Q</i> περνούν από το Γ, άρα έχουν μηδενική ροπή ως προς αυτό. Το ίδιο ισχύει για την <i>N</i><sub>1</sub> όταν γίνει μηδέν.</li>
+<li>Το βάρος έχει μοχλοβραχίονα <i>d</i> και τείνει να κρατήσει τον τροχό κάτω: <b>Στ<sub>w</sub> = <i>w</i>·<i>d</i></b>.</li>
+<li>Η <i>F</i> έχει μοχλοβραχίονα <i>b</i> = <i>y</i><sub>F</sub> − <i>h</i>, δηλαδή την απόσταση της γραμμής δράσης της από το ύψος της γωνίας: <b>Στ<sub>F</sub> = <i>F</i>·<i>b</i></b>.</li>
+</ul>
+<h3>Ελάχιστη δύναμη ανάβασης</h3>
+<ul>
+<li>Στο όριο: <b>Στ<sub>F</sub> = Στ<sub>w</sub></b> ⇒ <b><i>F</i><sub>όρ</sub> = <i>w</i>·<i>d</i> / (<i>y</i><sub>F</sub> − <i>h</i>)</b>.</li>
+<li>Όσο πιο ψηλά εφαρμόζεται η <i>F</i>, τόσο μικρότερη χρειάζεται. Η μικρότερη τιμή είναι για <i>y</i><sub>F</sub> = 2<i>R</i>, στην κορυφή του τροχού.</li>
+<li>Αν <i>y</i><sub>F</sub> ≤ <i>h</i>, η <i>F</i> δεν έχει ροπή που να ανεβάζει τον τροχό και δεν τον ανεβάζει όσο μεγάλη κι αν είναι.</li>
+<li>Για <i>F</i> &lt; <i>F</i><sub>όρ</sub> ο τροχός ισορροπεί και η <i>N</i><sub>1</sub> = <i>w</i> − <i>F</i>·<i>b</i>/<i>d</i> μικραίνει καθώς μεγαλώνει η <i>F</i>.</li>
+<li>Με <i>h</i> πολύ μικρότερο από <i>R</i> έχουμε περίπου <i>F</i><sub>όρ</sub> ≈ <i>w</i>·√(2<i>h</i>/<i>R</i>): οι μεγάλοι τροχοί ανεβαίνουν πιο εύκολα.</li>
+</ul>
+<h3>Μόλις ξεκολλήσει</h3>
+<ul>
+<li>Ο τροχός στρέφεται γύρω από το Γ με ροπή αδράνειας <i>I</i><sub>Γ</sub> = <i>I</i><sub>Κ</sub> + <i>m</i><i>R</i>² και γωνιακή επιτάχυνση <i>α</i> = (Στ<sub>F</sub> − Στ<sub>w</sub>) / <i>I</i><sub>Γ</sub>.</li>
+<li>Καθώς ανεβαίνει, η κάθετη δύναμη <i>N</i><sub>2</sub> μικραίνει. Αν μηδενιστεί πριν φτάσει στην κορυφή, ο τροχός χάνει την επαφή με τη γωνία, πετά πάνω από αυτήν και προσγειώνεται στο σκαλοπάτι.</li>
+<li>Για να μην γλιστρά στη γωνία χρειάζεται συντελεστής τριβής μ ≥ <i>T</i>/<i>N</i><sub>2</sub>.</li>
+</ul>
+<h3>Παραδείγματα από την καθημερινή ζωή</h3>
+<ul>
+<li><b>Καρότσι μωρού ή αναπηρικό αμαξίδιο σε πεζοδρόμιο:</b> είναι πολύ πιο εύκολο να το ανεβάσεις όταν σπρώχνεις ψηλά (λαβή) ή το γέρνεις προς τα πίσω, γιατί η δύναμη αποκτά μεγάλο μοχλοβραχίονα <i>b</i>.</li>
+<li><b>Βαλίτσα με μικρές ρόδες:</b> δυσκολεύεται σε κάθε σκαλοπάτι γιατί η ακτίνα είναι μικρή και το <i>h</i>/<i>R</i> μεγάλο.</li>
+<li><b>Τρακτέρ και ποδήλατο:</b> οι μεγάλοι τροχοί περνούν εύκολα εμπόδια, ενώ οι μικροί ανεβαίνουν δύσκολα.</li>
+<li><b>Κάδος σκουπιδιών με ρόδες στο κράσπεδο:</b> τον τραβάς από τη λαβή ψηλά και όχι από τη βάση.</li>
+<li><b>Χειράμαξα και καροτσάκι μεταφοράς:</b> η δύναμη στη λαβή, πάνω από το ύψος του κράσπεδου, δίνει ροπή που ανεβάζει τον τροχό.</li>
+</ul>
+</div>`;
+const GUIDE_HTML=`<div class="guide">
+<h3>Τι δείχνει</h3>
+<p>Ένας στερεός τροχός ακουμπά στο δάπεδο μπροστά από ένα σκαλοπάτι. Μια οριζόντια δύναμη <i>F</i> προσπαθεί να τον ανεβάσει. Βλέπεις όλες τις δυνάμεις που δέχεται και τις ροπές τους ως προς τη γωνία του σκαλοπατιού.</p>
+<h3>1. Ρυθμίσεις</h3>
+<ul>
+<li>Άλλαξε την ακτίνα και τη μάζα του τροχού, την επιτάχυνση της βαρύτητας και το ύψος του σκαλοπατιού με τα ρυθμιστικά ή πληκτρολογώντας τιμή.</li>
+<li>Διάλεξε την τιμή της δύναμης και πού εφαρμόζεται: στην περιφέρεια του τροχού σε όποιο ύψος θέλεις ή στο κέντρο (άξονας). Μπορείς να τη σύρεις και με το ποντίκι.</li>
+<li>Δίσκος ή στεφάνι: αλλάζει η ροπή αδράνειας και άρα η κίνηση μετά την ξεκόλληση.</li>
+</ul>
+<h3>2. Προβολή μεγεθών</h3>
+<ul>
+<li>Διάλεξε ποιες δυνάμεις φαίνονται, τους μοχλοβραχίονες, τις διαστάσεις και το ίχνος του κέντρου.</li>
+<li>Οι τιμές δεν φαίνονται αρχικά. Με τα «Τιμές δίπλα στα διανύσματα» και «Τιμές πάνω δεξιά στο παράθυρο» εμφανίζονται.</li>
+<li>Ρύθμισε το μήκος και το πάχος των διανυσμάτων. Το βάρος έχει πάντα το ίδιο μήκος και οι άλλες δυνάμεις κλιμακώνονται ως προς αυτό. Όσες θα έβγαιναν υπερβολικά μεγάλες κόβονται με το σημάδι //.</li>
+</ul>
+<h3>3. Ανάλυση</h3>
+<p>Εξηγεί με τις τρέχουσες τιμές τον ρόλο κάθε δύναμης, την ελάχιστη δύναμη ανάβασης και τα βήματα της λύσης, με παραδείγματα από την καθημερινή ζωή.</p>
+<h3>4. Τιμές μεγεθών</h3>
+<p>Πίνακας με τις τιμές τη στιγμή που βλέπεις. Με το «Όλα τα μεγέθη στον πίνακα» εμφανίζονται και οι ροπές, οι μοχλοβραχίονες και οι ροπές αδράνειας.</p>
+<h3>5. Διαγράμματα</h3>
+<p>Η ελάχιστη δύναμη <i>F</i><sub>όρ</sub> ως προς το ύψος εφαρμογής και ως προς το ύψος του σκαλοπατιού, οι αντιδράσεις <i>N</i><sub>1</sub>, <i>N</i><sub>2</sub> ως προς την <i>F</i> και οι ροπές ως προς τη γωνία ανύψωσης. Κάνε κλικ ή σύρε πάνω τους για να αλλάξεις τις τιμές.</p>
+<h3>Προβολές</h3>
+<ul>
+<li><b>Δυνάμεις</b>: όλες οι δυνάμεις στον τροχό και στη γωνία.</li>
+<li><b>Ροπές ως προς Γ</b>: μόνο το βάρος και η <i>F</i>, με τους μοχλοβραχίονες και τα τόξα των ροπών τους.</li>
+<li>Ρόδα ποντικιού ή τσίμπημα με δύο δάχτυλα για μεγέθυνση, σύρσιμο στο κενό για μετατόπιση. Το «↺ Προβολή» επαναφέρει.</li>
+</ul>
+<h3>Χειρισμός κίνησης</h3>
+<ul>
+<li><b>Εκκίνηση / Επαναφορά</b>: ξεκινούν ή μηδενίζουν την κίνηση. Το ρυθμιστικό χρόνου σε αφήνει να δεις οποιαδήποτε στιγμή.</li>
+<li><b>Επανάληψη</b>: η κίνηση ξαναρχίζει όταν τελειώσει.</li>
+<li><b>Ήχος</b>: ένα «μπιπ» όταν ο τροχός ξεκολλά από το δάπεδο, όταν χάνει την επαφή με τη γωνία και όταν τελειώνει η κίνηση.</li>
+<li><b>Ταχύτητα αναπαραγωγής</b>: από ×0,05 (πολύ αργά) ως ×2. Η πραγματική κίνηση διαρκεί λιγότερο από ένα δευτερόλεπτο, γι' αυτό η προεπιλογή είναι ×0,25.</li>
+</ul>
+<h3>Skins</h3>
+<p>Από το μενού «Skins» πάνω δεξιά αλλάζεις την εμφάνιση (φωτεινή ή σκούρη). Η επιλογή σου αποθηκεύεται στη συσκευή.</p>
+</div>`;
+let skin='blueprint';try{skin=localStorage.getItem('troxos-skin')||skin;}catch(e){}
+if(!SKINS.some(k=>k[0]===skin))skin='blueprint';
+{
+  const rc=$('#rightCol'),tp=el('div','panel tabs-panel');tp.id='tabsPanel';
+  tp.innerHTML='<div class="set-tabs" id="setTabs" role="tablist" aria-label="Ρυθμίσεις"></div><div id="tabBody"></div>';
+  rc.appendChild(tp);
+  const t1=mkTab(),t2=mkTab(),t3=mkTab(),t4=mkTab(),t6=mkTab();t6.b.innerHTML=GUIDE_HTML;
+  buildSettings(t1.b);buildToggles(t2.b);{const sp=el('div');sp.style.height='20px';t2.b.appendChild(sp);}buildView(t2.b);buildPrefs(t2.b);t2.b.appendChild($('#navHint'));
+  {const rh=el('div','');rh.style.marginBottom='4px';rh.appendChild(el('div','role'));rh.firstChild.id='roleBox';const hl=el('div','hintline');hl.id='roleHint';rh.appendChild(hl);t3.b.appendChild(rh);t3.b.insertAdjacentHTML('beforeend',PHYS_HTML);}
+  {const al=el('label','checkline','<input type="checkbox" id="allChk"> Όλα τα μεγέθη στον πίνακα');al.id='allWrap';al.style.margin='0 0 4px';t4.b.appendChild(al);const ro2=el('div','readouts');ro2.id='readouts';t4.b.appendChild(ro2);
+    $('#allChk',al).addEventListener('change',e=>{S.tblAll=e.target.checked;lastRO='';dirty=true;});}
+  const gp=$('#graphPanel');
+  const ps=[t1.p,t2.p,t3.p,t4.p,gp,t6.p];
+  const names=['Ρυθμίσεις','Προβολή μεγεθών','Ανάλυση','Τιμές μεγεθών','Διαγράμματα','Οδηγίες'];
+  ps.forEach(p=>{p.classList.remove('collapsed');$('#tabBody').appendChild(p);});
+  const show=i=>{ps.forEach((p,j)=>{p.hidden=j!==i;});$$('#setTabs button').forEach((b,j)=>{b.classList.toggle('active',j===i);b.setAttribute('aria-selected',j===i);});dirty=true;setTimeout(()=>{dirty=true;},60);};
+  names.forEach((n,i)=>{const b=el('button','main-tab-btn',n);b.type='button';b.setAttribute('role','tab');b.addEventListener('click',()=>show(i));$('#setTabs').appendChild(b);});
+  show(0);
+}
+let uiZ=0.8;try{uiZ=+localStorage.getItem('ui-zoom-v3')||0.8;}catch(e){}
+const fitGrid=()=>{const g=$('.main-grid'),app=$('.app'),z=innerWidth>980?uiZ:1;app.style.zoom=z===1?'':z;if(innerWidth>980){const top=g.getBoundingClientRect().top+scrollY;g.style.height=Math.min(800,Math.max(420,(innerHeight-top-12)/z))+'px';}else g.style.height='';dirty=true;};
+{const zs=$('#zoomSel');zs.value=String(uiZ);if(zs.value!==String(uiZ)){uiZ=0.8;zs.value='0.8';}zs.addEventListener('change',()=>{uiZ=+zs.value;try{localStorage.setItem('ui-zoom-v3',uiZ);}catch(e){}fitGrid();setTimeout(()=>{fitGrid();window.dispatchEvent(new Event('resize'));},60);});}
+addEventListener('resize',fitGrid);fitGrid();setTimeout(fitGrid,300);
+buildChartChips();buildChartCells();updatePlay();
+setSkin(skin);setViewMode('forces');
+recompute();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{dirty=true;});
+window.__wheel={S,GEO,recompute,render,get G(){return G;},get TR(){return TR;},get CUR(){return CUR;},setViewMode,touch,refreshAll};
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
